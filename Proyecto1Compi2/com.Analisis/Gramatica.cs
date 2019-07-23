@@ -16,11 +16,10 @@ namespace com.Analisis
 			RegexBasedTerminal decimal_ = new RegexBasedTerminal("decimal", "[0-9]+.[0-9]+");
 			RegexBasedTerminal date = new RegexBasedTerminal("date", "[0-9]{2}-[0-9]{2}-[0-9]{4}");
 			RegexBasedTerminal datetime = new RegexBasedTerminal("datetime", "[0-9]{2}-[0-9]{2}-[0-9]{4}\\s+[0-9]{2}:[0-9]{2}:[0-9]{2}");
-
 			RegexBasedTerminal id = new RegexBasedTerminal("id", "@[a-zA-ZñÑ]([a-zA-ZñÑ0-9_])*");
 			RegexBasedTerminal nombre = new RegexBasedTerminal("nombre", "[a-zA-ZñÑ]+([a-zA-ZñÑ]|_|[0-9])*");
-			CommentTerminal comentario_linea = new CommentTerminal("comentario_linea", "//", "\n", "\r\n");
-			CommentTerminal comentario_bloque = new CommentTerminal("comentario_bloque", "/*", "*/");
+			CommentTerminal comentario_linea = new CommentTerminal("comentario_linea", "#", "\n", "\r\n");
+			CommentTerminal comentario_bloque = new CommentTerminal("comentario_bloque", "#*", "*#");
 
 			#endregion
 
@@ -99,6 +98,21 @@ namespace com.Analisis
 			var pr_permisos = ToTerm("PERMISOS");
 			var pr_denegar = ToTerm("DENEGAR");
 			var pr_de = ToTerm("DE");
+
+			var pr_declarar = ToTerm("DECLARAR");
+			var pr_if = ToTerm("SI");
+			var pr_else = ToTerm("SINO");
+			var pr_switch = ToTerm("SELECCIONA");
+			var pr_case = ToTerm("CASO");
+			var pr_default = ToTerm("DEFECTO");
+			var pr_for = ToTerm("PARA");
+			var pr_while = ToTerm("MIENTRAS");
+			var pr_break = ToTerm("DETENER");
+			var pr_backup = ToTerm("BACKUP");
+			var pr_usqldump = ToTerm("USQLDUMP");
+			var pr_completo = ToTerm("COMPLETO");
+			var pr_restaurar = ToTerm("RESTAURAR");
+			var pr_contar = ToTerm("CONTAR");
 			#endregion
 
 			#region NoTerm
@@ -110,8 +124,8 @@ namespace com.Analisis
 				LISTAEXPRESIONES = new NonTerminal("LISTAEXPRESIONES"),
 				LISTAACCESO = new NonTerminal("LISTACCESO");
 
-			NonTerminal SENTENCIASDDL = new NonTerminal("SENTENCIASDDL"),
-				SENTENCIADDL = new NonTerminal("SENTENCIADDL"),
+			NonTerminal SENTENCIAS = new NonTerminal("SENTENCIAS"),
+				SENTENCIA = new NonTerminal("SENTENCIA"),
 				CREAR_DB = new NonTerminal("CREAR_DB"),
 				CREAR_TABLA = new NonTerminal("CREAR_TABLA"),
 				LISTACAMPOSTABLA = new NonTerminal("LISTACAMPOSTABLA"),
@@ -131,33 +145,50 @@ namespace com.Analisis
 				SENTENCIABLOQUE = new NonTerminal("SENTENCIABLOQUE"),
 				LISTAPARAMETROS = new NonTerminal("LISTAPARAMETROS"),
 				PARAMETRO = new NonTerminal("PARAMETRO"),
-				ASIGNACION = new NonTerminal("ASIGNACION"),
 				ALTERAR_TABLA = new NonTerminal("ALTERAR_TABLA"),
 				ALTERAR_USUARIO = new NonTerminal("ALTERAR_USUARIO"),
 				ALTERAR_OBJETO = new NonTerminal("ALTERAR_OBJETO"),
-				LISTANOMBRES=new NonTerminal("LISTANOMBRES"),
+				LISTANOMBRES = new NonTerminal("LISTANOMBRES"),
 				ELIMINARTABLA = new NonTerminal("ELIMINARTABLA"),
 				ELIMINARUSUARIO = new NonTerminal("ELIMINARUSUARIO"),
 				ELIMINAROBJETO = new NonTerminal("ELIMINAROBJETO"),
 				ELIMINARDB = new NonTerminal("ELIMINARDB")
 				;
 
-			NonTerminal SENTENCIASDML = new NonTerminal("SENTENCIASDML"), 
-				SENTENCIADML = new NonTerminal("SENTENCIADML"),
-				SELECCIONAR = new NonTerminal("SELECCIONAR"),
+			NonTerminal SELECCIONAR = new NonTerminal("SELECCIONAR"),
 				BORRAR = new NonTerminal("BORRAR"),
 				ACTUALIZAR = new NonTerminal("ACTUALIZAR"),
 				INSERTAR = new NonTerminal("INSERTAR"),
-				LISTAVALORES= new NonTerminal("LISTAVALORES"),
-				VALORES = new NonTerminal("VALORES"),
-				PROPIEDADSELECCIONAR=new NonTerminal("PROPIEDADSELECCIONAR"),
-				ASCDESC= new NonTerminal("ASCDESC")
+				PROPIEDADSELECCIONAR = new NonTerminal("PROPIEDADSELECCIONAR"),
+				PROPIEDADDONDE = new NonTerminal("PROPIEDADDONDE"),
+				PROPIEDADORDENAR = new NonTerminal("PROPIEDADORDENAR"),
+				ASCDESC = new NonTerminal("ASCDESC")
+				;
+
+			NonTerminal OTORGAR = new NonTerminal("OTORGAR"),
+				DENEGAR = new NonTerminal("DENEGAR"),
+				ASIGNACION = new NonTerminal("ASIGNACION"),
+				DECLARACION = new NonTerminal("DECLARACION"),
+				IF = new NonTerminal("IF"),
+				ELSE = new NonTerminal("ELSE"),
+				SWITCH = new NonTerminal("SWITCH"),
+				CASE = new NonTerminal("CASE"),
+				DEFAULT = new NonTerminal("DEFAULT"),
+				LISTACASE = new NonTerminal("LISTACASE"),
+				FOR = new NonTerminal("FOR"),
+				BREAK = new NonTerminal("BREAK"),
+				LISTAVARIABLES = new NonTerminal("LISTAVARIABLES"),
+				OPPFOR = new NonTerminal("OPPFOR"),
+				WHILE = new NonTerminal("WHILE"), //uimprimir y fecha y fechahora
+				CONTAR = new NonTerminal("CONTAR"),
+				BACKUP = new NonTerminal("BACKUP"),
+				RESTAURAR = new NonTerminal("RESTAURAR")	
 				;
 
 			#endregion
 
 			#region Gramatica
-			INICIO.Rule = SENTENCIASDML;
+			INICIO.Rule = SENTENCIAS;
 
 			#region expresion
 			EXPRESION.Rule = //aritmeticos
@@ -191,7 +222,10 @@ namespace com.Analisis
 				| not + EXPRESION
 				| LLAMADAFUNCION;
 
-			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2;
+			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2
+				|CONTAR;
+
+			LISTANOMBRES.Rule = MakePlusRule(LISTANOMBRES, coma, nombre);
 
 			LISTAEXPRESIONES.Rule = MakeStarRule(LISTAEXPRESIONES, coma, EXPRESION);
 
@@ -201,9 +235,9 @@ namespace com.Analisis
 
 			#region sentencias DDL
 
-			SENTENCIASDDL.Rule = MakeStarRule(SENTENCIASDDL, SENTENCIADDL);
+			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 
-			SENTENCIADDL.Rule = CREAR_DB
+			SENTENCIA.Rule = CREAR_DB
 				| CREAR_TABLA
 				| CREAR_OBJETO
 				| CREAR_PROC
@@ -216,7 +250,24 @@ namespace com.Analisis
 				| ELIMINARDB
 				| ELIMINAROBJETO
 				| ELIMINARTABLA
-				| ELIMINARUSUARIO;
+				| ELIMINARUSUARIO
+				| INSERTAR
+				| ACTUALIZAR
+				| BORRAR
+				| SELECCIONAR + puntoycoma
+				| OTORGAR
+				| DENEGAR
+				| DECLARACION
+				| ASIGNACION
+				| IF
+				| BACKUP
+				| RESTAURAR
+				| WHILE
+				| FOR
+				| SWITCH
+				|LLAMADAFUNCION+puntoycoma
+				|BREAK
+				;
 
 			CREAR_DB.Rule = pr_crear + pr_db + nombre + puntoycoma;
 
@@ -232,7 +283,8 @@ namespace com.Analisis
 				| pr_double
 				| pr_bool
 				| pr_date
-				| pr_datetime;
+				| pr_datetime
+				| nombre;
 
 			LISTACOMPLEMENTOSCT.Rule = MakeStarRule(LISTACOMPLEMENTOSCT, COMPLEMENTOCAMPOTABLA);
 
@@ -254,17 +306,9 @@ namespace com.Analisis
 
 			PARAMETRO.Rule =TIPODATO+id;
 
-			BLOQUESENTENCIAS.Rule = MakeStarRule(BLOQUESENTENCIAS, SENTENCIABLOQUE);
-
-			SENTENCIABLOQUE.Rule =RETORNO
-				|LLAMADAFUNCION+puntoycoma
-				|ASIGNACION;
-
 			CREAR_FUNCION.Rule =pr_crear+pr_funcion+nombre+par1+LISTAPARAMETROS+par2+TIPODATO+llave1+BLOQUESENTENCIAS+llave2;
 
 			RETORNO.Rule =pr_retorno+EXPRESION+puntoycoma;
-
-			ASIGNACION.Rule =id+igual+EXPRESION+puntoycoma;
 
 			CREAR_USUARIO.Rule =pr_crear+pr_usuario+nombre+pr_colocar+pr_password+igual+cadena+puntoycoma;
 
@@ -272,8 +316,6 @@ namespace com.Analisis
 
 			ALTERAR_TABLA.Rule =pr_alterar+pr_tabla+nombre+pr_agregar+par1+LISTACAMPOSTABLA +par2+puntoycoma
 				| pr_alterar + pr_tabla + nombre + pr_quitar + LISTANOMBRES+puntoycoma;
-
-			LISTANOMBRES.Rule = MakePlusRule(LISTANOMBRES,coma,nombre);
 
 			ALTERAR_OBJETO.Rule= pr_alterar + pr_objeto + nombre + pr_agregar + par1 + LISTAATRIBUTOS + par2 + puntoycoma
 				| pr_alterar + pr_objeto + nombre + pr_quitar + LISTANOMBRES+puntoycoma;
@@ -293,44 +335,84 @@ namespace com.Analisis
 
 			#region sentencias DML?
 
-			SENTENCIASDML.Rule =MakeStarRule(SENTENCIASDML,SENTENCIADML);
-
-			SENTENCIADML.Rule =INSERTAR
-				|ACTUALIZAR
-				|BORRAR
-				|SELECCIONAR;
-
-			INSERTAR.Rule =pr_insertar+pr_en+pr_tabla+nombre +par1 + LISTAVALORES+par2+puntoycoma
-				|pr_insertar+pr_en+pr_tabla+nombre+par1+LISTANOMBRES+par2+pr_valores+par1+LISTAVALORES+par2+puntoycoma;
+			INSERTAR.Rule =pr_insertar+pr_en+pr_tabla+nombre +par1 + LISTAEXPRESIONES+par2+puntoycoma
+				|pr_insertar+pr_en+pr_tabla+nombre+par1+LISTAEXPRESIONES+par2+pr_valores+par1+LISTAEXPRESIONES+par2+puntoycoma;
 
 
-			LISTAVALORES.Rule = MakePlusRule(LISTAVALORES,coma,VALORES);
-
-			VALORES.Rule = cadena
-				|entero
-				|decimal_
-				|date
-				|datetime;
-
-			ACTUALIZAR.Rule =pr_actualizar+pr_tabla+nombre+par1 + LISTANOMBRES + par2 + pr_valores + par1 + LISTAVALORES + par2 + puntoycoma
-				| pr_actualizar + pr_tabla + nombre + par1 + LISTANOMBRES + par2 + pr_valores + par1 + LISTAVALORES + par2+pr_donde+ EXPRESION+ puntoycoma;
+			ACTUALIZAR.Rule =pr_actualizar+pr_tabla+nombre+par1 + LISTANOMBRES + par2 + pr_valores + par1 + LISTAEXPRESIONES + par2 + puntoycoma
+				| pr_actualizar + pr_tabla + nombre + par1 + LISTANOMBRES + par2 + pr_valores + par1 + LISTAEXPRESIONES + par2+pr_donde+ EXPRESION+ puntoycoma;
 
 			BORRAR.Rule =pr_borrar+pr_en+pr_tabla+nombre+pr_donde+EXPRESION+puntoycoma
 				|pr_borrar + pr_en + pr_tabla + nombre +puntoycoma;
 
-			SELECCIONAR.Rule =pr_seleccionar+LISTANOMBRES+pr_de+LISTANOMBRES+PROPIEDADSELECCIONAR+puntoycoma
-				| pr_seleccionar + por + pr_de + LISTANOMBRES + PROPIEDADSELECCIONAR + puntoycoma;
+			SELECCIONAR.Rule =pr_seleccionar+LISTANOMBRES+pr_de+LISTANOMBRES+PROPIEDADSELECCIONAR
+				| pr_seleccionar + por + pr_de + LISTANOMBRES + PROPIEDADSELECCIONAR;
 
-			PROPIEDADSELECCIONAR.Rule = pr_donde + EXPRESION+pr_ordenarPor + nombre+ ASCDESC
-				| pr_ordenarPor + nombre+ ASCDESC + pr_donde + EXPRESION
-				| pr_donde + EXPRESION
-				| pr_ordenarPor + nombre+ASCDESC
+			PROPIEDADSELECCIONAR.Rule = PROPIEDADDONDE + PROPIEDADORDENAR
+				| PROPIEDADORDENAR + PROPIEDADDONDE
+				| PROPIEDADDONDE
+				| PROPIEDADORDENAR
 				|Empty;
+
+			PROPIEDADDONDE.Rule = pr_donde + EXPRESION;
+
+			PROPIEDADORDENAR.Rule = pr_ordenarPor + nombre + ASCDESC;
 
 			ASCDESC.Rule =pr_asc|pr_desc|Empty;
 
-			#endregion
+			//sentencias ssl
+			OTORGAR.Rule =pr_otorgar+pr_permisos+nombre+coma+nombre+punto+nombre+puntoycoma
+				| pr_otorgar + pr_permisos + nombre + coma + nombre + punto +por+ puntoycoma;
 
+			DENEGAR.Rule = pr_denegar + pr_permisos + nombre + coma + nombre + punto + nombre + puntoycoma
+				| pr_denegar + pr_permisos + nombre + coma + nombre + punto + por + puntoycoma;
+
+			BLOQUESENTENCIAS.Rule = MakeStarRule(BLOQUESENTENCIAS, SENTENCIABLOQUE);
+
+			SENTENCIABLOQUE.Rule = RETORNO
+				| SENTENCIA;
+
+			DECLARACION.Rule = pr_declarar + LISTAVARIABLES + TIPODATO + puntoycoma
+				| pr_declarar + LISTAVARIABLES + TIPODATO + igual + EXPRESION + puntoycoma;
+				
+			LISTAVARIABLES.Rule =MakePlusRule(LISTAVARIABLES,coma,id);
+
+			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
+				| id + punto + LISTAACCESO +igual + EXPRESION + puntoycoma;
+
+			IF.Rule = pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2
+				| pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else + llave1 + BLOQUESENTENCIAS + llave2;
+
+			SWITCH.Rule = pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + DEFAULT + llave2
+				| pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + llave2;
+
+			LISTACASE.Rule = MakePlusRule(LISTACASE,CASE);
+
+			CASE.Rule = pr_case + EXPRESION + dospuntos + BLOQUESENTENCIAS;
+
+			DEFAULT.Rule = pr_default + dospuntos + BLOQUESENTENCIAS;
+
+			BREAK.Rule = pr_break + puntoycoma;
+
+			FOR.Rule = pr_for + par1 + pr_declarar + id + igual + EXPRESION + puntoycoma + EXPRESION + puntoycoma + OPPFOR + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+
+			OPPFOR.Rule = mas + mas
+				| menos + menos;
+
+			WHILE.Rule =pr_while+par1+EXPRESION+par2+llave1+BLOQUESENTENCIAS+llave2;
+
+			CONTAR.Rule = pr_contar + par1  +SELECCIONAR + par2;
+
+			BACKUP.Rule = pr_backup + pr_usqldump + nombre + nombre + puntoycoma
+				| pr_backup + pr_completo + nombre + nombre + puntoycoma;
+
+			RESTAURAR.Rule = pr_restaurar + pr_usqldump + cadena + puntoycoma
+				| pr_restaurar + pr_completo + cadena + puntoycoma;
+
+
+			#endregion
+			//revisar lista de acceso a objetos basado en si existen objetos con objetos dentro y si son accesibles
+			//revisar contar con seleccionar con expresion al final y >>
 			#endregion
 
 			#region Ajustes
@@ -342,13 +424,16 @@ namespace com.Analisis
 				pr_llaveForanea.ToString(),pr_unico.ToString(),pr_objeto.ToString(),pr_proc.ToString(),pr_funcion.ToString(),pr_retorno.ToString(),pr_usuario.ToString(),
 				pr_colocar.ToString(),pr_password.ToString(),pr_usar.ToString(),pr_alterar.ToString(),pr_agregar.ToString(),pr_quitar.ToString(),pr_cambiar.ToString(),
 				pr_insertar.ToString(),pr_en.ToString(),pr_actualizar.ToString(),pr_valores.ToString(),pr_donde.ToString(),pr_borrar.ToString(),pr_seleccionar.ToString(),
-				pr_ordenarPor.ToString(),pr_asc.ToString(),pr_desc.ToString(),pr_otorgar.ToString(),pr_permisos.ToString(),pr_denegar.ToString(),pr_de.ToString());
+				pr_ordenarPor.ToString(),pr_asc.ToString(),pr_desc.ToString(),pr_otorgar.ToString(),pr_permisos.ToString(),pr_denegar.ToString(),pr_de.ToString(),
+				pr_declarar.ToString(),pr_if.ToString(),pr_else.ToString(),pr_switch.ToString(),pr_case.ToString(),pr_default.ToString(),pr_for.ToString(),pr_while.ToString(),
+				pr_break.ToString(),pr_backup.ToString(),pr_usqldump.ToString(),pr_completo.ToString(),pr_restaurar.ToString(),pr_contar.ToString());
 			//NODOS A OMITIR
-			MarkTransient(SENTENCIADDL,SENTENCIADML);
+			MarkTransient(SENTENCIA,ASCDESC);
 			//TERMINALES IGNORADO
-			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,
+			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_colocar,pr_password,pr_objeto,pr_tabla,pr_alterar,pr_cambiar, pr_usar,pr_proc,pr_funcion,pr_insertar,pr_en,
-				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de);		
+				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenarPor,pr_otorgar,pr_permisos,pr_denegar,pr_declarar,pr_if,pr_switch,pr_for,pr_while,
+				pr_backup,pr_restaurar,pr_else,pr_case,pr_default);		
 			//COMENTA	RIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);
