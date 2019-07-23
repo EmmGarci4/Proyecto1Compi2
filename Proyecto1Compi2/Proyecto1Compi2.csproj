@@ -70,6 +70,13 @@
     <Compile Include="com.Analisis\Util\Simbolo.cs" />
     <Compile Include="com.Analisis\Util\TablaSimbolos.cs" />
     <Compile Include="com.Analisis\Util\Tipos.cs" />
+    <Compile Include="com.db\BaseDatos.cs" />
+    <Compile Include="com.db\Celda.cs" />
+    <Compile Include="com.db\Columna.cs" />
+    <Compile Include="com.db\Objeto.cs" />
+    <Compile Include="com.db\Procedimiento.cs" />
+    <Compile Include="com.db\Tabla.cs" />
+    <Compile Include="com.db\Tipos.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

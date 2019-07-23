@@ -1,5 +1,6 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,6 +36,38 @@ namespace Proyecto1Compi2
 			}
 
 			
+		}
+
+		private void toolStripButton2_Click(object sender, EventArgs e)
+		{
+			BaseDatos db = new BaseDatos("MiBase", "C:\\Users\\Emely\\Desktop\\miBase.txt");
+			Tabla tb = new Tabla("Alumnos", "C:\\Users\\Emely\\Desktop\\miBase_AlumnosTb.txt");
+			tb.AgregarColumna(new Columna("carnet", TipoDatoDB.INTEGER));
+			tb.AgregarColumna(new Columna("nombre", TipoDatoDB.TEXT));
+			tb.AgregarColumna(new Columna("grado", TipoDatoDB.INTEGER));
+			db.AgregarTabla(tb);
+			tb = new Tabla("Clases", "C:\\Users\\Emely\\Desktop\\miBase_ClasesTb.txt");
+			tb.AgregarColumna(new Columna("codigo", TipoDatoDB.INTEGER));
+			tb.AgregarColumna(new Columna("Nombre", TipoDatoDB.TEXT));
+			tb.AgregarColumna(new Columna("Descripcion", TipoDatoDB.TEXT));
+			db.AgregarTabla(tb);
+			List<Celda> cls = new List<Celda>();
+			cls.Add(new Celda("12",TipoDatoDB.INTEGER));
+			cls.Add(new Celda("Matematica", TipoDatoDB.TEXT));
+			cls.Add(new Celda("Descripcion", TipoDatoDB.TEXT));
+
+			db.Insertar("Clases",cls);//tabla-fila de valores
+
+			cls = new List<Celda>();
+			cls.Add(new Celda("1", TipoDatoDB.INTEGER));
+			cls.Add(new Celda("Ciencias", TipoDatoDB.TEXT));
+
+			List<string> columnas = new List<string>();
+			columnas.Add("codigo");
+			columnas.Add("Nombre");
+			db.Insertar("Clases", columnas,cls);//tabla-fila de valores
+
+			db.MostrarBaseDatos();
 		}
 	}
 }
