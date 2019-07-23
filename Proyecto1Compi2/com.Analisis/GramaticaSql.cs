@@ -7,9 +7,9 @@ using Irony.Ast;
 using Irony.Parsing;
 namespace com.Analisis
 {
-	class Gramatica:Grammar
+	class GramaticaSql:Grammar
 	{
-		public Gramatica() : base(caseSensitive: false) {
+		public GramaticaSql() : base(caseSensitive: false) {
 			#region ER
 			StringLiteral cadena = new StringLiteral("cadena", "\"", StringOptions.IsTemplate);
 			NumberLiteral entero = new NumberLiteral("entero");

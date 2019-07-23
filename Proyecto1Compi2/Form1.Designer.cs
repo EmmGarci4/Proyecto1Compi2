@@ -30,11 +30,12 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.Btn_EjecutarSql = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
-			this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+			this.Btn_leerXml = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -43,8 +44,9 @@
 			// 
 			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton2});
+            this.Btn_EjecutarSql,
+            this.toolStripButton2,
+            this.Btn_leerXml});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -52,15 +54,25 @@
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
-			// toolStripButton1
+			// Btn_EjecutarSql
 			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(53, 22);
-			this.toolStripButton1.Text = "Ejecutar";
-			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+			this.Btn_EjecutarSql.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.Btn_EjecutarSql.Image = ((System.Drawing.Image)(resources.GetObject("Btn_EjecutarSql.Image")));
+			this.Btn_EjecutarSql.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Btn_EjecutarSql.Name = "Btn_EjecutarSql";
+			this.Btn_EjecutarSql.Size = new System.Drawing.Size(77, 22);
+			this.Btn_EjecutarSql.Text = "Ejecutar SQL";
+			this.Btn_EjecutarSql.Click += new System.EventHandler(this.ToolStripButton1_Click);
+			// 
+			// toolStripButton2
+			// 
+			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton2.Name = "toolStripButton2";
+			this.toolStripButton2.Size = new System.Drawing.Size(67, 22);
+			this.toolStripButton2.Text = "GenerarDB";
+			this.toolStripButton2.Click += new System.EventHandler(this.ToolStripButton2_Click);
 			// 
 			// tableLayoutPanel1
 			// 
@@ -98,15 +110,15 @@
 			this.textBox2.Size = new System.Drawing.Size(794, 207);
 			this.textBox2.TabIndex = 1;
 			// 
-			// toolStripButton2
+			// Btn_leerXml
 			// 
-			this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-			this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton2.Name = "toolStripButton2";
-			this.toolStripButton2.Size = new System.Drawing.Size(67, 22);
-			this.toolStripButton2.Text = "GenerarDB";
-			this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+			this.Btn_leerXml.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.Btn_leerXml.Image = ((System.Drawing.Image)(resources.GetObject("Btn_leerXml.Image")));
+			this.Btn_leerXml.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Btn_leerXml.Name = "Btn_leerXml";
+			this.Btn_leerXml.Size = new System.Drawing.Size(54, 22);
+			this.Btn_leerXml.Text = "LeerXml";
+			this.Btn_leerXml.Click += new System.EventHandler(this.Btn_leerXml_Click);
 			// 
 			// Form1
 			// 
@@ -129,11 +141,12 @@
 		#endregion
 
 		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton toolStripButton1;
+		private System.Windows.Forms.ToolStripButton Btn_EjecutarSql;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.ToolStripButton toolStripButton2;
+		private System.Windows.Forms.ToolStripButton Btn_leerXml;
 	}
 }
 

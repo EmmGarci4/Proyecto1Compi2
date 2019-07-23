@@ -20,25 +20,24 @@ namespace Proyecto1Compi2
 			InitializeComponent();
 		}
 
-		private void toolStripButton1_Click(object sender, EventArgs e)
+		private void ToolStripButton1_Click(object sender, EventArgs e)
 		{
 			this.textBox2.Clear();
 			if (Analizador.AnalizarUsql(this.textBox1.Text))
 			{
 				this.textBox2.Text = "Finalizado con éxito\n";
-				 generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
 			}
-			else {
+			else
+			{
 				foreach (Error er in Analizador.Errores)
 				{
-					this.textBox2.AppendText(er.Mensaje+"En linea: "+er.Linea+"y columna: "+er.Columna + "\n");
+					this.textBox2.AppendText(er.Mensaje + "En linea: " + er.Linea + "y columna: " + er.Columna + "\n");
 				}
 			}
-
-			
 		}
 
-		private void toolStripButton2_Click(object sender, EventArgs e)
+		private void ToolStripButton2_Click(object sender, EventArgs e)
 		{
 			BaseDatos db = new BaseDatos("MiBase", "C:\\Users\\Emely\\Desktop\\miBase.txt");
 			Tabla tb = new Tabla("Alumnos", "C:\\Users\\Emely\\Desktop\\miBase_AlumnosTb.txt");
@@ -87,5 +86,23 @@ namespace Proyecto1Compi2
 			db.MostrarBaseDatos();
 			db.GenerarArchivo();
 		}
+
+		private void Btn_leerXml_Click(object sender, EventArgs e)
+		{
+			this.textBox2.Clear();
+			if (Analizador.AnalizarXml(this.textBox1.Text))
+			{
+				this.textBox2.Text = "Finalizado con éxito\n";
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\xml.dot");
+			}
+			else
+			{
+				foreach (Error er in Analizador.Errores)
+				{
+					this.textBox2.AppendText(er.Mensaje + "En linea: " + er.Linea + "y columna: " + er.Columna + "\n");
+				}
+			}
+		}
+
 	}
 }

@@ -15,7 +15,7 @@ namespace com.Analisis
 		private static ParseTreeNode raiz= null;
 
 		public static bool AnalizarUsql(String texto){
-			Gramatica gramatica = new Gramatica();
+			GramaticaSql gramatica = new GramaticaSql();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
 			ParseTree arbol = parser.Parse(texto);
@@ -26,6 +26,24 @@ namespace com.Analisis
 			{
 				
 				errores.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line,mensaje.Location.Column));
+			}
+
+			return Analizador.raiz != null;
+		}
+
+		public static bool AnalizarXml(String texto)
+		{
+			GramaticaXml gramatica = new GramaticaXml();
+			LanguageData ldata = new LanguageData(gramatica);
+			Parser parser = new Parser(ldata);
+			ParseTree arbol = parser.Parse(texto);
+			Analizador.errores.Clear();
+			Analizador.raiz = arbol.Root;
+
+			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
+			{
+
+				errores.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
 			}
 
 			return Analizador.raiz != null;

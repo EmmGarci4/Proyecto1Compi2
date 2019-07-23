@@ -65,7 +65,8 @@
   <ItemGroup>
     <Compile Include="com.Analisis\Analizador.cs" />
     <Compile Include="com.Analisis\generadorDOT.cs" />
-    <Compile Include="com.Analisis\Gramatica.cs" />
+    <Compile Include="com.Analisis\GramaticaXml.cs" />
+    <Compile Include="com.Analisis\GramaticaSql.cs" />
     <Compile Include="com.Util\Error.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
     <Compile Include="com.Util\TablaSimbolos.cs" />
