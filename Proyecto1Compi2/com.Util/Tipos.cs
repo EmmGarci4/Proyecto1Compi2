@@ -13,14 +13,15 @@ namespace com.Analisis.Util
 		Semantico,
 		Advertencia
 	}
-	public enum TipoDato
+	enum TipoDatoDB
 	{
 		TEXT,
 		INTEGER,
 		DOUBLE,
 		BOOL,
 		DATE,
-		DATETIME
+		DATETIME,
+		NULO
 	}
 	public enum TipoSentencia
 	{

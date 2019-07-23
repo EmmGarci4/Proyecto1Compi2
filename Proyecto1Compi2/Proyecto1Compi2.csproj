@@ -66,17 +66,18 @@
     <Compile Include="com.Analisis\Analizador.cs" />
     <Compile Include="com.Analisis\generadorDOT.cs" />
     <Compile Include="com.Analisis\Gramatica.cs" />
-    <Compile Include="com.Analisis\Util\Error.cs" />
-    <Compile Include="com.Analisis\Util\Simbolo.cs" />
-    <Compile Include="com.Analisis\Util\TablaSimbolos.cs" />
-    <Compile Include="com.Analisis\Util\Tipos.cs" />
+    <Compile Include="com.Util\Error.cs" />
+    <Compile Include="com.Util\Simbolo.cs" />
+    <Compile Include="com.Util\TablaSimbolos.cs" />
+    <Compile Include="com.Util\Tipos.cs" />
+    <Compile Include="com.AST\Objeto.cs" />
     <Compile Include="com.db\BaseDatos.cs" />
     <Compile Include="com.db\Celda.cs" />
     <Compile Include="com.db\Columna.cs" />
-    <Compile Include="com.db\Objeto.cs" />
-    <Compile Include="com.db\Procedimiento.cs" />
+    <Compile Include="com.db\Lista_Objetos.cs" />
+    <Compile Include="com.db\Lista_Procedimientos.cs" />
+    <Compile Include="com.AST\Procedimiento.cs" />
     <Compile Include="com.db\Tabla.cs" />
-    <Compile Include="com.db\Tipos.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,8 +137,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="com.Analisis\com.analisis.usql\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

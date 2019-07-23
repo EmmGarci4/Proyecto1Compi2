@@ -51,23 +51,41 @@ namespace Proyecto1Compi2
 			tb.AgregarColumna(new Columna("Nombre", TipoDatoDB.TEXT));
 			tb.AgregarColumna(new Columna("Descripcion", TipoDatoDB.TEXT));
 			db.AgregarTabla(tb);
-			List<Celda> cls = new List<Celda>();
-			cls.Add(new Celda("12",TipoDatoDB.INTEGER));
-			cls.Add(new Celda("Matematica", TipoDatoDB.TEXT));
-			cls.Add(new Celda("Descripcion", TipoDatoDB.TEXT));
+			List<Celda> cls = new List<Celda>
+			{
+				new Celda("12", TipoDatoDB.INTEGER),
+				new Celda("Matematica", TipoDatoDB.TEXT),
+				new Celda("Descripcion", TipoDatoDB.TEXT)
+			};
 
 			db.Insertar("Clases",cls);//tabla-fila de valores
 
-			cls = new List<Celda>();
-			cls.Add(new Celda("1", TipoDatoDB.INTEGER));
-			cls.Add(new Celda("Ciencias", TipoDatoDB.TEXT));
+			cls = new List<Celda>
+			{
+				new Celda("1", TipoDatoDB.INTEGER),
+				new Celda("Ciencias", TipoDatoDB.TEXT)
+			};
 
-			List<string> columnas = new List<string>();
-			columnas.Add("codigo");
-			columnas.Add("Nombre");
+			List<string> columnas = new List<string>
+			{
+				"codigo",
+				"Nombre"
+			};
 			db.Insertar("Clases", columnas,cls);//tabla-fila de valores
-
+			List<Simbolo> atributos= new List<Simbolo> {
+				new Simbolo("holi","12",TipoDatoDB.INTEGER,1,1),
+				new Simbolo("holi1","12",TipoDatoDB.INTEGER,1,1),
+				new Simbolo("holi2","12",TipoDatoDB.INTEGER,1,1)
+			};
+			db.Objetos.Add(new com.AST.Objeto("Persona",atributos));
+			atributos = new List<Simbolo> {
+				new Simbolo("holi","12",TipoDatoDB.INTEGER,1,1),
+				new Simbolo("holi1","12",TipoDatoDB.TEXT,1,1),
+				new Simbolo("holi2","12",TipoDatoDB.DATETIME,1,1)
+			};
+			db.Procedimientos.Add(new Procedimiento("MarcoProc",atributos));
 			db.MostrarBaseDatos();
+			db.GenerarArchivo();
 		}
 	}
 }

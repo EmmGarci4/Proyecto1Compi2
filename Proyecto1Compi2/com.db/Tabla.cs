@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.Analisis.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -98,7 +99,6 @@ namespace Proyecto1Compi2.com.db
 			}
 			contadorFilas++;
 		}
-
 		internal bool ExistenColumnas(List<string> cls)
 		{
 			foreach (string colum in cls) {
@@ -118,6 +118,39 @@ namespace Proyecto1Compi2.com.db
 				}
 			}
 			return false;
+		}
+
+		internal string GetXml()
+		{
+			StringBuilder codigotabla = new StringBuilder();
+			codigotabla.AppendLine("<Tabla>");
+			codigotabla.AppendLine("<nombre>" + this.nombre + "</nombre>");
+			codigotabla.AppendLine("<path>" + this.path + "</path>");
+			codigotabla.AppendLine("<rows>");
+			foreach (Columna cl in this.columnas)
+			{
+				codigotabla.AppendLine("<" + cl.TipoDato.ToString().ToLower() + ">" + cl.Titulo + "</" + cl.TipoDato.ToString().ToLower() + ">");
+			}
+			codigotabla.AppendLine("</rows>");
+			codigotabla.AppendLine("</Tabla>");
+			return codigotabla.ToString();
+		}
+
+		internal void GenerarArchivo()
+		{
+			StringBuilder archivoTB = new StringBuilder();
+			int contador;
+			for (contador=0;contador<contadorFilas;contador++) {
+				archivoTB.AppendLine("<Row>");
+				foreach (Columna cl in this.columnas)
+				{
+					archivoTB.AppendLine("<" + cl.Titulo + ">" + cl.Valores[contador].Valor + "</" + cl.Titulo + ">");
+				}
+				archivoTB.AppendLine("</Row>");
+			}
+			Console.WriteLine("*****************************************************");
+			Console.WriteLine(archivoTB.ToString());
+
 		}
 	}
 }
