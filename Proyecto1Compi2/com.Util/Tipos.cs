@@ -23,18 +23,17 @@ namespace com.Analisis.Util
 		DATETIME,
 		NULO
 	}
-	public enum TipoSentencia
+	public enum TipoAccion
 	{
-		Expresion,
-		Retorno,
-		Break,
-		Continue
+		Agregar,
+		Quitar
+	}
+	public enum TipoObjeto
+	{
+		Tabla,
+		BaseDatos,
+		Objeto,
+		Usuario
 	}
 
-	public enum Visibilidad {
-		Private,
-		Public,
-		Protected,
-		Error
-	}
 }
