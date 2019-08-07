@@ -12,7 +12,7 @@ namespace Proyecto1Compi2.com.AST
 		TipoObjeto objeto;
 		string nombre;
 
-		public EliminarTabla(TipoObjeto objeto, string nombre)
+		public EliminarTabla(TipoObjeto objeto, string nombre, int linea, int columna) : base(linea, columna)
 		{
 			this.Objeto = objeto;
 			this.Nombre = nombre;

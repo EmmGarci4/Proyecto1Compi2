@@ -64,12 +64,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="com.Analisis\Analizador.cs" />
+    <Compile Include="com.Analisis\GeneradorAstSql.cs" />
     <Compile Include="com.Analisis\generadorDOT.cs" />
     <Compile Include="com.Analisis\GramaticaXml.cs" />
     <Compile Include="com.Analisis\GramaticaSql.cs" />
     <Compile Include="com.AST\AlterarObjeto.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />
     <Compile Include="com.AST\AlterarUsuario.cs" />
+    <Compile Include="com.AST\Condicion.cs" />
     <Compile Include="com.AST\CrearBaseDatos.cs" />
     <Compile Include="com.AST\CrearFuncion.cs" />
     <Compile Include="com.AST\CrearObjeto.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="com.AST\Insertar.cs" />
     <Compile Include="com.AST\LlamadaFuncion.cs" />
     <Compile Include="com.AST\NodoAST.cs" />
+    <Compile Include="com.AST\Operacion.cs" />
     <Compile Include="com.AST\Return.cs" />
     <Compile Include="com.AST\Sentencia.cs" />
     <Compile Include="com.AST\UsarBaseDatos.cs" />

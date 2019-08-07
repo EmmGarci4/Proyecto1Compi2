@@ -13,7 +13,7 @@ namespace Proyecto1Compi2.com.AST
 		List<Simbolo> parametros;
 		List<Sentencia> sentencias;
 
-		public CrearProcedimiento(string nombre, List<Simbolo> parametros, List<Sentencia> sentencias)
+		public CrearProcedimiento(string nombre, List<Simbolo> parametros, List<Sentencia> sentencias, int linea, int columna) : base(linea, columna)
 		{
 			this.Nombre = nombre;
 			this.Parametros = parametros;

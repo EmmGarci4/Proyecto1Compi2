@@ -1,5 +1,6 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,12 @@ namespace Proyecto1Compi2
 			this.textBox2.Clear();
 			if (Analizador.AnalizarUsql(this.textBox1.Text))
 			{
+				//Expresion exp =(Expresion) Analizador.Raiz;
+			//	Console.WriteLine(exp.getValor(new TablaSimbolos(0,"global")).ToString());
 				this.textBox2.Text = "Finalizado con éxito\n";
+				
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
-			}
+			}//1+2*(10/2)-1
 			else
 			{
 				foreach (Error er in Analizador.Errores)
@@ -104,5 +108,11 @@ namespace Proyecto1Compi2
 			}
 		}
 
+		private void Btn_Probar_Click(object sender, EventArgs e)
+		{
+			Operacion op = new Operacion(new Operacion("12",TipoOperacion.Numero,1,1), new Operacion("12", TipoOperacion.Numero,1,1),
+				TipoOperacion.Suma,1,1);
+			Console.WriteLine("Resultado="+op.GetValor(new TablaSimbolos(0,"global")).ToString());
+		}
 	}
 }

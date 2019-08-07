@@ -10,7 +10,7 @@ namespace Proyecto1Compi2.com.AST
 	{
 		string nombre;
 
-		public UsarBaseDatos(string nombre)
+		public UsarBaseDatos(string nombre, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 		}

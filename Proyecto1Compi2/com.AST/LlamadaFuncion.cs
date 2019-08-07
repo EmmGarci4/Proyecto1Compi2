@@ -12,7 +12,7 @@ namespace Proyecto1Compi2.com.AST
 		string nombre;
 		List<Simbolo> parametros;
 
-		public LlamadaFuncion(string nombre, List<Simbolo> parametros) 
+		public LlamadaFuncion(string nombre, List<Simbolo> parametros, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;

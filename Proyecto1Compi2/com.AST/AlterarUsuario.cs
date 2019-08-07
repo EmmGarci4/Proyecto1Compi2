@@ -11,7 +11,7 @@ namespace Proyecto1Compi2.com.AST
 		string nombre;
 		string passwd;
 
-		public AlterarUsuario(string nombre, string passwd)
+		public AlterarUsuario(string nombre, string passwd, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.passwd = passwd;

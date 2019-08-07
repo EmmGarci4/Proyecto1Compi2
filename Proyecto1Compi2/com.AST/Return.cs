@@ -10,7 +10,7 @@ namespace Proyecto1Compi2.com.AST
 	{
 		Expresion valor;
 
-		protected Return(Expresion valor) 
+		protected Return(Expresion valor, int linea, int columna) : base(linea, columna)
 		{
 			this.valor = valor;
 		}

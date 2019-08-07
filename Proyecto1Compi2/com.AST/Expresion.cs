@@ -9,16 +9,11 @@ namespace Proyecto1Compi2.com.AST
 {
 	abstract class Expresion : NodoAST
 	{
-		string valor;
-		TipoDatoDB tipo;
-
-		protected Expresion(string valor, TipoDatoDB tipo)
+		protected Expresion(int linea, int columna) : base(linea, columna)
 		{
-			this.valor = valor;
-			this.tipo = tipo;
 		}
 
-		public abstract Object getValor();
-		public abstract TipoDatoDB getTipo();
+		public abstract Object GetValor(TablaSimbolos ts);
+		public abstract TipoOperacion GetTipo(TablaSimbolos ts);
 	}
 }

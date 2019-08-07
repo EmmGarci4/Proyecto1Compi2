@@ -12,7 +12,7 @@ namespace Proyecto1Compi2.com.AST
 		string nombre;
 		List<Simbolo> atributos;
 
-		public CrearObjeto(string nombre, List<Simbolo> atributos)
+		public CrearObjeto(string nombre, List<Simbolo> atributos, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.atributos = atributos;

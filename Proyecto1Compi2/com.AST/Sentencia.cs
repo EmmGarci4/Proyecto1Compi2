@@ -8,6 +8,10 @@ namespace Proyecto1Compi2.com.AST
 {
 	abstract class Sentencia : NodoAST
 	{
+		protected Sentencia(int linea, int columna) : base(linea, columna)
+		{
+		}
+
 		public abstract Object Ejecutar();
 	}
 }

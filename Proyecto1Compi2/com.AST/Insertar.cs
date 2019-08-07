@@ -12,14 +12,14 @@ namespace Proyecto1Compi2.com.AST
 		List<string> valores;
 		List<string> columnas;
 
-		public Insertar(string tabla, List<string> valores, List<string> columnas)
+		public Insertar(string tabla, List<string> valores, List<string> columnas,int linea,int columna):base(linea,columna)
 		{
 			this.Tabla = tabla;
 			this.Valores = valores;
 			this.Columnas = columnas;
 		}
 
-		public Insertar(string tabla, List<string> valores)
+		public Insertar(string tabla, List<string> valores, int linea, int columna) : base(linea, columna)
 		{
 			this.Tabla = tabla;
 			this.Valores = valores;

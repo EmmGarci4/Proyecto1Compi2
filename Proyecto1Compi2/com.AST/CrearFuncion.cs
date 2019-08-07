@@ -14,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 		TipoDatoDB tipo;
 		List<Sentencia> sentencias;
 
-		public CrearFuncion(string nombre, List<Simbolo> parametros, TipoDatoDB tipo, List<Sentencia> sentencias)
+		public CrearFuncion(string nombre, List<Simbolo> parametros, TipoDatoDB tipo, List<Sentencia> sentencias, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;

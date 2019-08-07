@@ -12,8 +12,7 @@ namespace com.Analisis
 		public GramaticaSql() : base(caseSensitive: false) {
 			#region ER
 			StringLiteral cadena = new StringLiteral("cadena", "\"", StringOptions.IsTemplate);
-			NumberLiteral entero = new NumberLiteral("entero");
-			RegexBasedTerminal decimal_ = new RegexBasedTerminal("decimal", "[0-9]+.[0-9]+");
+			NumberLiteral numero = new NumberLiteral("numero",NumberOptions.AllowSign);
 			RegexBasedTerminal date = new RegexBasedTerminal("date", "[0-9]{2}-[0-9]{2}-[0-9]{4}");
 			RegexBasedTerminal datetime = new RegexBasedTerminal("datetime", "[0-9]{2}-[0-9]{2}-[0-9]{4}\\s+[0-9]{2}:[0-9]{2}:[0-9]{2}");
 			RegexBasedTerminal id = new RegexBasedTerminal("id", "@[a-zA-ZñÑ]([a-zA-ZñÑ0-9_])*");
@@ -55,6 +54,8 @@ namespace com.Analisis
 			var dospuntos = ToTerm(":");
 			var punto = ToTerm(".");
 			//palabras reservadas
+			var pr_true = ToTerm("true");
+			var pr_false = ToTerm("false");
 			var pr_crear = ToTerm("CREAR");
 			var pr_db = ToTerm("BASE_DATOS");
 			var pr_tabla = ToTerm("TABLA");
@@ -120,6 +121,7 @@ namespace com.Analisis
 
 			NonTerminal EXPRESION = new NonTerminal("EXPRESION"),
 				VALOR = new NonTerminal("VALOR"),
+				CONDICION=new NonTerminal("CONDICION"),
 				LLAMADAFUNCION = new NonTerminal("LLAMADAFUNCION"),
 				LISTAEXPRESIONES = new NonTerminal("LISTAEXPRESIONES"),
 				LISTAACCESO = new NonTerminal("LISTACCESO");
@@ -188,17 +190,32 @@ namespace com.Analisis
 			#endregion
 
 			#region Gramatica
-			INICIO.Rule = SENTENCIAS;
+			INICIO.Rule = EXPRESION;// SENTENCIAS;
 
 			#region expresion
+
 			EXPRESION.Rule = //aritmeticos
 				EXPRESION + mas + EXPRESION
 				| EXPRESION + menos + EXPRESION
 				| EXPRESION + por + EXPRESION
 				| EXPRESION + div + EXPRESION
 				| EXPRESION + pot + EXPRESION
-				//logicos
-				| EXPRESION + mayor + EXPRESION
+				//otros
+				| CONDICION
+				| VALOR;
+
+			VALOR.Rule = cadena
+				| numero
+				| id
+				| nombre
+				| date
+				| datetime
+				| par1 + EXPRESION + par2
+				| nombre +punto+LISTAACCESO
+				| menos + EXPRESION
+				| LLAMADAFUNCION;
+
+			CONDICION.Rule = EXPRESION + mayor + EXPRESION
 				| EXPRESION + menor + EXPRESION
 				| EXPRESION + mayorigual + EXPRESION
 				| EXPRESION + menorigual + EXPRESION
@@ -206,21 +223,9 @@ namespace com.Analisis
 				| EXPRESION + notigual + EXPRESION
 				| EXPRESION + and + EXPRESION
 				| EXPRESION + or + EXPRESION
-				//otros
-				| par1 + EXPRESION + par2
-				| VALOR;
-
-			VALOR.Rule = cadena
-				| decimal_
-				| entero
-				| id
-				|nombre
-				|date
-				|datetime
-				|nombre+punto+LISTAACCESO
-				| menos + EXPRESION
-				| not + EXPRESION
-				| LLAMADAFUNCION;
+				| not + CONDICION
+				| pr_true
+				| pr_false;
 
 			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2
 				|CONTAR;
@@ -380,7 +385,7 @@ namespace com.Analisis
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
 				| id + punto + LISTAACCESO +igual + EXPRESION + puntoycoma;
 
-			IF.Rule = pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2
+			IF.Rule = pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
 				| pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else + llave1 + BLOQUESENTENCIAS + llave2;
 
 			SWITCH.Rule = pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + DEFAULT + llave2
@@ -394,12 +399,12 @@ namespace com.Analisis
 
 			BREAK.Rule = pr_break + puntoycoma;
 
-			FOR.Rule = pr_for + par1 + pr_declarar + id + igual + EXPRESION + puntoycoma + EXPRESION + puntoycoma + OPPFOR + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			FOR.Rule = pr_for + par1 + pr_declarar + id + igual + EXPRESION + puntoycoma + CONDICION + puntoycoma + OPPFOR + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 			OPPFOR.Rule = mas + mas
 				| menos + menos;
 
-			WHILE.Rule =pr_while+par1+EXPRESION+par2+llave1+BLOQUESENTENCIAS+llave2;
+			WHILE.Rule =pr_while+par1+CONDICION+par2+llave1+BLOQUESENTENCIAS+llave2;
 
 			CONTAR.Rule = pr_contar + par1  +SELECCIONAR + par2;
 
@@ -426,7 +431,7 @@ namespace com.Analisis
 				pr_insertar.ToString(),pr_en.ToString(),pr_actualizar.ToString(),pr_valores.ToString(),pr_donde.ToString(),pr_borrar.ToString(),pr_seleccionar.ToString(),
 				pr_ordenarPor.ToString(),pr_asc.ToString(),pr_desc.ToString(),pr_otorgar.ToString(),pr_permisos.ToString(),pr_denegar.ToString(),pr_de.ToString(),
 				pr_declarar.ToString(),pr_if.ToString(),pr_else.ToString(),pr_switch.ToString(),pr_case.ToString(),pr_default.ToString(),pr_for.ToString(),pr_while.ToString(),
-				pr_break.ToString(),pr_backup.ToString(),pr_usqldump.ToString(),pr_completo.ToString(),pr_restaurar.ToString(),pr_contar.ToString());
+				pr_break.ToString(),pr_backup.ToString(),pr_usqldump.ToString(),pr_completo.ToString(),pr_restaurar.ToString(),pr_contar.ToString(),pr_true.ToString(),pr_false.ToString());
 			//NODOS A OMITIR
 			MarkTransient(SENTENCIA,ASCDESC);
 			//TERMINALES IGNORADO

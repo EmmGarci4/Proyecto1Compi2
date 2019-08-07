@@ -15,7 +15,7 @@ namespace Proyecto1Compi2.com.AST
 		List<Columna> agregarCols;
 		List<string> quitarCols;
 
-		public AlterarTabla(TipoAccion accion, string tabla, List<string> quitarCols)
+		public AlterarTabla(TipoAccion accion, string tabla, List<string> quitarCols, int linea, int columna) : base(linea, columna)
 		{
 			this.accion = accion;
 			this.tabla = tabla;
@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 			this.quitarCols = quitarCols;
 		}
 
-		public AlterarTabla(TipoAccion accion, string tabla, List<Columna> agregarCols)
+		public AlterarTabla(TipoAccion accion, string tabla, List<Columna> agregarCols, int linea, int columna) : base(linea, columna)
 		{
 			this.accion = accion;
 			this.tabla = tabla;

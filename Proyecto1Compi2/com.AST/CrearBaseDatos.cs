@@ -10,7 +10,7 @@ namespace Proyecto1Compi2.com.AST
 	{
 		string nombre;
 
-		protected CrearBaseDatos(string nombre)
+		protected CrearBaseDatos(string nombre, int linea, int columna) : base(linea, columna)
 		{
 			this.Nombre = nombre;
 		}

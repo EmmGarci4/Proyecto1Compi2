@@ -12,7 +12,7 @@ namespace Proyecto1Compi2.com.AST
 		String nombre;
 		List<Columna> columnas;
 		
-		protected CrearTabla(String tabla,List<Columna> cols) 
+		protected CrearTabla(String tabla,List<Columna> cols, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = tabla;
 			this.columnas = cols;

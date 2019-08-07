@@ -14,7 +14,15 @@ namespace Proyecto1Compi2.com.AST
 		List<Simbolo> agregarattrib;
 		List<string> quitarattrib;
 
-		public AlterarObjeto(TipoAccion accion, string objeto, List<Simbolo> agregarattrib, List<string> quitarattrib)
+		public AlterarObjeto(TipoAccion accion, string objeto, List<Simbolo> agregarattrib,  int linea, int columna) : base(linea, columna)
+		{
+			this.Accion = accion;
+			this.Objeto = objeto;
+			this.Agregarattrib = agregarattrib;
+			this.Quitarattrib = null;
+		}
+
+		public AlterarObjeto(TipoAccion accion, string objeto, List<Simbolo> agregarattrib, List<string> quitarattrib, int linea, int columna) : base(linea, columna)
 		{
 			this.Accion = accion;
 			this.Objeto = objeto;
