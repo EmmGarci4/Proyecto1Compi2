@@ -67,7 +67,7 @@
     <Compile Include="com.Analisis\GeneradorAstSql.cs" />
     <Compile Include="com.Analisis\generadorDOT.cs" />
     <Compile Include="com.Analisis\GramaticaXml.cs" />
-    <Compile Include="com.Analisis\GramaticaSql.cs" />
+    <Compile Include="com.Analisis\GramaticaCql.cs" />
     <Compile Include="com.AST\AlterarObjeto.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />
     <Compile Include="com.AST\AlterarUsuario.cs" />

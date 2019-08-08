@@ -24,11 +24,10 @@ namespace Proyecto1Compi2
 		private void ToolStripButton1_Click(object sender, EventArgs e)
 		{
 			this.textBox2.Clear();
-			if (Analizador.AnalizarUsql(this.textBox1.Text))
+			if (Analizador.AnalizarCql(this.textBox1.Text)) //si no hay errores sintácticos/léxicos
 			{
-				//Expresion exp =(Expresion) Analizador.Raiz;
-				//	Console.WriteLine(exp.getValor(new TablaSimbolos(0,"global")).ToString());
 				if (Analizador.Errores.Count==0) {
+					//si no hay errores semánticos
 					this.textBox2.Text = "Finalizado con éxito\n";
 				}
 				else
@@ -102,7 +101,7 @@ namespace Proyecto1Compi2
 		private void Btn_leerXml_Click(object sender, EventArgs e)
 		{
 			this.textBox2.Clear();
-			if (Analizador.AnalizarXml(this.textBox1.Text))
+			if (Analizador.AnalizarChison(this.textBox1.Text))
 			{
 				this.textBox2.Text = "Finalizado con éxito\n";
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\xml.dot");

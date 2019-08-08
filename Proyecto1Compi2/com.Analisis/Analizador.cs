@@ -17,19 +17,19 @@ namespace com.Analisis
 		private static NodoAST ast= null;
 		private static ParseTreeNode raiz;
 
-		public static bool AnalizarUsql(String texto){
-			GramaticaSql gramatica = new GramaticaSql();
+		public static bool AnalizarCql(String texto){
+			GramaticaCql gramatica = new GramaticaCql();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
 			ParseTree arbol = parser.Parse(texto);
 			Analizador.errores.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
-				Analizador.ast = GeneradorAstSql.GetAST(arbol.Root);
-				Expresion ex = (Expresion)Analizador.ast;
-				if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
-					Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
-				}
+				//Analizador.ast = GeneradorAstSql.GetAST(arbol.Root);
+				//Expresion ex = (Expresion)Analizador.ast;
+				//if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
+				//	Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
+				//}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
@@ -39,7 +39,7 @@ namespace com.Analisis
 			return Analizador.raiz != null;
 		}
 
-		public static bool AnalizarXml(String texto)
+		public static bool AnalizarChison(String texto)
 		{
 			GramaticaXml gramatica = new GramaticaXml();
 			LanguageData ldata = new LanguageData(gramatica);
