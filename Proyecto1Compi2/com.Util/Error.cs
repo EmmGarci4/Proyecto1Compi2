@@ -20,9 +20,15 @@ namespace com.Analisis.Util
 			this.tipo = tipo;
 		}
 
+
 		public string Mensaje { get => mensaje; set => mensaje = value; }
 		public int Linea { get => linea; set => linea = value; }
 		public int Columna { get => columna; set => columna = value; }
 		public TipoError Tipo { get => tipo; set => tipo = value; }
+
+		public override string ToString()
+		{
+			return "Error "+tipo+":"+mensaje+". En línea:"+linea+" y columna:"+Columna;
+		}
 	}
 }

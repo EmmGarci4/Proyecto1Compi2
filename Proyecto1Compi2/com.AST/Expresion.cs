@@ -13,7 +13,7 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public abstract Object GetValor(TablaSimbolos ts);
+		public abstract string GetValor(TablaSimbolos ts);
 		public abstract TipoOperacion GetTipo(TablaSimbolos ts);
 	}
 }

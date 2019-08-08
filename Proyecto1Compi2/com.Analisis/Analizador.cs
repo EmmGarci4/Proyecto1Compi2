@@ -27,7 +27,9 @@ namespace com.Analisis
 			if (raiz!=null) {
 				Analizador.ast = GeneradorAstSql.GetAST(arbol.Root);
 				Expresion ex = (Expresion)Analizador.ast;
-				Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global")).ToString());
+				if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
+					Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
+				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{

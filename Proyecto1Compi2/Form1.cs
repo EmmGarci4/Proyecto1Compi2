@@ -27,16 +27,24 @@ namespace Proyecto1Compi2
 			if (Analizador.AnalizarUsql(this.textBox1.Text))
 			{
 				//Expresion exp =(Expresion) Analizador.Raiz;
-			//	Console.WriteLine(exp.getValor(new TablaSimbolos(0,"global")).ToString());
-				this.textBox2.Text = "Finalizado con éxito\n";
-				
+				//	Console.WriteLine(exp.getValor(new TablaSimbolos(0,"global")).ToString());
+				if (Analizador.Errores.Count==0) {
+					this.textBox2.Text = "Finalizado con éxito\n";
+				}
+				else
+				{
+					foreach (Error er in Analizador.Errores)
+					{
+						this.textBox2.AppendText(er+"\n");
+					}
+				}
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
-			}//1+2*(10/2)-1
+			}
 			else
 			{
 				foreach (Error er in Analizador.Errores)
 				{
-					this.textBox2.AppendText(er.Mensaje + "En linea: " + er.Linea + "y columna: " + er.Columna + "\n");
+					this.textBox2.AppendText(er + "\n");
 				}
 			}
 		}
@@ -103,7 +111,7 @@ namespace Proyecto1Compi2
 			{
 				foreach (Error er in Analizador.Errores)
 				{
-					this.textBox2.AppendText(er.Mensaje + "En linea: " + er.Linea + "y columna: " + er.Columna + "\n");
+					this.textBox2.AppendText(er + "\n");
 				}
 			}
 		}
