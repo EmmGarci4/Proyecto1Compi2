@@ -1,0 +1,50 @@
+<
+	"ID" = 1,
+	"Name" = "Brevvuiks",
+	"Tallas" = [32,30,33]
+>,
+<
+	"ID" = 2,
+	"Name" = "Xistrod",
+	"Tallas" = []
+>,
+<
+	"ID" = 3,
+	"Name" = "Qonqix",
+	"Tallas" = [32,36]
+>,
+<
+	"ID" = 4,
+	"Name" = "Nids",
+	"Tallas" = [32,28,33]
+>,
+<
+	"ID" = 5,
+	"Name" = "Noltain",
+	"Tallas" = [33]
+>,
+<
+	"ID" = 6,
+	"Name" = "Bheelzae",
+	"Tallas" = [31,28,34]
+>,
+<
+	"ID" = 7,
+	"Name" = "Sih'un",
+	"Tallas" = [32,28,29]
+>,
+<
+	"ID" = 8,
+	"Name" = "Grudoll",
+	"Tallas" = [28,27]
+>,
+<
+	"ID" = 9,
+	"Name" = "Lahlo",
+	"Tallas" = [27,36,30,31]
+>,
+<
+	"ID" = 10,
+	"Name" = "Vehlens",
+	"Tallas" = [31,33,29,35]
+>

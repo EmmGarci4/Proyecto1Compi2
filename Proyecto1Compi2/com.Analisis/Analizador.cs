@@ -41,16 +41,44 @@ namespace com.Analisis
 
 		public static bool AnalizarChison(String texto)
 		{
-			GramaticaXml gramatica = new GramaticaXml();
+			GramaticaChison gramatica = new GramaticaChison();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
 			ParseTree arbol = parser.Parse(texto);
 			Analizador.errores.Clear();
 			Analizador.raiz = arbol.Root;
-
+			if (raiz != null)
+			{
+				
+				//if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
+				//	Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
+				//}
+			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
+				errores.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
+			}
 
+			return Analizador.raiz != null;
+		}
+
+		public static bool AnalizarLup(String texto)
+		{
+			GramaticaLup gramatica = new GramaticaLup();
+			LanguageData ldata = new LanguageData(gramatica);
+			Parser parser = new Parser(ldata);
+			ParseTree arbol = parser.Parse(texto);
+			Analizador.errores.Clear();
+			Analizador.raiz = arbol.Root;
+			if (raiz != null)
+			{
+
+				//if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
+				//	Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
+				//}
+			}
+			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
+			{
 				errores.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
 			}
 

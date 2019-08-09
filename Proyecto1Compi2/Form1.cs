@@ -121,5 +121,33 @@ namespace Proyecto1Compi2
 				TipoOperacion.Suma,1,1);
 			Console.WriteLine("Resultado="+op.GetValor(new TablaSimbolos(0,"global")).ToString());
 		}
+
+		private void toolStripButton1_Click_1(object sender, EventArgs e)
+		{
+			this.textBox2.Clear();
+			if (Analizador.AnalizarLup(this.textBox1.Text)) //si no hay errores sintácticos/léxicos
+			{
+				if (Analizador.Errores.Count == 0)
+				{
+					//si no hay errores semánticos
+					this.textBox2.Text = "Finalizado con éxito\n";
+				}
+				else
+				{
+					foreach (Error er in Analizador.Errores)
+					{
+						this.textBox2.AppendText(er + "\n");
+					}
+				}
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
+			}
+			else
+			{
+				foreach (Error er in Analizador.Errores)
+				{
+					this.textBox2.AppendText(er + "\n");
+				}
+			}
+		}
 	}
 }
