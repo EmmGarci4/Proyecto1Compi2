@@ -75,6 +75,7 @@ namespace com.Analisis
 			var pr_db = ToTerm("DATABASE");
 			var pr_tabla = ToTerm("TABLE");
 			var pr_usuario = ToTerm("USER");
+
 			var pr_password = ToTerm("PASSWORD");
 			var pr_limit = ToTerm("LIMIT");
 			var pr_insertar = ToTerm("INSERT");
@@ -137,9 +138,8 @@ namespace com.Analisis
 			var pr_try = ToTerm("TRY");
 			var pr_catch = ToTerm("CATCH");
 			var pr_throw = ToTerm("THROW");
-
 			#endregion
-
+		
 			#region NoTerm
 			NonTerminal INICIO = new NonTerminal("INICIO");
 
@@ -189,6 +189,7 @@ namespace com.Analisis
 				CREAR_FUNCION = new NonTerminal("CREAR_FUNCION"),
 				ELIMINARUSUARIO = new NonTerminal("ELIMINARUSUARIO"),
 				BLOQUESENTENCIAS = new NonTerminal("BLOQUESENTENCIAS"),
+				LISTA_SENTENCIAS=new NonTerminal("LISTA_SENTENCIAS"),
 				SENTENCIABLOQUE = new NonTerminal("SENTENCIABLOQUE"),
 				LISTAPARAMETROS = new NonTerminal("LISTAPARAMETROS"),
 				PARAMETRO = new NonTerminal("PARAMETRO");
@@ -252,7 +253,7 @@ namespace com.Analisis
 			#region Gramatica
 			INICIO.Rule = SENTENCIAS;
 
-			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
+			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIAFCL);
 
 			SENTENCIA.Rule = SENTENCIADDL | SENTENCIATCL | SENTENCIADCL | SENTENCIASDML | BATCH
 				| FUNCIONAGREGACION
@@ -284,9 +285,10 @@ namespace com.Analisis
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2
 				| cor1 + LISTAEXPRESIONES + cor2
-				| MODIFICADORES
+			//	| MODIFICADORES
 				| FUNCIONAGREGACION
 				| pr_new + TIPODATO
+				|id+punto+ACCESO
 				;
 
 
@@ -324,7 +326,7 @@ namespace com.Analisis
 				| pr_false;
 
 			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2
-				| id + ACCESO + par1 + LISTAEXPRESIONES + par2;
+				| id+punto+ACCESO + par1 + LISTAEXPRESIONES + par2;
 
 			LISTANOMBRES.Rule = MakePlusRule(LISTANOMBRES, coma, ACCESO);
 
@@ -488,10 +490,12 @@ namespace com.Analisis
 				| pr_avg;
 
 			#endregion
-		
+
 			#region sentencias FCL
-			
-			BLOQUESENTENCIAS.Rule = MakeStarRule(BLOQUESENTENCIAS, SENTENCIABLOQUE);
+
+			BLOQUESENTENCIAS.Rule =llave1+LISTA_SENTENCIAS+llave2;
+
+			LISTA_SENTENCIAS.Rule = MakeStarRule(LISTA_SENTENCIAS, SENTENCIABLOQUE);
 
 			SENTENCIABLOQUE.Rule = SENTENCIADDL
 				| SENTENCIADML
@@ -506,7 +510,7 @@ namespace com.Analisis
 				|WHILE
 				|DOWHILE
 				|FOR
-				|LLAMADAFUNCION
+				|LLAMADAFUNCION+puntoycoma
 				|CREAR_FUNCION
 				|RETORNO
 				|CREAR_PROC
@@ -531,54 +535,56 @@ namespace com.Analisis
 				| id + cor1 + EXPRESION + cor2 + igual + EXPRESION + puntoycoma
 				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
 
-			IF.Rule =// pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
-				 pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 +ELSEIFS+ pr_else + llave1 + BLOQUESENTENCIAS + llave2;
+			IF.Rule = pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS
+				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS + pr_else+BLOQUESENTENCIAS
+				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS+ELSEIFS
+				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS+ELSEIFS + pr_else + BLOQUESENTENCIAS;
 
-			ELSEIFS.Rule = MakeStarRule(ELSEIFS,ELSEIF);
+			ELSEIFS.Rule = MakePlusRule(ELSEIFS,ELSEIF);
 
-			ELSEIF.Rule = pr_else + pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			ELSEIF.Rule = pr_else + pr_if + par1 + CONDICION + par2  + BLOQUESENTENCIAS ;
 
 			SWITCH.Rule = pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + DEFAULT + llave2
 				| pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + llave2;
 
 			LISTACASE.Rule = MakePlusRule(LISTACASE,CASE);
 
-			CASE.Rule = pr_case + EXPRESION + dospuntos + BLOQUESENTENCIAS;
+			CASE.Rule = pr_case + EXPRESION + dospuntos + LISTA_SENTENCIAS;
 
-			DEFAULT.Rule = pr_default + dospuntos + BLOQUESENTENCIAS;
+			DEFAULT.Rule = pr_default + dospuntos + LISTA_SENTENCIAS;
 
 			BREAK.Rule = pr_break + puntoycoma;
 
-			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + MODIFICADORES + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + MODIFICADORES + par2 +  BLOQUESENTENCIAS;
 
 			INIFOR.Rule = id + igual + EXPRESION
-				| TIPODATOFOR + igual + EXPRESION;
+				| TIPODATOFOR+id + igual + EXPRESION;
 
 			TIPODATOFOR.Rule = pr_integer
 				| pr_double;
 
-			WHILE.Rule =pr_while+par1+CONDICION+par2+llave1+BLOQUESENTENCIAS+llave2;
+			WHILE.Rule =pr_while+par1+CONDICION+par2+BLOQUESENTENCIAS;
 
-			DOWHILE.Rule = pr_do+llave1 + BLOQUESENTENCIAS + llave2+pr_while + par1 + CONDICION + par2 + puntoycoma;
+			DOWHILE.Rule = pr_do + BLOQUESENTENCIAS +pr_while + par1 + CONDICION + par2 + puntoycoma;
 
-			CREAR_PROC.Rule = pr_proc + nombre + par1 + LISTAPARAMETROS + par2+coma + par1 + LISTAPARAMETROS + par2  + llave1 + BLOQUESENTENCIAS + llave2;
+			CREAR_PROC.Rule = pr_proc + nombre + par1 + LISTAPARAMETROS + par2+coma + par1 + LISTAPARAMETROS + par2  + BLOQUESENTENCIAS;
 
 			LISTAPARAMETROS.Rule = MakeStarRule(LISTAPARAMETROS, coma, PARAMETRO);
 
 			PARAMETRO.Rule = TIPODATO + id;
 
-			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ llave1 + BLOQUESENTENCIAS + llave2;
+			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ BLOQUESENTENCIAS;
 
 			RETORNO.Rule = pr_return+LISTAEXPRESIONES+puntoycoma;
 
-			CALLPROC.Rule = pr_call + nombre + par1 + LISTAEXPRESIONES + par2;
+			CALLPROC.Rule = pr_call + nombre + par1 + LISTAEXPRESIONES + par2+puntoycoma;
 
 			CONTINUE.Rule = pr_continue+puntoycoma;
 
 			CREAR_CURSOR.Rule = pr_cursor + id + pr_is + SELECCIONAR + puntoycoma;
 
-			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2
-			| pr_for + pr_each + par1 + TIPODATO + id + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2;
+			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + BLOQUESENTENCIAS
+			| pr_for + pr_each + par1 + TIPODATO + id + par2 + pr_in + id + BLOQUESENTENCIAS;
 
 			OPENCURSOR.Rule = pr_open + id + puntoycoma;
 
@@ -588,7 +594,7 @@ namespace com.Analisis
 
 			THROW.Rule = pr_throw + pr_new + nombre + puntoycoma;
 
-			TRYCATCH.Rule = pr_try + llave1 + BLOQUESENTENCIAS + llave2 + pr_catch + par1 + nombre + nombre + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			TRYCATCH.Rule = pr_try + BLOQUESENTENCIAS + pr_catch + par1 + nombre + nombre + par2 + BLOQUESENTENCIAS;
 
 			#endregion
 			//revisar lista de acceso a objetos basado en si existen objetos con objetos dentro y si son accesibles
@@ -598,17 +604,17 @@ namespace com.Analisis
 			//NO TERMINAL DE INICIO
 			this.Root = INICIO;
 			//PALABRAS RESERVADAS
-			MarkReservedWords(pr_crear.ToString(),pr_db.ToString(),pr_tabla.ToString(),pr_text.ToString(),pr_integer.ToString(),pr_double.ToString(),pr_bool.ToString(),
-				pr_date.ToString(),pr_proc.ToString(),pr_return.ToString(),pr_usuario.ToString(),pr_into.ToString(),pr_limit.ToString(),pr_apply.ToString(),pr_each.ToString(),
-				pr_con.ToString(),pr_password.ToString(),pr_usar.ToString(),pr_alterar.ToString(),pr_agregar.ToString(),pr_begin.ToString(),pr_batch.ToString(),pr_try.ToString(),
-				pr_insertar.ToString(),pr_on.ToString(),pr_actualizar.ToString(),pr_valores.ToString(),pr_donde.ToString(),pr_borrar.ToString(),pr_seleccionar.ToString(),
-				pr_ordenar.ToString(),pr_ordPor.ToString(),pr_asc.ToString(),pr_desc.ToString(),pr_otorgar.ToString(),pr_denegar.ToString(),pr_de.ToString(),pr_count.ToString(),
-				pr_if.ToString(),pr_else.ToString(),pr_switch.ToString(),pr_case.ToString(),pr_default.ToString(),pr_for.ToString(),pr_while.ToString(),pr_open.ToString(),
-				pr_break.ToString(),pr_backup.ToString(),pr_restaurar.ToString(),pr_true.ToString(),pr_false.ToString(),pr_call.ToString(),pr_is.ToString(),pr_close.ToString(),
-				pr_time.ToString(), pr_null.ToString(), pr_counter.ToString(), pr_map.ToString(), pr_set.ToString(), pr_list.ToString(), pr_type.ToString(),pr_type.ToString(),
-				pr_not.ToString(), pr_exist.ToString(), pr_new.ToString(),pr_llave.ToString(),pr_primaria.ToString(),pr_truncar.ToString(),pr_exists.ToString(),pr_catch.ToString(),
-				pr_min.ToString(),pr_max.ToString(),pr_sum.ToString(),pr_avg.ToString(),pr_in.ToString(),pr_do.ToString(),pr_continue.ToString(),pr_cursor.ToString(),
-				pr_throw.ToString());
+			MarkReservedWords(pr_crear.ToString(), pr_db.ToString(), pr_tabla.ToString(), pr_text.ToString(), pr_integer.ToString(), pr_double.ToString(), pr_bool.ToString(),
+				pr_date.ToString(), pr_proc.ToString(), pr_return.ToString(), pr_usuario.ToString(), pr_into.ToString(), pr_limit.ToString(), pr_apply.ToString(), pr_each.ToString(),
+				pr_con.ToString(), pr_password.ToString(), pr_usar.ToString(), pr_alterar.ToString(), pr_agregar.ToString(), pr_begin.ToString(), pr_batch.ToString(), pr_try.ToString(),
+				pr_insertar.ToString(), pr_on.ToString(), pr_actualizar.ToString(), pr_valores.ToString(), pr_donde.ToString(), pr_borrar.ToString(), pr_seleccionar.ToString(),
+				pr_ordenar.ToString(), pr_ordPor.ToString(), pr_asc.ToString(), pr_desc.ToString(), pr_otorgar.ToString(), pr_denegar.ToString(), pr_de.ToString(), pr_count.ToString(),
+				pr_if.ToString(), pr_else.ToString(), pr_switch.ToString(), pr_case.ToString(), pr_default.ToString(), pr_for.ToString(), pr_while.ToString(), pr_open.ToString(),
+				pr_break.ToString(), pr_backup.ToString(), pr_restaurar.ToString(), pr_true.ToString(), pr_false.ToString(), pr_call.ToString(), pr_is.ToString(), pr_close.ToString(),
+				pr_time.ToString(), pr_null.ToString(), pr_counter.ToString(), pr_map.ToString(), pr_set.ToString(), pr_list.ToString(), pr_type.ToString(),
+				pr_not.ToString(), pr_exist.ToString(), pr_new.ToString(), pr_llave.ToString(), pr_primaria.ToString(), pr_truncar.ToString(), pr_exists.ToString(), pr_catch.ToString(),
+				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
+				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString());
 			//NODOS A OMITIR
 			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION);
 			//TERMINALES IGNORADO
@@ -630,7 +636,7 @@ namespace com.Analisis
 			RegisterOperators(8, Associativity.Left,por, div,mod);
 			RegisterOperators(9, Associativity.Right, pot);
 			RegisterOperators(10, Associativity.Right, not);
-			RegisterOperators(11, Associativity.Right, mas+mas,menos+menos);
+			RegisterOperators(11, Associativity.Right, mas + mas, menos + menos, mas + igual, menos + igual, div + igual, por + igual);
 
 			#endregion
 		}
