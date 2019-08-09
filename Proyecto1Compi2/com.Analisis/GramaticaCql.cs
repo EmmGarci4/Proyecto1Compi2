@@ -30,10 +30,9 @@ namespace com.Analisis
 			var menos = ToTerm("-");
 			var por = ToTerm("*");
 			var div = ToTerm("/");
-			var pot = ToTerm("^");
-			///mods
-			var masmas = ToTerm("++");
-			var menosmenos = ToTerm("--");
+			var pot = ToTerm("**");
+			var mod = ToTerm("%");
+			var khe = ToTerm("?");
 			//relacionales
 			var mayor = ToTerm(">");
 			var menor = ToTerm("<");
@@ -125,16 +124,19 @@ namespace com.Analisis
 			var pr_max = ToTerm("MAX");
 			var pr_sum = ToTerm("SUM");
 			var pr_avg = ToTerm("AVG");
-
-			var pr_cambiar = ToTerm("CAMBIAR");
-			var pr_proc = ToTerm("PROCEDIMIENTO");
-			var pr_funcion = ToTerm("FUNCION");
-			var pr_declarar = ToTerm("DECLARAR");
-			var pr_usqldump = ToTerm("USQLDUMP");
-			var pr_completo = ToTerm("COMPLETO");
-			var pr_contar = ToTerm("CONTAR");
-
-
+			var pr_do = ToTerm("DO");
+			var pr_proc = ToTerm("PROCEDURE");
+			var pr_call = ToTerm("CALL");
+			var pr_continue = ToTerm("CONTINUE");
+			var pr_cursor = ToTerm("CURSOR");
+			var pr_is = ToTerm("IS");
+			var pr_each = ToTerm("EACH");
+			var pr_open = ToTerm("OPEN");
+			var pr_close = ToTerm("CLOSE");
+			var pr_log = ToTerm("LOG");
+			var pr_try = ToTerm("TRY");
+			var pr_catch = ToTerm("CATCH");
+			var pr_throw = ToTerm("THROW");
 
 			#endregion
 
@@ -225,9 +227,24 @@ namespace com.Analisis
 				FOR = new NonTerminal("FOR"),
 				BREAK = new NonTerminal("BREAK"),
 				LISTAVARIABLES = new NonTerminal("LISTAVARIABLES"),
-				OPPFOR = new NonTerminal("OPPFOR"),
-				WHILE = new NonTerminal("WHILE"), 
-				CONTAR = new NonTerminal("CONTAR")
+				WHILE = new NonTerminal("WHILE"),
+				SENTENCIAFCL = new NonTerminal("SENTENCIAFCL"),
+				MODIFICADORES= new NonTerminal("MODIFICADORES"),
+				TERNARIO=new NonTerminal("TERNARIO"),
+				ELSEIFS=new NonTerminal("ELSEIFS"),
+				ELSEIF=new NonTerminal("ELSEIF"),
+				DOWHILE=new NonTerminal("DOWHILE"),
+				INIFOR=new NonTerminal("INIFOR"),
+				TIPODATOFOR=new NonTerminal("TIPODATOFOR"),
+				CALLPROC=new NonTerminal("CALLPROC"),
+				CONTINUE = new NonTerminal("CONTINUE"),
+				CREAR_CURSOR = new NonTerminal("CREAR_CURSOR"),
+				FOREACH = new NonTerminal("FOREACH"),
+				OPENCURSOR = new NonTerminal("OPENCURSOR"),
+				CLOSECURSOR = new NonTerminal("CLOSECURSOR"),
+				LOG = new NonTerminal("LOG"),
+				THROW = new NonTerminal("THROW"),
+				TRYCATCH = new NonTerminal("TRYCATCH")
 				;
 
 			#endregion
@@ -238,7 +255,8 @@ namespace com.Analisis
 			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 
 			SENTENCIA.Rule = SENTENCIADDL | SENTENCIATCL | SENTENCIADCL | SENTENCIASDML | BATCH
-				| FUNCIONAGREGACION;
+				| FUNCIONAGREGACION
+				|SENTENCIAFCL;
 
 			#region expresion
 
@@ -248,9 +266,11 @@ namespace com.Analisis
 				| EXPRESION + por + EXPRESION
 				| EXPRESION + div + EXPRESION
 				| EXPRESION + pot + EXPRESION
+				| EXPRESION + mod + EXPRESION
 				//otros
 				| CONDICION
-				| VALOR;
+				| VALOR
+				|TERNARIO;
 
 			VALOR.Rule = cadena
 				| numero
@@ -264,8 +284,18 @@ namespace com.Analisis
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2
 				| cor1 + LISTAEXPRESIONES + cor2
-				//|FUNCIONAGREGACION
+				| MODIFICADORES
+				| FUNCIONAGREGACION
+				| pr_new + TIPODATO
 				;
+
+
+			MODIFICADORES.Rule = id + mas + mas | id + punto + ACCESO + mas + mas
+				| id + menos + menos | id + punto + ACCESO + menos + menos
+				| id + mas + igual + EXPRESION | id + punto + ACCESO + mas + igual + EXPRESION
+				| id + menos + igual + EXPRESION | id + punto + ACCESO + menos + igual + EXPRESION
+				| id + div + igual + EXPRESION | id + punto + ACCESO + div + igual + EXPRESION
+				| id + por + igual + EXPRESION | id + punto + ACCESO + por + igual + EXPRESION;
 
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
 			
@@ -275,23 +305,26 @@ namespace com.Analisis
 			INFOCOLLECTIONS.Rule = MakePlusRule(INFOCOLLECTIONS, coma, INFO)
 				| MakePlusRule(INFOCOLLECTIONS,coma,cadena); 
 
-			INFO.Rule = cadena + dospuntos + EXPRESION;
+			INFO.Rule = EXPRESION + dospuntos + EXPRESION;
+
+			TERNARIO.Rule = CONDICION + khe + EXPRESION + dospuntos + EXPRESION;
 
 			CONDICION.Rule = EXPRESION + mayor + EXPRESION
 				| EXPRESION + menor + EXPRESION
 				| EXPRESION + mayorigual + EXPRESION
 				| EXPRESION + menorigual + EXPRESION
 				| EXPRESION + igualigual + EXPRESION
-				| EXPRESION + igual + EXPRESION
+				//| EXPRESION + igual + EXPRESION
 				| EXPRESION + notigual + EXPRESION
 				| EXPRESION + and + EXPRESION
 				| EXPRESION + or + EXPRESION
+				| EXPRESION + pot + EXPRESION
 				| not + CONDICION
 				| pr_true
 				| pr_false;
 
 			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2
-				|CONTAR;
+				| id + ACCESO + par1 + LISTAEXPRESIONES + par2;
 
 			LISTANOMBRES.Rule = MakePlusRule(LISTANOMBRES, coma, ACCESO);
 
@@ -345,10 +378,13 @@ namespace com.Analisis
 				| pr_date
 				| pr_time
 				| pr_counter
-				| pr_map+menor+TIPODATO+coma+TIPODATO+mayor
-				| pr_set+menor + TIPODATO+ mayor
+				| pr_map + menor + TIPODATO + coma + TIPODATO + mayor
+				| pr_set + menor + TIPODATO + mayor
 				| pr_list + menor + TIPODATO + mayor
-				| nombre;
+				| nombre
+				| pr_map
+				| pr_set
+				| pr_list;
 
 
 			LLAVEPRIMARIA.Rule =MakePlusRule(LLAVEPRIMARIA,coma,nombre);//CAMBIAR SI CAMPO DE OBJETO PUEDE SER LLAVE PRIMARIA
@@ -453,23 +489,54 @@ namespace com.Analisis
 
 			#endregion
 		
-			#region sentencias ssl
-
+			#region sentencias FCL
+			
 			BLOQUESENTENCIAS.Rule = MakeStarRule(BLOQUESENTENCIAS, SENTENCIABLOQUE);
 
-			SENTENCIABLOQUE.Rule = RETORNO
-				| SENTENCIA;
+			SENTENCIABLOQUE.Rule = SENTENCIADDL
+				| SENTENCIADML
+				|SENTENCIAFCL
+				;
 
-			DECLARACION.Rule = pr_declarar + LISTAVARIABLES + TIPODATO + puntoycoma
-				| pr_declarar + LISTAVARIABLES + TIPODATO + igual + EXPRESION + puntoycoma;
+			SENTENCIAFCL.Rule = ASIGNACION
+				|DECLARACION
+				|MODIFICADORES+puntoycoma
+				|IF
+				|SWITCH
+				|WHILE
+				|DOWHILE
+				|FOR
+				|LLAMADAFUNCION
+				|CREAR_FUNCION
+				|RETORNO
+				|CREAR_PROC
+				|CALLPROC
+				|BREAK
+				|CONTINUE
+				|CREAR_CURSOR
+				|FOREACH 
+				|OPENCURSOR
+				|CLOSECURSOR
+				|LOG
+				|THROW
+				|TRYCATCH
+				;
+
+			DECLARACION.Rule = TIPODATO+ LISTAVARIABLES + puntoycoma
+				| TIPODATO + LISTAVARIABLES + igual + EXPRESION + puntoycoma;
 				
 			LISTAVARIABLES.Rule =MakePlusRule(LISTAVARIABLES,coma,id);
-			/*
+
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
-				| id + punto +  +igual + EXPRESION + puntoycoma;
-				*/
-			IF.Rule = pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
-				| pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else + llave1 + BLOQUESENTENCIAS + llave2;
+				| id + cor1 + EXPRESION + cor2 + igual + EXPRESION + puntoycoma
+				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
+
+			IF.Rule =// pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
+				 pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 +ELSEIFS+ pr_else + llave1 + BLOQUESENTENCIAS + llave2;
+
+			ELSEIFS.Rule = MakeStarRule(ELSEIFS,ELSEIF);
+
+			ELSEIF.Rule = pr_else + pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 			SWITCH.Rule = pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + DEFAULT + llave2
 				| pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + llave2;
@@ -482,29 +549,49 @@ namespace com.Analisis
 
 			BREAK.Rule = pr_break + puntoycoma;
 
-			FOR.Rule = pr_for + par1 + pr_declarar + id + igual + EXPRESION + puntoycoma + CONDICION + puntoycoma + OPPFOR + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + MODIFICADORES + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
-			OPPFOR.Rule = mas + mas
-				| menos + menos;
+			INIFOR.Rule = id + igual + EXPRESION
+				| TIPODATOFOR + igual + EXPRESION;
+
+			TIPODATOFOR.Rule = pr_integer
+				| pr_double;
 
 			WHILE.Rule =pr_while+par1+CONDICION+par2+llave1+BLOQUESENTENCIAS+llave2;
 
-			CONTAR.Rule = pr_contar + par1  +SELECCIONAR + par2;
+			DOWHILE.Rule = pr_do+llave1 + BLOQUESENTENCIAS + llave2+pr_while + par1 + CONDICION + par2 + puntoycoma;
 
-
-			CREAR_PROC.Rule = pr_crear + pr_proc + nombre + par1 + LISTAPARAMETROS + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			CREAR_PROC.Rule = pr_proc + nombre + par1 + LISTAPARAMETROS + par2+coma + par1 + LISTAPARAMETROS + par2  + llave1 + BLOQUESENTENCIAS + llave2;
 
 			LISTAPARAMETROS.Rule = MakeStarRule(LISTAPARAMETROS, coma, PARAMETRO);
 
 			PARAMETRO.Rule = TIPODATO + id;
 
-			CREAR_FUNCION.Rule = pr_crear + pr_funcion + nombre + par1 + LISTAPARAMETROS + par2 + TIPODATO + llave1 + BLOQUESENTENCIAS + llave2;
+			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ llave1 + BLOQUESENTENCIAS + llave2;
 
-			RETORNO.Rule = pr_return + EXPRESION + puntoycoma;
+			RETORNO.Rule = pr_return+LISTAEXPRESIONES+puntoycoma;
+
+			CALLPROC.Rule = pr_call + nombre + par1 + LISTAEXPRESIONES + par2;
+
+			CONTINUE.Rule = pr_continue+puntoycoma;
+
+			CREAR_CURSOR.Rule = pr_cursor + id + pr_is + SELECCIONAR + puntoycoma;
+
+			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2
+			| pr_for + pr_each + par1 + TIPODATO + id + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2;
+
+			OPENCURSOR.Rule = pr_open + id + puntoycoma;
+
+			CLOSECURSOR.Rule = pr_close + id + puntoycoma;
+
+			LOG.Rule = pr_log + par1 + EXPRESION + par2 + puntoycoma;
+
+			THROW.Rule = pr_throw + pr_new + nombre + puntoycoma;
+
+			TRYCATCH.Rule = pr_try + llave1 + BLOQUESENTENCIAS + llave2 + pr_catch + par1 + nombre + nombre + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 			#endregion
 			//revisar lista de acceso a objetos basado en si existen objetos con objetos dentro y si son accesibles
-			//revisar contar con seleccionar con expresion al final y >>
 			#endregion
 
 			#region Ajustes
@@ -512,33 +599,39 @@ namespace com.Analisis
 			this.Root = INICIO;
 			//PALABRAS RESERVADAS
 			MarkReservedWords(pr_crear.ToString(),pr_db.ToString(),pr_tabla.ToString(),pr_text.ToString(),pr_integer.ToString(),pr_double.ToString(),pr_bool.ToString(),
-				pr_date.ToString(),pr_proc.ToString(),pr_funcion.ToString(),pr_return.ToString(),pr_usuario.ToString(),pr_into.ToString(),pr_limit.ToString(),pr_apply.ToString(),
-				pr_con.ToString(),pr_password.ToString(),pr_usar.ToString(),pr_alterar.ToString(),pr_agregar.ToString(),pr_cambiar.ToString(),pr_begin.ToString(),pr_batch.ToString(),
+				pr_date.ToString(),pr_proc.ToString(),pr_return.ToString(),pr_usuario.ToString(),pr_into.ToString(),pr_limit.ToString(),pr_apply.ToString(),pr_each.ToString(),
+				pr_con.ToString(),pr_password.ToString(),pr_usar.ToString(),pr_alterar.ToString(),pr_agregar.ToString(),pr_begin.ToString(),pr_batch.ToString(),pr_try.ToString(),
 				pr_insertar.ToString(),pr_on.ToString(),pr_actualizar.ToString(),pr_valores.ToString(),pr_donde.ToString(),pr_borrar.ToString(),pr_seleccionar.ToString(),
 				pr_ordenar.ToString(),pr_ordPor.ToString(),pr_asc.ToString(),pr_desc.ToString(),pr_otorgar.ToString(),pr_denegar.ToString(),pr_de.ToString(),pr_count.ToString(),
-				pr_declarar.ToString(),pr_if.ToString(),pr_else.ToString(),pr_switch.ToString(),pr_case.ToString(),pr_default.ToString(),pr_for.ToString(),pr_while.ToString(),
-				pr_break.ToString(),pr_backup.ToString(),pr_usqldump.ToString(),pr_completo.ToString(),pr_restaurar.ToString(),pr_contar.ToString(),pr_true.ToString(),pr_false.ToString(),
+				pr_if.ToString(),pr_else.ToString(),pr_switch.ToString(),pr_case.ToString(),pr_default.ToString(),pr_for.ToString(),pr_while.ToString(),pr_open.ToString(),
+				pr_break.ToString(),pr_backup.ToString(),pr_restaurar.ToString(),pr_true.ToString(),pr_false.ToString(),pr_call.ToString(),pr_is.ToString(),pr_close.ToString(),
 				pr_time.ToString(), pr_null.ToString(), pr_counter.ToString(), pr_map.ToString(), pr_set.ToString(), pr_list.ToString(), pr_type.ToString(),pr_type.ToString(),
-				pr_not.ToString(), pr_exist.ToString(), pr_new.ToString(),pr_llave.ToString(),pr_primaria.ToString(),pr_truncar.ToString(),pr_exists.ToString(),
-				pr_min.ToString(),pr_max.ToString(),pr_sum.ToString(),pr_avg.ToString(),pr_in.ToString());
+				pr_not.ToString(), pr_exist.ToString(), pr_new.ToString(),pr_llave.ToString(),pr_primaria.ToString(),pr_truncar.ToString(),pr_exists.ToString(),pr_catch.ToString(),
+				pr_min.ToString(),pr_max.ToString(),pr_sum.ToString(),pr_avg.ToString(),pr_in.ToString(),pr_do.ToString(),pr_continue.ToString(),pr_cursor.ToString(),
+				pr_throw.ToString());
 			//NODOS A OMITIR
 			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION);
 			//TERMINALES IGNORADO
-			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,
-				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar,pr_cambiar, pr_usar,pr_proc,pr_funcion,pr_insertar,pr_on,
-				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_declarar,pr_if,pr_switch,pr_for,pr_while,
-				pr_backup,pr_restaurar,pr_else,pr_case,pr_default);		
+			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
+				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
+				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
+				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do);		
 			//COMENTA	RIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);
 			//PRECEDENCIA DE OPERADORES
-			RegisterOperators(1, Associativity.Left, or);
-			RegisterOperators(2, Associativity.Left, and);
-			RegisterOperators(3, Associativity.Neutral, mayor, menor, notigual, igualigual, menorigual, mayorigual);
-			RegisterOperators(4, Associativity.Left, mas, menos);
-			RegisterOperators(5, Associativity.Left,por, div);
-			RegisterOperators(6, Associativity.Right,pot);
-			RegisterOperators(7, Associativity.Right, not);
+			RegisterOperators(1,Associativity.Right,igual);
+			RegisterOperators(2,Associativity.Right,khe,dospuntos);
+			RegisterOperators(3, Associativity.Left, or);
+			RegisterOperators(4, Associativity.Left, and);
+			RegisterOperators(5, Associativity.Left, notigual, igualigual);
+			RegisterOperators(6,Associativity.Neutral, mayor, menor, menorigual, mayorigual);
+			RegisterOperators(7, Associativity.Left, mas, menos);
+			RegisterOperators(8, Associativity.Left,por, div,mod);
+			RegisterOperators(9, Associativity.Right, pot);
+			RegisterOperators(10, Associativity.Right, not);
+			RegisterOperators(11, Associativity.Right, mas+mas,menos+menos);
+
 			#endregion
 		}
 	}

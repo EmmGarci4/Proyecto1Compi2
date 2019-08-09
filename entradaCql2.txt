@@ -1,0 +1,92 @@
+Int @var1, @var2 = 0; 
+Estudiante @est = new Estudiante; 
+Map @var = new Map<String, Int>;
+
+@var2 = 0;
+ @est = new Estudiante; 
+ @est.nombre = @est2.nombre; 
+ @var = new Map<String, Int>;
+ @obj.attr1.attr2.attr3 = "valor";
+ 
+ int @contador = 10; 
+ int @varIncremento = @contador++; // Valor 11
+ int @contador = 10; 
+ int @varIncremento = @contador--; // Valor 9
+ @variable += 10;
+ @Variable *= 20;
+ @Variable -= 15;
+ @Variable /= 30;
+ @variable=3<1?3:1;
+ 
+ if (@variable > 0) { 
+ @var1 = 0; 
+ }
+ 
+ if (@variable > 0) { 
+ @var1 = 0; 
+ } else if (@variable < 0) { 
+ @var1 = 1; 
+ } else { 
+ @var1 = 2; 
+ }
+ 
+ switch(@y /50){ 
+case 1: 
+// sentencias que se ejecutarán si y/50 = 1.
+case 2: 
+// sentencias que se ejecutarán si y/50 = 2.
+default: 
+// sentencias que s e ejecutarán si y/50 no coincide ningún 
+// caso.
+}
+ 
+ while (@cuenta < 5) { @cuenta++; }
+ Do{ @cuenta++; }while (@cuenta < 5);
+ 
+ for (int @cuenta = 0; @cuenta < 5; @cuenta++) { 
+ // Bloq ue de sentencias a ejecutarse
+}
+
+ Map @var1 = new Map<int, string>; 
+ Map @var2 = { 1 : "Julius" , 2 : "Luis" , 3 : "Rainman"};
+ 
+ List @var1 = new List<string>; 
+ List @var2 = [ "Julius" ,"Luis" ,"Rainman"];
+ 
+ Set @var1 = new Set<string>; 
+ Set @var2 = [ " Julius" , "Luis" ,"Rainman"];
+ 
+ Int factorial(int @n){ 
+return 23;
+}
+Procedure Ejemplo_Procedure(int @n, int @p), (int @retorno1, int @ret2){ 
+return @n, @n *2;
+ }
+Call Proc_ejemplo(1,2,3,4,5,”aaaa”);
+
+Procedure Ejemplo_Procedure(int @n, int @p), (int @retorno1, int @ret2){ if (@n == 0) { return 1, 2; } else { return @n, @n *2; } }
+
+int divisor = 0; 
+int dividendo = 10; 
+try { 
+int cociente == dividendo / divisor; 
+} 
+catch (ArithmeticException ae)
+{ 
+Log (e.message) ; 
+}
+
+throw new ArithmeticException;
+LOG ( “Hola” + “ ” + “Mundo”);
+Date @fecha = ‘2019-01-01’ 
+LOG(“Hoy es ” + @fecha); 
+Int @contador; 
+LOG(@contador);
+CURSOR @c1 IS Select * From Estudiante;
+FOR EACH (int @Carnet, String @Nombre) IN @c1 {
+
+}
+
+OPEN @c1;
+OPEN @ID;
+CLOSE @c1;
