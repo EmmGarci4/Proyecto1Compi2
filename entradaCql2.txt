@@ -22,6 +22,12 @@ Map @var = new Map<String, Int>;
  @var1 = 0; 
  }
  
+  if (@variable > 0) { 
+ @var1 = 0; 
+ } else { 
+ @var1 = 2; 
+ }
+ 
  if (@variable > 0) { 
  @var1 = 0; 
  } else if (@variable < 0) { 
@@ -62,14 +68,20 @@ return 23;
 Procedure Ejemplo_Procedure(int @n, int @p), (int @retorno1, int @ret2){ 
 return @n, @n *2;
  }
-Call Proc_ejemplo(1,2,3,4,5,”aaaa”);
+Call Proc_ejemplo(1,2,3,4,5,"aaaa");
 
-Procedure Ejemplo_Procedure(int @n, int @p), (int @retorno1, int @ret2){ if (@n == 0) { return 1, 2; } else { return @n, @n *2; } }
+Procedure Ejemplo_Procedure(int @n, int @p), (int @retorno1, int @ret2){ 
+if (@n == 0) { 
+return 1, 2; 
+} else { 
+return @n, @n *2; 
+} 
+}
 
-int divisor = 0; 
-int dividendo = 10; 
+int @divisor = 0; 
+int @dividendo = 10; 
 try { 
-int cociente == dividendo / divisor; 
+int @cociente = dividendo / divisor; 
 } 
 catch (ArithmeticException ae)
 { 
@@ -77,9 +89,9 @@ Log (e.message) ;
 }
 
 throw new ArithmeticException;
-LOG ( “Hola” + “ ” + “Mundo”);
-Date @fecha = ‘2019-01-01’ 
-LOG(“Hoy es ” + @fecha); 
+LOG ( "Hola" + " " + "Mundo");
+Date @fecha = '2019-01-01';
+LOG("Hoy es " + @fecha); 
 Int @contador; 
 LOG(@contador);
 CURSOR @c1 IS Select * From Estudiante;

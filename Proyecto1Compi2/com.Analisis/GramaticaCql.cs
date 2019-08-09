@@ -175,7 +175,8 @@ namespace com.Analisis
 				ELIMINAR_USERTYPE = new NonTerminal("ELIMINAR_USERTYPE"),
 				ATRIBUTO = new NonTerminal("ATRIBUTO"),
 				LISTAATRIBUTOS = new NonTerminal("LISTAATRIBUTOS"),
-				LISTANOMBRESPURA = new NonTerminal("LISTANOMBRESPURA")
+				LISTANOMBRESPURA = new NonTerminal("LISTANOMBRESPURA"),
+				OPERACIONASIGNACION=new NonTerminal("OPERACIONASIGNACION")
 				;
 
 			NonTerminal SENTENCIATCL = new NonTerminal("SENTENCIATCL"),
@@ -285,7 +286,7 @@ namespace com.Analisis
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2
 				| cor1 + LISTAEXPRESIONES + cor2
-			//	| MODIFICADORES
+				| MODIFICADORES
 				| FUNCIONAGREGACION
 				| pr_new + TIPODATO
 				|id+punto+ACCESO
@@ -293,11 +294,7 @@ namespace com.Analisis
 
 
 			MODIFICADORES.Rule = id + mas + mas | id + punto + ACCESO + mas + mas
-				| id + menos + menos | id + punto + ACCESO + menos + menos
-				| id + mas + igual + EXPRESION | id + punto + ACCESO + mas + igual + EXPRESION
-				| id + menos + igual + EXPRESION | id + punto + ACCESO + menos + igual + EXPRESION
-				| id + div + igual + EXPRESION | id + punto + ACCESO + div + igual + EXPRESION
-				| id + por + igual + EXPRESION | id + punto + ACCESO + por + igual + EXPRESION;
+				| id + menos + menos | id + punto + ACCESO + menos + menos;
 
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
 			
@@ -524,6 +521,7 @@ namespace com.Analisis
 				|LOG
 				|THROW
 				|TRYCATCH
+				|OPERACIONASIGNACION
 				;
 
 			DECLARACION.Rule = TIPODATO+ LISTAVARIABLES + puntoycoma
@@ -595,6 +593,16 @@ namespace com.Analisis
 			THROW.Rule = pr_throw + pr_new + nombre + puntoycoma;
 
 			TRYCATCH.Rule = pr_try + BLOQUESENTENCIAS + pr_catch + par1 + nombre + nombre + par2 + BLOQUESENTENCIAS;
+
+
+			OPERACIONASIGNACION.Rule = id + mas + igual + EXPRESION + puntoycoma 
+				| id + punto + ACCESO + mas + igual + EXPRESION + puntoycoma
+				| id + menos + igual + EXPRESION + puntoycoma 
+				| id + punto + ACCESO + menos + igual + EXPRESION + puntoycoma
+				| id + div + igual + EXPRESION + puntoycoma 
+				| id + punto + ACCESO + div + igual + EXPRESION + puntoycoma
+				| id + por + igual + EXPRESION + puntoycoma 
+				| id + punto + ACCESO + por + igual + EXPRESION + puntoycoma;
 
 			#endregion
 			//revisar lista de acceso a objetos basado en si existen objetos con objetos dentro y si son accesibles
