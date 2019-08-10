@@ -15,13 +15,15 @@ namespace com.Analisis.Util
 	}
 	enum TipoDatoDB
 	{
-		TEXT,
-		INTEGER,
+		STRING,
+		INT,
 		DOUBLE,
-		BOOL,
+		BOOLEAN,
 		DATE,
-		DATETIME,
-		NULO
+		TIME,
+		COUNTER,
+		NULO,
+		OBJETO
 	}
 	public enum TipoAccion
 	{

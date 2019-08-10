@@ -1,6 +1,5 @@
 $<
-    "DATABASES"= [
-        <
+<
             "NAME"= "Database 1",
             "Data"= [
                 <
@@ -120,24 +119,8 @@ $<
         "NAME"= "Database 3",
         "Data"= []
         >
-    ],
+],
     "USERS"= [
-        <
-            "NAME"="Luis",
-            "PASSWORD"= "1234",
-            "PERMISSIONS"= [
-                <
-                    "NAME"= "Database 1"
-                >,
-                <
-                    "NAME"= "Database 2"
-                >
-            ]
-        >,
-        <
-            "NAME"="Fernando",
-            "PASSWORD"= "5678",
-            "PERMISSIONS"= []
-        >
+	
     ]
 >$

@@ -32,10 +32,10 @@
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.Btn_EjecutarSql = new System.Windows.Forms.ToolStripButton();
 			this.Btn_leerXml = new System.Windows.Forms.ToolStripButton();
+			this.Bt_EjecutarLup = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -46,7 +46,7 @@
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Btn_EjecutarSql,
             this.Btn_leerXml,
-            this.toolStripButton1});
+            this.Bt_EjecutarLup});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -73,6 +73,16 @@
 			this.Btn_leerXml.Size = new System.Drawing.Size(93, 22);
 			this.Btn_leerXml.Text = "Ejecutar Chison";
 			this.Btn_leerXml.Click += new System.EventHandler(this.Btn_leerXml_Click);
+			// 
+			// Bt_EjecutarLup
+			// 
+			this.Bt_EjecutarLup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.Bt_EjecutarLup.Image = ((System.Drawing.Image)(resources.GetObject("Bt_EjecutarLup.Image")));
+			this.Bt_EjecutarLup.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Bt_EjecutarLup.Name = "Bt_EjecutarLup";
+			this.Bt_EjecutarLup.Size = new System.Drawing.Size(76, 22);
+			this.Bt_EjecutarLup.Text = "Ejecutar Lup";
+			this.Bt_EjecutarLup.Click += new System.EventHandler(this.Bt_EjecutarLup_Click_1);
 			// 
 			// tableLayoutPanel1
 			// 
@@ -110,16 +120,6 @@
 			this.textBox2.Size = new System.Drawing.Size(794, 207);
 			this.textBox2.TabIndex = 1;
 			// 
-			// toolStripButton1
-			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(76, 22);
-			this.toolStripButton1.Text = "Ejecutar Lup";
-			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_1);
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -146,7 +146,7 @@
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.ToolStripButton Btn_leerXml;
-		private System.Windows.Forms.ToolStripButton toolStripButton1;
+		private System.Windows.Forms.ToolStripButton Bt_EjecutarLup;
 	}
 }
 

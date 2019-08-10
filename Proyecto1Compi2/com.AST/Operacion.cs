@@ -337,7 +337,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						{
-							Analizador.Errores.Add(new Error(TipoError.Semantico, "No se pueden sumar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden sumar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
 							break;
 						}
 					case TipoOperacion.Resta:
@@ -376,7 +376,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						{
-							Analizador.Errores.Add(new Error(TipoError.Semantico, "No se pueden restar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden restar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
 							break;
 						}
 					case TipoOperacion.Division:
@@ -389,7 +389,7 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else
 							{
-								Analizador.Errores.Add(new Error(TipoError.Semantico, "No se puede hacer una división por cero", Linea, Columna));
+								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se puede hacer una división por cero", Linea, Columna));
 								break;
 							}
 							
@@ -408,7 +408,7 @@ namespace Proyecto1Compi2.com.AST
 								return valor.ToString();
 							}
 							else {
-								Analizador.Errores.Add(new Error(TipoError.Semantico, "No se puede hacer una división por cero", Linea, Columna));
+								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se puede hacer una división por cero", Linea, Columna));
 								break;
 							}
 							
@@ -424,7 +424,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						{
-							Analizador.Errores.Add(new Error(TipoError.Semantico, "No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
 							break;
 						}
 					case TipoOperacion.Multiplicacion:
@@ -477,7 +477,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						{
-							Analizador.Errores.Add(new Error(TipoError.Semantico, "No se pueden multiplicar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden multiplicar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
 							break;
 						}
 					case TipoOperacion.Potencia:
@@ -522,7 +522,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						{
-							Analizador.Errores.Add(new Error(TipoError.Semantico, "No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts), Linea, Columna));
 							break;
 						}
 				}

@@ -25,7 +25,7 @@ namespace Proyecto1Compi2.com.AST
 		{
 			Console.WriteLine("Creando tabla..."+this.nombre);
 			foreach (Columna cl in this.columnas) {
-				Console.WriteLine(cl.Titulo);
+				Console.WriteLine(cl.Nombre);
 			}
 			return null;
 		}

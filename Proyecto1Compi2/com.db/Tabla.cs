@@ -10,19 +10,18 @@ namespace Proyecto1Compi2.com.db
 	class Tabla
 	{
 		String nombre;
-		String path;
 		List<Columna> columnas;
+		private List<object> datos;
 		private int contadorFilas;
 
 		public string Nombre { get => nombre; set => nombre = value; }
-		public string Path { get => path; set => path = value; }
 		public List<Columna> Columnas { get => columnas; set => columnas = value; }
 
-		public Tabla(String nombre, String path)
+		public Tabla(String nombre)
 		{
 			this.nombre = nombre;
-			this.path = path;
 			this.columnas = new List<Columna>();
+			this.datos = new List<object>();
 		}
 
 		public void AgregarColumna(Columna columna) {
@@ -38,67 +37,65 @@ namespace Proyecto1Compi2.com.db
 			this.columnas.Clear();
 		}
 
-		public void MostrarColumnas()
+		public void MostrarCabecera()
 		{
+			Console.WriteLine("_____________________________________________________________");
+			Console.WriteLine("|  "+Nombre+"                                               |");
+			Console.WriteLine("_____________________________________________________________");
 			Console.Write("|");
-			foreach (Columna st in this.columnas) {
-				Console.Write(st.TipoDato.ToString().ToLower() + ":" + st.Titulo + "|");
+			foreach (Columna st in this.columnas)
+			{
+				Console.Write(st.Tipo.ToString().ToLower() + ":" + st.Nombre + "|");
 			}
 			Console.WriteLine();
-			//mostrando valores
-			int i;
-			for (i = 0; i < contadorFilas; i++) {
-				Console.Write("|");
-				foreach (Columna st in this.columnas)
-				{
-					Console.Write(st.Valores[i].Valor + "|");
+		}
+
+		internal void AgregarFila(List<object> cls)
+		{
+			//agreagando fila completa
+			this.datos.AddRange(cls);
+			contadorFilas++;
+		}
+
+		internal void MostrarDatos()
+		{
+			int i=0;
+			while (i<datos.Count) {
+				for (int contador=0;contador<columnas.Count;contador++) {
+					Console.Write("---");
+					Console.Write(datos.ElementAt(i));
+					Console.Write("---");
+					i++;
 				}
 				Console.WriteLine();
 			}
 		}
 
-		internal void AgregarFila(List<Celda> cls)
-		{
-			int contador = 0;
-			foreach (Columna col in this.columnas) {
-				if (col.TipoDato == cls[contador].TipoDato)
-				{
-					col.AgregarValor(cls[contador]);
+		//internal void AgregarFila(List<Celda> cls, List<string> columnas)
+		//{
+		////	int contador = 0;
+		////	foreach (Columna col in this.columnas)
+		////	{
+		////		if (columnas.Contains(col.Titulo))
+		////		{
+		////			if (col.TipoDato == cls[contador].TipoDato)
+		////			{
+		////				col.AgregarValor(cls[contador]);
+		////			}
+		////			else
+		////			{
+		////				col.AgregarValor(new Celda("NULO", TipoDatoDB.NULO));
+		////				Console.WriteLine("ERROR:NO SE PUEDE ASIGNAR EL VALOR TIPOS NO COINCIDEN");
+		////			}
+		////		}
+		////		else {
+		////			col.AgregarValor(new Celda("NULO", TipoDatoDB.NULO));
+		////		}
+		////		contador++;
+		////	}
+		////	contadorFilas++;
+		//}
 
-				}
-				else {
-					col.AgregarValor(new Celda("NULO", TipoDatoDB.NULO));
-					Console.WriteLine("ERROR:NO SE PUEDE ASIGNAR EL VALOR TIPOS NO COINCIDEN");
-				}
-				contador++;
-			}
-			contadorFilas++;
-		}
-
-		internal void AgregarFila(List<Celda> cls, List<string> columnas)
-		{
-			int contador = 0;
-			foreach (Columna col in this.columnas)
-			{
-				if (columnas.Contains(col.Titulo))
-				{
-					if (col.TipoDato == cls[contador].TipoDato)
-					{
-						col.AgregarValor(cls[contador]);
-					}
-					else
-					{
-						col.AgregarValor(new Celda("NULO", TipoDatoDB.NULO));
-						Console.WriteLine("ERROR:NO SE PUEDE ASIGNAR EL VALOR TIPOS NO COINCIDEN");
-					}
-				}
-				else {
-					col.AgregarValor(new Celda("NULO", TipoDatoDB.NULO));
-				}
-				contador++;
-			}
-			contadorFilas++;
-		}
 		internal bool ExistenColumnas(List<string> cls)
 		{
 			foreach (string colum in cls) {
@@ -112,45 +109,12 @@ namespace Proyecto1Compi2.com.db
 
 		private bool ExistenColumna(string colum)
 		{
-			foreach (Columna cl in this.columnas) {
-				if (cl.Titulo.Equals(colum)) {
-					return true;
-				}
-			}
+			//foreach (Columna cl in this.columnas) {
+			//	if (cl.Titulo.Equals(colum)) {
+			//		return true;
+			//	}
+			//}
 			return false;
-		}
-
-		internal string GetXml()
-		{
-			StringBuilder codigotabla = new StringBuilder();
-			codigotabla.AppendLine("<Tabla>");
-			codigotabla.AppendLine("<nombre>" + this.nombre + "</nombre>");
-			codigotabla.AppendLine("<path>" + this.path + "</path>");
-			codigotabla.AppendLine("<rows>");
-			foreach (Columna cl in this.columnas)
-			{
-				codigotabla.AppendLine("<" + cl.TipoDato.ToString().ToLower() + ">" + cl.Titulo + "</" + cl.TipoDato.ToString().ToLower() + ">");
-			}
-			codigotabla.AppendLine("</rows>");
-			codigotabla.AppendLine("</Tabla>");
-			return codigotabla.ToString();
-		}
-
-		internal void GenerarArchivo()
-		{
-			StringBuilder archivoTB = new StringBuilder();
-			int contador;
-			for (contador=0;contador<contadorFilas;contador++) {
-				archivoTB.AppendLine("<Row>");
-				foreach (Columna cl in this.columnas)
-				{
-					archivoTB.AppendLine("<" + cl.Titulo + ">" + cl.Valores[contador].Valor + "</" + cl.Titulo + ">");
-				}
-				archivoTB.AppendLine("</Row>");
-			}
-			Console.WriteLine("*****************************************************");
-			Console.WriteLine(archivoTB.ToString());
-
 		}
 	}
 }

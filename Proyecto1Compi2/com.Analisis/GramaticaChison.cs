@@ -61,8 +61,6 @@ namespace Proyecto1Compi2.com.Analisis
 			NonTerminal INICIO = new NonTerminal("INICIO"),
 				DATABASE = new NonTerminal("DATABASE"),
 				USER = new NonTerminal("USER"),
-				PASSWD = new NonTerminal("PASSWD"),
-				PERMISOS = new NonTerminal("PERMISOS"),
 				OTRONOMBRE = new NonTerminal("OTRONOMBRE"),
 				LISTA_USERS = new NonTerminal("LISTA_USERS"),
 				LISTA_DATABASES = new NonTerminal("LISTA_DATABASES"),
@@ -154,11 +152,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 			#region Usuarios
 			
-			USER.Rule = menor+ pr_nombre + igual + cadena + coma+PASSWD+coma+PERMISOS+mayor;
-
-			PASSWD.Rule =pr_passwd+igual+cadena;
-
-			PERMISOS.Rule =pr_permisos+igual+cor1+LISTA_OTRONOMBRES+cor2;
+			USER.Rule = menor+ pr_nombre + igual + cadena + coma+ pr_passwd + igual + cadena + coma+ pr_permisos + igual + cor1 + LISTA_OTRONOMBRES + cor2 + mayor;
 
 			LISTA_OTRONOMBRES.Rule = MakeStarRule(LISTA_OTRONOMBRES,coma,OTRONOMBRE);
 
@@ -187,9 +181,11 @@ namespace Proyecto1Compi2.com.Analisis
 				pr_cqlType.ToString(),pr_columns.ToString(),pr_table.ToString(),pr_type.ToString(),pr_pk.ToString(),pr_obj.ToString(),pr_attribs.ToString(),pr_proc.ToString(),
 				pr_params.ToString(),pr_inst.ToString(),pr_as.ToString(),pr_in.ToString(),pr_out.ToString(),pr_databases.ToString(),pr_users.ToString());
 			//NODOS A OMITIR
-			MarkTransient();
+			MarkTransient(OBJDB,FILA,INOUT);
 			//TERMINALES IGNORADO
-			MarkPunctuation(mayor,menor,igual,dolar,coma,dospuntos);
+			MarkPunctuation(mayor,menor,igual,dolar,coma,dospuntos,cor1,cor2,
+				pr_databases,pr_users,pr_nombre,pr_passwd,pr_permisos,pr_data,pr_cqlType,pr_table,pr_columns,pr_obj,pr_attribs,
+				pr_type,pr_pk,pr_proc,pr_params,pr_inst,pr_as);
 			//COMENTA	RIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);
