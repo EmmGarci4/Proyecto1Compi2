@@ -1,5 +1,5 @@
 $<
-    "DATABASE"= [
+    "DATABASES"= [
         <
             "NAME"= "Database 1",
             "Data"= [
@@ -19,7 +19,7 @@ $<
                         >
                     ],
                     "DATA" = [
-                        ${ estudiantes.chison }
+                        ${ estudiantes.chison }$
                     ]  
                 >,
                 <
@@ -80,12 +80,12 @@ $<
                         >
                     ],
                     "DATA" = [
-                        ${ jeansData.chison }    
+                        ${ jeansData.chison }$    
                     ]  
                 >,
                 <
                     "CQL-TYPE" = "PROCEDURE",
-                    "NAME" = "Procedure1"
+                    "NAME" = "Procedure1",
                     "PARAMETERS" = [
                         <
                             "NAME" = "@Nombre",
@@ -101,7 +101,7 @@ $<
                             "NAME" = "@Edad",
                             "TYPE" = "Int",
                             "AS"   = OUT
-                        >,
+                        >
                     ],
                     "INSTR" = $ 
                                 Int @val = Max(<Select edad from Estudiante where id=@id && Nombre=@Nombre >);
@@ -113,7 +113,7 @@ $<
         <
         "NAME"= "Database 2",
         "Data"= [
-            ${ bd2data.chison }
+            ${ bd2data.chison }$
         ]
         >,
         <
@@ -127,10 +127,10 @@ $<
             "PASSWORD"= "1234",
             "PERMISSIONS"= [
                 <
-                    "NAME": "Database 1"
+                    "NAME"= "Database 1"
                 >,
                 <
-                    "NAME": "Database 2"
+                    "NAME"= "Database 2"
                 >
             ]
         >,

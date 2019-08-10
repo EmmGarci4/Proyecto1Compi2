@@ -297,9 +297,10 @@ namespace com.Analisis
 				| id + menos + menos | id + punto + ACCESO + menos + menos;
 
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
-			
+
 			AC_CAMPO.Rule = nombre + cor1 + EXPRESION + cor2
-				| nombre;
+				| nombre
+				| nombre + par1 + LISTAEXPRESIONES + par2;
 
 			INFOCOLLECTIONS.Rule = MakePlusRule(INFOCOLLECTIONS, coma, INFO)
 				| MakePlusRule(INFOCOLLECTIONS,coma,cadena); 
@@ -330,6 +331,21 @@ namespace com.Analisis
 			LISTAEXPRESIONES.Rule = MakeStarRule(LISTAEXPRESIONES, coma, EXPRESION);
 
 			LISTANOMBRESPURA.Rule = MakePlusRule(LISTANOMBRESPURA,coma,nombre);
+
+			TIPODATO.Rule = pr_text
+				| pr_integer
+				| pr_double
+				| pr_bool
+				| pr_date
+				| pr_time
+				| pr_counter
+				| pr_map + menor + TIPODATO + coma + TIPODATO + mayor
+				| pr_set + menor + TIPODATO + mayor
+				| pr_list + menor + TIPODATO + mayor
+				| nombre
+				| pr_map
+				| pr_set
+				| pr_list;
 
 			#endregion
 
@@ -370,32 +386,14 @@ namespace com.Analisis
 				|nombre+TIPODATO
 				| pr_primaria + pr_llave+par1+LLAVEPRIMARIA+par2;
 
-			TIPODATO.Rule = pr_text
-				| pr_integer
-				| pr_double
-				| pr_bool
-				| pr_date
-				| pr_time
-				| pr_counter
-				| pr_map + menor + TIPODATO + coma + TIPODATO + mayor
-				| pr_set + menor + TIPODATO + mayor
-				| pr_list + menor + TIPODATO + mayor
-				| nombre
-				| pr_map
-				| pr_set
-				| pr_list;
-
-
-			LLAVEPRIMARIA.Rule =MakePlusRule(LLAVEPRIMARIA,coma,nombre);//CAMBIAR SI CAMPO DE OBJETO PUEDE SER LLAVE PRIMARIA
+			LLAVEPRIMARIA.Rule =MakePlusRule(LLAVEPRIMARIA,coma,nombre);
 
 			ALTERAR_TABLA.Rule = pr_alterar + pr_tabla + nombre + pr_agregar +  LISTACAMPOSTABLA  + puntoycoma
 				| pr_alterar + pr_tabla + nombre + pr_eliminar + LISTANOMBRESPURA + puntoycoma; 
 			//CAMBIAR SI SE PUEDE ELIMINAR CAMPO DE OBJETO DESDE ACA
-			//CAMBIAR LISTANOMBRES A LISTA ID SIN @
 
 			ELIMINAR_TABLA.Rule = pr_eliminar + pr_tabla + nombre + puntoycoma 
 				| pr_eliminar + pr_tabla + pr_if + pr_exists + nombre + puntoycoma;
-
 
 			TRUNCAR_TABLA.Rule = pr_truncar + pr_tabla + nombre+puntoycoma;
 
@@ -453,8 +451,9 @@ namespace com.Analisis
 			ASIGNACIONAC.Rule = ACCESO + igual + EXPRESION;
 
 			//cambiar listas si se puede eliminar campos de objetos desde aca
+			//
 			BORRAR.Rule =pr_borrar + pr_from + nombre + puntoycoma
-				| pr_borrar+LISTANOMBRESPURA + pr_from + nombre + puntoycoma;
+				|pr_borrar+pr_from+nombre+PROPIEDADDONDE+puntoycoma;
 
 			SELECCIONAR.Rule =pr_seleccionar+LISTANOMBRES+pr_from+nombre+PROPIEDADSELECCIONAR
 				| pr_seleccionar + por + pr_from + nombre + PROPIEDADSELECCIONAR;
@@ -531,7 +530,12 @@ namespace com.Analisis
 
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
 				| id + cor1 + EXPRESION + cor2 + igual + EXPRESION + puntoycoma
-				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
+				| id + punto + ACCESO + igual + EXPRESION + puntoycoma
+				//casteos
+				| id + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
+				| id + cor1 + EXPRESION + cor2 + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
+				| id + punto + ACCESO + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma;
+
 
 			IF.Rule = pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS
 				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS + pr_else+BLOQUESENTENCIAS
@@ -605,7 +609,8 @@ namespace com.Analisis
 				| id + punto + ACCESO + por + igual + EXPRESION + puntoycoma;
 
 			#endregion
-			//revisar lista de acceso a objetos basado en si existen objetos con objetos dentro y si son accesibles
+			
+			
 			#endregion
 
 			#region Ajustes

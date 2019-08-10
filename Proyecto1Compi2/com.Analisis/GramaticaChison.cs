@@ -18,9 +18,10 @@ namespace Proyecto1Compi2.com.Analisis
 			RegexBasedTerminal date = new RegexBasedTerminal("date", "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
 			RegexBasedTerminal time = new RegexBasedTerminal("time", "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
 			RegexBasedTerminal nombre = new RegexBasedTerminal("nombre", "[a-zA-ZñÑ]+([a-zA-ZñÑ]|_|[0-9])*");
-			RegexBasedTerminal archivo = new RegexBasedTerminal("archivo", "{ (.*)}");
 			CommentTerminal comentario_linea = new CommentTerminal("comentario_linea", "//", "\n", "\r\n");
 			CommentTerminal comentario_bloque = new CommentTerminal("comentario_bloque", "/*", "*/");
+			CommentTerminal archivo = new CommentTerminal("archivo", "{", "}");
+			CommentTerminal instrucciones = new CommentTerminal("instrucciones", "$", "$");
 			#endregion
 
 			#region Term
@@ -165,7 +166,8 @@ namespace Proyecto1Compi2.com.Analisis
 			#endregion
 
 			#region procedimiento
-			PROCEDIMIENTO.Rule = menor + pr_cqlType + igual + pr_proc + coma + pr_nombre + igual + cadena + coma + pr_params+igual+cor1+LISTA_PARAMETROS+cor2 + coma + pr_inst + igual + cadena + mayor;
+			PROCEDIMIENTO.Rule = menor + pr_cqlType + igual + pr_proc + coma + pr_nombre + igual + cadena + coma + 
+				pr_params+igual+cor1+LISTA_PARAMETROS+cor2 + coma + pr_inst + igual + instrucciones + mayor;
 
 			LISTA_PARAMETROS.Rule =MakeStarRule(LISTA_PARAMETROS,coma,PARAMETRO);
 
