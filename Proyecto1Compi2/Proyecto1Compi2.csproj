@@ -93,6 +93,7 @@
     <Compile Include="com.db\UserType.cs" />
     <Compile Include="com.db\Usuario.cs" />
     <Compile Include="com.Util\Error.cs" />
+    <Compile Include="com.Util\HandlerFiles.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
     <Compile Include="com.Util\TablaSimbolos.cs" />
     <Compile Include="com.Util\Tipos.cs" />

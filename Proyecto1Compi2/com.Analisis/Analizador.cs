@@ -9,6 +9,7 @@ using com.Analisis.Util;
 using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.Analisis;
 using Proyecto1Compi2.com.db;
+using System.Text.RegularExpressions;
 
 namespace com.Analisis
 {
@@ -49,12 +50,14 @@ namespace com.Analisis
 			GramaticaChison gramatica = new GramaticaChison();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
+			//IMPORTAR 
+			texto = Importar(texto);
 			ParseTree arbol = parser.Parse(texto);
 			Analizador.ErroresCHISON.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz != null)
 			{
-				GeneradorDB.GuardarInformación(raiz);
+				//GeneradorDB.GuardarInformación(raiz);
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
@@ -62,6 +65,32 @@ namespace com.Analisis
 			}
 
 			return Analizador.raiz != null;
+		}
+
+		private static string Importar(string texto)
+		{
+			foreach (Match match in Regex.Matches(texto, "\\${.*}\\$", RegexOptions.IgnoreCase))
+			{
+				String t1 = HandlerFiles.AbrirArchivo(GetURL(match.Value));
+				if (t1 != null)
+				{
+					texto = texto.Replace(match.Value, t1);
+				}
+				else
+				{
+					texto = texto.Replace(match.Value, String.Empty);
+					Console.Error.WriteLine("ERROR EL ARCHIVO NO EXISTE");
+				}
+			}
+			return texto;
+		}
+
+		private static string GetURL(string value)
+		{
+			value = value.Replace("$", String.Empty);
+			value = value.Replace("{", String.Empty);
+			value = value.Replace("}", String.Empty);
+			return value;
 		}
 
 		public static bool AnalizarLup(String texto)

@@ -20,7 +20,6 @@ namespace Proyecto1Compi2.com.Analisis
 			RegexBasedTerminal nombre = new RegexBasedTerminal("nombre", "[a-zA-ZñÑ]+([a-zA-ZñÑ]|_|[0-9])*");
 			CommentTerminal comentario_linea = new CommentTerminal("comentario_linea", "//", "\n", "\r\n");
 			CommentTerminal comentario_bloque = new CommentTerminal("comentario_bloque", "/*", "*/");
-			CommentTerminal archivo = new CommentTerminal("archivo", "{", "}");
 			CommentTerminal instrucciones = new CommentTerminal("instrucciones", "$", "$");
 			#endregion
 
@@ -83,7 +82,8 @@ namespace Proyecto1Compi2.com.Analisis
 				LISTA_PARAMETROS = new NonTerminal("LISTA_PARAMETROS"),
 				PARAMETRO = new NonTerminal("PARAMETRO"),
 				INOUT = new NonTerminal("INOUT"),
-				IMPORTAR = new NonTerminal("IMPORTAR")
+				LISTA_DATOS = new NonTerminal("LISTA_DATOS"),
+				DATO=new NonTerminal("DATO")
 				;
 			#endregion
 
@@ -93,31 +93,26 @@ namespace Proyecto1Compi2.com.Analisis
 
 			#region baseDeDatos
 
-			LISTA_DATABASES.Rule = MakeStarRule(LISTA_DATABASES, coma, DATABASE)
-				|IMPORTAR;
+			LISTA_DATABASES.Rule = MakeStarRule(LISTA_DATABASES, coma, DATABASE);
 
-			LISTA_USERS.Rule = MakeStarRule(LISTA_USERS, coma, USER)
-				|IMPORTAR;
+			LISTA_USERS.Rule = MakeStarRule(LISTA_USERS, coma, USER);
 
 			
 			DATABASE.Rule =menor+ pr_nombre + igual + cadena + coma+ pr_data + igual + cor1 + LISTA_OBJDB + cor2 + mayor;
 
-			LISTA_OBJDB.Rule =MakeStarRule(LISTA_OBJDB,coma,OBJDB)
-				|IMPORTAR;
+			LISTA_OBJDB.Rule =MakeStarRule(LISTA_OBJDB,coma,OBJDB);
 
 			OBJDB.Rule =TABLA
 				|OBJETO
 				|PROCEDIMIENTO;
 
-			IMPORTAR.Rule =dolar+archivo+dolar;
 			#endregion
 
 			#region Tabla
 
 			TABLA.Rule =menor+ pr_cqlType + igual + pr_table + coma+ pr_nombre + igual + cadena + coma + pr_columns + igual + cor1 + LISTA_COLUMNAS + cor2 + coma+pr_data+igual+cor1+LISTA_FILA+cor2+mayor;
 
-			LISTA_FILA.Rule =MakeStarRule(LISTA_FILA,coma,FILA)
-				|IMPORTAR;
+			LISTA_FILA.Rule =MakeStarRule(LISTA_FILA,coma,FILA);
 
 			FILA.Rule =menor+LISTA_DATATABLE+mayor;
 
@@ -128,10 +123,14 @@ namespace Proyecto1Compi2.com.Analisis
 				|cadena+igual+date
 				|cadena+igual+time
 				|cadena+igual+pr_true
-				|cadena+igual+pr_false;
+				|cadena+igual+pr_false
+				|cadena+igual+cor1+LISTA_DATOS+cor2;
 
-			LISTA_COLUMNAS.Rule = MakeStarRule(LISTA_COLUMNAS,coma,COLUMNA)
-				|IMPORTAR;
+			LISTA_DATOS.Rule =MakeStarRule(LISTA_DATOS,coma,DATO);
+
+			DATO.Rule =cadena|numero|LISTA_DATOS;
+
+			LISTA_COLUMNAS.Rule = MakeStarRule(LISTA_COLUMNAS,coma,COLUMNA);
 
 			COLUMNA.Rule =menor+ pr_nombre + igual + cadena + coma+TIPO+coma+ISPRIMARY+mayor;
 

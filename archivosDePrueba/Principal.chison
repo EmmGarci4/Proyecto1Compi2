@@ -1,4 +1,4 @@
-$<
+$<"DATABASES"=[
 <
             "NAME"= "Database 1",
             "Data"= [
@@ -18,7 +18,7 @@ $<
                         >
                     ],
                     "DATA" = [
-                        ${ estudiantes.chison }$
+                        ${ C:\Users\Emely\Documents\Visual Studio 2017\Projects\Proyecto1Compi2\archivosDePrueba\estudiantes.chison }$
                     ]  
                 >,
                 <
@@ -79,7 +79,7 @@ $<
                         >
                     ],
                     "DATA" = [
-                        ${ jeansData.chison }$    
+                        ${ C:\Users\Emely\Documents\Visual Studio 2017\Projects\Proyecto1Compi2\archivosDePrueba\jeansData.chison }$    
                     ]  
                 >,
                 <
@@ -103,7 +103,7 @@ $<
                         >
                     ],
                     "INSTR" = $ 
-                                Int @val = Max(<Select edad from Estudiante where id=@id && Nombre=@Nombre >);
+                                
                                 Return @val;
                               $
                 >
@@ -112,7 +112,7 @@ $<
         <
         "NAME"= "Database 2",
         "Data"= [
-            ${ bd2data.chison }$
+            ${ C:\Users\Emely\Documents\Visual Studio 2017\Projects\Proyecto1Compi2\archivosDePrueba\bd2data.chison }$
         ]
         >,
         <
