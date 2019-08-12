@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace Proyecto1Compi2.com.AST
 	{
 		string nombre;
 		List<Simbolo> parametros;
-		TipoDatoDB tipo;
+		TipoObjetoDB tipo;
 		List<Sentencia> sentencias;
 
-		public CrearFuncion(string nombre, List<Simbolo> parametros, TipoDatoDB tipo, List<Sentencia> sentencias, int linea, int columna) : base(linea, columna)
+		public CrearFuncion(string nombre, List<Simbolo> parametros, TipoObjetoDB tipo, List<Sentencia> sentencias, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;

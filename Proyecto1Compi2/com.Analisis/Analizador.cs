@@ -15,12 +15,25 @@ namespace com.Analisis
 {
 	static class Analizador
 	{
+		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
 		private static List<Error> erroresCQL= new List<Error>();
 		private static List<Error> erroresCHISON = new List<Error>();
 		private static List<Usuario> usuariosdb = new List<Usuario>();
 		private static List<BaseDatos> dbs = new List<BaseDatos>();
-		private static NodoAST ast= null;
+		private static NodoAST ast = null;
 		private static ParseTreeNode raiz;
+
+		internal static void AddBaseDatos(BaseDatos db)
+		{
+			if (!ExisteDB(db.Nombre))
+			{
+				BasesDeDatos.Add(db);
+			}
+			else
+			{
+				Console.WriteLine("ERROR YA EXISTE LA BASE DE DATOS");
+			}
+		}
 		
 
 		public static bool AnalizarCql(String texto){
@@ -57,7 +70,15 @@ namespace com.Analisis
 			Analizador.raiz = arbol.Root;
 			if (raiz != null)
 			{
-				//GeneradorDB.GuardarInformación(raiz);
+				GeneradorDB.GuardarInformación(raiz);
+				foreach (BaseDatos db in Analizador.BasesDeDatos)
+				{
+					db.MostrarBaseDatos();
+				}
+				foreach (Usuario us in Analizador.Usuariosdb)
+				{
+					us.Mostrar();
+				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
@@ -65,6 +86,54 @@ namespace com.Analisis
 			}
 
 			return Analizador.raiz != null;
+		}
+
+		internal static void GenerarArchivos(string v)
+		{
+			StringBuilder cadena = new StringBuilder();
+			cadena.Append("$<\n\"DATABASES\"=[");
+			IEnumerator<BaseDatos> enumerator = BasesDeDatos.GetEnumerator();
+			bool hasNext = enumerator.MoveNext();
+			while (hasNext)
+			{
+				BaseDatos i = enumerator.Current;
+				cadena.Append(i.ToString());
+				hasNext = enumerator.MoveNext();
+				if (hasNext)
+				{
+					cadena.Append(",");
+				}
+			}
+			enumerator.Dispose();
+			cadena.Append("],\n");
+			cadena.Append("\"USERS\"=[");
+			IEnumerator<Usuario> enumerator2 = Usuariosdb.GetEnumerator();
+			bool hasNext2 = enumerator2.MoveNext();
+			while (hasNext2)
+			{
+				Usuario i = enumerator2.Current;
+				cadena.Append(i.ToString());
+				hasNext2 = enumerator2.MoveNext();
+				if (hasNext2)
+				{
+					cadena.Append(",");
+				}
+			}
+			enumerator2.Dispose();
+			cadena.Append("]\n");
+			cadena.Append(">$");
+			Console.WriteLine(cadena);
+		}
+
+		internal static void Clear()
+		{
+			ErroresCQL.Clear();
+			ErroresCHISON.Clear();
+			Usuariosdb.Clear();
+			BasesDeDatos.Clear();
+			ast = null;
+			raiz = null;
+			Console.WriteLine("*************************************************************************");
 		}
 
 		private static string Importar(string texto)
@@ -90,6 +159,9 @@ namespace com.Analisis
 			value = value.Replace("$", String.Empty);
 			value = value.Replace("{", String.Empty);
 			value = value.Replace("}", String.Empty);
+			value = value.Replace(" ", String.Empty);
+			//agregando path directo
+			value = PATH + value;
 			return value;
 		}
 
@@ -143,5 +215,20 @@ namespace com.Analisis
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static List<Error> ErroresCHISON { get => erroresCHISON; set => erroresCHISON = value; }
 		internal static List<BaseDatos> BasesDeDatos { get => dbs; set => dbs = value; }
+
+		public static string PATH => path;
+
+		internal static void AddUsuario(Usuario usu)
+		{
+			if (!ExisteUsuario(usu.Nombre))
+			{
+				Usuariosdb.Add(usu);
+			}
+			else
+			{
+				Console.WriteLine("EL USUARIO YA EXISTE");
+			}
+		}
+
 	}
 }

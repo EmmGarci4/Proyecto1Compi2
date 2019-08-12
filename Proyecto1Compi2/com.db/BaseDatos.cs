@@ -9,24 +9,24 @@ namespace Proyecto1Compi2.com.db
 	class BaseDatos
 	{
 		String nombre;
-		List<Tabla> tablas;
-		Lista_Objetos objetos;
-		Lista_Procedimientos procedimientos;
+		ListaTablas tablas;
+		ListaUserTypes objetos;
+		ListaProcedimientos procedimientos;
 
 
 		public string Nombre { get => nombre; set => nombre = value; }
-		internal List<Tabla> Tablas { get => tablas; set => tablas = value; }
-		internal Lista_Objetos Objetos { get => objetos; set => objetos = value; }
-		internal Lista_Procedimientos Procedimientos { get => procedimientos; set => procedimientos = value; }
+		internal ListaTablas Tablas { get => tablas; set => tablas = value; }
+		internal ListaUserTypes Objetos { get => objetos; set => objetos = value; }
+		internal ListaProcedimientos Procedimientos { get => procedimientos; set => procedimientos = value; }
 
 		public BaseDatos(String nombre, List<object> objetosdb) {
 			this.nombre = nombre;
-			this.tablas = new List<Tabla>();
-			this.objetos = new Lista_Objetos();
-			this.procedimientos = new Lista_Procedimientos();
+			this.tablas = new ListaTablas();
+			this.objetos = new ListaUserTypes();
+			this.procedimientos = new ListaProcedimientos();
 			foreach (object obj in objetosdb) {
 				if (obj is Tabla) {
-					if (!ExisteTabla(((Tabla)obj).Nombre)) {
+					if (!this.tablas.Existe(((Tabla)obj).Nombre)) {
 						this.tablas.Add((Tabla)obj);
 					}
 					else {
@@ -86,56 +86,17 @@ namespace Proyecto1Compi2.com.db
 			this.tablas.Add(tb);
 		}
 
-		public Tabla BuscarTabla(String nombre) {
-			foreach (Tabla tb in this.tablas) {
-				if (tb.Nombre.Equals(nombre)) {
-					return tb;
-				}
-			}
-			return null;
-		}
-
-		public void EliminarTabla() {
-			foreach (Tabla tb in this.tablas)
-			{
-				if (tb.Nombre.Equals(nombre))
-				{
-					this.tablas.Remove(tb);
-				}
-			}
-		}
-
-		public bool ExisteTabla(String nombre)
-		{
-			foreach (Tabla tb in this.tablas)
-			{
-				if (tb.Nombre.Equals(nombre))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
 		public void MostrarBaseDatos()
 		{
-			Console.WriteLine("Base de Datos:"+this.nombre+"********************************");
-			foreach (Tabla tb in this.tablas) {
-				Console.WriteLine("Tabla: "+tb.Nombre);
-				tb.MostrarCabecera();
-				tb.MostrarDatos();
-			}
-			foreach (UserType user in objetos) {
-				user.Mostrar();
-			}
-			foreach (Procedimiento pr in procedimientos) {
-				pr.Mostrar();
-			}
+			Console.WriteLine("********************************Base de Datos:" + this.nombre+"********************************");
+			this.tablas.Mostrar();
+			this.Objetos.Mostrar();
+			this.procedimientos.Mostrar();
 		}
 
 		public void Insertar(string nombre, List<object> cls)
 		{
-			Tabla tabla = BuscarTabla(nombre);
+			Tabla tabla = this.tablas.Buscar(nombre);
 			if (tabla != null)
 			{
 				tabla.AgregarFila(cls);
@@ -147,7 +108,7 @@ namespace Proyecto1Compi2.com.db
 
 		internal void Insertar(string nombre, List<string> columnas, List<object> cls)
 		{
-			Tabla tabla = BuscarTabla(nombre);
+			Tabla tabla = this.tablas.Buscar(nombre);
 			if (tabla != null)
 			{
 				if (tabla.ExistenColumnas(columnas)) {
@@ -160,5 +121,25 @@ namespace Proyecto1Compi2.com.db
 			}
 		}
 
+		public override string ToString()
+		{
+			StringBuilder cadena = new StringBuilder();
+			cadena.Append("\n<\n");
+			cadena.Append("\"NAME\"=\""+Nombre+"\",\n");
+			cadena.Append("\"DATA\"=[");
+			cadena.Append(Objetos.ToString());
+			if (Procedimientos.Count>0) {
+				cadena.Append(",");
+				cadena.Append(procedimientos.ToString());
+			}
+			if (Tablas.Count > 0)
+			{
+				cadena.Append(",");
+				cadena.Append(Tablas.ToString());
+			}
+			cadena.Append("]\n");
+			cadena.Append(">");
+			return cadena.ToString();
+		}
 	}
 }

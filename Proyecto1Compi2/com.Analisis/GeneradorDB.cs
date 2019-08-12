@@ -1,14 +1,12 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
 using Irony.Parsing;
-using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.Analisis
 {
@@ -26,34 +24,28 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
-				
+
 				BaseDatos db = GetBaseDatos(nodo);
-				//validar que las bases de datos existan y luego agregar
-				if (!Analizador.ExisteDB(db.Nombre))
-				{
-					Analizador.BasesDeDatos.Add(db);
-				}
-				else {
-					Console.WriteLine("ERROR YA EXISTE LA BASE DE DATOS");
-				}
+				Analizador.AddBaseDatos(db);
 			}
 		}
 
 		private static BaseDatos GetBaseDatos(ParseTreeNode nodo)
 		{
 			List<object> objetosdb = GetObjetosDb(nodo.ChildNodes.ElementAt(1));
-			return new BaseDatos(nodo.ChildNodes.ElementAt(0).Token.ValueString, objetosdb) ;
+			return new BaseDatos(nodo.ChildNodes.ElementAt(0).Token.ValueString, objetosdb);
 		}
 
 		private static List<object> GetObjetosDb(ParseTreeNode raiz)
 		{
-			List<object> objetosdb=new List<object>();
+			List<object> objetosdb = new List<object>();
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
-				switch (nodo.Term.Name) {
+				switch (nodo.Term.Name)
+				{
 					case "TABLA":
-						Tabla tb = GetTabla(nodo);
-						tb.MostrarCabecera();
+						Tabla tb = GetTabla(objetosdb,nodo);
+						//tb.MostrarCabecera();
 						//tb.MostrarDatos();
 						objetosdb.Add(tb);
 						break;
@@ -75,29 +67,36 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Procedimiento GetProcedimiento(ParseTreeNode nodo)
 		{
-			Dictionary<string, TipoDatoDB> par = GetParametros(nodo.ChildNodes.ElementAt(1));
-			Dictionary<string, TipoDatoDB> ret = GeRetornos(nodo.ChildNodes.ElementAt(1));
+			Dictionary<string, TipoObjetoDB> par = GetParametros(nodo.ChildNodes.ElementAt(1));
+			Dictionary<string, TipoObjetoDB> ret = GeRetornos(nodo.ChildNodes.ElementAt(1));
 			String codigo = nodo.ChildNodes.ElementAt(2).Token.ValueString;
-			codigo=codigo.TrimStart('$');
-			codigo=codigo.TrimEnd('$');
+			codigo = codigo.TrimStart('$');
+			codigo = codigo.TrimEnd('$');
 			Analizador.AnalizarCql(codigo);
 			List<Error> erroresInst = (Analizador.ErroresCQL);
 			//cambiar el numero de linea 
-			Analizador.ErroresCHISON.AddRange(erroresInst);
-			
-			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par,ret,null);
+			if (erroresInst.Count>0) {
+				Analizador.ErroresCHISON.AddRange(erroresInst);
+				codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
+			}
+			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo);
 		}
 
-		private static Dictionary<string, TipoDatoDB> GeRetornos(ParseTreeNode parseTreeNode)
+		private static Dictionary<string, TipoObjetoDB> GeRetornos(ParseTreeNode parseTreeNode)
 		{
-			Dictionary<string, TipoDatoDB> ret = new Dictionary<string, TipoDatoDB>();
+			Dictionary<string, TipoObjetoDB> ret = new Dictionary<string, TipoObjetoDB>();
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
 			{
 				if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("out"))
 				{
 					try
 					{
-						ret.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetTipo(nodo.ChildNodes.ElementAt(1)));
+						TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
+						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1));
+
+							ret.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString,new TipoObjetoDB(t,nombreTipo));
+						
+						
 					}
 					catch (ArgumentException ex)
 					{
@@ -108,13 +107,20 @@ namespace Proyecto1Compi2.com.Analisis
 			return ret;
 		}
 
-		private static Dictionary<string, TipoDatoDB> GetParametros(ParseTreeNode parseTreeNode)
+		private static Dictionary<string, TipoObjetoDB> GetParametros(ParseTreeNode parseTreeNode)
 		{
-			Dictionary<string, TipoDatoDB> param = new Dictionary<string, TipoDatoDB>();
-			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
-				if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("in")) {
-					try {
-						param.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetTipo(nodo.ChildNodes.ElementAt(1)));
+			Dictionary<string, TipoObjetoDB> param = new Dictionary<string, TipoObjetoDB>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
+			{
+				if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("in"))
+				{
+					try
+					{
+						TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
+						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1));
+						param.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo));
+						
+
 					}
 					catch (ArgumentException ex)
 					{
@@ -127,17 +133,21 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static UserType GetObjeto(ParseTreeNode nodo)
 		{
-			return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString, 
+			return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString,
 				GetAtributos(nodo.ChildNodes.ElementAt(1)));
 		}
 
-		private static Dictionary<string, TipoDatoDB> GetAtributos(ParseTreeNode parseTreeNode)
+		private static Dictionary<string, TipoObjetoDB> GetAtributos(ParseTreeNode parseTreeNode)
 		{
-			Dictionary<string, TipoDatoDB> atributos = new Dictionary<string, TipoDatoDB>();
+			Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
 			{
-				try {
-					atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetTipo(nodo.ChildNodes.ElementAt(1)));
+				try
+				{
+					TipoDatoDB td = GetTipo(nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GetNombreTipo(td,nodo.ChildNodes.ElementAt(1));
+					
+					atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(td, nombreTipo));
 				}
 				catch (ArgumentException ex)
 				{
@@ -147,124 +157,193 @@ namespace Proyecto1Compi2.com.Analisis
 			return atributos;
 		}
 
-		private static Tabla GetTabla(ParseTreeNode nodo)
+		private static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode)
 		{
-			List<Columna> columnas = GetColumnas(nodo.ChildNodes.ElementAt(1));
-			Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString);//nombre como parámetro
-			//asignando columnas
-			tb.Columnas = columnas;
-			//agregando datos a la tabla
-			AddDataTabla(tb,nodo.ChildNodes.ElementAt(2));
+			if (td == TipoDatoDB.OBJETO)
+			{
+				return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
+
+			}
+			else if (td == TipoDatoDB.LISTA_OBJETO)
+			{
+				string val = Regex.Replace(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, "list", String.Empty, RegexOptions.IgnoreCase);
+				val = Regex.Replace(val, "<|>", String.Empty, RegexOptions.IgnoreCase);
+
+				return val;
+			}
+			else if (td == TipoDatoDB.SET_OBJETO)
+			{
+				string val = Regex.Replace(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, "set",String.Empty,RegexOptions.IgnoreCase);
+				val = Regex.Replace(val, "<|>", String.Empty, RegexOptions.IgnoreCase);
+
+				return val;
+			}
+			else if (td == TipoDatoDB.MAP_OBJETO)
+			{
+				string val = Regex.Replace(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, "map", String.Empty, RegexOptions.IgnoreCase);
+				val = Regex.Replace(val, "<|>", String.Empty, RegexOptions.IgnoreCase);
+
+				return val;
+			}
+			else
+			{
+				return "";
+			}
+		}
+
+		private static Tabla GetTabla(List<object> objetosdb,ParseTreeNode nodo)
+		{
+			Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)));
+			  //agregando datos a la tabla
+			AddDataTabla(tb, nodo.ChildNodes.ElementAt(2));
 			return tb;
 		}
 
-		private static void AddDataTabla(Tabla tb,ParseTreeNode raiz)
+		private static void AddDataTabla(Tabla tb, ParseTreeNode raiz)
 		{
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
-				Dictionary<string, string> fila = GetFila(nodo);
+				Dictionary<string, object> fila = GetFila(nodo);
 				if (fila != null)
 				{
-					try
-					{
-						if (fila.Count == tb.Columnas.Count)
-						{
-							bool bandera = true;
-							List<object> valores = new List<object>();
-							foreach (Columna cl in tb.Columnas) {
-								if (!fila.ContainsKey(cl.Nombre))
-								{
-									bandera = false;
-								}
-								else {
-									if (IsTipoCompatible(cl.Tipo, fila[cl.Nombre]))
-									{
-										valores.Add(fila[cl.Nombre]);
-									}
-									else {
-										bandera = false;
-									}
-								}
-							}
-							if (bandera) {
-									tb.AgregarFila(valores);
-							}
-						}
-						else
-						{
-							Console.WriteLine("ERROR CANTIDAD DE COLUMNAS NO CONCUERDA CON DATOS DE FILA");
-						}
-					}
-					catch (KeyNotFoundException ex)
-					{
-						Console.WriteLine("ERROR COLUMNA EN DATOS NO EXISTE EN BASE DE DATOS");
-					}
-
+					tb.Insertar(fila);
 				}
 			}
 		}
 
-		private static bool IsTipoCompatible(TipoDatoDB tipo, string v)
+		private static Dictionary<string, object> GetFila(ParseTreeNode fila)
 		{
-			switch (tipo) {
-				case TipoDatoDB.BOOLEAN:
-					return bool.TryParse(v, out bool res);
-				case TipoDatoDB.COUNTER:
-					return int.TryParse(v, out int r1)|| double.TryParse(v, out double r1_1);
-				case TipoDatoDB.DATE:
-					return Regex.IsMatch(v, "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
-				case TipoDatoDB.DOUBLE:
-					return double.TryParse(v, out double r3);
-				case TipoDatoDB.INT:
-					return int.TryParse(v, out int r4);
-				case TipoDatoDB.NULO:
-					return v.ToLower().Equals("null");
-				//	case TipoDatoDB.OBJETO:
-				//		return bool.TryParse(v, out bool r6);
-				case TipoDatoDB.STRING:
-					return true;
-				case TipoDatoDB.TIME:
-					return Regex.IsMatch(v, "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
-				default:
-					return false;
-			}
-		}
-
-		private static Dictionary<string, string> GetFila(ParseTreeNode fila)
-		{
-			Dictionary<string, string> datos= new Dictionary<string, string>();
-			try {
+			Dictionary<string, object> datos = new Dictionary<string, object>();
+			try
+			{
 				foreach (ParseTreeNode nod in fila.ChildNodes)
 				{
-					datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, nod.ChildNodes.ElementAt(1).Token.ValueString);
+					if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATOS"))
+					{
+						//ES UNA LISTA
+						CollectionLista valores = GetListaDatos(nod.ChildNodes.ElementAt(1));
+						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, valores);
+					}
+					else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
+						//ES UN OBJETO
+						Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
+						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
+					}else {
+						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
+
+					}
+
 				}
 			}
-			catch (ArgumentException ex) {
+			catch (ArgumentException ex)
+			{
 				Console.WriteLine("ERROR LEYENDO DATOS DE FILAS DE TABLA DE BASE DE DATOS");
 				return null;
 			}
 			return datos;
 		}
 
-		private static List<Columna> GetColumnas(ParseTreeNode raiz)
+		private static CollectionLista GetListaDatos(ParseTreeNode parseTreeNode)
 		{
-			List<Columna> columnas = new List<Columna>();
-			foreach (ParseTreeNode nodo in raiz.ChildNodes) {
-				Columna cl = GetColumna(nodo);
-				columnas.Add(cl);
+			CollectionLista valores = new CollectionLista();
+			foreach (ParseTreeNode nod in parseTreeNode.ChildNodes)
+			{
+				if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
+				{
+					//DATO primitivo
+					valores.AddItem(GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
+				}
+				else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
+					//lista
+					valores.AddItem(GetListaDatos(nod.ChildNodes.ElementAt(0)));
+				}else
+				{
+					//objeto
+					Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
+					valores.AddItem(new Objeto(atributos));
+				}
 			}
 
+			return valores;
+		}
+
+		private static object GetValor(string valueString)
+		{
+			if (valueString.Contains(".")) {
+				//decimal
+				if (double.TryParse(valueString, out double val1))
+				{
+					return val1;
+				}
+				else
+				{
+					return valueString;
+				}
+			}
+			//entero
+			if (int.TryParse(valueString, out int val2))
+			{
+				return val2;
+			}
+			
+			//booleano
+			else if (bool.TryParse(valueString, out bool val3))
+			{
+				return val3;
+			}
+			else
+			{
+				return valueString;
+			}
+
+		}
+
+		private static List<Columna> GetColumnas(List<object> objetosdb,ParseTreeNode raiz)
+		{
+			List<Columna> columnas = new List<Columna>();
+			foreach (ParseTreeNode nodo in raiz.ChildNodes)
+			{
+				Columna cl = GetColumna(objetosdb,nodo);
+				if (cl!=null) {
+					columnas.Add(cl);
+				}
+			}
 			return columnas;
 		}
 
-		private static Columna GetColumna(ParseTreeNode nodo)
+		private static Columna GetColumna(List<object> objetos,ParseTreeNode nodo)
 		{
-			return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetTipo(nodo.ChildNodes.ElementAt(1)), IsPk(nodo.ChildNodes.ElementAt(2)));
+			TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
+			string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
+			if (!ExisteUserTypeEnDb(objetos, nodo.ChildNodes.ElementAt(1).ChildNodes.ElementAt(0).Token.ValueString))
+			{
+				Console.WriteLine("ERROR NO EXISTE EL USERTYHPE PARA CREAR EL OBJETO");
+				return null;
+			}
+				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString,
+					new TipoObjetoDB(tipo, nombreTipo),
+					IsPk(nodo.ChildNodes.ElementAt(2)));
+			}
+
+		private static bool ExisteUserTypeEnDb(List<object> objetos, string v)
+		{
+			foreach (object ob in objetos)
+			{
+				if (ob.GetType() == typeof(UserType))
+				{
+					if (((UserType)ob).Nombre.Equals(v))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		private static bool IsPk(ParseTreeNode parseTreeNode)
 		{
-			if (bool.TryParse(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, out bool res)) {
+			if (bool.TryParse(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, out bool res))
+			{
 				return res;
 			}
 			return false;
@@ -273,7 +352,8 @@ namespace Proyecto1Compi2.com.Analisis
 		private static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
 		{
 
-			switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower()) {
+			switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
+			{
 				case "string":
 					return TipoDatoDB.STRING;
 				case "int":
@@ -288,42 +368,94 @@ namespace Proyecto1Compi2.com.Analisis
 					return TipoDatoDB.TIME;
 				case "counter":
 					return TipoDatoDB.COUNTER;
+				//listas
+				case "list<string>":
+					return TipoDatoDB.LISTA_STRING;
+				case "list<int>":
+					return TipoDatoDB.LISTA_INT;
+				case "list<double>":
+					return TipoDatoDB.LISTA_DOUBLE;
+				case "list<boolean>":
+					return TipoDatoDB.LISTA_BOOLEAN;
+				case "list<date>":
+					return TipoDatoDB.LISTA_DATE;
+				case "list<time>":
+					return TipoDatoDB.LISTA_TIME;
+				//sets
+				case "set<string>":
+					return TipoDatoDB.SET_STRING;
+				case "set<int>":
+					return TipoDatoDB.SET_INT;
+				case "set<double>":
+					return TipoDatoDB.SET_DOUBLE;
+				case "set<boolean>":
+					return TipoDatoDB.SET_BOOLEAN;
+				case "set<date>":
+					return TipoDatoDB.SET_DATE;
+				case "set<time>":
+					return TipoDatoDB.SET_TIME;
+				//maps
+				case "map<string>":
+					return TipoDatoDB.MAP_STRING;
+				case "map<int>":
+					return TipoDatoDB.MAP_INT;
+				case "map<double>":
+					return TipoDatoDB.MAP_DOUBLE;
+				case "map<boolean>":
+					return TipoDatoDB.MAP_BOOLEAN;
+				case "map<date>":
+					return TipoDatoDB.MAP_DATE;
+				case "map<time>":
+					return TipoDatoDB.MAP_TIME;
 				default:
+					if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Contains("list<"))
+					{
+						return TipoDatoDB.LISTA_OBJETO;
+					}
+					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Contains("set<"))
+					{
+						return TipoDatoDB.SET_OBJETO;
+					}
+					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Contains("map<"))
+					{
+						return TipoDatoDB.MAP_OBJETO;
+					}
+
 					return TipoDatoDB.OBJETO;
 			}
 		}
 
 		private static void GuardarUsuarios(ParseTreeNode lista_usuarios)
 		{
-			foreach (ParseTreeNode usuario in lista_usuarios.ChildNodes) {
-				Usuario usu=GetUsuario(usuario);
-				if (!Analizador.ExisteUsuario(usu.Nombre))
-				{
-					Analizador.Usuariosdb.Add(usu);
-				}
-				else {
-					Console.WriteLine("EL USUARIO YA EXISTE");
-				}
+			foreach (ParseTreeNode usuario in lista_usuarios.ChildNodes)
+			{
+				Usuario usu = GetUsuario(usuario);
+				Analizador.AddUsuario(usu);
 			}
 		}
 
 		private static Usuario GetUsuario(ParseTreeNode raiz)
 		{
-			List<string> permisos = GetListaOtroNombre(raiz.ChildNodes.ElementAt(2));
-			foreach (string per in permisos) {
-				if (!Analizador.ExisteDB(per)) {
-					permisos.Remove(per);
+			List<string> listadb = GetListaOtroNombre(raiz.ChildNodes.ElementAt(2));
+			List<string> permisos = new List<string>();
+			foreach (string per in listadb)
+			{
+				if (Analizador.ExisteDB(per)) {
+					permisos.Add(per);
+				} else
+				{
 					Console.WriteLine("ERROR NO EXISTE LA BASE DE DATOS");
 				}
 			}
 			return new Usuario(raiz.ChildNodes.ElementAt(0).Token.ValueString,
-				raiz.ChildNodes.ElementAt(1).Token.ValueString,permisos);
+				raiz.ChildNodes.ElementAt(1).Token.ValueString, permisos);
 		}
 
 		private static List<string> GetListaOtroNombre(ParseTreeNode lista_nombres)
 		{
 			List<string> nombres = new List<string>();
-			foreach (ParseTreeNode nodo in lista_nombres.ChildNodes) {
+			foreach (ParseTreeNode nodo in lista_nombres.ChildNodes)
+			{
 				nombres.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString);
 			}
 			return nombres;

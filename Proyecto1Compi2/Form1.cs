@@ -50,26 +50,20 @@ namespace Proyecto1Compi2
 
 		private void Btn_leerXml_Click(object sender, EventArgs e)
 		{
-			this.textBox2.Clear();
-			if (Analizador.AnalizarChison(this.textBox1.Text))
-			{
-				this.textBox2.Text = "Finalizado con éxito\n";
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
-			}
-			else
-			{
-				foreach (Error er in Analizador.ErroresCHISON)
-				{
-					this.textBox2.AppendText(er + "\n");
-				}
-			}
-		}
 
-		private void Btn_Probar_Click(object sender, EventArgs e)
-		{
-			Operacion op = new Operacion(new Operacion("12",TipoOperacion.Numero,1,1), new Operacion("12", TipoOperacion.Numero,1,1),
-				TipoOperacion.Suma,1,1);
-			Console.WriteLine("Resultado="+op.GetValor(new TablaSimbolos(0,"global")).ToString());
+			this.textBox2.Clear();
+				if (Analizador.AnalizarChison(this.textBox1.Text))
+				{
+					this.textBox2.Text = "Finalizado con éxito\n";
+					//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				}
+				else
+				{
+					foreach (Error er in Analizador.ErroresCHISON)
+					{
+						this.textBox2.AppendText(er + "\n");
+					}
+				}
 		}
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
@@ -96,6 +90,37 @@ namespace Proyecto1Compi2
 				foreach (Error er in Analizador.ErroresCQL)
 				{
 					this.textBox2.AppendText(er + "\n");
+				}
+			}
+		}
+
+		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
+		{
+			Analizador.Clear();
+		}
+
+		private void Btn_GenerarArchivos_Click(object sender, EventArgs e)
+		{
+			Analizador.GenerarArchivos("ArchivoPrincipal.txt");
+		}
+
+		private void Btn_cargarChison_Click(object sender, EventArgs e)
+		{
+			this.textBox2.Clear();
+			String chi = HandlerFiles.AbrirArchivo(Analizador.PATH + "principal.chison");
+			if (chi != null)
+			{
+				if (Analizador.AnalizarChison(chi))
+				{
+					this.textBox2.Text = "Finalizado con éxito\n";
+					//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				}
+				else
+				{
+					foreach (Error er in Analizador.ErroresCHISON)
+					{
+						this.textBox2.AppendText(er + "\n");
+					}
 				}
 			}
 		}

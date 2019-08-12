@@ -124,11 +124,15 @@ namespace Proyecto1Compi2.com.Analisis
 				|cadena+igual+time
 				|cadena+igual+pr_true
 				|cadena+igual+pr_false
-				|cadena+igual+cor1+LISTA_DATOS+cor2;
+				|cadena+igual+cor1+LISTA_DATOS+cor2
+				|cadena+igual+FILA;
 
 			LISTA_DATOS.Rule =MakeStarRule(LISTA_DATOS,coma,DATO);
 
-			DATO.Rule =cadena|numero|LISTA_DATOS;
+			DATO.Rule =cadena
+				|numero
+				|cor1+LISTA_DATOS+cor2
+				|FILA;
 
 			LISTA_COLUMNAS.Rule = MakeStarRule(LISTA_COLUMNAS,coma,COLUMNA);
 

@@ -13,18 +13,6 @@ namespace com.Analisis.Util
 		Semantico,
 		Advertencia
 	}
-	enum TipoDatoDB
-	{
-		STRING,
-		INT,
-		DOUBLE,
-		BOOLEAN,
-		DATE,
-		TIME,
-		COUNTER,
-		NULO,
-		OBJETO
-	}
 	public enum TipoAccion
 	{
 		Agregar,

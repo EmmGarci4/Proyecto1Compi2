@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto1Compi2.com.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,19 +11,19 @@ namespace com.Analisis.Util
 	{
 		string nombre;
 		object valor;
-		TipoDatoDB tipoDato;
+		TipoObjetoDB tipoDato;
 		int linea;
 		int columna;
 
 
 		public string Nombre { get => nombre; set => nombre = value; }
 		public object Valor { get => valor; set => valor = value; }
-		public TipoDatoDB TipoDato { get => tipoDato; set => tipoDato = value; }
+		public TipoObjetoDB TipoDato { get => tipoDato; set => tipoDato = value; }
 		public int Linea { get => linea; set => linea = value; }
 		public int Columna { get => columna; set => columna = value; }
 
 
-		public Simbolo(string nombre, object valor, TipoDatoDB tipo, int linea, int columna)
+		public Simbolo(string nombre, object valor, TipoObjetoDB tipo, int linea, int columna)
 		{
 			this.Nombre = nombre;
 			this.Valor = valor;
