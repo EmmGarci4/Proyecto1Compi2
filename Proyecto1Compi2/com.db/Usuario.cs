@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Usuario
+	class Usuario:ObjetoDB
 	{
 		String nombre;
 		String password;
 		List<String> permisos;
 
-		public Usuario(string nombre, string password, List<string> permisos)
+		public Usuario(string nombre, string password, List<string> permisos, int linea, int columna) : base(linea, columna)
 		{
 			this.Nombre = nombre;
 			this.Password = password;

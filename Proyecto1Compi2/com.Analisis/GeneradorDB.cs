@@ -33,7 +33,9 @@ namespace Proyecto1Compi2.com.Analisis
 		private static BaseDatos GetBaseDatos(ParseTreeNode nodo)
 		{
 			List<object> objetosdb = GetObjetosDb(nodo.ChildNodes.ElementAt(1));
-			return new BaseDatos(nodo.ChildNodes.ElementAt(0).Token.ValueString, objetosdb);
+			return new BaseDatos(nodo.ChildNodes.ElementAt(0).Token.ValueString, objetosdb,
+				nodo.ChildNodes.ElementAt(0).Token.Location.Line,
+				nodo.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
 		private static List<object> GetObjetosDb(ParseTreeNode raiz)
@@ -79,7 +81,8 @@ namespace Proyecto1Compi2.com.Analisis
 				//Analizador.ErroresCHISON.AddRange(erroresInst);
 				codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
 			}
-			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo);
+			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo,
+				nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
 		private static Dictionary<string, TipoObjetoDB> GeRetornos(ParseTreeNode parseTreeNode)
@@ -152,7 +155,8 @@ namespace Proyecto1Compi2.com.Analisis
 		private static UserType GetObjeto(ParseTreeNode nodo)
 		{
 			return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString,
-				GetAtributos(nodo.ChildNodes.ElementAt(1)));
+				GetAtributos(nodo.ChildNodes.ElementAt(1)),
+				nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
 		private static Dictionary<string, TipoObjetoDB> GetAtributos(ParseTreeNode parseTreeNode)
@@ -221,7 +225,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Tabla GetTabla(List<object> objetosdb,ParseTreeNode nodo)
 		{
-			Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)));
+			Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)),
+				nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
 			  //agregando datos a la tabla
 			AddDataTabla(tb, nodo.ChildNodes.ElementAt(2));
 			return tb;
@@ -255,7 +260,8 @@ namespace Proyecto1Compi2.com.Analisis
 					else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
 						//ES UN OBJETO
 						Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
-						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
+						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos,
+							nod.ChildNodes.ElementAt(0).Token.Location.Line, nod.ChildNodes.ElementAt(0).Token.Location.Column));
 					}else {
 						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
 
@@ -297,7 +303,8 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					//objeto
 					Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
-					valores.AddItem(new Objeto(atributos));
+					valores.AddItem(new Objeto(atributos,
+						nod.ChildNodes.ElementAt(0).Span.Location.Line, nod.ChildNodes.ElementAt(0).Span.Location.Column));
 				}
 			}
 
@@ -506,7 +513,8 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 			return new Usuario(raiz.ChildNodes.ElementAt(0).Token.ValueString,
-				raiz.ChildNodes.ElementAt(1).Token.ValueString, permisos);
+				raiz.ChildNodes.ElementAt(1).Token.ValueString, permisos,
+				raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
 		private static List<string> GetListaOtroNombre(ParseTreeNode lista_nombres)

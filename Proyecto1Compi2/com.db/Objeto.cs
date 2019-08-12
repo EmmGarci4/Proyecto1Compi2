@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Objeto
+	class Objeto:ObjetoDB
 	{
 		Dictionary<string, object> atributos;
 		string tipo;
@@ -42,7 +42,8 @@ namespace Proyecto1Compi2.com.db
 		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
 		public string Tipo { get => tipo; set => tipo = value; }
 
-		public Objeto(Dictionary<string, object> atributos) {
+		public Objeto(Dictionary<string, object> atributos, int linea, int columna) : base(linea, columna)
+		{
 			this.atributos = atributos;
 			Tipo = "";
 		}

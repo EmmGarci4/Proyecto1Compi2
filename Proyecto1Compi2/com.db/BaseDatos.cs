@@ -1,4 +1,6 @@
-﻿using System;
+﻿using com.Analisis;
+using com.Analisis.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class BaseDatos
+	class BaseDatos:ObjetoDB
 	{
 		String nombre;
 		ListaTablas tablas;
@@ -19,7 +21,7 @@ namespace Proyecto1Compi2.com.db
 		internal ListaUserTypes Objetos { get => objetos; set => objetos = value; }
 		internal ListaProcedimientos Procedimientos { get => procedimientos; set => procedimientos = value; }
 
-		public BaseDatos(String nombre, List<object> objetosdb) {
+		public BaseDatos(String nombre, List<object> objetosdb,int linea,int columna):base(linea,columna) {
 			this.nombre = nombre;
 			this.tablas = new ListaTablas();
 			this.objetos = new ListaUserTypes();
@@ -30,7 +32,17 @@ namespace Proyecto1Compi2.com.db
 						this.tablas.Add((Tabla)obj);
 					}
 					else {
-						Console.WriteLine("ERROR LA TABLA YA EXISTE");
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"La tabla '"+((Tabla)obj).Nombre+"' ya existe",
+							((Tabla)obj).Linea,
+							((Tabla)obj).Columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+
 					}
 				}else if (obj is UserType)
 				{
@@ -40,7 +52,16 @@ namespace Proyecto1Compi2.com.db
 					}
 					else
 					{
-						Console.WriteLine("ERROR EL USERTYPE YA EXISTE");
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"El user type '"+((UserType)obj).Nombre+"' ya existe",
+							((UserType)obj).Linea,
+							((UserType)obj).Columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 					}
 				}
 				else if (obj is Procedimiento)
@@ -51,7 +72,16 @@ namespace Proyecto1Compi2.com.db
 					}
 					else
 					{
-						Console.WriteLine("ERROR EL PROCEDMIENTO YA EXISTE");
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe",
+							((Procedimiento)obj).Linea,
+							((Procedimiento)obj).Columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 					}
 					
 				}
@@ -94,7 +124,7 @@ namespace Proyecto1Compi2.com.db
 			this.procedimientos.Mostrar();
 		}
 
-		public void Insertar(string nombre, List<object> cls)
+		public void Insertar(string nombre, List<object> cls,int linea,int columna)
 		{
 			Tabla tabla = this.tablas.Buscar(nombre);
 			if (tabla != null)
@@ -102,7 +132,16 @@ namespace Proyecto1Compi2.com.db
 				tabla.Insertar(cls);
 			}
 			else {
-				Console.WriteLine("ERROR:NO EXISTE LA TABLA");
+				//INSERTANDO ERROR EN TABLA ERRORS
+				Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"La tabla '"+nombre+"' no existe",
+							Linea,
+							Columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 			}
 		}
 
@@ -117,7 +156,17 @@ namespace Proyecto1Compi2.com.db
 			}
 			else
 			{
-				Console.WriteLine("ERROR:NO EXISTE LA TABLA");
+				//INSERTANDO ERROR EN TABLA ERRORS
+				Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"La tabla '"+nombre+"' no existe",
+							Linea,
+							Columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+
 			}
 		}
 

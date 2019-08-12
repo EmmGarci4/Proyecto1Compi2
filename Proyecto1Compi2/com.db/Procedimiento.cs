@@ -9,14 +9,15 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Procedimiento
+	class Procedimiento:ObjetoDB
 	{
 		string nombre;
 		Dictionary<string, TipoObjetoDB> parametros;
 		Dictionary<string, TipoObjetoDB> retornos;
 		string instrucciones;
 
-		public Procedimiento(string nombre, Dictionary<string, TipoObjetoDB> parametros, Dictionary<string, TipoObjetoDB> retornos,string inst)
+		public Procedimiento(string nombre, Dictionary<string, TipoObjetoDB> parametros, Dictionary<string, 
+			TipoObjetoDB> retornos,string inst, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;

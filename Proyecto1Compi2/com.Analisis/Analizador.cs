@@ -30,7 +30,7 @@ namespace com.Analisis
 				new Columna("Columna",new TipoObjetoDB(TipoDatoDB.INT,""),false),
 				new Columna("Fecha",new TipoObjetoDB(TipoDatoDB.DATE,""),false),
 				new Columna("Hora",new TipoObjetoDB(TipoDatoDB.TIME,""),false),
-			}); 
+			},1,1); 
 
 		internal static void AddBaseDatos(BaseDatos db)
 		{

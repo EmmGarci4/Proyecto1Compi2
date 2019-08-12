@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Tabla
+	class Tabla:ObjetoDB
 	{
 		String nombre;
 		List<Columna> columnas;
@@ -20,13 +20,13 @@ namespace Proyecto1Compi2.com.db
 		public string Nombre { get => nombre; set => nombre = value; }
 		public List<Columna> Columnas { get => columnas; set => columnas = value; }
 
-		public Tabla(String nombre, List<Columna> cls)
+		public Tabla(String nombre, List<Columna> cls,int linea,int columna):base(linea,columna)
 		{
 			this.nombre = nombre;
 			this.columnas = cls;
 		}
 
-		public Tabla(String nombre)
+		public Tabla(String nombre, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.columnas = null;
