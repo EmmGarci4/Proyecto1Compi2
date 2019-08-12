@@ -9,15 +9,20 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Procedimiento:ObjetoDB
+	class Procedimiento
 	{
 		string nombre;
 		Dictionary<string, TipoObjetoDB> parametros;
 		Dictionary<string, TipoObjetoDB> retornos;
 		string instrucciones;
 
+		public string Nombre { get => nombre; set => nombre = value; }
+		public Dictionary<string, TipoObjetoDB> Parametros { get => parametros; set => parametros = value; }
+		public Dictionary<string, TipoObjetoDB> Retornos { get => retornos; set => retornos = value; }
+		internal string Instrucciones { get => instrucciones; set => instrucciones = value; }
+
 		public Procedimiento(string nombre, Dictionary<string, TipoObjetoDB> parametros, Dictionary<string, 
-			TipoObjetoDB> retornos,string inst, int linea, int columna) : base(linea, columna)
+			TipoObjetoDB> retornos,string inst)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;
@@ -25,13 +30,8 @@ namespace Proyecto1Compi2.com.db
 			this.instrucciones = inst;
 		}
 
-		public string Nombre { get => nombre; set => nombre = value; }
-		public Dictionary<string, TipoObjetoDB> Parametros { get => parametros; set => parametros = value; }
-		public Dictionary<string, TipoObjetoDB> Retornos { get => retornos; set => retornos = value; }
-		internal string Instrucciones { get => instrucciones; set => instrucciones = value; }
-
 		public string GetCodigoFuente() {
-			return "Codigo";
+			return instrucciones;
 		}
 
 		internal void Mostrar()

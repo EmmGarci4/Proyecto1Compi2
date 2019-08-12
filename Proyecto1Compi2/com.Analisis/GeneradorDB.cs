@@ -55,11 +55,11 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"La tabla '"+((Tabla)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
-							linea,
-							columna,
+							linea+1,
+							columna+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						},linea,columna);
 
 					}
 				}
@@ -76,11 +76,11 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"El user type '"+((UserType)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
-							linea,
-							columna,
+							linea+1,
+							columna+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						},linea,columna);
 					}
 				}
 				else if (obj is Procedimiento)
@@ -96,11 +96,11 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
-							linea,
-							columna,
+							linea+1,
+							columna+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						},linea,columna);
 					}
 
 				}
@@ -149,8 +149,7 @@ namespace Proyecto1Compi2.com.Analisis
 				//Analizador.ErroresCHISON.AddRange(erroresInst);
 				codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
 			}
-			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo,
-				nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
+			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo);
 		}
 
 		private static Dictionary<string, TipoObjetoDB> GeRetornos(ParseTreeNode parseTreeNode)
@@ -176,11 +175,12 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"Error grave leyendo datos en retornos del procedimiento",
-							nodo.Span.Location.Line,
-							nodo.Span.Location.Column,
+							nodo.Span.Location.Line+1,
+							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						}, nodo.Span.Location.Line,
+							nodo.Span.Location.Column);
 					}
 				}
 			}
@@ -209,11 +209,12 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"Error grave leyendo datos en parametros del procedimiento",
-							nodo.Span.Location.Line,
-							nodo.Span.Location.Column,
+							nodo.Span.Location.Line+1,
+							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						}, nodo.Span.Location.Line,
+							nodo.Span.Location.Column);
 					}
 				}
 			}
@@ -223,8 +224,7 @@ namespace Proyecto1Compi2.com.Analisis
 		private static UserType GetObjeto(ParseTreeNode nodo)
 		{
 			return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString,
-				GetAtributos(nodo.ChildNodes.ElementAt(1)),
-				nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
+				GetAtributos(nodo.ChildNodes.ElementAt(1)));
 		}
 
 		private static Dictionary<string, TipoObjetoDB> GetAtributos(ParseTreeNode parseTreeNode)
@@ -246,11 +246,12 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString+"' en el User Type",
-							nodo.Span.Location.Line,
-							nodo.Span.Location.Column,
+							nodo.Span.Location.Line+1,
+							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						}, nodo.Span.Location.Line,
+							nodo.Span.Location.Column);
 
 				}
 			}
@@ -293,8 +294,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Tabla GetTabla(List<object> objetosdb,ParseTreeNode nodo)
 		{
-			Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)),
-				nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
+			Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)));
 			  //agregando datos a la tabla
 			AddDataTabla(tb, nodo.ChildNodes.ElementAt(2));
 			return tb;
@@ -307,7 +307,18 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, object> fila = GetFila(nodo);
 				if (fila != null)
 				{
-					tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
+					List<Error> er =tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
+					foreach (Error err in er) {
+						Analizador.Errors.Insertar(new List<object>
+						{
+							err.Tipo.ToString().ToLower(),
+							err.Mensaje,
+							err.Linea,
+							err.Columna,
+							err.Fecha, //fecha
+							err.Hora//hora
+						},nodo.Span.Location.Line,nodo.Span.Location.Column);
+					}
 				}
 			}
 		}
@@ -328,8 +339,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
 						//ES UN OBJETO
 						Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
-						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos,
-							nod.ChildNodes.ElementAt(0).Token.Location.Line, nod.ChildNodes.ElementAt(0).Token.Location.Column));
+						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
 					}else {
 						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
 
@@ -344,11 +354,12 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"Error grave al leer los datos de la tabla ",
-							fila.Span.Location.Line,
-							fila.Span.Location.Column,
+							fila.Span.Location.Line+1,
+							fila.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						}, fila.Span.Location.Line,
+							fila.Span.Location.Column);
 				return null;
 			}
 			return datos;
@@ -371,8 +382,7 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					//objeto
 					Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
-					valores.AddItem(new Objeto(atributos,
-						nod.ChildNodes.ElementAt(0).Span.Location.Line, nod.ChildNodes.ElementAt(0).Span.Location.Column));
+					valores.AddItem(new Objeto(atributos));
 				}
 			}
 
@@ -435,11 +445,12 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"No existe el User Type '"+nombreTipo+"' para crear el objeto",
-							nodo.Span.Location.Line,
-							nodo.Span.Location.Column,
+							nodo.Span.Location.Line+1,
+							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						}, nodo.Span.Location.Line,
+							nodo.Span.Location.Column);
 
 					return null;
 				}
@@ -573,16 +584,16 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							"Sintáctico",
 							"No se puede asignar permisos al usuario pues La base de datos '"+per+"' no existe",
-							raiz.Span.Location.Line,
-							raiz.Span.Location.Column,
+							raiz.Span.Location.Line+1,
+							raiz.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						});
+						}, raiz.Span.Location.Line,
+							raiz.Span.Location.Column);
 				}
 			}
 			return new Usuario(raiz.ChildNodes.ElementAt(0).Token.ValueString,
-				raiz.ChildNodes.ElementAt(1).Token.ValueString, permisos,
-				raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+				raiz.ChildNodes.ElementAt(1).Token.ValueString, permisos);
 		}
 
 		private static List<string> GetListaOtroNombre(ParseTreeNode lista_nombres)

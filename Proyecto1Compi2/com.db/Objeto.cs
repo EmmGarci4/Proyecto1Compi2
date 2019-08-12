@@ -8,28 +8,40 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Objeto:ObjetoDB
+	class Objeto
 	{
 		Dictionary<string, object> atributos;
 		string tipo;
+
+		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
+		public string Tipo { get => tipo; set => tipo = value; }
+
+		public Objeto(Dictionary<string, object> atributos)
+		{
+			this.atributos = atributos;
+			Tipo = "";
+		}
 
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
 			cadena.Append("<\n");
 			int i = 0;
-			foreach (KeyValuePair<string,object> val in atributos) {
-				cadena.Append("\""+val.Key+"\"=");
+			foreach (KeyValuePair<string, object> val in atributos)
+			{
+				cadena.Append("\"" + val.Key + "\"=");
 				if (val.Value.GetType() == typeof(string) & !Regex.IsMatch(val.Value.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'") &&
 					!Regex.IsMatch(val.Value.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 				{
 					cadena.Append("\"" + val.Value + "\"");
 				}
-				else {
+				else
+				{
 					cadena.Append(val.Value);
 				}
 
-				if (i<atributos.Count-1) {
+				if (i < atributos.Count - 1)
+				{
 					cadena.Append(",\n");
 				}
 				i++;
@@ -38,16 +50,5 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("\n>");
 			return cadena.ToString();
 		}
-
-		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
-		public string Tipo { get => tipo; set => tipo = value; }
-
-		public Objeto(Dictionary<string, object> atributos, int linea, int columna) : base(linea, columna)
-		{
-			this.atributos = atributos;
-			Tipo = "";
-		}
-
-
 	}
 }

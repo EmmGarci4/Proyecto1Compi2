@@ -56,52 +56,6 @@ namespace Proyecto1Compi2.com.db
 			this.procedimientos.Add(obj);
 		}
 
-		public void Insertar(string nombre, List<object> cls,int linea,int columna)
-		{
-			Tabla tabla = this.tablas.Buscar(nombre);
-			if (tabla != null)
-			{
-				tabla.Insertar(cls);
-			}
-			else {
-				//INSERTANDO ERROR EN TABLA ERRORS
-				Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
-							"La tabla '"+nombre+"' no existe",
-							linea,
-							columna,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
-						});
-			}
-		}
-
-		public void Insertar(string nombre, List<string> columnas, List<object> cls,int linea,int columna)
-		{
-			Tabla tabla = this.tablas.Buscar(nombre);
-			if (tabla != null)
-			{
-				if (tabla.ExistenColumnas(columnas)) {
-					//tabla.AgregarFila(cls, columnas);
-				}
-			}
-			else
-			{
-				//INSERTANDO ERROR EN TABLA ERRORS
-				Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
-							"La tabla '"+nombre+"' no existe",
-							linea,
-							columna,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
-						});
-
-			}
-		}
-
 		public void MostrarBaseDatos()
 		{
 			Console.WriteLine("********************************Base de Datos:" + this.nombre + "********************************");

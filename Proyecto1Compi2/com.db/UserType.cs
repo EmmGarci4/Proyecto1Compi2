@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class UserType:ObjetoDB
+	class UserType
 	{
 		string nombre;
 		Dictionary<string, TipoObjetoDB> atributos;
 
-		public UserType(string nombre, Dictionary<string, TipoObjetoDB> atributos, int linea, int columna) : base(linea, columna)
+		public UserType(string nombre, Dictionary<string, TipoObjetoDB> atributos)
 		{
 			this.Nombre = nombre;
 			this.Atributos = atributos;
