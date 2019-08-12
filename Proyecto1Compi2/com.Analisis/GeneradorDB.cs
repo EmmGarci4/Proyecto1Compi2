@@ -76,7 +76,7 @@ namespace Proyecto1Compi2.com.Analisis
 			List<Error> erroresInst = (Analizador.ErroresCQL);
 			//cambiar el numero de linea 
 			if (erroresInst.Count>0) {
-				Analizador.ErroresCHISON.AddRange(erroresInst);
+				//Analizador.ErroresCHISON.AddRange(erroresInst);
 				codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
 			}
 			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo);
@@ -100,7 +100,16 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					catch (ArgumentException ex)
 					{
-						Console.WriteLine("ERROR LEYENDO DATOS DE PARAMETROS DE PROCEDIMIENTO");
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"Error grave leyendo datos en retornos del procedimiento",
+							nodo.Span.Location.Line,
+							nodo.Span.Location.Column,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 					}
 				}
 			}
@@ -124,7 +133,16 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					catch (ArgumentException ex)
 					{
-						Console.WriteLine("ERROR LEYENDO DATOS DE PARAMETROS DE PROCEDIMIENTO");
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"Error grave leyendo datos en parametros del procedimiento",
+							nodo.Span.Location.Line,
+							nodo.Span.Location.Column,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 					}
 				}
 			}
@@ -151,7 +169,17 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				catch (ArgumentException ex)
 				{
-					Console.WriteLine("ERROR YA EXISTE UN ATRIBUTO CON ESE NOMBRE");
+					//INSERTANDO ERROR EN TABLA ERRORS
+					Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString+"' en el User Type",
+							nodo.Span.Location.Line,
+							nodo.Span.Location.Column,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+
 				}
 			}
 			return atributos;
@@ -237,7 +265,16 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			catch (ArgumentException ex)
 			{
-				Console.WriteLine("ERROR LEYENDO DATOS DE FILAS DE TABLA DE BASE DE DATOS");
+				//INSERTANDO ERROR EN TABLA ERRORS
+				Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"Error grave al leer los datos de la tabla ",
+							fila.Span.Location.Line,
+							fila.Span.Location.Column,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 				return null;
 			}
 			return datos;
@@ -315,10 +352,22 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
 			string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
-			if (!ExisteUserTypeEnDb(objetos, nodo.ChildNodes.ElementAt(1).ChildNodes.ElementAt(0).Token.ValueString))
-			{
-				Console.WriteLine("ERROR NO EXISTE EL USERTYHPE PARA CREAR EL OBJETO");
-				return null;
+			if (tipo==TipoDatoDB.OBJETO) {
+				if (!ExisteUserTypeEnDb(objetos, nombreTipo))
+				{
+					//INSERTANDO ERROR EN TABLA ERRORS
+					Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"No existe el User Type '"+nombreTipo+"' para crear el objeto",
+							nodo.Span.Location.Line,
+							nodo.Span.Location.Column,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+
+					return null;
+				}
 			}
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString,
 					new TipoObjetoDB(tipo, nombreTipo),
@@ -444,7 +493,16 @@ namespace Proyecto1Compi2.com.Analisis
 					permisos.Add(per);
 				} else
 				{
-					Console.WriteLine("ERROR NO EXISTE LA BASE DE DATOS");
+					//INSERTANDO ERROR EN TABLA ERRORS
+					Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"No se puede asignar permisos al usuario pues La base de datos '"+per+"' no existe",
+							raiz.Span.Location.Line,
+							raiz.Span.Location.Column,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
 				}
 			}
 			return new Usuario(raiz.ChildNodes.ElementAt(0).Token.ValueString,

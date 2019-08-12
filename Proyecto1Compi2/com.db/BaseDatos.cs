@@ -99,7 +99,7 @@ namespace Proyecto1Compi2.com.db
 			Tabla tabla = this.tablas.Buscar(nombre);
 			if (tabla != null)
 			{
-				tabla.AgregarFila(cls);
+				tabla.Insertar(cls);
 			}
 			else {
 				Console.WriteLine("ERROR:NO EXISTE LA TABLA");

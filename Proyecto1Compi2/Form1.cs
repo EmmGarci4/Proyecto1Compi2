@@ -59,10 +59,10 @@ namespace Proyecto1Compi2
 				}
 				else
 				{
-					foreach (Error er in Analizador.ErroresCHISON)
-					{
-						this.textBox2.AppendText(er + "\n");
-					}
+					//foreach (Error er in Analizador.ErroresCHISON)
+					//{
+					//	this.textBox2.AppendText(er + "\n");
+					//}
 				}
 		}
 
@@ -117,10 +117,10 @@ namespace Proyecto1Compi2
 				}
 				else
 				{
-					foreach (Error er in Analizador.ErroresCHISON)
-					{
-						this.textBox2.AppendText(er + "\n");
-					}
+					//foreach (Error er in Analizador.)
+					//{
+					//	this.textBox2.AppendText(er + "\n");
+					//}
 				}
 			}
 		}

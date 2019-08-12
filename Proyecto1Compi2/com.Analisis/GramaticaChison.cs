@@ -104,7 +104,9 @@ namespace Proyecto1Compi2.com.Analisis
 
 			OBJDB.Rule =TABLA
 				|OBJETO
-				|PROCEDIMIENTO;
+				|PROCEDIMIENTO
+				| SyntaxError + mayor
+				| SyntaxError + coma; ;
 
 			#endregion
 
@@ -125,18 +127,23 @@ namespace Proyecto1Compi2.com.Analisis
 				|cadena+igual+pr_true
 				|cadena+igual+pr_false
 				|cadena+igual+cor1+LISTA_DATOS+cor2
-				|cadena+igual+FILA;
+				|cadena+igual+FILA
+				|SyntaxError+mayor
+				|SyntaxError+coma;
 
 			LISTA_DATOS.Rule =MakeStarRule(LISTA_DATOS,coma,DATO);
 
 			DATO.Rule =cadena
 				|numero
 				|cor1+LISTA_DATOS+cor2
-				|FILA;
+				|FILA
+				|SyntaxError+coma;
 
 			LISTA_COLUMNAS.Rule = MakeStarRule(LISTA_COLUMNAS,coma,COLUMNA);
 
-			COLUMNA.Rule =menor+ pr_nombre + igual + cadena + coma+TIPO+coma+ISPRIMARY+mayor;
+			COLUMNA.Rule = menor + pr_nombre + igual + cadena + coma + TIPO + coma + ISPRIMARY + mayor
+				| SyntaxError + mayor
+				| SyntaxError + coma;
 
 			TIPO.Rule =pr_type+igual+cadena;
 
@@ -149,7 +156,9 @@ namespace Proyecto1Compi2.com.Analisis
 
 			LISTA_ATRIBUTOS.Rule =MakeStarRule(LISTA_ATRIBUTOS,coma,ATRIBUTO);
 
-			ATRIBUTO.Rule =menor+ pr_nombre + igual + cadena + coma+TIPO+mayor;
+			ATRIBUTO.Rule =menor+ pr_nombre + igual + cadena + coma+TIPO+mayor
+				| SyntaxError + mayor
+				| SyntaxError + coma; ;
 
 			#endregion
 

@@ -13,7 +13,7 @@ namespace Proyecto1Compi2.com.db
 	{
 		String nombre;
 		List<Columna> columnas;
-		private List<object> datos;
+		
 		private int contadorFilas;
 
 	
@@ -24,7 +24,12 @@ namespace Proyecto1Compi2.com.db
 		{
 			this.nombre = nombre;
 			this.columnas = cls;
-			this.datos = new List<object>();
+		}
+
+		public Tabla(String nombre)
+		{
+			this.nombre = nombre;
+			this.columnas = null;
 		}
 
 		public void AgregarColumna(Columna columna) {
@@ -54,23 +59,15 @@ namespace Proyecto1Compi2.com.db
 			Console.WriteLine("_____________________________________________________________");
 		}
 
-		internal void AgregarFila(List<object> cls)
-		{
-			//agreagando fila completa
-			this.datos.AddRange(cls);
-			contadorFilas++;
-		}
-
 		internal void MostrarDatos()
 		{
 			int i=0;
-			while (i<datos.Count) {
-				for (int contador=0;contador<columnas.Count;contador++) {
-					Console.Write("---");
-					Console.Write(datos.ElementAt(i));
-					Console.Write("---");
-					i++;
+			while (i < contadorFilas)
+			{
+				foreach (Columna cl in columnas) {
+					Console.Write("|"+cl.Datos.ElementAt(i)+"|");
 				}
+				i++;
 				Console.WriteLine();
 			}
 		}
@@ -81,7 +78,6 @@ namespace Proyecto1Compi2.com.db
 				if (!ExistenColumna(colum)) {
 					return false;
 				}
-
 			}
 			return true;
 		}
@@ -100,52 +96,125 @@ namespace Proyecto1Compi2.com.db
 
 		internal void Insertar(Dictionary<string, object> fila)
 		{
-			//insercion especial
-			//se inserta en las filas que corresponden y los demas valores son nulos
-			foreach (Columna cl in Columnas) {
+			////insercion especial
+			////se inserta en las filas que corresponden y los demas valores son nulos
+			List<object> filaFantasma = new List<object>();
+			bool bandera = true;
+			foreach (Columna cl in Columnas)
+			{
 				try
 				{
 					if (!fila.ContainsKey(cl.Nombre))
 					{
 						if (cl.IsPrimary)
 						{
-							Console.WriteLine("ERROR LA LLAVE PRIMARIA NO PUEDE SER NULA");
-							break;
+							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+							{
+								filaFantasma.Add(contadorFilas + 1);
+							}
+							else
+							{
+								Console.WriteLine("ERROR LA LLAVE PRIMARIA NO PUEDE SER NULA");
+								bandera = false;
+								break;
+							}
 						}
 						else
 						{
-							this.datos.Add("null");
+							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+							{
+								filaFantasma.Add(contadorFilas + 1);
+							}
+							else
+							{
+								filaFantasma.Add("null");
+							}
 						}
 					}
 					else
 					{
-						if (IsTipoCompatible(cl.Tipo.Tipo, fila[cl.Nombre]))
+						if (IsTipoCompatible(cl.Tipo, fila[cl.Nombre]))
 						{
-							this.datos.Add(fila[cl.Nombre]);
+							filaFantasma.Add(fila[cl.Nombre]);
 						}
 						else
 						{
 							if (cl.IsPrimary)
 							{
 								Console.WriteLine("ERROR LA LLAVE PRIMARIA NO PUEDE SER NULA");
+								bandera = false;
 								break;
 							}
 							else
 							{
+								filaFantasma.Add("null");
 								Console.WriteLine("ERROR LOS TIPOS NO SON COMPATIBLES");
 							}
 						}
 					}
 				}
-				catch (KeyNotFoundException ex) {
+				catch (KeyNotFoundException ex)
+				{
 					Console.WriteLine("ERROR COLUMNA EN DATOS NO EXISTE EN BASE DE DATOS");
 				}
 			}
+			if (Columnas.Count == filaFantasma.Count && bandera)
+			{
+				int indice = 0;
+				foreach (Columna cl in Columnas)
+				{
+					cl.Datos.Add(filaFantasma.ElementAt(indice));
+					indice++;
+				}
+				contadorFilas++;
+			}
 		}
 
-		private static bool IsTipoCompatible(TipoDatoDB tipo, object v)
+		internal void Insertar(List<object> list)
 		{
-			switch (tipo)
+			int i = 0;
+			List<object> filaFantasma = new List<object>();
+			foreach (Columna cl in Columnas) {
+				if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+				{
+					filaFantasma.Add(contadorFilas+1);
+				}
+				else {
+					if (i < list.Count)
+					{
+						if (IsTipoCompatible(cl.Tipo, list.ElementAt(i)))
+						{
+							filaFantasma.Add(list.ElementAt(i));
+						}
+						else {
+							if (cl.IsPrimary)
+							{
+								Console.WriteLine("ERROR NO SE PUEDE INSERTAR UN VALOR NUMERO EN LLAVE PRIMARIA");
+							}
+							else {
+								filaFantasma.Add("null");
+							}
+						}
+						i++;
+					}
+					else {
+						filaFantasma.Add("null");
+					}
+				}
+			}
+			if (Columnas.Count==filaFantasma.Count) {
+				int indice = 0;
+				foreach (Columna cl in Columnas) {
+					cl.Datos.Add(filaFantasma.ElementAt(indice));
+					indice++;
+				}
+				contadorFilas++;
+			}	
+		}
+
+		private static bool IsTipoCompatible(TipoObjetoDB tipo, object v)
+		{
+			switch (tipo.Tipo)
 			{
 				case TipoDatoDB.BOOLEAN:
 					return v.GetType() == typeof(bool);
@@ -339,6 +408,14 @@ namespace Proyecto1Compi2.com.db
 			return false;
 		}
 
+		internal void Truncar()
+		{
+			contadorFilas = 0;
+			foreach (Columna cl in Columnas) {
+				cl.Datos.Clear();
+			}
+		}
+
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
@@ -365,28 +442,33 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("\"DATA\" =[");
 			int indice = 0;
 			int cont;
-			while(indice<this.datos.Count) {
+			while (indice <contadorFilas)
+			{
 				cadena.Append("\n<\n");
 				cont = 0;
-				foreach (Columna cl in this.columnas) {
+				foreach (Columna cl in this.columnas)
+				{
 					if (cl.Tipo.Tipo.Equals(TipoDatoDB.STRING))
 					{
-						cadena.Append("\"" + cl.Nombre + "\"=\"" + this.datos.ElementAt(indice) + "\"");
+						cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
 					}
-					else {
-						cadena.Append("\"" + cl.Nombre + "\"=" + this.datos.ElementAt(indice));
+					else
+					{
+						cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
 					}
-					
-					if (cont<this.columnas.Count-1) {
+
+					if (cont < this.columnas.Count - 1)
+					{
 						cadena.Append(",\n");
 					}
 					cont++;
-					indice++;
 				}
 				cadena.Append("\n>");
-				if (indice<this.datos.Count-1) {
+				if (indice < contadorFilas - 1)
+				{
 					cadena.Append(",");
 				}
+				indice++;
 			}
 			cadena.Append("]\n>");
 			return cadena.ToString();

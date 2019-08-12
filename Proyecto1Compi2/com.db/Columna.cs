@@ -13,15 +13,18 @@ namespace Proyecto1Compi2.com.db
 		String nombre;
 		TipoObjetoDB tipo;
 		bool isPrimary;
+		private List<object> datos;
 
 		public string Nombre { get => nombre; set => nombre = value; }
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 		public bool IsPrimary { get => isPrimary; set => isPrimary = value; }
+		public List<object> Datos { get => datos; set => datos = value; }
 
 		public Columna(String titulo, TipoObjetoDB tipo,bool isp) {
 			this.tipo = tipo;
 			this.nombre = titulo;
 			this.isPrimary = isp;
+			this.datos = new List<object>();
 		}
 
 		public override string ToString()
