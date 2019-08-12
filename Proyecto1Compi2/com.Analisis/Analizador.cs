@@ -78,8 +78,9 @@ namespace com.Analisis
 			Analizador.Errors.Truncar();
 			Analizador.raiz = arbol.Root;
 			
-			if (raiz != null)
+			if (raiz != null && arbol.ParserMessages.Count==0)
 			{
+				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
 				foreach (BaseDatos db in Analizador.BasesDeDatos)
 				{
@@ -107,7 +108,7 @@ namespace com.Analisis
 			}
 			Errors.MostrarCabecera();
 			Errors.MostrarDatos();
-			return Analizador.raiz != null;
+			return Analizador.raiz != null && arbol.ParserMessages.Count == 0;
 		}
 
 		internal static void GenerarArchivos(string v)

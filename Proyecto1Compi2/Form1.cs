@@ -113,14 +113,11 @@ namespace Proyecto1Compi2
 				if (Analizador.AnalizarChison(chi))
 				{
 					this.textBox2.Text = "Finalizado con éxito\n";
-					//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				}
 				else
 				{
-					//foreach (Error er in Analizador.)
-					//{
-					//	this.textBox2.AppendText(er + "\n");
-					//}
+					this.textBox2.Text="Finalizado con errores";
+					
 				}
 			}
 		}

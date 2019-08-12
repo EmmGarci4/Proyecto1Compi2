@@ -98,7 +98,8 @@ namespace Proyecto1Compi2.com.Analisis
 			LISTA_USERS.Rule = MakeStarRule(LISTA_USERS, coma, USER);
 
 			
-			DATABASE.Rule =menor+ pr_nombre + igual + cadena + coma+ pr_data + igual + cor1 + LISTA_OBJDB + cor2 + mayor;
+			DATABASE.Rule =menor+ pr_nombre + igual + cadena + coma+ pr_data + igual + cor1 + LISTA_OBJDB + cor2 + mayor
+				| SyntaxError + mayor;
 
 			LISTA_OBJDB.Rule =MakeStarRule(LISTA_OBJDB,coma,OBJDB);
 
@@ -164,7 +165,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 			#region Usuarios
 			
-			USER.Rule = menor+ pr_nombre + igual + cadena + coma+ pr_passwd + igual + cadena + coma+ pr_permisos + igual + cor1 + LISTA_OTRONOMBRES + cor2 + mayor;
+			USER.Rule = menor+ pr_nombre + igual + cadena + coma+ pr_passwd + igual + cadena + coma+ pr_permisos + igual + cor1 + LISTA_OTRONOMBRES + cor2 + mayor
+				| SyntaxError + mayor;
 
 			LISTA_OTRONOMBRES.Rule = MakeStarRule(LISTA_OTRONOMBRES,coma,OTRONOMBRE);
 
