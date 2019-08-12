@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class BaseDatos:ObjetoDB
+	class BaseDatos
 	{
 		String nombre;
 		ListaTablas tablas;
@@ -21,107 +21,39 @@ namespace Proyecto1Compi2.com.db
 		internal ListaUserTypes Objetos { get => objetos; set => objetos = value; }
 		internal ListaProcedimientos Procedimientos { get => procedimientos; set => procedimientos = value; }
 
-		public BaseDatos(String nombre, List<object> objetosdb,int linea,int columna):base(linea,columna) {
+		public BaseDatos(String nombre) {
 			this.nombre = nombre;
 			this.tablas = new ListaTablas();
 			this.objetos = new ListaUserTypes();
 			this.procedimientos = new ListaProcedimientos();
-			foreach (object obj in objetosdb) {
-				if (obj is Tabla) {
-					if (!this.tablas.Existe(((Tabla)obj).Nombre)) {
-						this.tablas.Add((Tabla)obj);
-					}
-					else {
-						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
-							"La tabla '"+((Tabla)obj).Nombre+"' ya existe",
-							((Tabla)obj).Linea,
-							((Tabla)obj).Columna,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
-						});
-
-					}
-				}else if (obj is UserType)
-				{
-					if (!ExisteUserType(((UserType)obj).Nombre))
-					{
-						this.objetos.Add((UserType)obj);
-					}
-					else
-					{
-						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
-							"El user type '"+((UserType)obj).Nombre+"' ya existe",
-							((UserType)obj).Linea,
-							((UserType)obj).Columna,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
-						});
-					}
-				}
-				else if (obj is Procedimiento)
-				{
-					if (!ExisteProcedimiento(((Procedimiento)obj).Nombre))
-					{
-						this.procedimientos.Add((Procedimiento)obj);
-					}
-					else
-					{
-						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
-							"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe",
-							((Procedimiento)obj).Linea,
-							((Procedimiento)obj).Columna,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
-						});
-					}
-					
-				}
-			}
 		}
 
-		private bool ExisteProcedimiento(string nombre)
+		public bool ExisteTabla(string nombre)
 		{
-			foreach (Procedimiento tb in this.procedimientos)
-			{
-				if (tb.Nombre.Equals(nombre))
-				{
-					return true;
-				}
-			}
-			return false;
+			return tablas.Existe(nombre);
+		}
+		public bool ExisteProcedimiento(string nombre)
+		{
+			return procedimientos.Existe(nombre);
 		}
 
-		private bool ExisteUserType(string nombre)
+		public bool ExisteUserType(string nombre)
 		{
-			foreach (UserType tb in this.objetos)
-			{
-				if (tb.Nombre.Equals(nombre))
-				{
-					return true;
-				}
-			}
-			return false;
+			return objetos.Existe(nombre);
 		}
 
 		public void AgregarTabla(Tabla tb) {
 			this.tablas.Add(tb);
 		}
 
-		public void MostrarBaseDatos()
+		public void AgregarUserType(UserType obj)
 		{
-			Console.WriteLine("********************************Base de Datos:" + this.nombre+"********************************");
-			this.tablas.Mostrar();
-			this.Objetos.Mostrar();
-			this.procedimientos.Mostrar();
+			this.objetos.Add(obj);
+		}
+
+		public void AgregarProcedimiento(Procedimiento obj)
+		{
+			this.procedimientos.Add(obj);
 		}
 
 		public void Insertar(string nombre, List<object> cls,int linea,int columna)
@@ -137,15 +69,15 @@ namespace Proyecto1Compi2.com.db
 						{
 							"Sintáctico",
 							"La tabla '"+nombre+"' no existe",
-							Linea,
-							Columna,
+							linea,
+							columna,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
 						});
 			}
 		}
 
-		internal void Insertar(string nombre, List<string> columnas, List<object> cls)
+		public void Insertar(string nombre, List<string> columnas, List<object> cls,int linea,int columna)
 		{
 			Tabla tabla = this.tablas.Buscar(nombre);
 			if (tabla != null)
@@ -161,13 +93,21 @@ namespace Proyecto1Compi2.com.db
 						{
 							"Sintáctico",
 							"La tabla '"+nombre+"' no existe",
-							Linea,
-							Columna,
+							linea,
+							columna,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
 						});
 
 			}
+		}
+
+		public void MostrarBaseDatos()
+		{
+			Console.WriteLine("********************************Base de Datos:" + this.nombre + "********************************");
+			this.tablas.Mostrar();
+			this.Objetos.Mostrar();
+			this.procedimientos.Mostrar();
 		}
 
 		public override string ToString()

@@ -33,9 +33,77 @@ namespace Proyecto1Compi2.com.Analisis
 		private static BaseDatos GetBaseDatos(ParseTreeNode nodo)
 		{
 			List<object> objetosdb = GetObjetosDb(nodo.ChildNodes.ElementAt(1));
-			return new BaseDatos(nodo.ChildNodes.ElementAt(0).Token.ValueString, objetosdb,
-				nodo.ChildNodes.ElementAt(0).Token.Location.Line,
-				nodo.ChildNodes.ElementAt(0).Token.Location.Column);
+			BaseDatos db=new  BaseDatos(nodo.ChildNodes.ElementAt(0).Token.ValueString);
+			foreach (object obj in objetosdb) {
+				AddDbObj(obj, db, nodo.ChildNodes.ElementAt(0).Token.Location.Line, nodo.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+			return db;
+		}
+
+		private static void AddDbObj(object obj, BaseDatos db,int linea,int columna)
+		{
+				if (obj is Tabla)
+				{
+					if (!db.ExisteTabla(((Tabla)obj).Nombre))
+					{
+						db.AgregarTabla((Tabla)obj);
+					}
+					else
+					{
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"La tabla '"+((Tabla)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
+							linea,
+							columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+
+					}
+				}
+				else if (obj is UserType)
+				{
+					if (!db.ExisteUserType(((UserType)obj).Nombre))
+					{
+						db.AgregarUserType((UserType)obj);
+					}
+					else
+					{
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"El user type '"+((UserType)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
+							linea,
+							columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+					}
+				}
+				else if (obj is Procedimiento)
+				{
+					if (!db.ExisteProcedimiento(((Procedimiento)obj).Nombre))
+					{
+						db.AgregarProcedimiento((Procedimiento)obj);
+					}
+					else
+					{
+						//INSERTANDO ERROR EN TABLA ERRORS
+						Analizador.Errors.Insertar(new List<object>
+						{
+							"Sintáctico",
+							"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
+							linea,
+							columna,
+							HandlerFiles.getDate(), //fecha
+							HandlerFiles.getTime()//hora
+						});
+					}
+
+				}
 		}
 
 		private static List<object> GetObjetosDb(ParseTreeNode raiz)
@@ -239,7 +307,7 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, object> fila = GetFila(nodo);
 				if (fila != null)
 				{
-					tb.Insertar(fila);
+					tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
 				}
 			}
 		}

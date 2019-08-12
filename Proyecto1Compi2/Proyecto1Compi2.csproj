@@ -92,7 +92,6 @@
     <Compile Include="com.db\Atributo.cs" />
     <Compile Include="com.db\CollectionLista.cs" />
     <Compile Include="com.db\ListaTablas.cs" />
-    <Compile Include="com.db\ObjetoDB.cs" />
     <Compile Include="com.db\UserType.cs" />
     <Compile Include="com.db\Usuario.cs" />
     <Compile Include="com.Util\Error.cs" />
