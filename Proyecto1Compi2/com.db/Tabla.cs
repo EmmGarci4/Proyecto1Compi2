@@ -1,4 +1,5 @@
-﻿using com.Analisis.Util;
+﻿using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
@@ -94,7 +95,7 @@ namespace Proyecto1Compi2.com.db
 			return false;
 		}
 
-		internal void Insertar(Dictionary<string, object> fila)
+		internal void Insertar(Dictionary<string, object> fila,int linea,int columna)
 		{
 			////insercion especial
 			////se inserta en las filas que corresponden y los demas valores son nulos
@@ -114,7 +115,16 @@ namespace Proyecto1Compi2.com.db
 							}
 							else
 							{
-								Console.WriteLine("ERROR LA LLAVE PRIMARIA NO PUEDE SER NULA");
+								//INSERTANDO ERROR EN TABLA ERRORS
+								Analizador.Errors.Insertar(new List<object>
+								{
+									"Sintáctico",
+									"La llave primaria no puede ser nula",
+									Linea,
+									Columna,
+									HandlerFiles.getDate(), //fecha
+									HandlerFiles.getTime()//hora
+								});
 								bandera = false;
 								break;
 							}
@@ -141,21 +151,46 @@ namespace Proyecto1Compi2.com.db
 						{
 							if (cl.IsPrimary)
 							{
-								Console.WriteLine("ERROR LA LLAVE PRIMARIA NO PUEDE SER NULA");
+								Analizador.Errors.Insertar(new List<object>
+								{
+									"Sintáctico",
+									"La llave primaria no puede ser nula",
+									Linea,
+									Columna,
+									HandlerFiles.getDate(), //fecha
+									HandlerFiles.getTime()//hora
+								});
 								bandera = false;
 								break;
 							}
 							else
 							{
 								filaFantasma.Add("null");
-								Console.WriteLine("ERROR LOS TIPOS NO SON COMPATIBLES");
+								Analizador.Errors.Insertar(new List<object>
+								{
+									"Sintáctico",
+									"El tipo de dato de la columna no es compatible con el dato ingresado",
+									Linea,
+									Columna,
+									HandlerFiles.getDate(), //fecha
+									HandlerFiles.getTime()//hora
+								});
 							}
 						}
 					}
 				}
 				catch (KeyNotFoundException ex)
 				{
-					Console.WriteLine("ERROR COLUMNA EN DATOS NO EXISTE EN BASE DE DATOS");
+					Analizador.Errors.Insertar(new List<object>
+								{
+									"Sintáctico",
+									"Error grave al insertar datos en la tabla "+Nombre,
+									Linea,
+									Columna,
+									HandlerFiles.getDate(), //fecha
+									HandlerFiles.getTime()//hora
+								});
+
 				}
 			}
 			if (Columnas.Count == filaFantasma.Count && bandera)
@@ -189,7 +224,16 @@ namespace Proyecto1Compi2.com.db
 						else {
 							if (cl.IsPrimary)
 							{
-								Console.WriteLine("ERROR NO SE PUEDE INSERTAR UN VALOR NUMERO EN LLAVE PRIMARIA");
+								Analizador.Errors.Insertar(new List<object>
+								{
+									"Sintáctico",
+									"El valor ingresado a la llave primaria no concuerda con el tipo de dato de la columna",
+									Linea,
+									Columna,
+									HandlerFiles.getDate(), //fecha
+									HandlerFiles.getTime()//hora
+								});
+								break;
 							}
 							else {
 								filaFantasma.Add("null");
