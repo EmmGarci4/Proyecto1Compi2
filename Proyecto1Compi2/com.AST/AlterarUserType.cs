@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class AlterarObjeto:Sentencia
+	class AlterarUserType:Sentencia
 	{
 		TipoAccion accion;
 		string objeto;
-		List<Simbolo> agregarattrib;
+		Dictionary<string, TipoObjetoDB> agregarattrib;
 		List<string> quitarattrib;
 
-		public AlterarObjeto(TipoAccion accion, string objeto, List<Simbolo> agregarattrib,  int linea, int columna) : base(linea, columna)
+		public AlterarUserType(TipoAccion accion, string objeto, Dictionary<string, TipoObjetoDB> agregarattrib,  int linea, int columna) : base(linea, columna)
 		{
 			this.Accion = accion;
 			this.Objeto = objeto;
@@ -22,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 			this.Quitarattrib = null;
 		}
 
-		public AlterarObjeto(TipoAccion accion, string objeto, List<Simbolo> agregarattrib, List<string> quitarattrib, int linea, int columna) : base(linea, columna)
+		public AlterarUserType(TipoAccion accion, string objeto, Dictionary<string, TipoObjetoDB> agregarattrib, List<string> quitarattrib, int linea, int columna) : base(linea, columna)
 		{
 			this.Accion = accion;
 			this.Objeto = objeto;
@@ -33,7 +34,7 @@ namespace Proyecto1Compi2.com.AST
 		public TipoAccion Accion { get => accion; set => accion = value; }
 		public string Objeto { get => objeto; set => objeto = value; }
 		public List<string> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
-		internal List<Simbolo> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
+		internal Dictionary<string, TipoObjetoDB> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
 
 		public override object Ejecutar()
 		{

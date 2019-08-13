@@ -53,6 +53,8 @@ namespace com.Analisis
 			Analizador.ErroresCQL.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
+				GeneradorAstCql.GetAST(arbol.Root);
 				//Analizador.ast = GeneradorAstSql.GetAST(arbol.Root);
 				//Expresion ex = (Expresion)Analizador.ast;
 				//if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
@@ -82,14 +84,14 @@ namespace com.Analisis
 			{
 				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
-				foreach (BaseDatos db in Analizador.BasesDeDatos)
-				{
-					db.MostrarBaseDatos();
-				}
-				foreach (Usuario us in Analizador.Usuariosdb)
-				{
-					us.Mostrar();
-				}
+				//foreach (BaseDatos db in Analizador.BasesDeDatos)
+				//{
+				//	db.MostrarBaseDatos();
+				//}
+				//foreach (Usuario us in Analizador.Usuariosdb)
+				//{
+				//	us.Mostrar();
+				//}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
@@ -106,8 +108,8 @@ namespace com.Analisis
 				}, mensaje.Location.Line,
 					mensaje.Location.Column);
 			}
-			Errors.MostrarCabecera();
-			Errors.MostrarDatos();
+			//Errors.MostrarCabecera();
+			//Errors.MostrarDatos();
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0;
 		}
 

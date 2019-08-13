@@ -258,7 +258,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return atributos;
 		}
 
-		private static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode)
+		public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode)
 		{
 			if (td == TipoDatoDB.OBJETO)
 			{
@@ -484,7 +484,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return false;
 		}
 
-		private static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
+		public static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
 		{
 
 			switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower())

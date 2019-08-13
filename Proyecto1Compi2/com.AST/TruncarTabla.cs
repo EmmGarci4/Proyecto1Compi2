@@ -1,5 +1,4 @@
-﻿using com.Analisis.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,23 +6,20 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class EliminarTabla:Sentencia
+	class TruncarTabla:Sentencia
 	{
 		string nombre;
-		bool ifExist;
 
-		public EliminarTabla(string nombre, bool ifExist,int linea,int columna):base(linea,columna)
+		public TruncarTabla(string nombre,int linea,int columna):base(linea,columna)
 		{
 			this.nombre = nombre;
-			this.ifExist = ifExist;
 		}
 
 		public string Nombre { get => nombre; set => nombre = value; }
-		public bool IfExist { get => ifExist; set => ifExist = value; }
 
 		public override object Ejecutar()
 		{
-			Console.WriteLine("Eliminar..."+this.nombre);
+			Console.WriteLine("Truncando tabla "+Nombre);
 			return null;
 		}
 	}

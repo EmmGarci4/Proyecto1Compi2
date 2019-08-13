@@ -166,7 +166,7 @@ namespace com.Analisis
 				RETORNO = new NonTerminal("RETORNO"),
 				USAR_DB = new NonTerminal("USAR_DB"),
 				ALTERAR_TABLA = new NonTerminal("ALTERAR_TABLA"),
-				LISTANOMBRES = new NonTerminal("LISTANOMBRES"),
+				LISTA_ACCESOS = new NonTerminal("LISTA_ACCESOS"),
 				ELIMINAR_TABLA = new NonTerminal("ELIMINAR_TABLA"),
 				ELIMINAR_DB = new NonTerminal("ELIMINAR_DB"),
 				TRUNCAR_TABLA = new NonTerminal("TRUNCAR_TABLA"),
@@ -237,7 +237,6 @@ namespace com.Analisis
 				ELSEIF=new NonTerminal("ELSEIF"),
 				DOWHILE=new NonTerminal("DOWHILE"),
 				INIFOR=new NonTerminal("INIFOR"),
-				TIPODATOFOR=new NonTerminal("TIPODATOFOR"),
 				CALLPROC=new NonTerminal("CALLPROC"),
 				CONTINUE = new NonTerminal("CONTINUE"),
 				CREAR_CURSOR = new NonTerminal("CREAR_CURSOR"),
@@ -254,9 +253,16 @@ namespace com.Analisis
 			#region Gramatica
 			INICIO.Rule = SENTENCIAS;
 
-			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIAFCL);
+			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIADDL);
 
-			SENTENCIA.Rule = SENTENCIADDL | SENTENCIATCL | SENTENCIADCL | SENTENCIASDML | BATCH
+			SENTENCIA.Rule = SENTENCIADDL 
+				| SENTENCIATCL //commit y rollback
+				| SENTENCIADCL //usuarios y permisos
+				| SENTENCIASDML //base de datos
+				| BATCH
+				| CREAR_FUNCION
+				| CREAR_PROC
+				| CREAR_USERTYPE
 				| FUNCIONAGREGACION
 				|SENTENCIAFCL;
 
@@ -314,7 +320,6 @@ namespace com.Analisis
 				| EXPRESION + mayorigual + EXPRESION
 				| EXPRESION + menorigual + EXPRESION
 				| EXPRESION + igualigual + EXPRESION
-				//| EXPRESION + igual + EXPRESION
 				| EXPRESION + notigual + EXPRESION
 				| EXPRESION + and + EXPRESION
 				| EXPRESION + or + EXPRESION
@@ -326,7 +331,7 @@ namespace com.Analisis
 			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2
 				| id+punto+ACCESO + par1 + LISTAEXPRESIONES + par2;
 
-			LISTANOMBRES.Rule = MakePlusRule(LISTANOMBRES, coma, ACCESO);
+			LISTA_ACCESOS.Rule = MakePlusRule(LISTA_ACCESOS, coma, ACCESO);
 
 			LISTAEXPRESIONES.Rule = MakeStarRule(LISTAEXPRESIONES, coma, EXPRESION);
 
@@ -358,7 +363,6 @@ namespace com.Analisis
 				| ALTERAR_TABLA
 				| ELIMINAR_TABLA
 				| TRUNCAR_TABLA
-				| CREAR_USERTYPE
 				| ALTERAR_USERTYPE
 				| ELIMINAR_USERTYPE;
 
@@ -373,12 +377,12 @@ namespace com.Analisis
 			USAR_DB.Rule = pr_usar + nombre + puntoycoma;
 
 			CREAR_DB.Rule = pr_crear + pr_db + nombre + puntoycoma
-				| pr_crear + pr_db +pr_if+pr_not+pr_exist+ nombre + puntoycoma;
+				| pr_crear + pr_db +pr_if+pr_not+pr_exists+ nombre + puntoycoma;
 
 			ELIMINAR_DB.Rule = pr_eliminar + pr_db + nombre + puntoycoma;
 
 			CREAR_TABLA.Rule = pr_crear + pr_tabla + nombre + par1 + LISTACAMPOSTABLA + par2 + puntoycoma
-				| pr_crear + pr_tabla + pr_if + pr_not + pr_exist + nombre + par1 + LISTACAMPOSTABLA + par2 + puntoycoma;
+				| pr_crear + pr_tabla + pr_if + pr_not + pr_exists + nombre + par1 + LISTACAMPOSTABLA + par2 + puntoycoma;
 
 			LISTACAMPOSTABLA.Rule = MakePlusRule(LISTACAMPOSTABLA, coma, CAMPOTABLA);
 
@@ -415,7 +419,7 @@ namespace com.Analisis
 			ATRIBUTO.Rule = nombre + TIPODATO;
 
 			ALTERAR_USERTYPE.Rule = pr_alterar + pr_type + nombre + pr_agregar + par1 + LISTAATRIBUTOS + par2 + puntoycoma
-				| pr_alterar + pr_type + nombre + pr_borrar + par1 + LISTANOMBRES + par2 + puntoycoma;
+				| pr_alterar + pr_type + nombre + pr_borrar + par1 + LISTA_ACCESOS + par2 + puntoycoma;
 
 			ELIMINAR_USERTYPE.Rule =pr_borrar+pr_type+nombre+puntoycoma;
 
@@ -453,9 +457,11 @@ namespace com.Analisis
 			//cambiar listas si se puede eliminar campos de objetos desde aca
 			//
 			BORRAR.Rule =pr_borrar + pr_from + nombre + puntoycoma
-				|pr_borrar+pr_from+nombre+PROPIEDADDONDE+puntoycoma;
+				|pr_borrar+pr_from+nombre+PROPIEDADDONDE+puntoycoma
+				| pr_borrar+LISTA_ACCESOS + pr_from + nombre + puntoycoma
+				| pr_borrar+LISTA_ACCESOS + pr_from + nombre + PROPIEDADDONDE + puntoycoma;
 
-			SELECCIONAR.Rule =pr_seleccionar+LISTANOMBRES+pr_from+nombre+PROPIEDADSELECCIONAR
+			SELECCIONAR.Rule =pr_seleccionar+LISTA_ACCESOS+pr_from+nombre+PROPIEDADSELECCIONAR
 				| pr_seleccionar + por + pr_from + nombre + PROPIEDADSELECCIONAR;
 
 			PROPIEDADSELECCIONAR.Rule = MakeStarRule(PROPIEDADSELECCIONAR,PROPSELECT);
@@ -507,10 +513,8 @@ namespace com.Analisis
 				|DOWHILE
 				|FOR
 				|LLAMADAFUNCION+puntoycoma
-				|CREAR_FUNCION
 				|RETORNO
-				|CREAR_PROC
-				|CALLPROC
+				| CALLPROC
 				|BREAK
 				|CONTINUE
 				|CREAR_CURSOR
@@ -557,13 +561,10 @@ namespace com.Analisis
 
 			BREAK.Rule = pr_break + puntoycoma;
 
-			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + MODIFICADORES + par2 +  BLOQUESENTENCIAS;
+			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + EXPRESION + par2 +  BLOQUESENTENCIAS;
 
 			INIFOR.Rule = id + igual + EXPRESION
-				| TIPODATOFOR+id + igual + EXPRESION;
-
-			TIPODATOFOR.Rule = pr_integer
-				| pr_double;
+				| TIPODATO+id + igual + EXPRESION;
 
 			WHILE.Rule =pr_while+par1+CONDICION+par2+BLOQUESENTENCIAS;
 
@@ -629,13 +630,13 @@ namespace com.Analisis
 				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
 				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString());
 			//NODOS A OMITIR
-			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION);
+			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION,AC_CAMPO);
 			//TERMINALES IGNORADO
 			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
-				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do);		
-			//COMENTA	RIOS IGNORADOS
+				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar);		
+			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);
 			//PRECEDENCIA DE OPERADORES

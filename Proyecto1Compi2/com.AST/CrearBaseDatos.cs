@@ -9,13 +9,16 @@ namespace Proyecto1Compi2.com.AST
 	class CrearBaseDatos : Sentencia
 	{
 		string nombre;
+		bool ifExist;
 
-		protected CrearBaseDatos(string nombre, int linea, int columna) : base(linea, columna)
+		public CrearBaseDatos(string nombre,bool ifexist, int linea, int columna) : base(linea, columna)
 		{
 			this.Nombre = nombre;
+			this.IfExist = ifexist;
 		}
 
 		public string Nombre { get => nombre; set => nombre = value; }
+		public bool IfExist { get => ifExist; set => ifExist = value; }
 
 		public override object Ejecutar()
 		{
