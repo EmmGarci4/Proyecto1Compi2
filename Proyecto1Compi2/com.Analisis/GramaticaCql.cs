@@ -252,7 +252,7 @@ namespace com.Analisis
 			#region Gramatica
 			INICIO.Rule = SENTENCIAS;
 
-			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIADML);
+			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 
 			SENTENCIA.Rule = SENTENCIADDL 
 				| SENTENCIATCL //commit y rollback
@@ -262,8 +262,8 @@ namespace com.Analisis
 				| CREAR_FUNCION
 				| CREAR_PROC
 				| CREAR_USERTYPE
-				| FUNCIONAGREGACION
-				|SENTENCIAFCL;
+				| FUNCIONAGREGACION+puntoycoma
+				| SENTENCIAFCL;
 
 			#region expresion
 
@@ -482,7 +482,7 @@ namespace com.Analisis
 
 			BATCH.Rule = pr_begin + pr_batch + SENTENCIASDML + pr_apply + pr_batch + puntoycoma;
 
-			FUNCIONAGREGACION.Rule = NOMBREFUNCION + par1+menor + SELECCIONAR +mayor+par2 + puntoycoma;
+			FUNCIONAGREGACION.Rule = NOMBREFUNCION + par1+menor + SELECCIONAR +mayor+par2;
 
 			NOMBREFUNCION.Rule = pr_count 
 				| pr_min 
@@ -629,13 +629,13 @@ namespace com.Analisis
 				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
 				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString());
 			//NODOS A OMITIR
-			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION, PROPSELECT);
+			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA);
 			//TERMINALES IGNORADO
 			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
 				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_set,pr_in,
-				pr_from,pr_limit);		
+				pr_from,pr_limit,pr_begin,pr_batch,pr_apply);		
 			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);

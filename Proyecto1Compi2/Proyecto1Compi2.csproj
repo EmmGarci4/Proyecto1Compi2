@@ -73,10 +73,12 @@
     <Compile Include="com.AST\Acceso.cs" />
     <Compile Include="com.AST\AccesoArreglo.cs" />
     <Compile Include="com.AST\Actualizar.cs" />
+    <Compile Include="com.AST\CrearAlterType.cs" />
     <Compile Include="com.AST\AlterarUserType.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />
     <Compile Include="com.AST\AlterarUsuario.cs" />
     <Compile Include="com.AST\AsignacionColumna.cs" />
+    <Compile Include="com.AST\Batch.cs" />
     <Compile Include="com.AST\Borrar.cs" />
     <Compile Include="com.AST\Commit.cs" />
     <Compile Include="com.AST\Condicion.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="com.AST\EliminarTabla.cs" />
     <Compile Include="com.AST\EliminarUserType.cs" />
     <Compile Include="com.AST\Expresion.cs" />
+    <Compile Include="com.AST\FuncionAgregacion.cs" />
     <Compile Include="com.AST\Insertar.cs" />
     <Compile Include="com.AST\Limit.cs" />
     <Compile Include="com.AST\LlamadaFuncion.cs" />

@@ -91,9 +91,73 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetSeleccionar(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "BATCH":
+						n = GetBatch(sentencia.ChildNodes.ElementAt(0));
+						if (n != null) sentencias.Add(n);
+						break;
+					case "FUNCIONAGREGACION":
+						n = GetFuncionAgregacion(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "CREAR_USERTYPE":
+						n = GetCrearUserType(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static NodoAST GetCrearUserType(ParseTreeNode sentencia)
+		{
+			//add
+			Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
+			foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(1).ChildNodes)
+			{
+				TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
+				string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
+				try
+				{
+					atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+				}
+				catch (ArgumentException ex)
+				{
+					Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden agregar dos atributos con el mismo nombre",
+						nodo.ChildNodes.ElementAt(0).Token.Location.Line,
+						nodo.ChildNodes.ElementAt(0).Token.Location.Column));
+				}
+			}
+			return new CrearUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				atributos, sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+		}
+
+		private static NodoAST GetFuncionAgregacion(ParseTreeNode sentencia)
+		{
+			return new FuncionAgregacion(sentencia.ChildNodes.ElementAt(0).Token.ValueString,(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
+				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+		}
+
+		private static NodoAST GetBatch(ParseTreeNode sentencia)
+		{
+			Batch bt = new Batch(sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+			foreach (ParseTreeNode nodo in sentencia.ChildNodes) {
+				switch (nodo.Term.Name) {
+					case "INSERTAR":
+						bt.Sentencias.Add((Sentencia)GetInsertar(nodo));
+						break;
+					case "ACTUALIZAR":
+						bt.Sentencias.Add((Sentencia)GetActualizar(nodo));
+						break;
+					case "BORRAR":
+						bt.Sentencias.Add((Sentencia)GetBorrar(nodo));
+						break;
+					default:
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,"No se puede agregar una sentencia tipo SELECT en un bloque Batch",
+							nodo.Span.Location.Line,nodo.Span.Location.Column));
+						break;
+				}
+			}
+			return bt;
 		}
 
 		private static NodoAST GetSeleccionar(ParseTreeNode sentencia)
