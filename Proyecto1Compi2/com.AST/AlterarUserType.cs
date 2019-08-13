@@ -13,7 +13,7 @@ namespace Proyecto1Compi2.com.AST
 		TipoAccion accion;
 		string objeto;
 		Dictionary<string, TipoObjetoDB> agregarattrib;
-		List<string> quitarattrib;
+		List<Acceso> quitarattrib;
 
 		public AlterarUserType(TipoAccion accion, string objeto, Dictionary<string, TipoObjetoDB> agregarattrib,  int linea, int columna) : base(linea, columna)
 		{
@@ -23,17 +23,17 @@ namespace Proyecto1Compi2.com.AST
 			this.Quitarattrib = null;
 		}
 
-		public AlterarUserType(TipoAccion accion, string objeto, Dictionary<string, TipoObjetoDB> agregarattrib, List<string> quitarattrib, int linea, int columna) : base(linea, columna)
+		public AlterarUserType(TipoAccion accion, string objeto,  List<Acceso> quitarattrib, int linea, int columna) : base(linea, columna)
 		{
 			this.Accion = accion;
 			this.Objeto = objeto;
-			this.Agregarattrib = agregarattrib;
+			this.Agregarattrib = null;
 			this.Quitarattrib = quitarattrib;
 		}
 
 		public TipoAccion Accion { get => accion; set => accion = value; }
 		public string Objeto { get => objeto; set => objeto = value; }
-		public List<string> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
+		public List<Acceso> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
 		internal Dictionary<string, TipoObjetoDB> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
 
 		public override object Ejecutar()

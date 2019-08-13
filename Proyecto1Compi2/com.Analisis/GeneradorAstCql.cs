@@ -27,8 +27,8 @@ namespace Proyecto1Compi2.com.Analisis
 			foreach (ParseTreeNode sentencia in parseTreeNode.ChildNodes) {
 				switch (sentencia.Term.Name) {
 					case "CREAR_DB":
-						NodoAST n= GetCrearDB(sentencia);
-						if(n!=null)sentencias.Add(n);
+						NodoAST n = GetCrearDB(sentencia);
+						if (n != null) sentencias.Add(n);
 						break;
 					case "USAR_DB":
 						n = GetUsarDB(sentencia);
@@ -54,9 +54,246 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetModificarUserType(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "ELIMINAR_USERTYPE":
+						n = GetEliminarUserType(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "COMMIT":
+						sentencias.Add(new Commit(sentencia.Span.Location.Line,
+							sentencia.Span.Location.Column));
+						break;
+					case "ROLLBACK":
+						sentencias.Add(new Rollback(sentencia.Span.Location.Line, 
+							sentencia.Span.Location.Column));
+						break;
+					case "CREAR_USUARIO":
+						sentencias.Add(GetCrearUsuario(sentencia));
+						break;
+					case "OTORGAR":
+						sentencias.Add(GetOtorgarpermiso(sentencia));
+						break;
+					case "DENEGAR":
+						sentencias.Add(GetDenegarPermiso(sentencia));
+						break;
+					case "INSERTAR":
+						n = GetInsertar(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "ACTUALIZAR":
+						n = GetActualizar(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "BORRAR":
+						n = GetBorrar(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "SELECCIONAR":
+						n = GetSeleccionar(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static NodoAST GetSeleccionar(ParseTreeNode sentencia)
+		{
+			List<Acceso> listaAccesos;
+			if (sentencia.ChildNodes.ElementAt(0).Term.Name == "LISTA_ACCESOS")
+			{
+				listaAccesos = GetListaAcceso(sentencia.ChildNodes.ElementAt(0));
+			}
+			else {
+				listaAccesos = null;
+			}
+			Seleccionar seleccionar = new Seleccionar(listaAccesos, sentencia.ChildNodes.ElementAt(1).Token.ValueString,
+				sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+
+			GetPropiedadesSeleccionar(seleccionar,sentencia.ChildNodes.ElementAt(2));
+			return seleccionar;
+		}
+
+		private static void GetPropiedadesSeleccionar(Seleccionar seleccionar, ParseTreeNode parseTreeNode)
+		{
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				switch (nodo.Term.Name) {
+					case "PROPIEDADDONDE":
+						if (seleccionar.PropiedadWhere == null)
+						{
+							Where wh = GetWhere(nodo);
+							if (wh != null) seleccionar.PropiedadWhere = wh;
+						}
+						else {
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,"No se puede agregar dos clausulas Where a una sentencia" +
+								" de selección", nodo.Span.Location.Line,nodo.Span.Location.Column));
+						}
+						break;
+					case "PROPIEDADORDENAR":
+						if (seleccionar.PropiedadOrderBy == null)
+						{
+							OrderBy wh = GetOrderBy(nodo);
+							if (wh != null) seleccionar.PropiedadOrderBy = wh;
+						}
+						else
+						{
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se puede agregar dos clausulas OrderBy a una sentencia" +
+								" de selección", nodo.Span.Location.Line, nodo.Span.Location.Column));
+						}
+						break;
+					case "PROPIEDADLIMIT":
+						if (seleccionar.PropiedadLimit == null)
+						{
+							Limit wh = GetLimit(nodo);
+							if (wh != null) seleccionar.PropiedadLimit = wh;
+						}
+						else
+						{
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se puede agregar dos clausulas Limit a una sentencia" +
+								" de selección", nodo.Span.Location.Line, nodo.Span.Location.Column));
+						}
+						break;
+				}
+			}
+		}
+
+		private static Limit GetLimit(ParseTreeNode nodo)
+		{
+			return new Limit(GetExpresion(nodo.ChildNodes.ElementAt(0)), nodo.ChildNodes.ElementAt(0).Span.Location.Line,
+				nodo.ChildNodes.ElementAt(0).Span.Location.Column);
+		}
+
+		private static OrderBy GetOrderBy(ParseTreeNode nodo)
+		{
+			OrderBy order = new OrderBy(nodo.Span.Location.Line,nodo.Span.Location.Column);
+			foreach (ParseTreeNode nodito in nodo.ChildNodes) {
+				bool isAsc = nodito.ChildNodes.ElementAt(1).Token.ValueString.Equals("asc");
+				order.Propiedades.Add(new PropOrderBy(GetAcceso(nodito.ChildNodes.ElementAt(0)),isAsc));
+			}
+			return order;
+		}
+
+		private static NodoAST GetBorrar(ParseTreeNode sentencia) 
+			{
+			if (sentencia.ChildNodes.Count == 1)
+			{
+				//eliminar todo de tabla
+				return new Borrar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+			else if (sentencia.ChildNodes.Count == 2)
+			{
+				if (sentencia.ChildNodes.ElementAt(0).Term.Name == "AC_CAMPO")
+				{// eliminar acCampo de tabla
+					return new Borrar(sentencia.ChildNodes.ElementAt(1).Token.ValueString, GetAcCampo(sentencia.ChildNodes.ElementAt(0)),
+						sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+				}
+				else
+				{
+					//eliminar todo de tabla con where
+					return new Borrar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, GetWhere(sentencia.ChildNodes.ElementAt(1)),
+						sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+
+				}
+			}
+			else {
+				//eliminar algo de tabla con where
+				return new Borrar(sentencia.ChildNodes.ElementAt(1).Token.ValueString, GetAcCampo(sentencia.ChildNodes.ElementAt(0)),
+					GetWhere(sentencia.ChildNodes.ElementAt(2)), sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+			}
+		}
+
+		private static NodoAST GetActualizar(ParseTreeNode sentencia)
+		{
+			if (sentencia.ChildNodes.Count == 2)
+			{
+				//sin where
+				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+			else {
+				//con where
+				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+					GetWhere(sentencia.ChildNodes.ElementAt(2)),
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+		}
+
+		private static Where GetWhere(ParseTreeNode parseTreeNode)
+		{
+			if (parseTreeNode.ChildNodes.Count == 1)
+			{
+				return new Where(GetCondicion(parseTreeNode.ChildNodes.ElementAt(0)), parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line,
+					parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Column);
+			}
+			else
+			{
+				if (parseTreeNode.ChildNodes.ElementAt(1).Term.Name == "LISTAEXPRESIONES")
+				{
+					//(LISTA DE EXPRESIONES)
+					return new Where(GetExpresion(parseTreeNode.ChildNodes.ElementAt(0)), GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
+											parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line, parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Column);
+
+				}
+				else
+				{
+					//LISTA EN VARIABLES, FORMATO JSON O CORCHETES
+					return new Where(GetExpresion(parseTreeNode.ChildNodes.ElementAt(0)), GetExpresion(parseTreeNode.ChildNodes.ElementAt(1)),
+						parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line, parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Column);
+				}
+			}
+		}
+
+		private static List<AsignacionColumna> GetListaAsignacionesColumna(ParseTreeNode parseTreeNode)
+		{
+			List<AsignacionColumna> lista = new List<AsignacionColumna>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				lista.Add(new AsignacionColumna(GetAcceso(nodo.ChildNodes.ElementAt(0)),GetExpresion(nodo.ChildNodes.ElementAt(1))));
+			}
+			return lista;
+		}
+
+		private static NodoAST GetInsertar(ParseTreeNode sentencia)
+		{
+			if (sentencia.ChildNodes.Count == 2)
+			{
+				//insercion normal
+				return new Insertar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+					GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+			else {
+				//insercion especial
+				return new Insertar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,GetListaStrings(sentencia.ChildNodes.ElementAt(1)),
+					GetListaExpresiones(sentencia.ChildNodes.ElementAt(2)), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+		}
+
+		private static NodoAST GetDenegarPermiso(ParseTreeNode sentencia)
+		{
+			return new DenegarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+		}
+
+		private static NodoAST GetOtorgarpermiso(ParseTreeNode sentencia)
+		{
+			return new OtorgarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+		}
+
+		private static NodoAST GetCrearUsuario(ParseTreeNode sentencia)
+		{
+			return new CrearUsuario(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+		}
+
+		private static NodoAST GetEliminarUserType(ParseTreeNode sentencia)
+		{
+			return new EliminarUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
 		private static NodoAST GetModificarUserType(ParseTreeNode sentencia)
@@ -67,12 +304,12 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(2).ChildNodes) {
 					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-					string nombreTipo = GeneradorDB.GetNombreTipo(tipo,nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
 					try {
-						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo,nombreTipo));
+						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
 					}
 					catch (ArgumentException ex) {
-						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,"No se pueden agregar dos atributos con el mismo nombre",
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden agregar dos atributos con el mismo nombre",
 							nodo.ChildNodes.ElementAt(0).Token.Location.Line,
 							nodo.ChildNodes.ElementAt(0).Token.Location.Column));
 					}
@@ -82,9 +319,66 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			else {
 				//borrar
+				List<Acceso> accesos = GetListaAcceso(sentencia.ChildNodes.ElementAt(1));
+				return new AlterarUserType(TipoAccion.Quitar,sentencia.ChildNodes.ElementAt(0).Token.ValueString,accesos,
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+		}
+
+		private static List<Acceso> GetListaAcceso(ParseTreeNode parseTreeNode)
+		{
+			List<Acceso> lista = new List<Acceso>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				lista.Add(GetAcceso(nodo));
+			}
+			return lista;
+		}
+
+		private static Acceso GetAcceso(ParseTreeNode nodo)
+		{
+			Acceso accesss = new Acceso();
+			foreach (ParseTreeNode ac_campo in nodo.ChildNodes) {
+				object ac = GetAcCampo(ac_campo);
+				if(ac!=null)accesss.Objetos.Enqueue(ac);	
+			}
+			return accesss;
+		}
+
+		private static object GetAcCampo(ParseTreeNode ac_campo)
+		{
+			if (ac_campo.ChildNodes.Count == 1)
+			{
+				//nombre
+				return ac_campo.ChildNodes.ElementAt(0).Token.ValueString;
+			}
+			else if (ac_campo.ChildNodes.Count == 2)
+			{
+				if (ac_campo.ChildNodes.ElementAt(1).Term.Name == "LISTAEXPRESIONES")
+				{
+					//llamada a funcion
+					return new LlamadaFuncion(ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
+						GetListaExpresiones(ac_campo.ChildNodes.ElementAt(1)), ac_campo.ChildNodes.ElementAt(0).Token.Location.Line,
+						ac_campo.ChildNodes.ElementAt(0).Token.Location.Column);
+				}
+				else
+				{
+					//acceso a arreglo
+					return new AccesoArreglo(GetExpresion(ac_campo.ChildNodes.ElementAt(1)),
+						ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
+						ac_campo.ChildNodes.ElementAt(0).Token.Location.Line, ac_campo.ChildNodes.ElementAt(0).Token.Location.Column);
+				}
 
 			}
-			throw new NotImplementedException();
+			return null;
+		}
+
+		private static List<Expresion> GetListaExpresiones(ParseTreeNode parseTreeNode)
+		{
+			List<Expresion> lista = new List<Expresion>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				lista.Add(GetExpresion(nodo));
+			}
+			return lista;
 		}
 
 		private static NodoAST GetTruncarTabla(ParseTreeNode sentencia)
@@ -236,15 +530,16 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static Expresion GetCondicion(ParseTreeNode raiz)
+		private static Condicion GetCondicion(ParseTreeNode raiz)
 		{
 			switch (raiz.ChildNodes.Count) {
 				case 1://true o false
-					return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.Booleano, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					return new Condicion(new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoOperacion.Booleano,
+						raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column), TipoOperacion.Booleano, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 2://not
 					return new Condicion(GetCondicion(raiz.ChildNodes.ElementAt(1)),TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 3://operaciones
-					return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(0)), GetExpresion(raiz.ChildNodes.ElementAt(2)), GetTipoOperacion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(1).Token.Location.Line, raiz.ChildNodes.ElementAt(1).Token.Location.Column);
+					return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(0)), GetExpresion(raiz.ChildNodes.ElementAt(2)), GetTipoOperacion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(1).Token.Location.Line, raiz.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 			return null;
 		}

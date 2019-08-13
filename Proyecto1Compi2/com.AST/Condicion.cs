@@ -27,6 +27,7 @@ namespace Proyecto1Compi2.com.AST
 			this.derecha = null;
 		}
 
+
 		public TipoOperacion TipoOp { get => tipoOp; set => tipoOp = value; }
 		internal Expresion Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Derecha { get => derecha; set => derecha = value; }

@@ -10,9 +10,9 @@ namespace Proyecto1Compi2.com.AST
 	class LlamadaFuncion : Sentencia
 	{
 		string nombre;
-		List<Simbolo> parametros;
+		List<Expresion> parametros;
 
-		public LlamadaFuncion(string nombre, List<Simbolo> parametros, int linea, int columna) : base(linea, columna)
+		public LlamadaFuncion(string nombre, List<Expresion> parametros, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;
@@ -21,9 +21,6 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar()
 		{
 			Console.WriteLine("Llamando funcion..."+this.nombre);
-			foreach (Simbolo s in this.parametros) {
-				Console.WriteLine(s.Nombre);
-			}
 			return null;
 		}
 	}

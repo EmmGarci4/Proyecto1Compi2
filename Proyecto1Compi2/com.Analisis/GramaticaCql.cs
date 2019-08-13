@@ -1,4 +1,4 @@
-﻿using System;
+﻿	using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -108,7 +108,6 @@ namespace com.Analisis
 			var pr_llave = ToTerm("KEY");
 			var pr_primaria = ToTerm("PRIMARY");
 			var pr_not = ToTerm("NOT");
-			var pr_exist = ToTerm("EXIST");
 			var pr_exists = ToTerm("EXISTS");
 			var pr_new = ToTerm("NEW");
 			var pr_truncar = ToTerm("TRUNCATE");
@@ -253,12 +252,12 @@ namespace com.Analisis
 			#region Gramatica
 			INICIO.Rule = SENTENCIAS;
 
-			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIADDL);
+			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIADML);
 
 			SENTENCIA.Rule = SENTENCIADDL 
 				| SENTENCIATCL //commit y rollback
 				| SENTENCIADCL //usuarios y permisos
-				| SENTENCIASDML //base de datos
+				| SENTENCIADML //base de datos
 				| BATCH
 				| CREAR_FUNCION
 				| CREAR_PROC
@@ -372,7 +371,6 @@ namespace com.Analisis
 			SENTENCIADCL.Rule =CREAR_USUARIO
 				|OTORGAR
 				|DENEGAR;
-			;
 
 			USAR_DB.Rule = pr_usar + nombre + puntoycoma;
 
@@ -448,7 +446,7 @@ namespace com.Analisis
 
 
 			ACTUALIZAR.Rule = pr_actualizar + nombre + pr_set + LISTA_ASIGNACIONES + puntoycoma
-				| pr_actualizar + nombre + pr_set + LISTA_ASIGNACIONES + pr_donde + CONDICION + puntoycoma;
+				| pr_actualizar + nombre + pr_set + LISTA_ASIGNACIONES + PROPIEDADDONDE + puntoycoma;
 
 			LISTA_ASIGNACIONES.Rule = MakePlusRule(LISTA_ASIGNACIONES,coma,ASIGNACIONAC);
 
@@ -456,10 +454,10 @@ namespace com.Analisis
 
 			//cambiar listas si se puede eliminar campos de objetos desde aca
 			//
-			BORRAR.Rule =pr_borrar + pr_from + nombre + puntoycoma
-				|pr_borrar+pr_from+nombre+PROPIEDADDONDE+puntoycoma
-				| pr_borrar+LISTA_ACCESOS + pr_from + nombre + puntoycoma
-				| pr_borrar+LISTA_ACCESOS + pr_from + nombre + PROPIEDADDONDE + puntoycoma;
+			BORRAR.Rule = pr_borrar + pr_from + nombre + puntoycoma
+				| pr_borrar + pr_from + nombre + PROPIEDADDONDE + puntoycoma
+				| pr_borrar + AC_CAMPO + pr_from + nombre + puntoycoma
+				| pr_borrar + AC_CAMPO + pr_from + nombre + PROPIEDADDONDE + puntoycoma;
 
 			SELECCIONAR.Rule =pr_seleccionar+LISTA_ACCESOS+pr_from+nombre+PROPIEDADSELECCIONAR
 				| pr_seleccionar + por + pr_from + nombre + PROPIEDADSELECCIONAR;
@@ -471,7 +469,8 @@ namespace com.Analisis
 				| PROPIEDADLIMIT;
 
 			PROPIEDADDONDE.Rule = pr_donde + CONDICION
-				|pr_donde+ACCESO+pr_in+par1+LISTAEXPRESIONES+par2;
+				| pr_donde + EXPRESION + pr_in + EXPRESION
+				| pr_donde + EXPRESION + pr_in + par1 + LISTAEXPRESIONES + par2;
 
 			PROPIEDADORDENAR.Rule = MakePlusRule(PROPIEDADORDENAR,coma,PROPORDER);
 
@@ -626,16 +625,17 @@ namespace com.Analisis
 				pr_if.ToString(), pr_else.ToString(), pr_switch.ToString(), pr_case.ToString(), pr_default.ToString(), pr_for.ToString(), pr_while.ToString(), pr_open.ToString(),
 				pr_break.ToString(), pr_backup.ToString(), pr_restaurar.ToString(), pr_true.ToString(), pr_false.ToString(), pr_call.ToString(), pr_is.ToString(), pr_close.ToString(),
 				pr_time.ToString(), pr_null.ToString(), pr_counter.ToString(), pr_map.ToString(), pr_set.ToString(), pr_list.ToString(), pr_type.ToString(),
-				pr_not.ToString(), pr_exist.ToString(), pr_new.ToString(), pr_llave.ToString(), pr_primaria.ToString(), pr_truncar.ToString(), pr_exists.ToString(), pr_catch.ToString(),
+				pr_not.ToString(), pr_new.ToString(), pr_llave.ToString(), pr_primaria.ToString(), pr_truncar.ToString(), pr_exists.ToString(), pr_catch.ToString(),
 				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
 				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString());
 			//NODOS A OMITIR
-			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION,AC_CAMPO);
+			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, SENTENCIASDML, ASCDESC,NOMBREFUNCION, PROPSELECT);
 			//TERMINALES IGNORADO
 			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
-				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar);		
+				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_set,pr_in,
+				pr_from,pr_limit);		
 			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);

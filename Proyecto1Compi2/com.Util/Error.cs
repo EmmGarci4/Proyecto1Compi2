@@ -47,7 +47,7 @@ namespace com.Analisis.Util
 
 		public override string ToString()
 		{
-			return "Error "+Tipo1+":"+Mensaje1+". En línea:"+Linea1+" y columna:"+Columna;
+			return "Error "+Tipo1+":"+Mensaje1+". En línea:"+Linea1+" y columna:"+Columna+"\n";
 		}
 	}
 }
