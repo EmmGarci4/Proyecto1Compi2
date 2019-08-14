@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Simbolo> Parametros { get => parametros; set => parametros = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			Console.WriteLine("Creando Procedimiento..." + this.nombre);
 			foreach (Simbolo cl in this.parametros)

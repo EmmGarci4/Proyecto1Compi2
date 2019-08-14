@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<Acceso> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
 		internal Dictionary<string, TipoObjetoDB> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			Console.WriteLine("Alterando objeto..." + this.objeto + "->" + this.accion.ToString().ToLower());
 

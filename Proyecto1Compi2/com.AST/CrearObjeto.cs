@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace Proyecto1Compi2.com.AST
 			this.atributos = atributos;
 		}
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			Console.WriteLine("Creando Objeto..." + this.nombre);
 			foreach (Simbolo cl in this.atributos)

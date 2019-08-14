@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			if (Analizador.ExisteDB(nombre))
 			{

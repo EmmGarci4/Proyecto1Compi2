@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto1Compi2.com.db;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,6 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public abstract Object Ejecutar();
+		public abstract Object Ejecutar(Usuario usuario);
 	}
 }

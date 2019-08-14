@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Objeto { get => objeto; set => objeto = value; }
 		internal Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			Console.WriteLine("Creando objeto..." + this.objeto + "->");
 

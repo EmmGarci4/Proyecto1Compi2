@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Usuario { get => usuario; set => usuario = value; }
 		public string BaseDatos { get => baseDatos; set => baseDatos = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			if (Analizador.ExisteUsuario(usuario))
 			{

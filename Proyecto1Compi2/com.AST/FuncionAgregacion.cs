@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto1Compi2.com.db;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal Seleccionar Select { get => select; set => select = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			throw new NotImplementedException();
 		}

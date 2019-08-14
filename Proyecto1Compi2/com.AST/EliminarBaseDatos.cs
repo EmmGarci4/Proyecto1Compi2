@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -19,7 +20,7 @@ namespace Proyecto1Compi2.com.AST
 
 			public string Nombre { get => nombre; set => nombre = value; }
 
-			public override object Ejecutar()
+			public override object Ejecutar(Usuario usuario)
 			{
 			if (Analizador.ExisteDB(nombre))
 			{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto1Compi2.com.db;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			throw new NotImplementedException();
 		}

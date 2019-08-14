@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Proyecto1Compi2.com.db;
+using System.Collections.Generic;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -13,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<PropOrderBy> Propiedades { get => propiedades; set => propiedades = value; }
 
-		public override object Ejecutar()
+		public override object Ejecutar(Usuario usuario)
 		{
 			throw new System.NotImplementedException();
 		}
