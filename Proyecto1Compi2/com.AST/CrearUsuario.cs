@@ -1,4 +1,6 @@
-﻿using System;
+﻿using com.Analisis;
+using Proyecto1Compi2.com.db;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +24,13 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar()
 		{
-			Console.WriteLine("Creando usuario..."+this.nombre+":"+this.passwd);
+			if (!Analizador.ExisteUsuario(nombre))
+			{
+				Analizador.AddUsuario(new Usuario(nombre, passwd));
+			}
+			else {
+				return new ThrowError(Util.TipoThrow.UserAleadyExists, "El usuario '" + nombre + "' ya existe", Linea, Columna);
+			}
 			return null;
 		}
 	}

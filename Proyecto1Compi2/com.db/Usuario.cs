@@ -19,6 +19,13 @@ namespace Proyecto1Compi2.com.db
 			this.Permisos = permisos;
 		}
 
+		public Usuario(string nombre, string password)
+		{
+			this.Nombre = nombre;
+			this.Password = password;
+			this.Permisos = new List<string>();
+		}
+
 		public string Nombre { get => nombre; set => nombre = value; }
 		public string Password { get => password; set => password = value; }
 		public List<string> Permisos { get => permisos; set => permisos = value; }
@@ -47,6 +54,16 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("]\n>");
 
 			return cadena.ToString();
+		}
+
+		internal bool ExistePermiso(string baseDatos)
+		{
+			foreach (string b in permisos) {
+				if (b==baseDatos) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		internal void Mostrar()

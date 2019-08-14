@@ -28,5 +28,6 @@ namespace Proyecto1Compi2.com.Util
 		FunctionAlreadyExists,
 		ProcedureAlreadyExists,
 		ObjectAlreadyExists,
+		Exception
 	}
 }

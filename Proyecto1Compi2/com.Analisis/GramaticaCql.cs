@@ -252,7 +252,7 @@ namespace com.Analisis
 			#region Gramatica
 			INICIO.Rule = SENTENCIAS;
 
-			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIADDL);
+			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 
 			SENTENCIA.Rule = SENTENCIADDL 
 				| SENTENCIATCL //commit y rollback

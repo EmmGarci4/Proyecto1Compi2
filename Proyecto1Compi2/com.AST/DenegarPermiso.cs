@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using com.Analisis;
+using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -22,7 +25,29 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar()
 		{
-			Console.WriteLine("negar permisos a " + Usuario + " sobre " + baseDatos);
+			if (Analizador.ExisteUsuario(usuario))
+			{
+				if (Analizador.ExisteDB(baseDatos))
+				{
+					Usuario u = Analizador.BuscarUsuario(usuario);
+					if (!u.ExistePermiso(baseDatos))
+					{
+						return new ThrowError(TipoThrow.Exception, "El usuario '" + usuario + "' no tiene permisos sobre la base de datos '" + baseDatos + "'", Linea, Columna);
+					}
+					else
+					{
+						u.Permisos.Remove(baseDatos);
+					}
+				}
+				else
+				{
+					return new ThrowError(TipoThrow.BDDontExists, "La base de datos '" + baseDatos + "' no existe", Linea, Columna);
+				}
+			}
+			else
+			{
+				return new ThrowError(TipoThrow.UserDontExists, "El usuario '" + usuario + "' no existe", Linea, Columna);
+			}
 			return null;
 		}
 	}

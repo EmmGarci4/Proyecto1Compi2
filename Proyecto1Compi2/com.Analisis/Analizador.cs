@@ -21,6 +21,17 @@ namespace com.Analisis
 		private static List<Usuario> Usuariosdb = new List<Usuario>();
 		private static List<Error> erroresCQL = new List<Error>();	
 		private static NodoAST ast = null;
+
+		internal static Usuario BuscarUsuario(string usuario)
+		{
+			foreach (Usuario usu in Usuariosdb) {
+				if (usu.Nombre==usuario) {
+					return usu;
+				}
+			}
+			return null;
+		}
+
 		private static ParseTreeNode raiz;
 		private static BaseDatos dbActual;
 		static Tabla errors = new Tabla("errors", new List<Columna> {
@@ -296,6 +307,10 @@ namespace com.Analisis
 			Console.WriteLine("Usuarios: ");
 			foreach (Usuario usu in Usuariosdb) {
 				Console.WriteLine(usu.Nombre+"=>"+usu.Password);
+				Console.WriteLine("Permisos:");
+				foreach (string per in usu.Permisos) {
+					Console.WriteLine(per);
+				}
 			}
 			if (dbActual != null)
 			{
