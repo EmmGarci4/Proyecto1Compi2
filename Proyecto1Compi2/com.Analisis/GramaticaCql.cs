@@ -263,7 +263,8 @@ namespace com.Analisis
 				| CREAR_PROC
 				| CREAR_USERTYPE
 				| FUNCIONAGREGACION+puntoycoma
-				| SENTENCIAFCL;
+				| SENTENCIAFCL
+				;
 
 			#region expresion
 
@@ -596,7 +597,7 @@ namespace com.Analisis
 
 			THROW.Rule = pr_throw + pr_new + nombre + puntoycoma;
 
-			TRYCATCH.Rule = pr_try + BLOQUESENTENCIAS + pr_catch + par1 + nombre + nombre + par2 + BLOQUESENTENCIAS;
+			TRYCATCH.Rule = pr_try + BLOQUESENTENCIAS + pr_catch + par1 + nombre + id + par2 + BLOQUESENTENCIAS;
 
 
 			OPERACIONASIGNACION.Rule = id + mas + igual + EXPRESION + puntoycoma 
@@ -627,7 +628,7 @@ namespace com.Analisis
 				pr_time.ToString(), pr_null.ToString(), pr_counter.ToString(), pr_map.ToString(), pr_set.ToString(), pr_list.ToString(), pr_type.ToString(),
 				pr_not.ToString(), pr_new.ToString(), pr_llave.ToString(), pr_primaria.ToString(), pr_truncar.ToString(), pr_exists.ToString(), pr_catch.ToString(),
 				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
-				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString());
+				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString(),pr_eliminar.ToString());
 			//NODOS A OMITIR
 			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA);
 			//TERMINALES IGNORADO
