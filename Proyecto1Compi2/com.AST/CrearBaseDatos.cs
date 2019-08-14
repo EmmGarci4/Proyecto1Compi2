@@ -1,4 +1,7 @@
-﻿using System;
+﻿using com.Analisis;
+using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +25,16 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar()
 		{
-			Console.WriteLine("Creando base de datos..."+this.nombre);
+			if (Analizador.ExisteDB(nombre))
+			{
+				if (!ifExist) {
+					//lanzar mensaje de error
+					return new ThrowError(TipoThrow.BDAlreadyExists, "La base de datos '"+Nombre+"' ya existe", Linea, Columna);
+				}
+			}
+			else {
+				Analizador.AddBaseDatos(new BaseDatos(Nombre));
+			}
 			return null;
 		}
 	}

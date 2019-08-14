@@ -1,4 +1,6 @@
-﻿using System;
+﻿using com.Analisis;
+using Proyecto1Compi2.com.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +21,14 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar()
 		{
-			Console.WriteLine("Usando base de datos..."+this.nombre);
+			if (Analizador.ExisteDB(nombre))
+			{
+				//indicar al usuario que db esta en uso
+				Analizador.DBActual = Analizador.BuscarDB(nombre);
+			}
+			else {
+				return new ThrowError(TipoThrow.BDDontExists,"La base de datos '"+Nombre+"' no existe",Linea,Columna);
+			}
 			return null;
 		}
 	}

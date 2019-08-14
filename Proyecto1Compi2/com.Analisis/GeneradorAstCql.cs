@@ -15,19 +15,18 @@ namespace Proyecto1Compi2.com.Analisis
 	static class GeneradorAstCql
 	{
 
-		public static NodoAST GetAST(ParseTreeNode raiz)
+		public static List<Sentencia> GetAST(ParseTreeNode raiz)
 		{
-			GetSentencias(raiz.ChildNodes.ElementAt(0));
-			return null;
+			return GetSentencias(raiz.ChildNodes.ElementAt(0));
 		}
 
-		private static List<NodoAST> GetSentencias(ParseTreeNode parseTreeNode)
+		private static List<Sentencia> GetSentencias(ParseTreeNode parseTreeNode)
 		{
-			List<NodoAST> sentencias = new List<NodoAST>();
+			List<Sentencia> sentencias = new List<Sentencia>();
 			foreach (ParseTreeNode sentencia in parseTreeNode.ChildNodes) {
 				switch (sentencia.Term.Name) {
 					case "CREAR_DB":
-						NodoAST n = GetCrearDB(sentencia);
+						Sentencia n = GetCrearDB(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
 					case "USAR_DB":
@@ -108,7 +107,8 @@ namespace Proyecto1Compi2.com.Analisis
 			return sentencias;
 		}
 
-		private static NodoAST GetCrearUserType(ParseTreeNode sentencia)
+		#region Sentencias DB
+		private static Sentencia GetCrearUserType(ParseTreeNode sentencia)
 		{
 			//add
 			Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
@@ -131,13 +131,13 @@ namespace Proyecto1Compi2.com.Analisis
 				atributos, sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
-		private static NodoAST GetFuncionAgregacion(ParseTreeNode sentencia)
+		private static Sentencia GetFuncionAgregacion(ParseTreeNode sentencia)
 		{
 			return new FuncionAgregacion(sentencia.ChildNodes.ElementAt(0).Token.ValueString,(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
-		private static NodoAST GetBatch(ParseTreeNode sentencia)
+		private static Sentencia GetBatch(ParseTreeNode sentencia)
 		{
 			Batch bt = new Batch(sentencia.Span.Location.Line,sentencia.Span.Location.Column);
 			foreach (ParseTreeNode nodo in sentencia.ChildNodes) {
@@ -160,7 +160,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return bt;
 		}
 
-		private static NodoAST GetSeleccionar(ParseTreeNode sentencia)
+		private static Sentencia GetSeleccionar(ParseTreeNode sentencia)
 		{
 			List<Acceso> listaAccesos;
 			if (sentencia.ChildNodes.ElementAt(0).Term.Name == "LISTA_ACCESOS")
@@ -236,7 +236,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return order;
 		}
 
-		private static NodoAST GetBorrar(ParseTreeNode sentencia) 
+		private static Sentencia GetBorrar(ParseTreeNode sentencia) 
 			{
 			if (sentencia.ChildNodes.Count == 1)
 			{
@@ -266,7 +266,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 		}
 
-		private static NodoAST GetActualizar(ParseTreeNode sentencia)
+		private static Sentencia GetActualizar(ParseTreeNode sentencia)
 		{
 			if (sentencia.ChildNodes.Count == 2)
 			{
@@ -316,7 +316,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return lista;
 		}
 
-		private static NodoAST GetInsertar(ParseTreeNode sentencia)
+		private static Sentencia GetInsertar(ParseTreeNode sentencia)
 		{
 			if (sentencia.ChildNodes.Count == 2)
 			{
@@ -333,34 +333,34 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 		}
 
-		private static NodoAST GetDenegarPermiso(ParseTreeNode sentencia)
+		private static Sentencia GetDenegarPermiso(ParseTreeNode sentencia)
 		{
 			return new DenegarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 		}
 
-		private static NodoAST GetOtorgarpermiso(ParseTreeNode sentencia)
+		private static Sentencia GetOtorgarpermiso(ParseTreeNode sentencia)
 		{
 			return new OtorgarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 		}
 
-		private static NodoAST GetCrearUsuario(ParseTreeNode sentencia)
+		private static Sentencia GetCrearUsuario(ParseTreeNode sentencia)
 		{
 			return new CrearUsuario(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 		}
 
-		private static NodoAST GetEliminarUserType(ParseTreeNode sentencia)
+		private static Sentencia GetEliminarUserType(ParseTreeNode sentencia)
 		{
 			return new EliminarUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
-		private static NodoAST GetModificarUserType(ParseTreeNode sentencia)
+		private static Sentencia GetModificarUserType(ParseTreeNode sentencia)
 		{
 			if (sentencia.ChildNodes.Count == 3)
 			{
@@ -445,13 +445,13 @@ namespace Proyecto1Compi2.com.Analisis
 			return lista;
 		}
 
-		private static NodoAST GetTruncarTabla(ParseTreeNode sentencia)
+		private static Sentencia GetTruncarTabla(ParseTreeNode sentencia)
 		{
 			return new TruncarTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
-		private static NodoAST GetEliminarTabla(ParseTreeNode sentencia)
+		private static Sentencia GetEliminarTabla(ParseTreeNode sentencia)
 		{
 			if (sentencia.ChildNodes.Count == 1)
 			{
@@ -466,7 +466,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 		}
 
-		private static NodoAST GetModificarTabla(ParseTreeNode sentencia)
+		private static Sentencia GetModificarTabla(ParseTreeNode sentencia)
 		{
 			if (sentencia.ChildNodes.Count == 3)
 			{
@@ -495,7 +495,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 		}
 
-		private static NodoAST GetCrearTabla(ParseTreeNode sentencia)
+		private static Sentencia GetCrearTabla(ParseTreeNode sentencia)
 		{
 			Boolean ifexist = sentencia.ChildNodes.Count == 2;
 				List<object> cls = GetColumnasTabla(sentencia.ChildNodes.ElementAt(1));
@@ -550,19 +550,19 @@ namespace Proyecto1Compi2.com.Analisis
 			return nombres;
 		}
 
-		private static NodoAST GetEliminarDB(ParseTreeNode sentencia)
+		private static Sentencia GetEliminarDB(ParseTreeNode sentencia)
 		{
 			return new EliminarBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
-		private static NodoAST GetUsarDB(ParseTreeNode sentencia)
+		private static Sentencia GetUsarDB(ParseTreeNode sentencia)
 		{
 			return new UsarBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
-		private static NodoAST GetCrearDB(ParseTreeNode sentencia)
+		private static Sentencia GetCrearDB(ParseTreeNode sentencia)
 		{
 			if (sentencia.ChildNodes.Count == 1)
 			{
@@ -574,7 +574,8 @@ namespace Proyecto1Compi2.com.Analisis
 					sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 		}
-
+		#endregion
+	
 		#region Expresion
 		private static Expresion GetExpresion(ParseTreeNode raiz)
 		{

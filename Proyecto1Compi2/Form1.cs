@@ -34,16 +34,15 @@ namespace Proyecto1Compi2
 				{
 					foreach (Error er in Analizador.ErroresCQL)
 					{
-						this.textBox2.AppendText(er+"\n");
+						this.textBox2.AppendText(er.ToString());
 					}
 				}
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
 			}
 			else
 			{
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					this.textBox2.AppendText(er + "\n");
+					this.textBox2.AppendText(er.ToString());
 				}
 			}
 		}
@@ -80,7 +79,7 @@ namespace Proyecto1Compi2
 				{
 					foreach (Error er in Analizador.ErroresCQL)
 					{
-						this.textBox2.AppendText(er + "\n");
+						this.textBox2.AppendText(er.ToString());
 					}
 				}
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
@@ -89,7 +88,7 @@ namespace Proyecto1Compi2
 			{
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					this.textBox2.AppendText(er + "\n");
+					this.textBox2.AppendText(er.ToString());
 				}
 			}
 		}

@@ -104,6 +104,7 @@
     <Compile Include="com.AST\Rollback.cs" />
     <Compile Include="com.AST\Seleccionar.cs" />
     <Compile Include="com.AST\Sentencia.cs" />
+    <Compile Include="com.AST\ThrowError.cs" />
     <Compile Include="com.AST\TruncarTabla.cs" />
     <Compile Include="com.AST\UsarBaseDatos.cs" />
     <Compile Include="com.AST\Where.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="com.db\ListaProcedimientos.cs" />
     <Compile Include="com.db\Procedimiento.cs" />
     <Compile Include="com.db\Tabla.cs" />
+    <Compile Include="com.Util\TipoThrow.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Proyecto1Compi2.com.AST;
+using Proyecto1Compi2.com.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,12 +18,22 @@ namespace com.Analisis.Util
 		string hora;
 
 		public Error(TipoError tipo, String mensaje,int linea, int columna) {
-			this.Mensaje1 = mensaje;
-			this.Linea1 = linea+1;
-			this.Columna1 = columna+1;
-			this.Tipo1 = tipo;
+			this.mensaje = mensaje;
+			this.linea = linea+1;
+			this.columna = columna+1;
+			this.tipo = tipo;
 			this.fecha = "";
 			this.hora = "";
+		}
+
+		public Error(ThrowError error)
+		{
+			this.mensaje = error.Mensaje;
+			this.linea = error.Linea + 1;
+			this.columna = error.Columna + 1;
+			this.fecha = "";
+			this.hora = "";
+			tipo = TipoError.Semantico;
 		}
 
 		public Error(TipoError tipo, string mensaje, int linea, int columna,  string fecha, string hora)
@@ -34,20 +46,16 @@ namespace com.Analisis.Util
 			this.hora = hora;
 		}
 
-		public string Mensaje { get => Mensaje1; set => Mensaje1 = value; }
-		public int Linea { get => Linea1; set => Linea1 = value; }
-		public int Columna { get => Columna1; set => Columna1 = value; }
-		public TipoError Tipo { get => Tipo1; set => Tipo1 = value; }
-		public string Mensaje1 { get => mensaje; set => mensaje = value; }
-		public int Linea1 { get => linea; set => linea = value; }
-		public int Columna1 { get => columna; set => columna = value; }
-		public TipoError Tipo1 { get => tipo; set => tipo = value; }
+		public string Mensaje { get => mensaje; set => mensaje = value; }
+		public int Linea { get => linea; set => linea = value; }
+		public int Columna { get => columna; set => columna = value; }
+		public TipoError Tipo { get => tipo; set => tipo = value; }
 		public string Fecha { get => fecha; set => fecha = value; }
 		public string Hora { get => hora; set => hora = value; }
 
 		public override string ToString()
 		{
-			return "Error "+Tipo1+":"+Mensaje1+". En línea:"+Linea1+" y columna:"+Columna+"\n";
+			return "Error "+tipo+":"+mensaje+". En línea:"+linea+" y columna:"+Columna+"\r\n";
 		}
 	}
 }

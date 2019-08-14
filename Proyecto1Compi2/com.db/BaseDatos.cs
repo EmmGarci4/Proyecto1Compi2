@@ -18,7 +18,7 @@ namespace Proyecto1Compi2.com.db
 
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal ListaTablas Tablas { get => tablas; set => tablas = value; }
-		internal ListaUserTypes Objetos { get => objetos; set => objetos = value; }
+		internal ListaUserTypes UserTypes { get => objetos; set => objetos = value; }
 		internal ListaProcedimientos Procedimientos { get => procedimientos; set => procedimientos = value; }
 
 		public BaseDatos(String nombre) {
@@ -60,7 +60,7 @@ namespace Proyecto1Compi2.com.db
 		{
 			Console.WriteLine("********************************Base de Datos:" + this.nombre + "********************************");
 			this.tablas.Mostrar();
-			this.Objetos.Mostrar();
+			this.UserTypes.Mostrar();
 			this.procedimientos.Mostrar();
 		}
 
@@ -70,7 +70,7 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("\n<\n");
 			cadena.Append("\"NAME\"=\""+Nombre+"\",\n");
 			cadena.Append("\"DATA\"=[");
-			cadena.Append(Objetos.ToString());
+			cadena.Append(UserTypes.ToString());
 			if (Procedimientos.Count>0) {
 				cadena.Append(",");
 				cadena.Append(procedimientos.ToString());

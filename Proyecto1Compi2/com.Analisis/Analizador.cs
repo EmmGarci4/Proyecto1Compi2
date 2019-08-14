@@ -17,11 +17,12 @@ namespace com.Analisis
 	static class Analizador
 	{
 		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
-		private static List<Error> erroresCQL= new List<Error>();
-		private static List<Usuario> usuariosdb = new List<Usuario>();
-		private static List<BaseDatos> dbs = new List<BaseDatos>();
+		private static List<BaseDatos> BasesDeDatos = new List<BaseDatos>();
+		private static List<Usuario> Usuariosdb = new List<Usuario>();
+		private static List<Error> erroresCQL = new List<Error>();	
 		private static NodoAST ast = null;
 		private static ParseTreeNode raiz;
+		private static BaseDatos dbActual;
 		static Tabla errors = new Tabla("errors", new List<Columna> {
 				new Columna("Numero",new TipoObjetoDB(TipoDatoDB.COUNTER,""),true),
 				new Columna("Tipo",new TipoObjetoDB(TipoDatoDB.STRING,""),false),
@@ -53,13 +54,19 @@ namespace com.Analisis
 			Analizador.ErroresCQL.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
-				GeneradorAstCql.GetAST(arbol.Root);
-				//Analizador.ast = GeneradorAstSql.GetAST(arbol.Root);
-				//Expresion ex = (Expresion)Analizador.ast;
-				//if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
-				//	Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
-				//}
+				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
+				List<Sentencia> sentencias=GeneradorAstCql.GetAST(arbol.Root);
+				if (Analizador.ErroresCQL.Count==0) {
+					foreach (Sentencia sentencia in sentencias) {
+						object respuesta=sentencia.Ejecutar();
+						if (respuesta!=null) {
+							if (respuesta.GetType()==typeof(ThrowError)) {
+								Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
+							}
+						}
+					}
+					MostrarReporteDeEstado();
+				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
@@ -215,7 +222,7 @@ namespace com.Analisis
 
 		public static bool ExisteUsuario(string nombre)
 		{
-			foreach (Usuario db in usuariosdb)
+			foreach (Usuario db in Usuariosdb)
 			{
 				if (db.Nombre.Equals(nombre))
 				{
@@ -226,7 +233,7 @@ namespace com.Analisis
 		}
 
 		public static bool ExisteDB(string nombre) {
-			foreach (BaseDatos db in dbs) {
+			foreach (BaseDatos db in BasesDeDatos) {
 				if (db.Nombre.Equals(nombre)) {
 					return true;
 				}
@@ -236,13 +243,10 @@ namespace com.Analisis
 
 		public static NodoAST AST { get => ast; }
 		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
-		internal static List<Usuario> Usuariosdb { get => usuariosdb; set => usuariosdb = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
-		internal static List<BaseDatos> BasesDeDatos { get => dbs; set => dbs = value; }
-
 		public static string PATH => path;
-
 		internal static Tabla Errors { get => errors; set => errors = value; }
+		internal static BaseDatos DBActual { get => dbActual; set => dbActual = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{
@@ -256,5 +260,66 @@ namespace com.Analisis
 			}
 		}
 
+		internal static BaseDatos BuscarDB(string nombre)
+		{
+			foreach (BaseDatos db in BasesDeDatos)
+			{
+				if (db.Nombre == nombre)
+				{
+					return db;
+				}
+			}
+			return null;
+		}
+
+		internal static void EliminarDB(string nombre)
+		{
+			try
+			{
+				BasesDeDatos.Remove(BuscarDB(nombre));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error removiendo bases de datos");
+			}
+		}
+
+		private static void MostrarReporteDeEstado() {
+			Console.WriteLine("********************************************************************************************");
+			Console.WriteLine(HandlerFiles.getDate()+"="+HandlerFiles.getTime());
+			Console.WriteLine("------------------------------------------------------");
+			Console.WriteLine("Bases de Datos: ");
+			foreach (BaseDatos db in BasesDeDatos) {
+				Console.WriteLine(db.Nombre);
+			}
+			Console.WriteLine("------------------------------------------------------");
+			Console.WriteLine("Usuarios: ");
+			foreach (Usuario usu in Usuariosdb) {
+				Console.WriteLine(usu.Nombre+"=>"+usu.Password);
+			}
+			if (dbActual != null)
+			{
+				Console.WriteLine("------------------------------------------------------");
+				Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
+				foreach (Tabla tb in dbActual.Tablas) {
+					Console.WriteLine("Tabla: "+tb.Nombre);
+					foreach (Columna cl in tb.Columnas) {
+						Console.WriteLine(cl.Nombre+"=>"+cl.Tipo);
+					}
+				}
+				foreach (UserType ut in dbActual.UserTypes) {
+					Console.WriteLine("UserType: "+ut.Nombre);
+					foreach (KeyValuePair<string,TipoObjetoDB> atributos in ut.Atributos) {
+						Console.WriteLine(atributos.Key+"=>"+atributos.Value);
+					}
+				}
+				foreach (Procedimiento pr in dbActual.Procedimientos) {
+					Console.WriteLine("Procedimiento: "+pr.Nombre);
+				}
+			}
+			else {
+				Console.WriteLine("NO HAY BASE DE DATOS EN USO");
+			}
+		}
 	}
 }

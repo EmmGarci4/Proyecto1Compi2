@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using com.Analisis;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -19,8 +21,21 @@ namespace Proyecto1Compi2.com.AST
 
 			public override object Ejecutar()
 			{
-				Console.WriteLine("Eliminar DB..."+ this.Nombre.ToString());
-				return null;
+			if (Analizador.ExisteDB(nombre))
+			{
+				Analizador.EliminarDB(nombre);
+				if (Analizador.DBActual!=null) {
+					if (Analizador.DBActual.Nombre == nombre)
+					{
+						Analizador.DBActual = null;
+
+					}
+				}
+			}
+			else {
+				return new ThrowError(TipoThrow.BDDontExists, "La base de datos '" + Nombre + "' no existe", Linea, Columna);
+			}
+			return null;
 			}
 		}
 }
