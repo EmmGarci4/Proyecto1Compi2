@@ -27,7 +27,7 @@ namespace Proyecto1Compi2.com.db
 		public Tabla(String nombre)
 		{
 			this.Nombre = nombre;
-			this.columnas = null;
+			this.columnas = new List<Columna> ();
 		}
 
 		public void AgregarColumna(Columna columna) {

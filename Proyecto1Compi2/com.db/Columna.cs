@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.db
 {
-	class Columna
+	class Columna : IEquatable<Columna>
 	{
 		String nombre;
 		TipoObjetoDB tipo;
@@ -38,6 +38,14 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("\"PK\" = "+isPrimary);
 			cadena.Append("\n>");
 			return cadena.ToString();
+		}
+
+		public bool Equals(Columna other)
+		{
+			if (Nombre==other.nombre) {
+				return true;
+			}
+			return false;
 		}
 	}
 }

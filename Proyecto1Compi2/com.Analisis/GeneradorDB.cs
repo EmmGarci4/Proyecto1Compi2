@@ -267,28 +267,64 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			else if (td == TipoDatoDB.LISTA_OBJETO)
 			{
-				string val = Regex.Replace(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, "list", String.Empty, RegexOptions.IgnoreCase);
-				val = Regex.Replace(val, "<|>", String.Empty, RegexOptions.IgnoreCase);
+				TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+				string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2));
+				if (t == TipoDatoDB.LISTA_OBJETO)
+				{
+					return "list<" + nombreTipo + ">";
+				}
+				else if (t == TipoDatoDB.SET_OBJETO) {
+					return "set<" + nombreTipo + ">";
 
-				return val;
+				}
+				else if(t == TipoDatoDB.MAP_OBJETO){
+					return "map<" + nombreTipo + ">";
+				}else if(t == TipoDatoDB.OBJETO)
+				{
+					return nombreTipo;
+				}
+				else
+				{
+					return t.ToString().ToLower();
+				}
 			}
 			else if (td == TipoDatoDB.SET_OBJETO)
 			{
-				string val = Regex.Replace(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, "set",String.Empty,RegexOptions.IgnoreCase);
-				val = Regex.Replace(val, "<|>", String.Empty, RegexOptions.IgnoreCase);
-
-				return val;
+				TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+				string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2));
+				if (t == TipoDatoDB.LISTA_OBJETO || t == TipoDatoDB.SET_OBJETO || t == TipoDatoDB.MAP_OBJETO)
+				{
+					return "set<" + nombreTipo + ">";
+				}
+				else if (t == TipoDatoDB.OBJETO)
+				{
+					return nombreTipo;
+				}
+				else
+				{
+					return t.ToString().ToLower();
+				}
 			}
 			else if (td == TipoDatoDB.MAP_OBJETO)
 			{
-				string val = Regex.Replace(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, "map", String.Empty, RegexOptions.IgnoreCase);
-				val = Regex.Replace(val, "<|>", String.Empty, RegexOptions.IgnoreCase);
-
-				return val;
+				TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+				string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2));
+				if (t == TipoDatoDB.LISTA_OBJETO || t == TipoDatoDB.SET_OBJETO || t == TipoDatoDB.MAP_OBJETO)
+				{
+					return "map<" + nombreTipo + ">";
+				}
+				else if (t == TipoDatoDB.OBJETO)
+				{
+					return nombreTipo;
+				}
+				else
+				{
+					return t.ToString().ToLower();
+				}
 			}
 			else
 			{
-				return "";
+				return td.ToString().ToLower();
 			}
 		}
 
@@ -486,7 +522,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		public static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
 		{
-
+			Console.WriteLine(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower());
 			switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
 			{
 				case "string":
@@ -543,15 +579,15 @@ namespace Proyecto1Compi2.com.Analisis
 				case "map<time>":
 					return TipoDatoDB.MAP_TIME;
 				default:
-					if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Contains("list<"))
+					if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("list"))
 					{
 						return TipoDatoDB.LISTA_OBJETO;
 					}
-					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Contains("set<"))
+					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("set"))
 					{
 						return TipoDatoDB.SET_OBJETO;
 					}
-					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Contains("map<"))
+					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("map"))
 					{
 						return TipoDatoDB.MAP_OBJETO;
 					}
