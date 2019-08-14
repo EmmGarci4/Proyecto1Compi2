@@ -25,28 +25,37 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Usuario usuarioActual)
 		{
-			if (Analizador.ExisteUsuario(usuario))
+			if (usuarioActual.ExistePermiso(BaseDatos))
 			{
-				if (Analizador.ExisteDB(baseDatos))
+
+
+				if (Analizador.ExisteUsuario(usuario))
 				{
-					Usuario u = Analizador.BuscarUsuario(usuario);
-					if (!u.ExistePermiso(baseDatos))
+					if (Analizador.ExisteDB(baseDatos))
 					{
-						return new ThrowError(TipoThrow.Exception, "El usuario '" + usuario + "' no tiene permisos sobre la base de datos '" + baseDatos + "'", Linea, Columna);
+						Usuario u = Analizador.BuscarUsuario(usuario);
+						if (!u.ExistePermiso(baseDatos))
+						{
+							return new ThrowError(TipoThrow.Exception, "El usuario '" + usuario + "' no tiene permisos sobre la base de datos '" + baseDatos + "'", Linea, Columna);
+						}
+						else
+						{
+							u.Permisos.Remove(baseDatos);
+						}
 					}
 					else
 					{
-						u.Permisos.Remove(baseDatos);
+						return new ThrowError(TipoThrow.BDDontExists, "La base de datos '" + baseDatos + "' no existe", Linea, Columna);
 					}
 				}
 				else
 				{
-					return new ThrowError(TipoThrow.BDDontExists, "La base de datos '" + baseDatos + "' no existe", Linea, Columna);
+					return new ThrowError(TipoThrow.UserDontExists, "El usuario '" + usuario + "' no existe", Linea, Columna);
 				}
 			}
-			else
-			{
-				return new ThrowError(TipoThrow.UserDontExists, "El usuario '" + usuario + "' no existe", Linea, Columna);
+			else {
+				return new ThrowError(TipoThrow.Exception, "No tiene permisos sobre la base de datos '" + baseDatos + "' para revocar permisos a otros usuarios", Linea, Columna);
+
 			}
 			return null;
 		}

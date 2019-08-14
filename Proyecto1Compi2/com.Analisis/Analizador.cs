@@ -68,8 +68,9 @@ namespace com.Analisis
 				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
 				List<Sentencia> sentencias=GeneradorAstCql.GetAST(arbol.Root);
 				if (Analizador.ErroresCQL.Count==0) {
+					Analizador.AddUsuario(new Usuario("admin","admin"));
 					foreach (Sentencia sentencia in sentencias) {
-						object respuesta=sentencia.Ejecutar();
+						object respuesta=sentencia.Ejecutar(Analizador.BuscarUsuario("admin"));
 						if (respuesta!=null) {
 							if (respuesta.GetType()==typeof(ThrowError)) {
 								Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));

@@ -34,6 +34,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 			else {
 				Analizador.AddBaseDatos(new BaseDatos(Nombre));
+				usuario.Permisos.Add(Nombre);
 			}
 			return null;
 		}
