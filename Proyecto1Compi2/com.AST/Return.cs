@@ -16,7 +16,7 @@ namespace Proyecto1Compi2.com.AST
 			this.valor = valor;
 		}
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Retornando...");
 			return null;

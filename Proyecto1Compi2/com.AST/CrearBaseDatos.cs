@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			if (Analizador.ExisteDB(nombre))
 			{
@@ -34,7 +34,9 @@ namespace Proyecto1Compi2.com.AST
 			}
 			else {
 				Analizador.AddBaseDatos(new BaseDatos(Nombre));
-				usuario.Permisos.Add(Nombre);
+				if (Analizador.ExisteUsuario(sesion.Usuario)) {
+					Analizador.BuscarUsuario(sesion.Usuario).Permisos.Add(Nombre);
+				}
 			}
 			return null;
 		}

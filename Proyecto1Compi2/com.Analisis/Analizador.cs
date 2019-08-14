@@ -33,7 +33,6 @@ namespace com.Analisis
 		}
 
 		private static ParseTreeNode raiz;
-		private static BaseDatos dbActual;
 		static Tabla errors = new Tabla("errors", new List<Columna> {
 				new Columna("Numero",new TipoObjetoDB(TipoDatoDB.COUNTER,""),true),
 				new Columna("Tipo",new TipoObjetoDB(TipoDatoDB.STRING,""),false),
@@ -65,19 +64,20 @@ namespace com.Analisis
 			Analizador.ErroresCQL.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
-				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
 				List<Sentencia> sentencias=GeneradorAstCql.GetAST(arbol.Root);
 				if (Analizador.ErroresCQL.Count==0) {
 					Analizador.AddUsuario(new Usuario("admin","admin"));
+					Sesion sesion = new Sesion("admin",null);
 					foreach (Sentencia sentencia in sentencias) {
-						object respuesta=sentencia.Ejecutar(Analizador.BuscarUsuario("admin"));
+						object respuesta=sentencia.Ejecutar(sesion);
 						if (respuesta!=null) {
 							if (respuesta.GetType()==typeof(ThrowError)) {
 								Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
 							}
 						}
 					}
-					MostrarReporteDeEstado();
+					MostrarReporteDeEstado(sesion);
 				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
@@ -248,7 +248,6 @@ namespace com.Analisis
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static string PATH => path;
 		internal static Tabla Errors { get => errors; set => errors = value; }
-		internal static BaseDatos DBActual { get => dbActual; set => dbActual = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{
@@ -286,7 +285,7 @@ namespace com.Analisis
 			}
 		}
 
-		private static void MostrarReporteDeEstado() {
+		private static void MostrarReporteDeEstado(Sesion sesion) {
 			Console.WriteLine("********************************************************************************************");
 			Console.WriteLine(HandlerFiles.getDate()+"="+HandlerFiles.getTime());
 			Console.WriteLine("------------------------------------------------------");
@@ -303,24 +302,32 @@ namespace com.Analisis
 					Console.WriteLine(per);
 				}
 			}
-			if (dbActual != null)
+			if ( sesion.DBActual!= null)
 			{
-				Console.WriteLine("------------------------------------------------------");
-				Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
-				foreach (Tabla tb in dbActual.Tablas) {
-					Console.WriteLine("Tabla: "+tb.Nombre);
-					foreach (Columna cl in tb.Columnas) {
-						Console.WriteLine(cl.Nombre+"=>"+cl.Tipo);
+				BaseDatos dbActual = BuscarDB(sesion.DBActual);
+				if (dbActual!=null) {
+					Console.WriteLine("------------------------------------------------------");
+					Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
+					foreach (Tabla tb in dbActual.Tablas)
+					{
+						Console.WriteLine("Tabla: " + tb.Nombre);
+						foreach (Columna cl in tb.Columnas)
+						{
+							Console.WriteLine(cl.Nombre + "=>" + cl.Tipo);
+						}
 					}
-				}
-				foreach (UserType ut in dbActual.UserTypes) {
-					Console.WriteLine("UserType: "+ut.Nombre);
-					foreach (KeyValuePair<string,TipoObjetoDB> atributos in ut.Atributos) {
-						Console.WriteLine(atributos.Key+"=>"+atributos.Value);
+					foreach (UserType ut in dbActual.UserTypes)
+					{
+						Console.WriteLine("UserType: " + ut.Nombre);
+						foreach (KeyValuePair<string, TipoObjetoDB> atributos in ut.Atributos)
+						{
+							Console.WriteLine(atributos.Key + "=>" + atributos.Value);
+						}
 					}
-				}
-				foreach (Procedimiento pr in dbActual.Procedimientos) {
-					Console.WriteLine("Procedimiento: "+pr.Nombre);
+					foreach (Procedimiento pr in dbActual.Procedimientos)
+					{
+						Console.WriteLine("Procedimiento: " + pr.Nombre);
+					}
 				}
 			}
 			else {

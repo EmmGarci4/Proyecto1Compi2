@@ -34,26 +34,16 @@ namespace Proyecto1Compi2.com.db
 			columnas.Add(columna);
 		}
 
-		public void AgregarColumnas(List<Columna> columna)
-		{
-			this.columnas.AddRange(columna);
-		}
+		//public void AgregarColumnas(List<Columna> columna)
+		//{
+		//	this.columnas.AddRange(columna);
+		//}
 
 		public void LimpiarColumnas() {
 			this.columnas.Clear();
 		}
 
-		internal bool ExistenColumnas(List<string> cls)
-		{
-			foreach (string colum in cls) {
-				if (!ExistenColumna(colum)) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		private bool ExistenColumna(string colum)
+		public bool ExisteColumna(string colum)
 		{
 			foreach (Columna cl in this.columnas)
 			{

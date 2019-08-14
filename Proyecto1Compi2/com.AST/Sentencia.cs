@@ -13,6 +13,6 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public abstract Object Ejecutar(Usuario usuario);
+		public abstract Object Ejecutar(Sesion sesion);
 	}
 }

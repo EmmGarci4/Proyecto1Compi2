@@ -36,7 +36,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<string> QuitarCols { get => quitarCols; set => quitarCols = value; }
 		internal List<Columna> AgregarCols { get => agregarCols; set => agregarCols = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Alterando tabla..."+this.tabla+"->"+this.accion.ToString().ToLower());
 			

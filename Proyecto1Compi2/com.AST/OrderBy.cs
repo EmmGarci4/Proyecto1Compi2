@@ -14,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<PropOrderBy> Propiedades { get => propiedades; set => propiedades = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			throw new System.NotImplementedException();
 		}

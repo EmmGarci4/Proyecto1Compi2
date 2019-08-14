@@ -21,7 +21,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal Seleccionar Select { get => select; set => select = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			throw new NotImplementedException();
 		}

@@ -15,7 +15,7 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Analizador.GenerarArchivos("data\\principal.chison");
 			Console.WriteLine("ARCHIVO PRINCIPAL.chison GENERADO");

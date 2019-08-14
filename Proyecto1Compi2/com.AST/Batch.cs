@@ -18,7 +18,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			throw new NotImplementedException();
 		}

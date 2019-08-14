@@ -31,7 +31,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<Expresion> Valores { get => valores; set => valores = value; }
 		public List<string> Columnas { get => columnas; set => columnas = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Insertando..."+this.tabla);
 			return null;

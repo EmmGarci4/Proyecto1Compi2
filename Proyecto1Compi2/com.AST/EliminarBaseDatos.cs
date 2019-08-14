@@ -20,15 +20,15 @@ namespace Proyecto1Compi2.com.AST
 
 			public string Nombre { get => nombre; set => nombre = value; }
 
-			public override object Ejecutar(Usuario usuario)
+			public override object Ejecutar(Sesion sesion)
 			{
 			if (Analizador.ExisteDB(nombre))
 			{
 				Analizador.EliminarDB(nombre);
-				if (Analizador.DBActual!=null) {
-					if (Analizador.DBActual.Nombre == nombre)
+				if (sesion.DBActual!=null) {
+					if (sesion.DBActual == nombre)
 					{
-						Analizador.DBActual = null;
+						sesion.DBActual = null;
 
 					}
 				}

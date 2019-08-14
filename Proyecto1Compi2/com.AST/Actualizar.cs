@@ -31,7 +31,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<AsignacionColumna> Asignaciones { get => asignaciones; set => asignaciones = value; }
 		internal Where Condicion { get => condicion; set => condicion = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Actualizando...");
 			return null;

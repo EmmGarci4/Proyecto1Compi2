@@ -18,7 +18,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public string Nombre { get => nombre; set => nombre = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Truncando tabla "+Nombre);
 			return null;

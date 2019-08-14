@@ -37,6 +37,10 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetEliminarDB(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "CREAR_TABLA":
+						n = GetCrearTabla(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 					case "ALTERAR_TABLA":
 						n = GetModificarTabla(sentencia);
 						if (n != null) sentencias.Add(n);
@@ -497,10 +501,20 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetCrearTabla(ParseTreeNode sentencia)
 		{
-			Boolean ifexist = sentencia.ChildNodes.Count == 2;
+			if (sentencia.ChildNodes.Count == 2) {
+				//sin if-exist
 				List<object> cls = GetColumnasTabla(sentencia.ChildNodes.ElementAt(1));
-				 return new CrearTabla(sentencia.ChildNodes.ElementAt(1).Token.ValueString, cls, ifexist, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
-					sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+				return new CrearTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString, cls, false, 
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+				   sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+			else{
+				//con if-exist
+				List<object> cls = GetColumnasTabla(sentencia.ChildNodes.ElementAt(2));
+				return new CrearTabla(sentencia.ChildNodes.ElementAt(1).Token.ValueString, cls, true, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+				   sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+			}
+				
 		}
 
 		private static List<object> GetColumnasTabla(ParseTreeNode parseTreeNode)

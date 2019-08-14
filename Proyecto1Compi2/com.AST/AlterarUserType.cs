@@ -37,7 +37,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<Acceso> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
 		internal Dictionary<string, TipoObjetoDB> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Alterando objeto..." + this.objeto + "->" + this.accion.ToString().ToLower());
 

@@ -19,7 +19,7 @@ namespace Proyecto1Compi2.com.AST
 			this.parametros = parametros;
 		}
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Llamando funcion..."+this.nombre);
 			return null;

@@ -19,7 +19,7 @@ namespace Proyecto1Compi2.com.AST
 			this.atributos = atributos;
 		}
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Creando Objeto..." + this.nombre);
 			foreach (Simbolo cl in this.atributos)

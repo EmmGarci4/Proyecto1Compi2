@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Objeto { get => objeto; set => objeto = value; }
 		internal Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
 			Console.WriteLine("Creando objeto..." + this.objeto + "->");
 

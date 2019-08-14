@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,63 @@ namespace Proyecto1Compi2.com.AST
 		public List<object> Objetos { get => objetos; set => objetos = value; }
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 
-		public override object Ejecutar(Usuario usuario)
+		public override object Ejecutar(Sesion sesion)
 		{
-			Console.WriteLine("Creando tabla..."+this.nombre);
-			foreach (Columna cl in this.objetos) {
-				Console.WriteLine(cl.Nombre);
+			List<string> llavePrimariaCompuesta = null;
+			Tabla tabla = new Tabla(Nombre);
+			foreach (object ob in this.objetos) {
+				if (ob.GetType() == typeof(Columna))
+				{
+					Columna cl = (Columna)ob;
+					//***************************************************************************
+					//VALIDANDO COLUMNA
+					if (tabla.ExisteColumna(cl.Nombre))
+					{
+
+
+					}
+					else {
+
+					}
+
+					//***************************************************************************
+				}
+				else {
+					if (llavePrimariaCompuesta != null)
+					{
+						//es llave primaria
+						llavePrimariaCompuesta = (List<string>)ob;
+					}
+					else {
+						return new ThrowError(Util.TipoThrow.Exception,"No se puede agregar más de una llave primaria compuesta a una tabla",Linea,Columna);
+					}
+				}
 			}
+
+			//***************************************************************************
+			//VALIDANDO TABLA
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				if (!db.ExisteTabla(Nombre))
+				{
+
+				}
+				else
+				{
+					if (!IfExist)
+					{
+						return new ThrowError(Util.TipoThrow.TableAlreadyExists, "La tabla '" + Nombre + "' ya existe", Linea, Columna);
+					}
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException, "No se puede ejecutar la sentencia para crear tabla", Linea, Columna);
+			}
+
+			//***************************************************************************
+
 			return null;
 		}
 	}
