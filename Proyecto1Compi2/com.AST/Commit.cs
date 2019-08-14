@@ -1,4 +1,6 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis;
+using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,8 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Usuario usuario)
 		{
-			Console.WriteLine("Commit");
+			Analizador.GenerarArchivos("data\\principal.chison");
+			Console.WriteLine("ARCHIVO PRINCIPAL.chison GENERADO");
 			return null;
 		}
 	}

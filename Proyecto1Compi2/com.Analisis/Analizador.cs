@@ -103,14 +103,6 @@ namespace com.Analisis
 			{
 				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
-				//foreach (BaseDatos db in Analizador.BasesDeDatos)
-				//{
-				//	db.MostrarBaseDatos();
-				//}
-				//foreach (Usuario us in Analizador.Usuariosdb)
-				//{
-				//	us.Mostrar();
-				//}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
@@ -127,8 +119,6 @@ namespace com.Analisis
 				}, mensaje.Location.Line,
 					mensaje.Location.Column);
 			}
-			//Errors.MostrarCabecera();
-			//Errors.MostrarDatos();
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0;
 		}
 
@@ -166,7 +156,7 @@ namespace com.Analisis
 			enumerator2.Dispose();
 			cadena.Append("]\n");
 			cadena.Append(">$");
-			HandlerFiles.guardarArchivo(cadena.ToString(), "MiPrincipal.chison");
+			HandlerFiles.guardarArchivo(cadena.ToString(), v);
 		}
 
 		internal static void Clear()

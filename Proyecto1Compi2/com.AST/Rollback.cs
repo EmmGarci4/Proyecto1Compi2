@@ -1,4 +1,6 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis;
+using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,21 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Usuario usuario)
 		{
-			Console.WriteLine("Rollback...");
+			Analizador.Clear();
+			String chi = HandlerFiles.AbrirArchivo("data\\principal.chison");
+			if (chi != null)
+			{
+				if (Analizador.AnalizarChison(chi))
+				{
+					Console.WriteLine("ARCHIVO CARGADO CON EXITO");
+				}
+				else
+				{
+					Console.WriteLine("ARCHIVO CARGADO CON ERRORES");
+					Analizador.Errors.MostrarCabecera();
+					Analizador.Errors.MostrarDatos();
+				}
+			}
 			return null;
 		}
 	}
