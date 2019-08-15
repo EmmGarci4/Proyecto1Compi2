@@ -1,4 +1,5 @@
-﻿using com.Analisis.Util;
+﻿using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,30 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Sesion sesion)
 		{
-			Console.WriteLine("Eliminar..."+this.nombre);
+			//VALIDANDO BASEDATOS
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				//VALLIDANDO TABLA
+				if (db.ExisteTabla(Nombre))
+				{
+					db.EliminarTabla(nombre);
+				}
+				else
+				{
+					if (!IfExist) {
+						return new ThrowError(Util.TipoThrow.TableDontExists,
+						"La tabla '" + nombre + "' no existe",
+						Linea, Columna);
+					}
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+					Linea, Columna);
+			}
 			return null;
 		}
 	}

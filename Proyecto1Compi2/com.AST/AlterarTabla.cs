@@ -39,10 +39,11 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Sesion sesion)
 		{
-			//VALIDANDO TABLA
+			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
 			{
 				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				//VALLIDANDO TABLA
 				if (db.ExisteTabla(nombreTabla))
 				{
 					Tabla tabla = db.BuscarTabla(nombreTabla);
@@ -84,8 +85,8 @@ namespace Proyecto1Compi2.com.AST
 							else
 							{
 								return new ThrowError(Util.TipoThrow.Exception,
-																		"La tabla ya contiene una columna con nombre '" + cl.Nombre + "'",
-																		Linea, Columna);
+									"La tabla ya contiene una columna con nombre '" + cl.Nombre + "'",
+									Linea, Columna);
 							}
 						}
 						//INSERTANDO

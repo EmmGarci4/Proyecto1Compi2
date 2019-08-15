@@ -28,6 +28,11 @@ namespace Proyecto1Compi2.com.db
 			this.procedimientos = new ListaProcedimientos();
 		}
 
+		internal void EliminarTabla(string nombre)
+		{
+			this.tablas.Eliminar(nombre);
+		}
+
 		public bool ExisteTabla(string nombre)
 		{
 			return tablas.Existe(nombre);
