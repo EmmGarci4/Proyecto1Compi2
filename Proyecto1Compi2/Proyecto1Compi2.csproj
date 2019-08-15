@@ -73,7 +73,7 @@
     <Compile Include="com.AST\Acceso.cs" />
     <Compile Include="com.AST\AccesoArreglo.cs" />
     <Compile Include="com.AST\Actualizar.cs" />
-    <Compile Include="com.AST\CrearAlterType.cs" />
+    <Compile Include="com.AST\CrearUserType.cs" />
     <Compile Include="com.AST\AlterarUserType.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />
     <Compile Include="com.AST\AlterarUsuario.cs" />

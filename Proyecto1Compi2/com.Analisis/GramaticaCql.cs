@@ -443,7 +443,8 @@ namespace com.Analisis
 			//cambiar si se puede insertar valores en objeto desde aca
 
 			INSERTAR.Rule =pr_insertar+pr_into+nombre+pr_valores +par1 + LISTAEXPRESIONES+par2+puntoycoma
-				|pr_insertar+pr_into+nombre+par1+LISTANOMBRESPURA+par2+pr_valores+par1+LISTAEXPRESIONES+par2+puntoycoma; //validar cantidad de columnas y expresiones
+				|pr_insertar+pr_into+nombre+par1+LISTANOMBRESPURA+par2+pr_valores+par1+LISTAEXPRESIONES+par2+puntoycoma; 
+			//validar cantidad de columnas y expresiones
 
 
 			ACTUALIZAR.Rule = pr_actualizar + nombre + pr_set + LISTA_ASIGNACIONES + puntoycoma

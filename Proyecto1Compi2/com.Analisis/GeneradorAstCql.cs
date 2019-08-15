@@ -114,25 +114,47 @@ namespace Proyecto1Compi2.com.Analisis
 		#region Sentencias DB
 		private static Sentencia GetCrearUserType(ParseTreeNode sentencia)
 		{
-			//add
-			Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
-			foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(1).ChildNodes)
+			if (sentencia.ChildNodes.Count == 2)
 			{
-				TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-				string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1),true);
-				try
+				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
+				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(1).ChildNodes)
 				{
-					atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
+					try
+					{
+						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+					}
+					catch (ArgumentException ex)
+					{
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden agregar dos atributos con el mismo nombre",
+							nodo.ChildNodes.ElementAt(0).Token.Location.Line,
+							nodo.ChildNodes.ElementAt(0).Token.Location.Column));
+					}
 				}
-				catch (ArgumentException ex)
-				{
-					Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden agregar dos atributos con el mismo nombre",
-						nodo.ChildNodes.ElementAt(0).Token.Location.Line,
-						nodo.ChildNodes.ElementAt(0).Token.Location.Column));
-				}
+				return new CrearUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString, atributos, false,
+					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
-			return new CrearUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
-				atributos, sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
+			else {
+				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
+				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(2).ChildNodes)
+				{
+					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
+					try
+					{
+						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+					}
+					catch (ArgumentException ex)
+					{
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se pueden agregar dos atributos con el mismo nombre",
+							nodo.ChildNodes.ElementAt(0).Token.Location.Line,
+							nodo.ChildNodes.ElementAt(0).Token.Location.Column));
+					}
+				}
+				return new CrearUserType(sentencia.ChildNodes.ElementAt(1).Token.ValueString, atributos, true,
+					sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
+			}
 		}
 
 		private static Sentencia GetFuncionAgregacion(ParseTreeNode sentencia)

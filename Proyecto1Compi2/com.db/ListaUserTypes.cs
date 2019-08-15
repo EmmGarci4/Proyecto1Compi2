@@ -28,13 +28,7 @@ namespace Proyecto1Compi2.com.db
 
 		public void Eliminar(string nombre)
 		{
-			foreach (UserType tb in this)
-			{
-				if (tb.Nombre.Equals(nombre))
-				{
-					this.Remove(tb);
-				}
-			}
+			this.Remove(Buscar(nombre));
 		}
 
 		public bool Existe(String nombre)

@@ -28,6 +28,11 @@ namespace Proyecto1Compi2.com.db
 			this.procedimientos = new ListaProcedimientos();
 		}
 
+		internal void EliminarUserType(string nombre)
+		{
+			this.objetos.Eliminar(nombre);
+		}
+
 		internal void EliminarTabla(string nombre)
 		{
 			this.tablas.Eliminar(nombre);
@@ -67,6 +72,11 @@ namespace Proyecto1Compi2.com.db
 			this.tablas.Mostrar();
 			this.UserTypes.Mostrar();
 			this.procedimientos.Mostrar();
+		}
+
+		internal UserType BuscarUserType(string nombre)
+		{
+			return this.UserTypes.Buscar(nombre);
 		}
 
 		internal Tabla BuscarTabla(string nombreTabla)

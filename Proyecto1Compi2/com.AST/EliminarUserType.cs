@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,28 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Sesion sesion)
 		{
-			Console.WriteLine("Eliminar Ut..." + this.Nombre.ToString());
+			//VALIDANDO BASEDATOS
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				if (db.ExisteUserType(nombre))
+				{
+					db.EliminarUserType(nombre);
+				}
+				else
+				{
+
+						return new ThrowError(Util.TipoThrow.TypeDontExists,
+					"El user Type '" + nombre + "' no existe",
+					Linea, Columna);
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+					Linea, Columna);
+			}
 			return null;
 		}
 	}

@@ -18,6 +18,14 @@ namespace com.Analisis.Util
 		Agregar,
 		Quitar
 	}
+	public enum TipoAcceso
+	{
+		Campo,
+		Arreglo,
+		CampoDeCampo,
+		ArregloDeCampo,
+		Indefinido
+	}
 	public enum TipoObjeto
 	{
 		Tabla,
