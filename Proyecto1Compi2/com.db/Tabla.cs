@@ -34,11 +34,6 @@ namespace Proyecto1Compi2.com.db
 			columnas.Add(columna);
 		}
 
-		//public void AgregarColumnas(List<Columna> columna)
-		//{
-		//	this.columnas.AddRange(columna);
-		//}
-
 		public void LimpiarColumnas() {
 			this.columnas.Clear();
 		}
@@ -136,6 +131,18 @@ namespace Proyecto1Compi2.com.db
 				contadorFilas++;
 			}
 			return er;
+		}
+
+		internal Columna BuscarColumna(string llave)
+		{
+			foreach (Columna cl in this.columnas)
+			{
+				if (cl.Nombre.Equals(llave))
+				{
+					return cl;
+				}
+			}
+			return null;
 		}
 
 		internal List<Error> Insertar(List<object> list,int linea,int columna)

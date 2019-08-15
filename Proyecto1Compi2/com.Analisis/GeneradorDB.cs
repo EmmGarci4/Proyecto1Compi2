@@ -290,41 +290,66 @@ namespace Proyecto1Compi2.com.Analisis
 					else {
 						return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
 					}
-				case TipoDatoDB.MAP_BOOLEAN:
-					return "";
 				case TipoDatoDB.LISTA_BOOLEAN:
 					if (!b) return "list<boolean>";
 					return "boolean";
 				case TipoDatoDB.SET_BOOLEAN:
 					if (!b) return "set<boolean>";
 					return "boolean";
+				case TipoDatoDB.MAP_BOOLEAN:
 				case TipoDatoDB.BOOLEAN:
 					return "boolean";
+
 				case TipoDatoDB.LISTA_DATE:
+					if (!b) return "list<date>";
+					return "date";
 				case TipoDatoDB.SET_DATE:
+					if (!b) return "set<date>";
+					return "boolean";
 				case TipoDatoDB.MAP_DATE:
 				case TipoDatoDB.DATE:
 					return "date";
+
 				case TipoDatoDB.LISTA_DOUBLE:
+					if (!b) return "list<doulbe>";
+					return "double";
 				case TipoDatoDB.SET_DOUBLE:
+					if (!b) return "set<double>";
+					return "boolean";
 				case TipoDatoDB.MAP_DOUBLE:
 				case TipoDatoDB.DOUBLE:
 					return "double";
+
 				case TipoDatoDB.LISTA_INT:
+					if (!b) return "list<int>";
+					return "int";
 				case TipoDatoDB.SET_INT:
+					if (!b) return "set<int>";
+					return "int";
 				case TipoDatoDB.MAP_INT:
 				case TipoDatoDB.INT:
 					return "int";
+
 				case TipoDatoDB.LISTA_STRING:
+					if (!b) return "list<string>";
+					return "string";
 				case TipoDatoDB.SET_STRING:
+					if (!b) return "set<string>";
+					return "string";
 				case TipoDatoDB.MAP_STRING:
 				case TipoDatoDB.STRING:
 					return "string";
+
 				case TipoDatoDB.SET_TIME:
+					if (!b) return "set<time>";
+					return "time";
 				case TipoDatoDB.LISTA_TIME:
+					if (!b) return "list<ime>";
+					return "time";
 				case TipoDatoDB.MAP_TIME:
 				case TipoDatoDB.TIME:
 					return "time";
+
 				case TipoDatoDB.COUNTER:
 					return "counter";
 				case TipoDatoDB.NULO:
@@ -528,7 +553,6 @@ namespace Proyecto1Compi2.com.Analisis
 
 		public static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
 		{
-			Console.WriteLine(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower());
 			switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
 			{
 				case "string":
@@ -585,15 +609,18 @@ namespace Proyecto1Compi2.com.Analisis
 				case "map<time>":
 					return TipoDatoDB.MAP_TIME;
 				default:
-					if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("list"))
+					if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("list")||
+						parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("list"))
 					{
 						return TipoDatoDB.LISTA_OBJETO;
 					}
-					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("set"))
+					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("set")||
+						parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("set"))
 					{
 						return TipoDatoDB.SET_OBJETO;
 					}
-					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("map"))
+					else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("map")||
+						parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("map"))
 					{
 						return TipoDatoDB.MAP_OBJETO;
 					}
