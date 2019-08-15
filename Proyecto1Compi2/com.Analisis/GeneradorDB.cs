@@ -162,7 +162,7 @@ namespace Proyecto1Compi2.com.Analisis
 					try
 					{
 						TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
-						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1));
+						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
 
 							ret.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString,new TipoObjetoDB(t,nombreTipo));
 						
@@ -197,7 +197,7 @@ namespace Proyecto1Compi2.com.Analisis
 					try
 					{
 						TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
-						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1));
+						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
 						param.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo));
 						
 
@@ -235,7 +235,7 @@ namespace Proyecto1Compi2.com.Analisis
 				try
 				{
 					TipoDatoDB td = GetTipo(nodo.ChildNodes.ElementAt(1));
-					string nombreTipo = GetNombreTipo(td,nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GetNombreTipo(td,nodo.ChildNodes.ElementAt(1),true);
 					
 					atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(td, nombreTipo));
 				}
@@ -258,73 +258,79 @@ namespace Proyecto1Compi2.com.Analisis
 			return atributos;
 		}
 
-		public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode)
+		public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode,bool b)
 		{
-			if (td == TipoDatoDB.OBJETO)
-			{
-				return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
+			switch (td) {
+				case TipoDatoDB.LISTA_OBJETO:
+					TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					if (!b) return "list<" + nombreTipo + ">";
+					return nombreTipo;
+				case TipoDatoDB.SET_OBJETO:
+					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					if (!b) return "set<" + nombreTipo + ">";
+					return nombreTipo;
+				case TipoDatoDB.MAP_OBJETO:
+					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					
+					TipoDatoDB t1 = GetTipo(parseTreeNode.ChildNodes.ElementAt(3));
+					string nombreTipo1 = GetNombreTipo(t1, parseTreeNode.ChildNodes.ElementAt(3), false);
+					if (!b) return "map<" + nombreTipo + "," + nombreTipo1 + ">";
+					return nombreTipo + "," + nombreTipo1;
+				case TipoDatoDB.OBJETO:
+					if (parseTreeNode.ChildNodes.Count == 4)
+					{
+						t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+						nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+						return nombreTipo;
 
-			}
-			else if (td == TipoDatoDB.LISTA_OBJETO)
-			{
-				TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-				string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2));
-				if (t == TipoDatoDB.LISTA_OBJETO)
-				{
-					return "list<" + nombreTipo + ">";
-				}
-				else if (t == TipoDatoDB.SET_OBJETO) {
-					return "set<" + nombreTipo + ">";
-
-				}
-				else if(t == TipoDatoDB.MAP_OBJETO){
-					return "map<" + nombreTipo + ">";
-				}else if(t == TipoDatoDB.OBJETO)
-				{
-					return nombreTipo;
-				}
-				else
-				{
-					return t.ToString().ToLower();
-				}
-			}
-			else if (td == TipoDatoDB.SET_OBJETO)
-			{
-				TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-				string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2));
-				if (t == TipoDatoDB.LISTA_OBJETO || t == TipoDatoDB.SET_OBJETO || t == TipoDatoDB.MAP_OBJETO)
-				{
-					return "set<" + nombreTipo + ">";
-				}
-				else if (t == TipoDatoDB.OBJETO)
-				{
-					return nombreTipo;
-				}
-				else
-				{
-					return t.ToString().ToLower();
-				}
-			}
-			else if (td == TipoDatoDB.MAP_OBJETO)
-			{
-				TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-				string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2));
-				if (t == TipoDatoDB.LISTA_OBJETO || t == TipoDatoDB.SET_OBJETO || t == TipoDatoDB.MAP_OBJETO)
-				{
-					return "map<" + nombreTipo + ">";
-				}
-				else if (t == TipoDatoDB.OBJETO)
-				{
-					return nombreTipo;
-				}
-				else
-				{
-					return t.ToString().ToLower();
-				}
-			}
-			else
-			{
-				return td.ToString().ToLower();
+					}
+					else {
+						return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
+					}
+				case TipoDatoDB.MAP_BOOLEAN:
+					return "";
+				case TipoDatoDB.LISTA_BOOLEAN:
+					if (!b) return "list<boolean>";
+					return "boolean";
+				case TipoDatoDB.SET_BOOLEAN:
+					if (!b) return "set<boolean>";
+					return "boolean";
+				case TipoDatoDB.BOOLEAN:
+					return "boolean";
+				case TipoDatoDB.LISTA_DATE:
+				case TipoDatoDB.SET_DATE:
+				case TipoDatoDB.MAP_DATE:
+				case TipoDatoDB.DATE:
+					return "date";
+				case TipoDatoDB.LISTA_DOUBLE:
+				case TipoDatoDB.SET_DOUBLE:
+				case TipoDatoDB.MAP_DOUBLE:
+				case TipoDatoDB.DOUBLE:
+					return "double";
+				case TipoDatoDB.LISTA_INT:
+				case TipoDatoDB.SET_INT:
+				case TipoDatoDB.MAP_INT:
+				case TipoDatoDB.INT:
+					return "int";
+				case TipoDatoDB.LISTA_STRING:
+				case TipoDatoDB.SET_STRING:
+				case TipoDatoDB.MAP_STRING:
+				case TipoDatoDB.STRING:
+					return "string";
+				case TipoDatoDB.SET_TIME:
+				case TipoDatoDB.LISTA_TIME:
+				case TipoDatoDB.MAP_TIME:
+				case TipoDatoDB.TIME:
+					return "time";
+				case TipoDatoDB.COUNTER:
+					return "counter";
+				case TipoDatoDB.NULO:
+					return "nulo";
+				default:
+					return "";
 			}
 		}
 
@@ -472,7 +478,7 @@ namespace Proyecto1Compi2.com.Analisis
 		private static Columna GetColumna(List<object> objetos,ParseTreeNode nodo)
 		{
 			TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
-			string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
+			string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1),true);
 			if (tipo==TipoDatoDB.OBJETO) {
 				if (!ExisteUserTypeEnDb(objetos, nombreTipo))
 				{

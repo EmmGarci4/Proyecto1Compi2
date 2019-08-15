@@ -119,7 +119,7 @@ namespace Proyecto1Compi2.com.Analisis
 			foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(1).ChildNodes)
 			{
 				TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-				string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
+				string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1),true);
 				try
 				{
 					atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
@@ -272,15 +272,17 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetActualizar(ParseTreeNode sentencia)
 		{
-			if (sentencia.ChildNodes.Count == 2)
+			if (sentencia.ChildNodes.Count == 3)
 			{
 				//sin where
-				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(2)), 
+					sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else {
 				//con where
-				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(2)), 
+					sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 					GetWhere(sentencia.ChildNodes.ElementAt(2)),
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
@@ -372,7 +374,7 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(2).ChildNodes) {
 					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1),true);
 					try {
 						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
 					}
@@ -538,7 +540,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//nombre -- tipo
 				TipoDatoDB t = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1));
+				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), false);
 			} else if (nodo.ChildNodes.Count==3) {
 				//llave primaria compuesta
@@ -547,7 +549,7 @@ namespace Proyecto1Compi2.com.Analisis
 			else if (nodo.ChildNodes.Count == 4) {
 				//columna con llave primaria
 				TipoDatoDB t = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1));
+				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), true);
 			}
 
