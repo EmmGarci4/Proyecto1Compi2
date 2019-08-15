@@ -90,14 +90,22 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("\n<\n");
 			cadena.Append("\"NAME\"=\""+Nombre+"\",\n");
 			cadena.Append("\"DATA\"=[");
-			cadena.Append(UserTypes.ToString());
+			if (UserTypes.Count > 0)
+			{
+				cadena.Append(UserTypes.ToString());
+				if (procedimientos.Count > 0 || Tablas.Count > 0)
+				{
+					cadena.Append(",");
+				}
+			}
 			if (Procedimientos.Count>0) {
-				cadena.Append(",");
 				cadena.Append(procedimientos.ToString());
+				if (tablas.Count>0) {
+					cadena.Append(",");
+				}
 			}
 			if (Tablas.Count > 0)
 			{
-				cadena.Append(",");
 				cadena.Append(Tablas.ToString());
 			}
 			cadena.Append("]\n");

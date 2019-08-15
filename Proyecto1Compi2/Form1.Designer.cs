@@ -34,11 +34,9 @@
 			this.Btn_leerXml = new System.Windows.Forms.ToolStripButton();
 			this.Bt_EjecutarLup = new System.Windows.Forms.ToolStripButton();
 			this.Btn_LimpiarDB = new System.Windows.Forms.ToolStripButton();
-			this.Btn_GenerarArchivos = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
-			this.Btn_cargarChison = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -50,9 +48,7 @@
             this.Btn_EjecutarSql,
             this.Btn_leerXml,
             this.Bt_EjecutarLup,
-            this.Btn_LimpiarDB,
-            this.Btn_GenerarArchivos,
-            this.Btn_cargarChison});
+            this.Btn_LimpiarDB});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -100,16 +96,6 @@
 			this.Btn_LimpiarDB.Text = "Limpiar DB";
 			this.Btn_LimpiarDB.Click += new System.EventHandler(this.Btn_LimpiarDB_Click);
 			// 
-			// Btn_GenerarArchivos
-			// 
-			this.Btn_GenerarArchivos.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.Btn_GenerarArchivos.Image = ((System.Drawing.Image)(resources.GetObject("Btn_GenerarArchivos.Image")));
-			this.Btn_GenerarArchivos.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.Btn_GenerarArchivos.Name = "Btn_GenerarArchivos";
-			this.Btn_GenerarArchivos.Size = new System.Drawing.Size(97, 22);
-			this.Btn_GenerarArchivos.Text = "Generar Chisons";
-			this.Btn_GenerarArchivos.Click += new System.EventHandler(this.Btn_GenerarArchivos_Click);
-			// 
 			// tableLayoutPanel1
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
@@ -146,16 +132,6 @@
 			this.textBox2.Size = new System.Drawing.Size(794, 207);
 			this.textBox2.TabIndex = 1;
 			// 
-			// Btn_cargarChison
-			// 
-			this.Btn_cargarChison.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.Btn_cargarChison.Image = ((System.Drawing.Image)(resources.GetObject("Btn_cargarChison.Image")));
-			this.Btn_cargarChison.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.Btn_cargarChison.Name = "Btn_cargarChison";
-			this.Btn_cargarChison.Size = new System.Drawing.Size(84, 22);
-			this.Btn_cargarChison.Text = "cargar Chison";
-			this.Btn_cargarChison.Click += new System.EventHandler(this.Btn_cargarChison_Click);
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -184,8 +160,6 @@
 		private System.Windows.Forms.ToolStripButton Btn_leerXml;
 		private System.Windows.Forms.ToolStripButton Bt_EjecutarLup;
 		private System.Windows.Forms.ToolStripButton Btn_LimpiarDB;
-		private System.Windows.Forms.ToolStripButton Btn_GenerarArchivos;
-		private System.Windows.Forms.ToolStripButton Btn_cargarChison;
 	}
 }
 

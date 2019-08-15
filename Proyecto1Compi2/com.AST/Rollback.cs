@@ -28,8 +28,8 @@ namespace Proyecto1Compi2.com.AST
 				else
 				{
 					Console.WriteLine("ARCHIVO CARGADO CON ERRORES");
-					Analizador.Errors.MostrarCabecera();
-					Analizador.Errors.MostrarDatos();
+					//Analizador.Errors.MostrarCabecera();
+					//Analizador.Errors.MostrarDatos();
 				}
 			}
 			return null;

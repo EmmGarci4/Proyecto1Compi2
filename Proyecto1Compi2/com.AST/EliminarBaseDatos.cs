@@ -25,6 +25,8 @@ namespace Proyecto1Compi2.com.AST
 			if (Analizador.ExisteDB(nombre))
 			{
 				Analizador.EliminarDB(nombre);
+				Analizador.ElminarPermisoDeUsuario(nombre);
+
 				if (sesion.DBActual!=null) {
 					if (sesion.DBActual == nombre)
 					{

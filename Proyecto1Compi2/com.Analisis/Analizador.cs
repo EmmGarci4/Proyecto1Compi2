@@ -19,8 +19,20 @@ namespace com.Analisis
 		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
 		private static List<BaseDatos> BasesDeDatos = new List<BaseDatos>();
 		private static List<Usuario> Usuariosdb = new List<Usuario>();
-		private static List<Error> erroresCQL = new List<Error>();	
+		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
+		static List<Error> errors = new List<Error>();
+		static private ParseTreeNode raiz;
+
+		internal static void ElminarPermisoDeUsuario(string nombre)
+		{
+			foreach (Usuario us in Usuariosdb) {
+				if (us.ExistePermiso(nombre)) {
+					us.Permisos.Remove(nombre);
+				}
+			}
+		}
+
 
 		internal static Usuario BuscarUsuario(string usuario)
 		{
@@ -31,17 +43,6 @@ namespace com.Analisis
 			}
 			return null;
 		}
-
-		private static ParseTreeNode raiz;
-		static Tabla errors = new Tabla("errors", new List<Columna> {
-				new Columna("Numero",new TipoObjetoDB(TipoDatoDB.COUNTER,""),true),
-				new Columna("Tipo",new TipoObjetoDB(TipoDatoDB.STRING,""),false),
-				new Columna("Descripcion",new TipoObjetoDB(TipoDatoDB.STRING,""),false),
-				new Columna("Fila",new TipoObjetoDB(TipoDatoDB.INT,""),false),
-				new Columna("Columna",new TipoObjetoDB(TipoDatoDB.INT,""),false),
-				new Columna("Fecha",new TipoObjetoDB(TipoDatoDB.DATE,""),false),
-				new Columna("Hora",new TipoObjetoDB(TipoDatoDB.TIME,""),false),
-			}); 
 
 		internal static void AddBaseDatos(BaseDatos db)
 		{
@@ -96,28 +97,29 @@ namespace com.Analisis
 			//IMPORTAR 
 			texto = Importar(texto);
 			ParseTree arbol = parser.Parse(texto);
-			Analizador.Errors.Truncar();
+			Analizador.ErroresChison.Clear();
 			Analizador.raiz = arbol.Root;
 			
 			if (raiz != null && arbol.ParserMessages.Count==0)
 			{
 				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
+
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
 
 				//INSERTANDO ERROR EN TABLA ERRORS
-				Errors.Insertar(new List<object>
-				{
-					"Léxico",
+				ErroresChison.Add(new Error(
+					TipoError.Semantico,
 					mensaje.Message,
 					mensaje.Location.Line,
 					mensaje.Location.Column,
-					HandlerFiles.getDate(), //fecha
-					HandlerFiles.getTime()//hora
-				}, mensaje.Location.Line,
-					mensaje.Location.Column);
+					HandlerFiles.getDate(), 
+					HandlerFiles.getTime()
+					));
+
+				Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
 			}
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0;
 		}
@@ -162,12 +164,12 @@ namespace com.Analisis
 		internal static void Clear()
 		{
 			ErroresCQL.Clear();
-			Errors.Truncar();
+			ErroresChison.Clear();
 			Usuariosdb.Clear();
 			BasesDeDatos.Clear();
 			ast = null;
 			raiz = null;
-			Console.WriteLine("*************************************************************************");
+			Console.WriteLine("****************************************************************************");
 		}
 
 		private static string Importar(string texto)
@@ -247,7 +249,7 @@ namespace com.Analisis
 		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static string PATH => path;
-		internal static Tabla Errors { get => errors; set => errors = value; }
+		internal static List<Error> ErroresChison { get => errors; set => errors = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{
@@ -308,6 +310,7 @@ namespace com.Analisis
 				if (dbActual!=null) {
 					Console.WriteLine("------------------------------------------------------");
 					Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
+					Console.WriteLine("-----------------");
 					foreach (Tabla tb in dbActual.Tablas)
 					{
 						Console.WriteLine("Tabla: " + tb.Nombre);
@@ -316,6 +319,7 @@ namespace com.Analisis
 							Console.WriteLine(cl.Nombre + "=>" + cl.Tipo);
 						}
 					}
+					Console.WriteLine("-----------------");
 					foreach (UserType ut in dbActual.UserTypes)
 					{
 						Console.WriteLine("UserType: " + ut.Nombre);
@@ -324,6 +328,7 @@ namespace com.Analisis
 							Console.WriteLine(atributos.Key + "=>" + atributos.Value);
 						}
 					}
+					Console.WriteLine("-----------------");
 					foreach (Procedimiento pr in dbActual.Procedimientos)
 					{
 						Console.WriteLine("Procedimiento: " + pr.Nombre);

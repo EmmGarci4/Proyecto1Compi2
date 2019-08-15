@@ -54,15 +54,14 @@ namespace Proyecto1Compi2
 				if (Analizador.AnalizarChison(this.textBox1.Text))
 				{
 					this.textBox2.Text = "Finalizado con éxito\n";
-					//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				}
 				else
 				{
-					//foreach (Error er in Analizador.ErroresCHISON)
-					//{
-					//	this.textBox2.AppendText(er + "\n");
-					//}
+				foreach (Error er in Analizador.ErroresChison)
+				{
+					this.textBox2.AppendText(er + "\n");
 				}
+			}
 		}
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)

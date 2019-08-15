@@ -51,15 +51,16 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+						
+						Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"La tabla '"+((Tabla)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
 							linea+1,
 							columna+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						},linea,columna);
+						));
 
 					}
 				}
@@ -72,15 +73,15 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+						Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"El user type '"+((UserType)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
 							linea+1,
 							columna+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						},linea,columna);
+						));
 					}
 				}
 				else if (obj is Procedimiento)
@@ -92,15 +93,15 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+						Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
 							linea+1,
 							columna+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						},linea,columna);
+						));
 					}
 
 				}
@@ -171,16 +172,15 @@ namespace Proyecto1Compi2.com.Analisis
 					catch (ArgumentException ex)
 					{
 						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+						Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"Error grave leyendo datos en retornos del procedimiento",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						}, nodo.Span.Location.Line,
-							nodo.Span.Location.Column);
+						));
 					}
 				}
 			}
@@ -205,16 +205,15 @@ namespace Proyecto1Compi2.com.Analisis
 					catch (ArgumentException ex)
 					{
 						//INSERTANDO ERROR EN TABLA ERRORS
-						Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+						Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"Error grave leyendo datos en parametros del procedimiento",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						}, nodo.Span.Location.Line,
-							nodo.Span.Location.Column);
+						));
 					}
 				}
 			}
@@ -242,16 +241,15 @@ namespace Proyecto1Compi2.com.Analisis
 				catch (ArgumentException ex)
 				{
 					//INSERTANDO ERROR EN TABLA ERRORS
-					Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+					Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString+"' en el User Type",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						}, nodo.Span.Location.Line,
-							nodo.Span.Location.Column);
+						));
 
 				}
 			}
@@ -375,17 +373,7 @@ namespace Proyecto1Compi2.com.Analisis
 				if (fila != null)
 				{
 					List<Error> er =tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
-					foreach (Error err in er) {
-						Analizador.Errors.Insertar(new List<object>
-						{
-							err.Tipo.ToString().ToLower(),
-							err.Mensaje,
-							err.Linea,
-							err.Columna,
-							err.Fecha, //fecha
-							err.Hora//hora
-						},nodo.Span.Location.Line,nodo.Span.Location.Column);
-					}
+					Analizador.ErroresChison.AddRange(er);
 				}
 			}
 		}
@@ -417,16 +405,15 @@ namespace Proyecto1Compi2.com.Analisis
 			catch (ArgumentException ex)
 			{
 				//INSERTANDO ERROR EN TABLA ERRORS
-				Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+				Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"Error grave al leer los datos de la tabla ",
 							fila.Span.Location.Line+1,
 							fila.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						}, fila.Span.Location.Line,
-							fila.Span.Location.Column);
+						));
 				return null;
 			}
 			return datos;
@@ -508,16 +495,15 @@ namespace Proyecto1Compi2.com.Analisis
 				if (!ExisteUserTypeEnDb(objetos, nombreTipo))
 				{
 					//INSERTANDO ERROR EN TABLA ERRORS
-					Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+					Analizador.ErroresChison.Add(new Error(
+
+							TipoError.Semantico,
 							"No existe el User Type '"+nombreTipo+"' para crear el objeto",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						}, nodo.Span.Location.Line,
-							nodo.Span.Location.Column);
+						));
 
 					return null;
 				}
@@ -649,16 +635,14 @@ namespace Proyecto1Compi2.com.Analisis
 				} else
 				{
 					//INSERTANDO ERROR EN TABLA ERRORS
-					Analizador.Errors.Insertar(new List<object>
-						{
-							"Sintáctico",
+					Analizador.ErroresChison.Add(new Error(
+							TipoError.Semantico,
 							"No se puede asignar permisos al usuario pues La base de datos '"+per+"' no existe",
 							raiz.Span.Location.Line+1,
 							raiz.Span.Location.Column+1,
 							HandlerFiles.getDate(), //fecha
 							HandlerFiles.getTime()//hora
-						}, raiz.Span.Location.Line,
-							raiz.Span.Location.Column);
+						));
 				}
 			}
 			return new Usuario(raiz.ChildNodes.ElementAt(0).Token.ValueString,
