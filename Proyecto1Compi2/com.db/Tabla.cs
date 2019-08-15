@@ -133,6 +133,11 @@ namespace Proyecto1Compi2.com.db
 			return er;
 		}
 
+		internal void EliminarColumna(string col)
+		{
+			this.columnas.Remove(BuscarColumna(col));
+		}
+
 		internal Columna BuscarColumna(string llave)
 		{
 			foreach (Columna cl in this.columnas)

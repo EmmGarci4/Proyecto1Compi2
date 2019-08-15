@@ -107,17 +107,19 @@ namespace Proyecto1Compi2.com.AST
 					}
 
 					//VALIDANDO LLAVES PRIMARIAS
-					foreach (string llave in llavePrimariaCompuesta)
-					{
-						if (tabla.ExisteColumna(llave))
+					if (llavePrimariaCompuesta!=null) {
+						foreach (string llave in llavePrimariaCompuesta)
 						{
-							tabla.BuscarColumna(llave).IsPrimary = true;
-						}
-						else
-						{
-							return new ThrowError(Util.TipoThrow.Exception,
-							"No existe la columna '" + llave + "' para asignarla como llave primaria",
-							Linea, Columna);
+							if (tabla.ExisteColumna(llave))
+							{
+								tabla.BuscarColumna(llave).IsPrimary = true;
+							}
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+								"No existe la columna '" + llave + "' para asignarla como llave primaria",
+								Linea, Columna);
+							}
 						}
 					}
 					//AGREGANDO TABLA A BASE DE DATOS
@@ -207,7 +209,7 @@ namespace Proyecto1Compi2.com.AST
 			return llavePrimariaCompuesta;
 		}
 
-		private bool EsListaDeLista(Columna cl)
+		public static bool EsListaDeLista(Columna cl)
 		{
 			if (cl.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO || cl.Tipo.Tipo == TipoDatoDB.MAP_OBJETO)
 			{
@@ -219,7 +221,7 @@ namespace Proyecto1Compi2.com.AST
 			return false;
 		}
 
-		private bool IsLista(TipoDatoDB td)
+		private static bool IsLista(TipoDatoDB td)
 		{
 			switch (td)
 			{
@@ -260,7 +262,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 		}
 
-		private TipoDatoDB GetTipoDatoConNombre(string nombre)
+		private static TipoDatoDB GetTipoDatoConNombre(string nombre)
 		{
 			switch (nombre.ToLower())
 			{

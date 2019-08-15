@@ -64,6 +64,11 @@ namespace Proyecto1Compi2.com.db
 			this.procedimientos.Mostrar();
 		}
 
+		internal Tabla BuscarTabla(string nombreTabla)
+		{
+			return tablas.Buscar(nombreTabla);
+		}
+
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
