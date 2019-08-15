@@ -16,13 +16,8 @@ namespace Proyecto1Compi2.com.db
 		Dictionary<string, TipoObjetoDB> retornos;
 		string instrucciones;
 
-		public string Nombre { get => nombre; set => nombre = value; }
-		public Dictionary<string, TipoObjetoDB> Parametros { get => parametros; set => parametros = value; }
-		public Dictionary<string, TipoObjetoDB> Retornos { get => retornos; set => retornos = value; }
-		internal string Instrucciones { get => instrucciones; set => instrucciones = value; }
-
-		public Procedimiento(string nombre, Dictionary<string, TipoObjetoDB> parametros, Dictionary<string, 
-			TipoObjetoDB> retornos,string inst)
+		public Procedimiento(string nombre, Dictionary<string, TipoObjetoDB> parametros, Dictionary<string,
+		TipoObjetoDB> retornos, string inst)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;
@@ -30,25 +25,14 @@ namespace Proyecto1Compi2.com.db
 			this.instrucciones = inst;
 		}
 
-		public string GetCodigoFuente() {
-			return instrucciones;
-		}
+		public string Nombre { get => nombre; set => nombre = value; }
+		public Dictionary<string, TipoObjetoDB> Parametros { get => parametros; set => parametros = value; }
+		public Dictionary<string, TipoObjetoDB> Retornos { get => retornos; set => retornos = value; }
+		internal string Instrucciones { get => instrucciones; set => instrucciones = value; }
 
-		internal void Mostrar()
+		public string GetCodigoFuente()
 		{
-			Console.WriteLine("______________________________________________");
-			Console.WriteLine("|	Procedimiento:"+Nombre+"				 |");
-			Console.WriteLine("______________________________________________");
-			Console.WriteLine("Parametros");
-			foreach (KeyValuePair<string, TipoObjetoDB> par in parametros) {
-				Console.WriteLine("|"+par.Key+"|	|"+par.Value+"|");
-			}
-			Console.WriteLine("______________________________________________");
-			Console.WriteLine("Retornos");
-			foreach (KeyValuePair<string, TipoObjetoDB> par in retornos)
-			{
-				Console.WriteLine("|" + par.Key + "|	|" + par.Value + "|");
-			}
+			return instrucciones;
 		}
 
 		public override string ToString()
@@ -74,7 +58,8 @@ namespace Proyecto1Compi2.com.db
 				i++;
 			}
 			//RETORNOS
-			if (retornos.Count>0) {
+			if (retornos.Count > 0)
+			{
 				cadena.Append(",");
 			}
 			i = 0;
@@ -83,7 +68,7 @@ namespace Proyecto1Compi2.com.db
 				cadena.Append("\n<");
 				cadena.Append("\"NAME\"=\"" + kvp.Key + "\",");
 				cadena.Append("\"TYPE\"=\"" + kvp.Value.ToString() + "\",");
-				
+
 				cadena.Append("\"AS\" = OUT>");
 
 				if (i < Retornos.Count - 1)
@@ -93,7 +78,7 @@ namespace Proyecto1Compi2.com.db
 				i++;
 			}
 			cadena.Append("],\n");
-			cadena.Append("\"INSTR\" = $\n"+instrucciones+"$\n");
+			cadena.Append("\"INSTR\" = $\n" + instrucciones + "$\n");
 			cadena.Append("\n>");
 
 			return cadena.ToString();

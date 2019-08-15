@@ -18,24 +18,22 @@ namespace Proyecto1Compi2.com.db
 		public int ContadorFilas { get => contadorFilas;}
 		public string Nombre { get => nombre; set => nombre = value; }
 
-		public Tabla(String nombre, List<Columna> cls)
-		{
-			this.Nombre = nombre;
-			this.columnas = cls;
-		}
-
 		public Tabla(String nombre)
 		{
 			this.Nombre = nombre;
 			this.columnas = new List<Columna> ();
 		}
 
-		public void AgregarColumna(Columna columna) {
-			columnas.Add(columna);
+		public Tabla(String nombre,List<Columna> tab)
+		{
+			this.Nombre = nombre;
+			this.columnas = tab;
 		}
 
-		public void LimpiarColumnas() {
-			this.columnas.Clear();
+		//*****************************COLUMNAS**************************************************
+
+		public void AgregarColumna(Columna columna) {
+			columnas.Add(columna);
 		}
 
 		public bool ExisteColumna(string colum)
@@ -49,6 +47,30 @@ namespace Proyecto1Compi2.com.db
 			}
 			return false;
 		}
+
+		public void LimpiarColumnas()
+		{
+			this.columnas.Clear();
+		}
+
+		internal void EliminarColumna(string col)
+		{
+			this.columnas.Remove(BuscarColumna(col));
+		}
+
+		internal Columna BuscarColumna(string llave)
+		{
+			foreach (Columna cl in this.columnas)
+			{
+				if (cl.Nombre.Equals(llave))
+				{
+					return cl;
+				}
+			}
+			return null;
+		}
+
+		//*****************************OPERACIONES***********************************************
 
 		public List<Error> Insertar(Dictionary<string, object> fila,int linea,int columna)
 		{
@@ -131,23 +153,6 @@ namespace Proyecto1Compi2.com.db
 				contadorFilas++;
 			}
 			return er;
-		}
-
-		internal void EliminarColumna(string col)
-		{
-			this.columnas.Remove(BuscarColumna(col));
-		}
-
-		internal Columna BuscarColumna(string llave)
-		{
-			foreach (Columna cl in this.columnas)
-			{
-				if (cl.Nombre.Equals(llave))
-				{
-					return cl;
-				}
-			}
-			return null;
 		}
 
 		internal List<Error> Insertar(List<object> list,int linea,int columna)

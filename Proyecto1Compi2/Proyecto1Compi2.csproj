@@ -110,7 +110,6 @@
     <Compile Include="com.AST\Where.cs" />
     <Compile Include="com.db\Atributo.cs" />
     <Compile Include="com.db\CollectionLista.cs" />
-    <Compile Include="com.db\ListaTablas.cs" />
     <Compile Include="com.db\Sesion.cs" />
     <Compile Include="com.db\UserType.cs" />
     <Compile Include="com.db\Usuario.cs" />
@@ -123,8 +122,6 @@
     <Compile Include="com.db\Objeto.cs" />
     <Compile Include="com.db\BaseDatos.cs" />
     <Compile Include="com.db\Columna.cs" />
-    <Compile Include="com.db\ListaUserTypes.cs" />
-    <Compile Include="com.db\ListaProcedimientos.cs" />
     <Compile Include="com.db\Procedimiento.cs" />
     <Compile Include="com.db\Tabla.cs" />
     <Compile Include="com.Util\TipoThrow.cs" />

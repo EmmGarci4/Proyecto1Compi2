@@ -13,14 +13,14 @@ namespace Proyecto1Compi2.com.db
 		Dictionary<string, object> atributos;
 		string tipo;
 
-		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
-		public string Tipo { get => tipo; set => tipo = value; }
-
 		public Objeto(Dictionary<string, object> atributos)
 		{
 			this.atributos = atributos;
 			Tipo = "";
 		}
+
+		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
+		public string Tipo { get => tipo; set => tipo = value; }
 
 		public override string ToString()
 		{

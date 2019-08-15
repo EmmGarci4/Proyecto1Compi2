@@ -65,10 +65,5 @@ namespace Proyecto1Compi2.com.db
 			}
 			return false;
 		}
-
-		internal void Mostrar()
-		{
-			Console.WriteLine("Usuario:"+Nombre+" Pasword:"+Password);
-		}
 	}
 }

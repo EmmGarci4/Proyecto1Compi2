@@ -11,102 +11,228 @@ namespace Proyecto1Compi2.com.db
 	class BaseDatos
 	{
 		String nombre;
-		ListaTablas tablas;
-		ListaUserTypes objetos;
-		ListaProcedimientos procedimientos;
+		List<Tabla> tablas;
+		List<UserType> objetos;
+		List<Procedimiento> procedimientos;
 
+		public BaseDatos(String nombre)
+		{
+			this.nombre = nombre;
+			this.tablas = new List<Tabla>();
+			this.objetos = new List<UserType>();
+			this.procedimientos = new List<Procedimiento>();
+		}
 
 		public string Nombre { get => nombre; set => nombre = value; }
-		internal ListaTablas Tablas { get => tablas; set => tablas = value; }
-		internal ListaUserTypes UserTypes { get => objetos; set => objetos = value; }
-		internal ListaProcedimientos Procedimientos { get => procedimientos; set => procedimientos = value; }
+		internal List<Tabla> Tablas { get => tablas; set => tablas = value; }
+		internal List<UserType> UserTypes { get => objetos; set => objetos = value; }
+		internal List<Procedimiento> Procedimientos { get => procedimientos; set => procedimientos = value; }
 
-		public BaseDatos(String nombre) {
-			this.nombre = nombre;
-			this.tablas = new ListaTablas();
-			this.objetos = new ListaUserTypes();
-			this.procedimientos = new ListaProcedimientos();
-		}
-
-		internal void EliminarUserType(string nombre)
+		//*****************************TABLAS****************************************************
+		public void AgregarTabla(Tabla tb)
 		{
-			this.objetos.Eliminar(nombre);
-		}
-
-		internal void EliminarTabla(string nombre)
-		{
-			this.tablas.Eliminar(nombre);
+			this.tablas.Add(tb);
 		}
 
 		public bool ExisteTabla(string nombre)
 		{
-			return tablas.Existe(nombre);
+			foreach (Tabla tb in this.tablas)
+			{
+				if (tb.Nombre.Equals(nombre))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
-		public bool ExisteProcedimiento(string nombre)
+
+		internal Tabla BuscarTabla(string nombreTabla)
 		{
-			return procedimientos.Existe(nombre);
+			foreach (Tabla tb in this.tablas)
+			{
+				if (tb.Nombre.Equals(nombre))
+				{
+					return tb;
+				}
+			}
+			return null;
 		}
 
-		public bool ExisteUserType(string nombre)
+		internal void EliminarTabla(string nombre)
 		{
-			return objetos.Existe(nombre);
+			this.tablas.Remove(BuscarTabla(nombre));
 		}
 
-		public void AgregarTabla(Tabla tb) {
-			this.tablas.Add(tb);
-		}
-
+		//*****************************USER TYPES************************************************
 		public void AgregarUserType(UserType obj)
 		{
 			this.objetos.Add(obj);
 		}
 
+		public bool ExisteUserType(string nombre)
+		{
+			foreach (UserType tb in this.UserTypes)
+			{
+				if (tb.Nombre.Equals(nombre))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		internal UserType BuscarUserType(string nombre)
+		{
+			foreach (UserType tb in this.objetos)
+			{
+				if (tb.Nombre.Equals(nombre))
+				{
+					return tb;
+				}
+			}
+			return null;
+		}
+
+		internal void EliminarUserType(string nombre)
+		{
+			this.objetos.Remove(BuscarUserType(nombre));
+		}
+
+		//*****************************PROCEDIMIENTOS********************************************
 		public void AgregarProcedimiento(Procedimiento obj)
 		{
 			this.procedimientos.Add(obj);
 		}
 
+		public bool ExisteProcedimiento(string nombre)
+		{
+			foreach (Procedimiento tb in this.procedimientos)
+			{
+				if (tb.Nombre.Equals(nombre))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private Procedimiento BuscarProcedimiento(string nombre)
+		{
+			foreach (Procedimiento tb in this.procedimientos)
+			{
+				if (tb.Nombre.Equals(nombre))
+				{
+					return tb;
+				}
+			}
+			return null;
+		}
+
+		internal void EliminarProcedimiento(string nombre)
+		{
+			this.procedimientos.Remove(BuscarProcedimiento(nombre));
+		}
+
+		//*****************************MOSTRAR***************************************************
+
 		public void MostrarBaseDatos()
 		{
 			Console.WriteLine("********************************Base de Datos:" + this.nombre + "********************************");
-			this.tablas.Mostrar();
-			this.UserTypes.Mostrar();
-			this.procedimientos.Mostrar();
+			MostrarTablas();
+			MostrarUserTypes();
+			MostrarProcedimientos();
 		}
 
-		internal UserType BuscarUserType(string nombre)
+		private void MostrarProcedimientos()
 		{
-			return this.UserTypes.Buscar(nombre);
+			foreach (Procedimiento pr in this.procedimientos)
+			{
+				Console.WriteLine("Procedimiento" + pr.Nombre);
+				//pr.Mostrar();
+			}
 		}
 
-		internal Tabla BuscarTabla(string nombreTabla)
+		private void MostrarUserTypes()
 		{
-			return tablas.Buscar(nombreTabla);
+			foreach (UserType user in this.UserTypes)
+			{
+				Console.WriteLine("UserType: " + user.Nombre);
+				//user.Mostrar();
+			}
+		}
+
+		private void MostrarTablas()
+		{
+			foreach (Tabla tb in this.tablas)
+			{
+				Console.WriteLine("Tabla: " + tb.Nombre);
+				//tb.MostrarCabecera();
+				//tb.MostrarDatos();
+			}
 		}
 
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
 			cadena.Append("\n<\n");
-			cadena.Append("\"NAME\"=\""+Nombre+"\",\n");
+			cadena.Append("\"NAME\"=\"" + Nombre + "\",\n");
 			cadena.Append("\"DATA\"=[");
 			if (UserTypes.Count > 0)
 			{
-				cadena.Append(UserTypes.ToString());
+				IEnumerator<UserType> enumerator = this.UserTypes.GetEnumerator();
+				bool hasNext = enumerator.MoveNext();
+				while (hasNext)
+				{
+					UserType i = enumerator.Current;
+					cadena.Append(i.ToString());
+					hasNext = enumerator.MoveNext();
+					if (hasNext)
+					{
+						cadena.Append(",");
+					}
+				}
+				enumerator.Dispose();
+
 				if (procedimientos.Count > 0 || Tablas.Count > 0)
 				{
 					cadena.Append(",");
 				}
 			}
-			if (Procedimientos.Count>0) {
-				cadena.Append(procedimientos.ToString());
-				if (tablas.Count>0) {
+			if (Procedimientos.Count > 0)
+			{
+				IEnumerator<Procedimiento> enumerator = this.procedimientos.GetEnumerator();
+				bool hasNext = enumerator.MoveNext();
+				while (hasNext)
+				{
+					Procedimiento i = enumerator.Current;
+					cadena.Append(i.ToString());
+					hasNext = enumerator.MoveNext();
+					if (hasNext)
+					{
+						cadena.Append(",");
+					}
+				}
+				enumerator.Dispose();
+				if (tablas.Count > 0)
+				{
 					cadena.Append(",");
 				}
 			}
 			if (Tablas.Count > 0)
 			{
-				cadena.Append(Tablas.ToString());
+				IEnumerator<Tabla> enumerator = this.tablas.GetEnumerator();
+				bool hasNext = enumerator.MoveNext();
+				while (hasNext)
+				{
+					Tabla i = enumerator.Current;
+					cadena.Append(i.ToString());
+					hasNext = enumerator.MoveNext();
+					if (hasNext)
+					{
+						cadena.Append(",");
+					}
+				}
+				enumerator.Dispose();
 			}
 			cadena.Append("]\n");
 			cadena.Append(">");

@@ -19,22 +19,26 @@ namespace Proyecto1Compi2.com.db
 			this.Atributos = atributos;
 		}
 
+		public string Nombre { get => nombre; set => nombre = value; }
+		public Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
+
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
 			cadena.Append("\n<\n");
 			cadena.Append("\"CQL-TYPE\" = \"OBJECT\",\n");
-			cadena.Append("\"NAME\" = \""+Nombre+"\",\n");
+			cadena.Append("\"NAME\" = \"" + Nombre + "\",\n");
 			cadena.Append("\"ATTRS\" = [");
 			int i = 0;
 			foreach (KeyValuePair<string, TipoObjetoDB> kvp in Atributos)
 			{
 				cadena.Append("\n<");
-				cadena.Append("\"NAME\"=\""+kvp.Key+"\",");
+				cadena.Append("\"NAME\"=\"" + kvp.Key + "\",");
 				cadena.Append("\"TYPE\"=\"" + kvp.Value.ToString() + "\">");
-				
-				
-				if (i<Atributos.Count-1) {
+
+
+				if (i < Atributos.Count - 1)
+				{
 					cadena.Append(",");
 				}
 				i++;
@@ -45,21 +49,6 @@ namespace Proyecto1Compi2.com.db
 			return cadena.ToString();
 		}
 
-		public string Nombre { get => nombre; set => nombre = value; }
-		public Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
 
-		internal void Mostrar()
-		{
-			Console.WriteLine("______________________________________________");
-			Console.WriteLine("|	UserType:"+Nombre+"						|");
-			Console.WriteLine("______________________________________________");
-			foreach (KeyValuePair<string, TipoObjetoDB> kvp in atributos)
-			{
-				Console.WriteLine("|Nombre = {0}|	| Tipo = {1}|",
-					kvp.Key, kvp.ToString());
-			}
-		}
-
-		
 	}
 }

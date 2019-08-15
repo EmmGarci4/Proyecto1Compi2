@@ -11,12 +11,13 @@ namespace Proyecto1Compi2.com.db
 	{
 		bool isList;
 
-		public bool IsLista { get => isList; set => isList = value; }
-		public bool IsSet { get => !isList; }
-
-		public CollectionLista() {
+		public CollectionLista()
+		{
 			isList = true;
 		}
+
+		public bool IsLista { get => isList; set => isList = value; }
+		public bool IsSet { get => !isList; }
 
 		public void AddItem(object obj) {
 			if (isList)
