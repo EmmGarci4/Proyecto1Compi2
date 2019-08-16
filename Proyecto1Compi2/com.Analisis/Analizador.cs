@@ -115,8 +115,8 @@ namespace com.Analisis
 					mensaje.Message,
 					mensaje.Location.Line,
 					mensaje.Location.Column,
-					HandlerFiles.getDate(), 
-					HandlerFiles.getTime()
+					Datos.GetDate(), 
+					Datos.GetTime()
 					));
 
 				Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
@@ -289,7 +289,7 @@ namespace com.Analisis
 
 		private static void MostrarReporteDeEstado(Sesion sesion) {
 			Console.WriteLine("********************************************************************************************");
-			Console.WriteLine(HandlerFiles.getDate()+"="+HandlerFiles.getTime());
+			Console.WriteLine(Datos.GetDate()+"="+Datos.GetTime());
 			Console.WriteLine("------------------------------------------------------");
 			Console.WriteLine("Bases de Datos: ");
 			foreach (BaseDatos db in BasesDeDatos) {

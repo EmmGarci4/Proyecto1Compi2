@@ -94,7 +94,7 @@ namespace Proyecto1Compi2.com.db
 							else
 							{
 								er.Add(new Error(TipoError.Sintactico, "La llave primaria no puede ser nula" + Nombre, linea, columna,
-						HandlerFiles.getDate(), HandlerFiles.getTime()));
+						Datos.GetDate(), Datos.GetTime()));
 								bandera = false;
 								break;
 							}
@@ -113,7 +113,7 @@ namespace Proyecto1Compi2.com.db
 					}
 					else
 					{
-						if (IsTipoCompatible(cl.Tipo, fila[cl.Nombre]))
+						if (Datos.IsTipoCompatible(cl.Tipo, fila[cl.Nombre]))
 						{
 							filaFantasma.Add(fila[cl.Nombre]);
 						}
@@ -122,7 +122,7 @@ namespace Proyecto1Compi2.com.db
 							if (cl.IsPrimary)
 							{
 								er.Add(new Error(TipoError.Sintactico, "La llave primaria no puede ser nula" + Nombre, linea, columna,
-						HandlerFiles.getDate(), HandlerFiles.getTime()));
+						Datos.GetDate(), Datos.GetTime()));
 								bandera = false;
 								break;
 							}
@@ -130,7 +130,7 @@ namespace Proyecto1Compi2.com.db
 							{
 								filaFantasma.Add("null");
 								er.Add(new Error(TipoError.Sintactico, "El tipo de dato de la columna no es compatible con el dato ingresado" + Nombre, linea, columna,
-						HandlerFiles.getDate(), HandlerFiles.getTime()));
+						Datos.GetDate(), Datos.GetTime()));
 							}
 						}
 					}
@@ -138,7 +138,7 @@ namespace Proyecto1Compi2.com.db
 				catch (KeyNotFoundException ex)
 				{
 					er.Add(new Error(TipoError.Sintactico, "Error grave al insertar datos en la tabla " + Nombre,linea,columna,
-						HandlerFiles.getDate(),HandlerFiles.getTime()));
+						Datos.GetDate(),Datos.GetTime()));
 					break;
 				}
 			}
@@ -168,7 +168,7 @@ namespace Proyecto1Compi2.com.db
 				else {
 					if (i < list.Count)
 					{
-						if (IsTipoCompatible(cl.Tipo, list.ElementAt(i)))
+						if (Datos.IsTipoCompatible(cl.Tipo, list.ElementAt(i)))
 						{
 							filaFantasma.Add(list.ElementAt(i));
 						}
@@ -176,7 +176,7 @@ namespace Proyecto1Compi2.com.db
 							if (cl.IsPrimary)
 							{
 								err.Add(new Error(TipoError.Sintactico, "El valor ingresado a la llave primaria no concuerda con el tipo de dato de la columna", linea, columna,
-						HandlerFiles.getDate(), HandlerFiles.getTime()));
+						Datos.GetDate(), Datos.GetTime()));
 								break;
 							}
 							else {
@@ -199,202 +199,6 @@ namespace Proyecto1Compi2.com.db
 				contadorFilas++;
 			}
 			return err;
-		}
-
-		private static bool IsTipoCompatible(TipoObjetoDB tipo, object v)
-		{
-			switch (tipo.Tipo)
-			{
-				case TipoDatoDB.BOOLEAN:
-					return v.GetType() == typeof(bool);
-				case TipoDatoDB.COUNTER:
-					return v.GetType() == typeof(double) || v.GetType() == typeof(int);
-				case TipoDatoDB.DOUBLE:
-					return v.GetType() == typeof(double);
-				case TipoDatoDB.INT:
-					return v.GetType() == typeof(int);
-				case TipoDatoDB.DATE:
-					if (v.GetType() == typeof(string))
-					{
-						return Regex.IsMatch(v.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
-					}
-					return false;
-				case TipoDatoDB.NULO:
-					if (v.GetType() == typeof(string))
-					{
-						return v.ToString().ToLower().Equals("null");
-					}
-					return false;
-				case TipoDatoDB.STRING:
-					return true;
-				case TipoDatoDB.TIME:
-					if (v.GetType() == typeof(string))
-					{
-						return Regex.IsMatch(v.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
-					}
-					return false;
-				case TipoDatoDB.LISTA_BOOLEAN:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllBool();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_DATE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllDate();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_DOUBLE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllDouble();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_INT:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllInteger();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_OBJETO:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllObjeto();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_STRING:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllString();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_TIME:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllTime();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_BOOLEAN:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllBool();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_DATE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							return list.IsAllDate();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_DOUBLE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllDouble();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_INT:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllInteger();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_OBJETO:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							return list.IsAllObjeto();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_STRING:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllString();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_TIME:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllTime();
-						}
-					}
-					break;
-				case TipoDatoDB.MAP_BOOLEAN:
-				case TipoDatoDB.MAP_DATE:
-				case TipoDatoDB.MAP_DOUBLE:
-				case TipoDatoDB.MAP_INT:
-				case TipoDatoDB.MAP_OBJETO:
-				case TipoDatoDB.MAP_STRING:
-				case TipoDatoDB.MAP_TIME:
-				case TipoDatoDB.OBJETO:
-					return true;
-			}
-
-			return false;
 		}
 
 		internal void Truncar()

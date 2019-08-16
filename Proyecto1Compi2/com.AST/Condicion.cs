@@ -37,7 +37,7 @@ namespace Proyecto1Compi2.com.AST
 			throw new NotImplementedException();
 		}
 
-		public override string GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts)
 		{
 			throw new NotImplementedException();
 		}

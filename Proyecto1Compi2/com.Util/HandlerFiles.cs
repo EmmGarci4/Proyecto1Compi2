@@ -33,14 +33,5 @@ namespace com.Analisis.Util
 			return fileContent;
 		}
 
-		internal static string getDate()
-		{
-			return "'"+DateTime.Now.ToString("yyyy-MM-dd")+"'";
-		}
-
-		internal static string getTime()
-		{
-			return "'"+DateTime.Now.ToString("HH:mm:ss")+"'";
-		}
 	}
 }

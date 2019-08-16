@@ -50,7 +50,7 @@ namespace Proyecto1Compi2.com.db
 		{
 			foreach (Tabla tb in this.tablas)
 			{
-				if (tb.Nombre.Equals(nombre))
+				if (tb.Nombre.Equals(nombreTabla))
 				{
 					return tb;
 				}

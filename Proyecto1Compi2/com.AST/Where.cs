@@ -44,7 +44,7 @@ namespace Proyecto1Compi2.com.AST
 			return TipoOperacion.Booleano;
 		}
 
-		public override string GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts)
 		{
 			throw new System.NotImplementedException();
 		}

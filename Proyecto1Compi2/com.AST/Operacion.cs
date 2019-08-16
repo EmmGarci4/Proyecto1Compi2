@@ -11,7 +11,7 @@ namespace Proyecto1Compi2.com.AST
 	class Operacion : Expresion
 	{
 		TipoOperacion tipoOp;
-		private readonly string Valor;
+		private readonly object Valor;
 		Expresion izquierda;
 		Expresion derecha;
 		/*
@@ -51,7 +51,7 @@ namespace Proyecto1Compi2.com.AST
 		 * numeros, identificadores, cadenas o booleanos
 		 * 
 		 */
-		public Operacion(string valor, TipoOperacion tipo, int linea, int columna) : base(linea, columna)
+		public Operacion(object valor, TipoOperacion tipo, int linea, int columna) : base(linea, columna)
 		{
 			this.tipoOp = tipo;
 			this.Valor = valor;
@@ -244,7 +244,7 @@ namespace Proyecto1Compi2.com.AST
 			return TipoOperacion.Nulo;
 		}
 
-		public override string GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts)
 		{
 			Object izq = izquierda?.GetValor(ts);
 			Object der = derecha?.GetValor(ts);
@@ -258,7 +258,7 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
 						{
 							bool valor = Boolean.Parse(izq.ToString()) || Boolean.Parse(der.ToString());
-							return valor.ToString();
+							return valor;
 						}
 						//BOOLEANO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
@@ -270,7 +270,7 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else
 							{
-								return der.ToString();
+								return der;
 							}
 						}
 						//BOOLEANO-CADENA
@@ -288,14 +288,14 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else
 							{
-								return izq.ToString();
+								return izq;
 							}
 						}
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) + double.Parse(der.ToString());
-							return valor.ToString();
+							return valor;
 						}
 						//NUMERO-CADENA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
@@ -347,12 +347,12 @@ namespace Proyecto1Compi2.com.AST
 							if (Boolean.Parse(izq.ToString()))
 							{
 								double valor = 1-double.Parse(der.ToString());
-								return valor.ToString();
+								return valor;
 							}
 							else
 							{
 								double valor = 0-double.Parse(der.ToString());
-								return valor.ToString();
+								return valor;
 							}
 						}
 						//NUMERO-BOOLEANO
@@ -365,14 +365,14 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else
 							{
-								return izq.ToString();
+								return izq;
 							}
 						}
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) - double.Parse(der.ToString());
-							return valor.ToString();
+							return valor;
 						}
 						else
 						{
@@ -385,7 +385,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (Boolean.Parse(izq.ToString()))
 							{
-								return izq.ToString();
+								return izq;
 							}
 							else
 							{
@@ -395,17 +395,17 @@ namespace Proyecto1Compi2.com.AST
 							
 						}
 						//NUMERO-BOOLEANO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
-						{
+						//if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
+						//{
 							
-						}
+						//}
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							if (double.Parse(der.ToString()) != 0)
 							{
 								double valor = double.Parse(izq.ToString()) / double.Parse(der.ToString());
-								return valor.ToString();
+								return valor;
 							}
 							else {
 								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, "No se puede hacer una división por cero", Linea, Columna));
@@ -432,7 +432,7 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
 						{
 							bool valor = Boolean.Parse(izq.ToString()) && Boolean.Parse(der.ToString());
-							return valor.ToString();
+							return valor;
 						}
 						//BOOLEANO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
@@ -440,11 +440,11 @@ namespace Proyecto1Compi2.com.AST
 							if (Boolean.Parse(izq.ToString()))
 							{
 								double valor = 1 * double.Parse(der.ToString());
-								return valor.ToString();
+								return valor;
 							}
 							else
 							{
-								return "0";
+								return 0;
 							}
 						}
 						//NUMERO-BOOLEANO
@@ -453,18 +453,18 @@ namespace Proyecto1Compi2.com.AST
 							if (Boolean.Parse(der.ToString()))
 							{
 								double valor = double.Parse(izq.ToString()) *1;
-								return valor.ToString();
+								return valor;
 							}
 							else
 							{
-								return "0";
+								return 0;
 							}
 						}
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) * double.Parse(der.ToString());
-							return valor.ToString();
+							return valor;
 						}
 						//Fecha-CADENA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
@@ -486,11 +486,11 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (Boolean.Parse(izq.ToString()))
 							{
-								return "1";
+								return 1;
 							}
 							else
 							{
-								return "0";
+								return 0;
 							}
 						}
 						//NUMERO-BOOLEANO
@@ -498,18 +498,18 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (Boolean.Parse(der.ToString()))
 							{
-								return izq.ToString();
+								return izq;
 							}
 							else
 							{
-								return "0";
+								return 0;
 							}
 						}
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							double valor = Math.Pow(double.Parse(izq.ToString()), double.Parse(der.ToString()));
-							return valor.ToString();
+							return valor;
 						}
 						//Fecha-CADENA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
@@ -535,11 +535,12 @@ namespace Proyecto1Compi2.com.AST
 					if (izquierda.GetTipo(ts) == TipoOperacion.Numero)
 					{
 						double valor = double.Parse(izq.ToString()) * -1;
-						return valor.ToString();
+						return valor;
 					}
 					else
 					{
-						Console.WriteLine("Error de tipos");
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, 
+							"No se puede negar un valor no numérico", Linea, Columna));
 					}
 				}
 			}

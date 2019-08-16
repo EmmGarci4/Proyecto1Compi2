@@ -58,8 +58,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"La tabla '"+((Tabla)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
 							linea+1,
 							columna+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 
 					}
@@ -79,8 +79,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"El user type '"+((UserType)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
 							linea+1,
 							columna+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 					}
 				}
@@ -99,8 +99,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
 							linea+1,
 							columna+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 					}
 
@@ -178,8 +178,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"Error grave leyendo datos en retornos del procedimiento",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 					}
 				}
@@ -211,8 +211,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"Error grave leyendo datos en parametros del procedimiento",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 					}
 				}
@@ -247,8 +247,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString+"' en el User Type",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 
 				}
@@ -406,13 +406,12 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//INSERTANDO ERROR EN TABLA ERRORS
 				Analizador.ErroresChison.Add(new Error(
-
 							TipoError.Semantico,
 							"Error grave al leer los datos de la tabla ",
 							fila.Span.Location.Line+1,
 							fila.Span.Location.Column+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 				return null;
 			}
@@ -501,8 +500,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"No existe el User Type '"+nombreTipo+"' para crear el objeto",
 							nodo.Span.Location.Line+1,
 							nodo.Span.Location.Column+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 
 					return null;
@@ -640,8 +639,8 @@ namespace Proyecto1Compi2.com.Analisis
 							"No se puede asignar permisos al usuario pues La base de datos '"+per+"' no existe",
 							raiz.Span.Location.Line+1,
 							raiz.Span.Location.Column+1,
-							HandlerFiles.getDate(), //fecha
-							HandlerFiles.getTime()//hora
+							Datos.GetDate(), //fecha
+							Datos.GetTime()//hora
 						));
 				}
 			}
