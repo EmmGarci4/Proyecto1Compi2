@@ -15,15 +15,15 @@ namespace Proyecto1Compi2.com.Analisis
 	static class GeneradorAstCql
 	{
 
-		//public static List<Sentencia> GetAST(ParseTreeNode raiz)
-		//{
-		//	return GetSentencias(raiz.ChildNodes.ElementAt(0));
-		//}
-
-		public static Expresion GetAST(ParseTreeNode raiz)
+		public static List<Sentencia> GetAST(ParseTreeNode raiz)
 		{
-			return GetExpresion(raiz.ChildNodes.ElementAt(0));
+			return GetSentencias(raiz.ChildNodes.ElementAt(0));
 		}
+
+		//public static Expresion GetAST(ParseTreeNode raiz)
+		//{
+		//	return GetExpresion(raiz.ChildNodes.ElementAt(0));
+		//}
 
 		private static List<Sentencia> GetSentencias(ParseTreeNode parseTreeNode)
 		{

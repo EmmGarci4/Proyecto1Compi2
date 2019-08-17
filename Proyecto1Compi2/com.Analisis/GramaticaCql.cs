@@ -253,7 +253,7 @@ namespace com.Analisis
 			#endregion
 
 			#region Gramatica
-			INICIO.Rule = EXPRESION;// SENTENCIAS;
+			INICIO.Rule =  SENTENCIAS;
 
 			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 

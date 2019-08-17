@@ -103,6 +103,7 @@ namespace Proyecto1Compi2.com.db
 				f.Add(ex.GetValor(ts));
 			}
 			this.datos.Add(f);
+			contadorFilas++;
 		}
 
 		internal void MostrarDatos()
@@ -110,12 +111,14 @@ namespace Proyecto1Compi2.com.db
 			int i = 0;
 			while (i < ContadorFilas)
 			{
-				foreach (Columna cl in columnas)
+				foreach (Fila cl in datos)
 				{
-					//Console.Write("|" + cl.Datos.ElementAt(i) + "|");
+					foreach (object val in cl) {
+						Console.Write("|"+val.ToString()+"|");
+					}
+					Console.WriteLine();
 				}
 				i++;
-				Console.WriteLine();
 			}
 		}
 
