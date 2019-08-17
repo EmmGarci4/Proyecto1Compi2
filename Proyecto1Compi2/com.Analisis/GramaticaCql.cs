@@ -244,13 +244,14 @@ namespace com.Analisis
 				CLOSECURSOR = new NonTerminal("CLOSECURSOR"),
 				LOG = new NonTerminal("LOG"),
 				THROW = new NonTerminal("THROW"),
-				TRYCATCH = new NonTerminal("TRYCATCH")
+				TRYCATCH = new NonTerminal("TRYCATCH"),
+				NULL=new NonTerminal("NULL")
 				;
 
 			#endregion
 
 			#region Gramatica
-			INICIO.Rule = SENTENCIAS;
+			INICIO.Rule = EXPRESION;// SENTENCIAS;
 
 			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 
@@ -269,8 +270,8 @@ namespace com.Analisis
 			#region expresion
 
 			EXPRESION.Rule = //aritmeticos
-				EXPRESION + mas + EXPRESION
-				| EXPRESION + menos + EXPRESION
+				ReduceHere()+EXPRESION + mas + EXPRESION
+				|ReduceHere()+ EXPRESION + menos + EXPRESION
 				| EXPRESION + por + EXPRESION
 				| EXPRESION + div + EXPRESION
 				| EXPRESION + pot + EXPRESION
@@ -284,23 +285,27 @@ namespace com.Analisis
 				| numero
 				| date
 				| time
-				| pr_null
+				| NULL
 				| id
 				| par1 + EXPRESION + par2
-				| menos + EXPRESION
+				|ImplyPrecedenceHere(9)+ menos + EXPRESION
 				| LLAMADAFUNCION
+				| nombre
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2
 				| cor1 + LISTAEXPRESIONES + cor2
 				| MODIFICADORES
 				| FUNCIONAGREGACION
 				| pr_new + TIPODATO
-				|id+punto+ACCESO
+				| id + punto + ACCESO
 				;
 
+			NULL.Rule = pr_null;
 
-			MODIFICADORES.Rule = id + mas + mas | id + punto + ACCESO + mas + mas
-				| id + menos + menos | id + punto + ACCESO + menos + menos;
+			MODIFICADORES.Rule = id + mas + mas 
+				| id + punto + ACCESO + mas + mas
+				| id + menos + menos 
+				| id + punto + ACCESO + menos + menos;
 
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
 
@@ -515,7 +520,7 @@ namespace com.Analisis
 				|FOR
 				|LLAMADAFUNCION+puntoycoma
 				|RETORNO
-				| CALLPROC
+				|CALLPROC
 				|BREAK
 				|CONTINUE
 				|CREAR_CURSOR
@@ -636,7 +641,7 @@ namespace com.Analisis
 			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
-				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_in,
+				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_in,pr_null,
 				pr_from,pr_limit,pr_begin,pr_batch,pr_apply);		
 			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
@@ -652,7 +657,6 @@ namespace com.Analisis
 			RegisterOperators(8, Associativity.Left,por, div,mod);
 			RegisterOperators(9, Associativity.Right, pot);
 			RegisterOperators(10, Associativity.Right, not);
-			RegisterOperators(11, Associativity.Right, mas + mas, menos + menos, mas + igual, menos + igual, div + igual, por + igual);
 
 			#endregion
 		}

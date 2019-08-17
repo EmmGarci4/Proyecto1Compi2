@@ -206,6 +206,38 @@ namespace Proyecto1Compi2.com.Util
 			return false;
 		}
 
+		public static object GetValor(string valueString)
+		{
+			if (valueString.Contains("."))
+			{
+				//decimal
+				if (double.TryParse(valueString, out double val1))
+				{
+					return val1;
+				}
+				else
+				{
+					return valueString;
+				}
+			}
+			//entero
+			if (int.TryParse(valueString, out int val2))
+			{
+				return val2;
+			}
+
+			//booleano
+			else if (bool.TryParse(valueString, out bool val3))
+			{
+				return val3;
+			}
+			else
+			{
+				return valueString;
+			}
+
+		}
+		
 		internal static string GetDate()
 		{
 			return "'" + DateTime.Now.ToString("yyyy-MM-dd") + "'";

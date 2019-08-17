@@ -15,9 +15,14 @@ namespace Proyecto1Compi2.com.Analisis
 	static class GeneradorAstCql
 	{
 
-		public static List<Sentencia> GetAST(ParseTreeNode raiz)
+		//public static List<Sentencia> GetAST(ParseTreeNode raiz)
+		//{
+		//	return GetSentencias(raiz.ChildNodes.ElementAt(0));
+		//}
+
+		public static Expresion GetAST(ParseTreeNode raiz)
 		{
-			return GetSentencias(raiz.ChildNodes.ElementAt(0));
+			return GetExpresion(raiz.ChildNodes.ElementAt(0));
 		}
 
 		private static List<Sentencia> GetSentencias(ParseTreeNode parseTreeNode)
@@ -428,7 +433,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Acceso GetAcceso(ParseTreeNode nodo)
 		{
-			Acceso accesss = new Acceso();
+			Acceso accesss = new Acceso(nodo.Span.Location.Line,nodo.Span.Location.Column);
 			foreach (ParseTreeNode ac_campo in nodo.ChildNodes) {
 				object ac = GetAcCampo(ac_campo);
 				if(ac!=null)accesss.Objetos.Enqueue(ac);	
@@ -655,6 +660,7 @@ namespace Proyecto1Compi2.com.Analisis
 				case "*": return TipoOperacion.Multiplicacion;
 				case "/": return TipoOperacion.Division;
 				case "**": return TipoOperacion.Potencia;
+				case "%": return TipoOperacion.Modulo;
 			}
 			return TipoOperacion.Nulo;
 		}
@@ -664,8 +670,10 @@ namespace Proyecto1Compi2.com.Analisis
 			switch(raiz.ChildNodes.Count) {
 				case 1://valores, o expresion o llamada
 					switch (raiz.ChildNodes.ElementAt(0).Term.Name) {
+					case "NULL":
+							return new Operacion("null", TipoOperacion.Nulo, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					case "numero":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Numero,raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Numero,raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					case "cadena":
 							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Cadena, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					case "id":
@@ -673,13 +681,26 @@ namespace Proyecto1Compi2.com.Analisis
 					case "nombre":
 						return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					case "date":
-						return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
-					case "datetime":
-						return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.FechaHora, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+						return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					case "time":
+						return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Hora, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					case "EXPRESION":
 						return GetExpresion(raiz.ChildNodes.ElementAt(0));
+						case "ACCESO":
+							return GetAcceso(raiz.ChildNodes.ElementAt(0));
 					case "LLAMADAFUNCION":
+							return GetLlamadaFuncion(raiz.ChildNodes.ElementAt(0));
+					case "INFOCOLLECTIONS": //{valor:{}:val:{}}
+
+					case "LISTAEXPRESIONES": //[1112,2,3,3,2]
+
 						break;
+					case "MODIFICADORES":
+							return GetmodificadorExp(raiz.ChildNodes.ElementAt(0));
+					case "FUNCIONAGREGACION":
+
+							break;
+
 					}
 					break;
 				case 2://menos
@@ -687,13 +708,38 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(0)), TipoOperacion.Menos, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					}
-					else {
-						///acceso a propiedad
+					else if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("new"))
+					{
+						//new tipodato
+						return new Operacion(raiz.ChildNodes.ElementAt(1).Token.ValueString, TipoOperacion.Objeto, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+
 					}
-					break;
-					
+					else {
+						//id punto acceso
+						Acceso acc = new Acceso(raiz.Span.Location.Line,raiz.Span.Location.Column);
+						acc.Objetos.Enqueue(raiz.ChildNodes.ElementAt(0).Token.ValueString);
+						foreach (ParseTreeNode ac_campo in raiz.ChildNodes.ElementAt(1).ChildNodes)
+						{
+							object ac = GetAcCampo(ac_campo);
+							if (ac != null) acc.Objetos.Enqueue(ac);
+						}
+						return acc;
+					}	
 			}
 			return null;
+		}
+
+		private static Expresion GetmodificadorExp(ParseTreeNode raiz)
+		{
+			bool op = raiz.ChildNodes.ElementAt(1).Token.ValueString == "+";
+							return new ModificadorExp(raiz.ChildNodes.ElementAt(0).Token.ValueString,op,raiz.ChildNodes.ElementAt(0).Token.Location.Line,
+								raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+		}
+
+		private static Expresion GetLlamadaFuncion(ParseTreeNode parseTreeNode)
+		{
+			return new LlamadaFuncionExp(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString,GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
+				parseTreeNode.Span.Location.Line,parseTreeNode.Span.Location.Column);
 		}
 		#endregion
 	}

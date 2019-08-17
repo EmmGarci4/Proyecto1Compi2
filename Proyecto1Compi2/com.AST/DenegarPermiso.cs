@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
@@ -23,7 +24,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Usuario { get => usuario; set => usuario = value; }
 		public string BaseDatos { get => baseDatos; set => baseDatos = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			if (Analizador.BuscarUsuario(sesion.Usuario)!=null) {
 				if (Analizador.BuscarUsuario(sesion.Usuario).ExistePermiso(BaseDatos))

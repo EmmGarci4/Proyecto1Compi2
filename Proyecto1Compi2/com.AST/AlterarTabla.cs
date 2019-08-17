@@ -37,7 +37,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<string> QuitarCols { get => quitarCols; set => quitarCols = value; }
 		internal List<Columna> AgregarCols { get => agregarCols; set => agregarCols = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)

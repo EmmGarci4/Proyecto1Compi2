@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,6 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public abstract Object Ejecutar(Sesion sesion);
+		public abstract Object Ejecutar(Sesion sesion,TablaSimbolos tb);
 	}
 }

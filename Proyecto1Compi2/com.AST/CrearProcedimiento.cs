@@ -25,7 +25,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Simbolo> Parametros { get => parametros; set => parametros = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			Console.WriteLine("Creando Procedimiento..." + this.nombre);
 			foreach (Simbolo cl in this.parametros)

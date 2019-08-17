@@ -372,8 +372,8 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, object> fila = GetFila(nodo);
 				if (fila != null)
 				{
-					List<Error> er =tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
-					Analizador.ErroresChison.AddRange(er);
+					//List<Error> er =tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
+					//Analizador.ErroresChison.AddRange(er);
 				}
 			}
 		}
@@ -396,7 +396,7 @@ namespace Proyecto1Compi2.com.Analisis
 						Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
 						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
 					}else {
-						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
+						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, Datos.GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
 
 					}
 
@@ -426,7 +426,7 @@ namespace Proyecto1Compi2.com.Analisis
 				if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
 				{
 					//DATO primitivo
-					valores.AddItem(GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
+					valores.AddItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
 				}
 				else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
 					//lista
@@ -440,37 +440,6 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 
 			return valores;
-		}
-
-		private static object GetValor(string valueString)
-		{
-			if (valueString.Contains(".")) {
-				//decimal
-				if (double.TryParse(valueString, out double val1))
-				{
-					return val1;
-				}
-				else
-				{
-					return valueString;
-				}
-			}
-			//entero
-			if (int.TryParse(valueString, out int val2))
-			{
-				return val2;
-			}
-			
-			//booleano
-			else if (bool.TryParse(valueString, out bool val3))
-			{
-				return val3;
-			}
-			else
-			{
-				return valueString;
-			}
-
 		}
 
 		private static List<Columna> GetColumnas(List<object> objetosdb,ParseTreeNode raiz)

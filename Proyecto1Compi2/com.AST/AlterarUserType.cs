@@ -38,7 +38,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<Acceso> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
 		internal Dictionary<string, TipoObjetoDB> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
@@ -69,16 +69,16 @@ namespace Proyecto1Compi2.com.AST
 					else
 					{
 						//eliminar
-						foreach (Acceso att in quitarattrib) {
-							if (att.getTipo() == TipoAcceso.Campo)
-							{
-								ut.Atributos.Remove(att.getValor().ToString());
-							}
-							else{
-								//eliminar campo en objeto adentro
+						//foreach (Acceso att in quitarattrib) {
+						//	if (att.getTipo() == TipoAcceso.Campo)
+						//	{
+						//		ut.Atributos.Remove(att.getValor().ToString());
+						//	}
+						//	else{
+						//		//eliminar campo en objeto adentro
 
-							}
-						}
+						//	}
+						//}
 
 					}
 				}

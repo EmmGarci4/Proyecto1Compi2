@@ -1,4 +1,5 @@
 ﻿using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 using System;
@@ -26,7 +27,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<object> Objetos { get => objetos; set => objetos = value; }
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			//VALIDANDO TABLA
 			if (sesion.DBActual != null)

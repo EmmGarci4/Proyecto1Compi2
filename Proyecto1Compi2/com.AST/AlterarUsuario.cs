@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public string Passwd { get => passwd; set => passwd = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			Console.WriteLine("Alterando usuario..."+this.nombre+":"+this.passwd);
 			return null;

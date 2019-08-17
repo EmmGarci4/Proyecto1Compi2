@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System.Collections.Generic;
 
 namespace Proyecto1Compi2.com.AST
@@ -14,7 +15,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<PropOrderBy> Propiedades { get => propiedades; set => propiedades = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			throw new System.NotImplementedException();
 		}

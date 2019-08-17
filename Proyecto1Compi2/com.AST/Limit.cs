@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -13,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal Expresion Limitante { get => limitante; set => limitante = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			throw new System.NotImplementedException();
 		}

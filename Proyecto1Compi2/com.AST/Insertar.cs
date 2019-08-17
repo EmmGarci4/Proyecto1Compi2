@@ -34,7 +34,7 @@ namespace Proyecto1Compi2.com.AST
 		public List<Expresion> Valores { get => valores; set => valores = value; }
 		public List<string> Columnas { get => columnas; set => columnas = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
@@ -53,18 +53,22 @@ namespace Proyecto1Compi2.com.AST
 							//VALIDANDO
 							int contador = 0;
 							foreach (Columna cl in tab.Columnas) {
-								if (!Datos.IsTipoCompatible(cl.Tipo,this.valores.ElementAt(contador).GetValor(new TablaSimbolos(0,"Global"))) ) {
-									return new ThrowError(Util.TipoThrow.ValuesException,
+								object respuesta = this.valores.ElementAt(contador).GetValor(new TablaSimbolos(0, "Global"));
+								if (respuesta.GetType()==typeof(ThrowError)) {
+									return respuesta;
+								}
+								if (!Datos.IsTipoCompatible(cl.Tipo,respuesta) ) {
+									return new ThrowError(TipoThrow.ValuesException,
 									"El valor No."+(contador+1)+" no concuerda con el tipo de dato '"+cl.Nombre+"'("+cl.Tipo.ToString()+")",
 									Linea, Columna);
 								}
 								contador++;
 							}
 							//INSERTANDO
-							
+							tab.AgregarValores(valores,new TablaSimbolos(0,"Global"));
 						}
 						else {
-							return new ThrowError(Util.TipoThrow.ValuesException,
+							return new ThrowError(TipoThrow.ValuesException,
 								"La cantidad de valores no concuerda con la cantidad de columnas",
 								Linea, Columna);
 						}

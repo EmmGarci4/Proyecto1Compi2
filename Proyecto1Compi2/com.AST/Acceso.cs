@@ -7,51 +7,58 @@ using com.Analisis.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class Acceso
+	class Acceso:Expresion
 	{
 		Queue<object> objetos;
 
-		public Acceso(Queue<object> objetos)
+		public Acceso(Queue<object> objetos,int linea,int columna):base(linea,columna)
 		{
 			this.objetos = objetos;
 		}
 
-		public Acceso()
+		public Acceso(int linea,int columna):base(linea,columna)
 		{
 			this.objetos = new Queue<object>();
 		}
 
 		public Queue<object> Objetos { get => objetos; set => objetos = value; }
 
-		internal TipoAcceso getTipo()
+
+		public override object GetValor(TablaSimbolos ts)
+		{
+			return null;
+		}
+
+		public override TipoOperacion GetTipo(TablaSimbolos ts)
 		{
 			if (this.objetos.Count == 1)
 			{
 				if (this.objetos.Peek().GetType() == typeof(string))
 				{
-					return TipoAcceso.Campo;
-				}
-				else {
-					//puede se acceso a arreglo
-					return TipoAcceso.Arreglo;
-				}
-			}
-			else {
-				if (this.objetos.Peek().GetType() == typeof(string))
-				{
-					return TipoAcceso.CampoDeCampo;
+					//return TipoAcceso.Campo;
+					return TipoOperacion.Identificador;
 				}
 				else
 				{
 					//puede se acceso a arreglo
-					return TipoAcceso.ArregloDeCampo;
+					//return TipoAcceso.Arreglo;
+					return TipoOperacion.Identificador;
 				}
 			}
-		}
-
-		internal object getValor()
-		{
-			return this.objetos.Peek();
+			else
+			{
+				if (this.objetos.Peek().GetType() == typeof(string))
+				{
+					//return TipoAcceso.CampoDeCampo;
+					return TipoOperacion.Identificador;
+				}
+				else
+				{
+					//puede se acceso a arreglo
+					//return TipoAcceso.ArregloDeCampo;
+					return TipoOperacion.Identificador;
+				}
+			}
 		}
 	}
 }

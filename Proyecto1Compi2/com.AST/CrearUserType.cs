@@ -27,7 +27,7 @@ namespace Proyecto1Compi2.com.AST
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 		internal Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)

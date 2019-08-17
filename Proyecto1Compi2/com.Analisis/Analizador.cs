@@ -66,20 +66,27 @@ namespace com.Analisis
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
-				List<Sentencia> sentencias=GeneradorAstCql.GetAST(arbol.Root);
-				if (Analizador.ErroresCQL.Count==0) {
-					Analizador.AddUsuario(new Usuario("admin","admin"));
-					Sesion sesion = new Sesion("admin",null);
-					foreach (Sentencia sentencia in sentencias) {
-						object respuesta=sentencia.Ejecutar(sesion);
-						if (respuesta!=null) {
-							if (respuesta.GetType()==typeof(ThrowError)) {
-								Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
-							}
-						}
-					}
-					MostrarReporteDeEstado(sesion);
-				}
+				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
+				//Console.WriteLine(ex.GetValor(new TablaSimbolos(0, "Global")).ToString());
+				//List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
+				//if (Analizador.ErroresCQL.Count == 0)
+				//{
+				//	Analizador.AddUsuario(new Usuario("admin", "admin"));
+				//	Sesion sesion = new Sesion("admin", null);
+				//	TablaSimbolos ts = new TablaSimbolos(0, "Global");
+				//	foreach (Sentencia sentencia in sentencias)
+				//	{
+				//		object respuesta = sentencia.Ejecutar(sesion,ts);
+				//		if (respuesta != null)
+				//		{
+				//			if (respuesta.GetType() == typeof(ThrowError))
+				//			{
+				//				Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
+				//			}
+				//		}
+				//	}
+				//	MostrarReporteDeEstado(sesion);
+				//}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{

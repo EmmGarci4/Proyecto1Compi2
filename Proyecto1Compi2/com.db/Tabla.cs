@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Proyecto1Compi2.com.db
 		private String nombre;
 		List<Columna> columnas;
 		private int contadorFilas;
+		private List<Fila> datos;
 
 		public List<Columna> Columnas { get => columnas;}
 		public int ContadorFilas { get => contadorFilas;}
@@ -22,12 +24,14 @@ namespace Proyecto1Compi2.com.db
 		{
 			this.Nombre = nombre;
 			this.columnas = new List<Columna> ();
+			this.datos = new List<Fila>();
 		}
 
 		public Tabla(String nombre,List<Columna> tab)
 		{
 			this.Nombre = nombre;
 			this.columnas = tab;
+			this.datos = new List<Fila>();
 		}
 
 		//*****************************COLUMNAS**************************************************
@@ -72,141 +76,10 @@ namespace Proyecto1Compi2.com.db
 
 		//*****************************OPERACIONES***********************************************
 
-		public List<Error> Insertar(Dictionary<string, object> fila,int linea,int columna)
-		{
-			List<Error> er = new List<Error>();
-			////insercion especial
-			////se inserta en las filas que corresponden y los demas valores son nulos
-			List<object> filaFantasma = new List<object>();
-			bool bandera = true;
-			foreach (Columna cl in Columnas)
-			{
-				try
-				{
-					if (!fila.ContainsKey(cl.Nombre))
-					{
-						if (cl.IsPrimary)
-						{
-							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
-							{
-								filaFantasma.Add(ContadorFilas + 1);
-							}
-							else
-							{
-								er.Add(new Error(TipoError.Sintactico, "La llave primaria no puede ser nula" + Nombre, linea, columna,
-						Datos.GetDate(), Datos.GetTime()));
-								bandera = false;
-								break;
-							}
-						}
-						else
-						{
-							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
-							{
-								filaFantasma.Add(ContadorFilas + 1);
-							}
-							else
-							{
-								filaFantasma.Add("null");
-							}
-						}
-					}
-					else
-					{
-						if (Datos.IsTipoCompatible(cl.Tipo, fila[cl.Nombre]))
-						{
-							filaFantasma.Add(fila[cl.Nombre]);
-						}
-						else
-						{
-							if (cl.IsPrimary)
-							{
-								er.Add(new Error(TipoError.Sintactico, "La llave primaria no puede ser nula" + Nombre, linea, columna,
-						Datos.GetDate(), Datos.GetTime()));
-								bandera = false;
-								break;
-							}
-							else
-							{
-								filaFantasma.Add("null");
-								er.Add(new Error(TipoError.Sintactico, "El tipo de dato de la columna no es compatible con el dato ingresado" + Nombre, linea, columna,
-						Datos.GetDate(), Datos.GetTime()));
-							}
-						}
-					}
-				}
-				catch (KeyNotFoundException ex)
-				{
-					er.Add(new Error(TipoError.Sintactico, "Error grave al insertar datos en la tabla " + Nombre,linea,columna,
-						Datos.GetDate(),Datos.GetTime()));
-					break;
-				}
-			}
-			if (Columnas.Count == filaFantasma.Count && bandera)
-			{
-				int indice = 0;
-				foreach (Columna cl in Columnas)
-				{
-					cl.Datos.Add(filaFantasma.ElementAt(indice));
-					indice++;
-				}
-				contadorFilas++;
-			}
-			return er;
-		}
-
-		internal List<Error> Insertar(List<object> list,int linea,int columna)
-		{
-			List<Error> err = new List<Error>();
-			int i = 0;
-			List<object> filaFantasma = new List<object>();
-			foreach (Columna cl in Columnas) {
-				if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
-				{
-					filaFantasma.Add(ContadorFilas+1);
-				}
-				else {
-					if (i < list.Count)
-					{
-						if (Datos.IsTipoCompatible(cl.Tipo, list.ElementAt(i)))
-						{
-							filaFantasma.Add(list.ElementAt(i));
-						}
-						else {
-							if (cl.IsPrimary)
-							{
-								err.Add(new Error(TipoError.Sintactico, "El valor ingresado a la llave primaria no concuerda con el tipo de dato de la columna", linea, columna,
-						Datos.GetDate(), Datos.GetTime()));
-								break;
-							}
-							else {
-								filaFantasma.Add("null");
-							}
-						}
-						i++;
-					}
-					else {
-						filaFantasma.Add("null");
-					}
-				}
-			}
-			if (Columnas.Count==filaFantasma.Count) {
-				int indice = 0;
-				foreach (Columna cl in Columnas) {
-					cl.Datos.Add(filaFantasma.ElementAt(indice));
-					indice++;
-				}
-				contadorFilas++;
-			}
-			return err;
-		}
-
 		internal void Truncar()
 		{
 			contadorFilas = 0;
-			foreach (Columna cl in Columnas) {
-				cl.Datos.Clear();
-			}
+			this.datos.Clear();
 		}
 
 		public void MostrarCabecera()
@@ -223,6 +96,15 @@ namespace Proyecto1Compi2.com.db
 			Console.WriteLine("_____________________________________________________________");
 		}
 
+		internal void AgregarValores(List<Expresion> valores,TablaSimbolos ts)
+		{
+			Fila f = new Fila(valores.Count);
+			foreach (Expresion ex in valores) {
+				f.Add(ex.GetValor(ts));
+			}
+			this.datos.Add(f);
+		}
+
 		internal void MostrarDatos()
 		{
 			int i = 0;
@@ -230,7 +112,7 @@ namespace Proyecto1Compi2.com.db
 			{
 				foreach (Columna cl in columnas)
 				{
-					Console.Write("|" + cl.Datos.ElementAt(i) + "|");
+					//Console.Write("|" + cl.Datos.ElementAt(i) + "|");
 				}
 				i++;
 				Console.WriteLine();
@@ -271,11 +153,11 @@ namespace Proyecto1Compi2.com.db
 				{
 					if (cl.Tipo.Tipo.Equals(TipoDatoDB.STRING))
 					{
-						cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
+						//cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
 					}
 					else
 					{
-						cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
+						//cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
 					}
 
 					if (cont < this.columnas.Count - 1)
@@ -291,6 +173,7 @@ namespace Proyecto1Compi2.com.db
 				}
 				indice++;
 			}
+		//*******
 			cadena.Append("]\n>");
 			return cadena.ToString();
 		}

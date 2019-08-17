@@ -1,4 +1,5 @@
-﻿using Proyecto1Compi2.com.db;
+﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<AsignacionColumna> Asignaciones { get => asignaciones; set => asignaciones = value; }
 		internal Where Condicion { get => condicion; set => condicion = value; }
 
-		public override object Ejecutar(Sesion sesion)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			Console.WriteLine("Actualizando...");
 			return null;

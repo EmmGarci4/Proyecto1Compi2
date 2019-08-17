@@ -96,6 +96,8 @@
     <Compile Include="com.AST\Insertar.cs" />
     <Compile Include="com.AST\Limit.cs" />
     <Compile Include="com.AST\LlamadaFuncion.cs" />
+    <Compile Include="com.AST\LlamadaFuncionExp.cs" />
+    <Compile Include="com.AST\ModificadorExp.cs" />
     <Compile Include="com.AST\NodoAST.cs" />
     <Compile Include="com.AST\Operacion.cs" />
     <Compile Include="com.AST\OrderBy.cs" />
@@ -110,6 +112,7 @@
     <Compile Include="com.AST\Where.cs" />
     <Compile Include="com.db\Atributo.cs" />
     <Compile Include="com.db\CollectionLista.cs" />
+    <Compile Include="com.db\Fila.cs" />
     <Compile Include="com.db\Sesion.cs" />
     <Compile Include="com.db\UserType.cs" />
     <Compile Include="com.db\Usuario.cs" />
