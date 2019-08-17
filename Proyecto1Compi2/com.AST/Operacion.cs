@@ -22,7 +22,7 @@ namespace Proyecto1Compi2.com.AST
 		 * sumas,restas,multiplicaciones,divisiones, y comparaciones
 		 * 
 		 */
-		public Operacion(Expresion operadorIzq, Expresion operadorDer, TipoOperacion tipo,int linea,int columna):base(linea,columna)
+		public Operacion(Expresion operadorIzq, Expresion operadorDer, TipoOperacion tipo, int linea, int columna) : base(linea, columna)
 		{
 			this.tipoOp = tipo;
 			this.izquierda = operadorIzq;
@@ -37,7 +37,7 @@ namespace Proyecto1Compi2.com.AST
 		 * negaciones
 		 *  
 		 */
-		public Operacion(Expresion operadorIzq,TipoOperacion tipo, int linea, int columna) : base(linea, columna)
+		public Operacion(Expresion operadorIzq, TipoOperacion tipo, int linea, int columna) : base(linea, columna)
 		{
 			this.tipoOp = tipo;
 			this.izquierda = operadorIzq;
@@ -58,7 +58,7 @@ namespace Proyecto1Compi2.com.AST
 			this.Valor = valor;
 			this.izquierda = null;
 			this.derecha = null;
-		}	
+		}
 
 		public TipoOperacion TipoOp { get => tipoOp; set => tipoOp = value; }
 		internal Expresion Izquierda { get => izquierda; set => izquierda = value; }
@@ -72,10 +72,16 @@ namespace Proyecto1Compi2.com.AST
 				case TipoOperacion.Cadena:
 				case TipoOperacion.Booleano:
 				case TipoOperacion.Caracter:
-				case TipoOperacion.Identificador:
 				case TipoOperacion.Fecha:
 				case TipoOperacion.Hora:
 					return this.tipoOp;
+				case TipoOperacion.Identificador:
+					if (ts.existeSimbolo(this.Valor.ToString()))
+					{
+						Simbolo s = ts.getSimbolo(this.Valor.ToString());
+						return GetTipoDatoDB(s.TipoDato.Tipo);
+					}
+					break;
 				case TipoOperacion.Suma:
 					//BOOLEANO-CADENA
 					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
@@ -160,10 +166,22 @@ namespace Proyecto1Compi2.com.AST
 			return TipoOperacion.Nulo;
 		}
 
+
 		public override object GetValor(TablaSimbolos ts)
 		{
 			Object izq = izquierda?.GetValor(ts);
+			if (izq != null)
+				if (izq.GetType() == typeof(ThrowError))
+				{
+					return izq;
+				}
 			Object der = derecha?.GetValor(ts);
+			if (der != null)
+				if (der.GetType() == typeof(ThrowError))
+				{
+					return der;
+				}
+
 			//operaciones de tipo binarias
 			if (izq != null && der != null)
 			{
@@ -249,12 +267,13 @@ namespace Proyecto1Compi2.com.AST
 								double valor = double.Parse(izq.ToString()) / double.Parse(der.ToString());
 								return valor;
 							}
-							else {
+							else
+							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 								 "No se puede hacer una división por cero",
 								Linea, Columna);
 							}
-							
+
 						}
 						else
 						{
@@ -292,13 +311,13 @@ namespace Proyecto1Compi2.com.AST
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
-							double valor = double.Parse(izq.ToString())% double.Parse(der.ToString());
+							double valor = double.Parse(izq.ToString()) % double.Parse(der.ToString());
 							return valor;
 						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
 								   Linea, Columna);
 						}
 				}
@@ -322,14 +341,65 @@ namespace Proyecto1Compi2.com.AST
 				}
 			}
 			//valores
-			else {
+			else
+			{
+				if (this.TipoOp == TipoOperacion.Identificador)
+				{
+					//buscar en tabla de simbolos
+					if (ts.existeSimbolo(this.Valor.ToString()))
+					{
+						Simbolo s = ts.getSimbolo(this.Valor.ToString());
+						object val = s.Valor;
+						if (val != null)
+						{
+							return val;
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.ArithmeticException,
+												"la variable '" + this.Valor + "' no se ha inicializado",
+												Linea, Columna);
+						}
+
+					}
+					else
+					{
+						return new ThrowError(Util.TipoThrow.ArithmeticException,
+											"la variable '" + this.Valor + "' no existe",
+											Linea, Columna);
+					}
+				}
 				return this.Valor;
 			}
 
-				return null;
+			return null;
+		}
+
+		public static TipoOperacion GetTipoDatoDB(TipoDatoDB tipo)
+		{
+			switch (tipo)
+			{
+				case TipoDatoDB.BOOLEAN:
+					return TipoOperacion.Booleano;
+				case TipoDatoDB.DATE:
+					return TipoOperacion.Fecha;
+				case TipoDatoDB.COUNTER:
+				case TipoDatoDB.DOUBLE:
+				case TipoDatoDB.INT:
+					return TipoOperacion.Numero;
+				case TipoDatoDB.STRING:
+					return TipoOperacion.Cadena;
+				case TipoDatoDB.TIME:
+					return TipoOperacion.Hora;
+				case TipoDatoDB.NULO:
+					return TipoOperacion.Nulo;
+				default:
+					return TipoOperacion.Objeto;
+			}
 		}
 	}
-	public enum TipoOperacion {
+	public enum TipoOperacion
+	{
 		//valores
 		Numero,
 		Booleano,

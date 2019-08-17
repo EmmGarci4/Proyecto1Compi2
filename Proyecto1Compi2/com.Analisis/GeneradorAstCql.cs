@@ -671,7 +671,7 @@ namespace Proyecto1Compi2.com.Analisis
 				case 1://valores, o expresion o llamada
 					switch (raiz.ChildNodes.ElementAt(0).Term.Name) {
 					case "NULL":
-							return new Operacion("null", TipoOperacion.Nulo, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion("null", TipoOperacion.Nulo, raiz.Span.Location.Line, raiz.Span.Location.Column);
 					case "numero":
 							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Numero,raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					case "cadena":
@@ -704,9 +704,9 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					break;
 				case 2://menos
-					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("menos"))
+					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("-"))
 					{
-						return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(0)), TipoOperacion.Menos, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+						return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Menos, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					}
 					else if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("new"))
 					{
@@ -731,9 +731,17 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Expresion GetmodificadorExp(ParseTreeNode raiz)
 		{
-			bool op = raiz.ChildNodes.ElementAt(1).Token.ValueString == "+";
-							return new ModificadorExp(raiz.ChildNodes.ElementAt(0).Token.ValueString,op,raiz.ChildNodes.ElementAt(0).Token.Location.Line,
+			bool op = raiz.ChildNodes.ElementAt(1).Token.ValueString == "++";
+			if (raiz.ChildNodes.ElementAt(0).Term.Name != "ACCESO")
+			{
+				return new ModificadorExp(raiz.ChildNodes.ElementAt(0).Token.ValueString, op, raiz.ChildNodes.ElementAt(0).Token.Location.Line,
+												raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+			else {
+				return new ModificadorExp(GetAcceso(raiz.ChildNodes.ElementAt(0)), op, raiz.ChildNodes.ElementAt(0).Token.Location.Line,
 								raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+			}
+							
 		}
 
 		private static Expresion GetLlamadaFuncion(ParseTreeNode parseTreeNode)

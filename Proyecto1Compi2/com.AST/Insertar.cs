@@ -53,7 +53,7 @@ namespace Proyecto1Compi2.com.AST
 							//VALIDANDO
 							int contador = 0;
 							foreach (Columna cl in tab.Columnas) {
-								object respuesta = this.valores.ElementAt(contador).GetValor(new TablaSimbolos(0, "Global"));
+								object respuesta = this.valores.ElementAt(contador).GetValor(tb);
 								if (respuesta.GetType()==typeof(ThrowError)) {
 									return respuesta;
 								}
@@ -65,7 +65,7 @@ namespace Proyecto1Compi2.com.AST
 								contador++;
 							}
 							//INSERTANDO
-							tab.AgregarValores(valores,new TablaSimbolos(0,"Global"));
+							tab.AgregarValores(valores,tb);
 						}
 						else {
 							return new ThrowError(TipoThrow.ValuesException,

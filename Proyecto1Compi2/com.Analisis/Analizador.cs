@@ -19,10 +19,35 @@ namespace com.Analisis
 		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
 		private static List<BaseDatos> BasesDeDatos = new List<BaseDatos>();
 		private static List<Usuario> Usuariosdb = new List<Usuario>();
+		private static List<Funcion> funciones = new List<Funcion>();
 		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
 		static List<Error> errors = new List<Error>();
 		static private ParseTreeNode raiz;
+
+
+		internal static bool ExisteFuncion(string nombre)
+		{
+			foreach (Funcion fun in funciones) {
+				if (fun.GetLlave()==nombre) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		internal static Funcion BuscarFuncion(string llave)
+		{
+			foreach (Funcion fun in funciones)
+			{
+				if (fun.GetLlave() == llave)
+				{
+					return fun;
+				}
+			}
+			return null;
+		}
+
 
 		internal static void ElminarPermisoDeUsuario(string nombre)
 		{
@@ -65,9 +90,20 @@ namespace com.Analisis
 			Analizador.ErroresCQL.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
+
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
-				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
-				//Console.WriteLine(ex.GetValor(new TablaSimbolos(0, "Global")).ToString());
+				Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
+				funciones.Add(new Funcion("llamada",new TipoObjetoDB(TipoDatoDB.STRING,"string"),1,1));
+				TablaSimbolos ts = new TablaSimbolos("Global");
+				ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+				object respuesta = ex.GetValor(ts);
+				if (respuesta.GetType() == typeof(ThrowError)) {
+					erroresCQL.Add(new Error((ThrowError)respuesta));
+				}
+				else {
+					Console.WriteLine(respuesta.ToString());
+				}
+				
 				//List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
 				//if (Analizador.ErroresCQL.Count == 0)
 				//{

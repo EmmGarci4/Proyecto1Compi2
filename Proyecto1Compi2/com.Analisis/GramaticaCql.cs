@@ -33,6 +33,8 @@ namespace com.Analisis
 			var pot = ToTerm("**");
 			var mod = ToTerm("%");
 			var khe = ToTerm("?");
+			var masmas = ToTerm("++");
+			var menosmenos = ToTerm("--");
 			//relacionales
 			var mayor = ToTerm(">");
 			var menor = ToTerm("<");
@@ -270,8 +272,8 @@ namespace com.Analisis
 			#region expresion
 
 			EXPRESION.Rule = //aritmeticos
-				ReduceHere()+EXPRESION + mas + EXPRESION
-				|ReduceHere()+ EXPRESION + menos + EXPRESION
+				EXPRESION + mas + EXPRESION
+				| EXPRESION + menos + EXPRESION
 				| EXPRESION + por + EXPRESION
 				| EXPRESION + div + EXPRESION
 				| EXPRESION + pot + EXPRESION
@@ -279,7 +281,7 @@ namespace com.Analisis
 				//otros
 				| CONDICION
 				| VALOR
-				|TERNARIO;
+				| TERNARIO;
 
 			VALOR.Rule = cadena
 				| numero
@@ -288,7 +290,7 @@ namespace com.Analisis
 				| NULL
 				| id
 				| par1 + EXPRESION + par2
-				|ImplyPrecedenceHere(9)+ menos + EXPRESION
+				| menos + EXPRESION
 				| LLAMADAFUNCION
 				| nombre
 				| ACCESO
@@ -302,10 +304,10 @@ namespace com.Analisis
 
 			NULL.Rule = pr_null;
 
-			MODIFICADORES.Rule = id + mas + mas 
-				| id + punto + ACCESO + mas + mas
-				| id + menos + menos 
-				| id + punto + ACCESO + menos + menos;
+			MODIFICADORES.Rule = id + masmas 
+				| id + punto + ACCESO + masmas
+				| id +menosmenos
+				| id + punto + ACCESO + menosmenos;
 
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
 
@@ -657,7 +659,7 @@ namespace com.Analisis
 			RegisterOperators(8, Associativity.Left,por, div,mod);
 			RegisterOperators(9, Associativity.Right, pot);
 			RegisterOperators(10, Associativity.Right, not);
-
+			RegisterOperators(11, Associativity.Right, masmas,menosmenos);
 			#endregion
 		}
 	}

@@ -10,13 +10,11 @@ namespace com.Analisis.Util
 	class TablaSimbolos
 	{
 		private Hashtable simbolos;
-		private int nivel;
 		private string ambito;
 
-		public TablaSimbolos( int nivel, string ambito)
+		public TablaSimbolos(string ambito)
 		{
 			this.simbolos = new Hashtable();
-			this.nivel = nivel;
 			this.ambito = ambito;
 		}
 
@@ -54,7 +52,6 @@ namespace com.Analisis.Util
 			return sims;
 		}
 
-		public int Nivel { get => nivel; set => nivel = value; }
 		public string Ambito { get => ambito; set => ambito = value; }
 
 		internal void Limpiar()
