@@ -113,7 +113,6 @@
     <Compile Include="com.AST\Where.cs" />
     <Compile Include="com.db\Atributo.cs" />
     <Compile Include="com.db\CollectionLista.cs" />
-    <Compile Include="com.db\Fila.cs" />
     <Compile Include="com.db\Sesion.cs" />
     <Compile Include="com.db\UserType.cs" />
     <Compile Include="com.db\Usuario.cs" />

@@ -14,7 +14,6 @@ namespace Proyecto1Compi2.com.db
 		private String nombre;
 		List<Columna> columnas;
 		private int contadorFilas;
-		private List<Fila> datos;
 
 		public List<Columna> Columnas { get => columnas;}
 		public int ContadorFilas { get => contadorFilas;}
@@ -24,14 +23,12 @@ namespace Proyecto1Compi2.com.db
 		{
 			this.Nombre = nombre;
 			this.columnas = new List<Columna> ();
-			this.datos = new List<Fila>();
 		}
 
 		public Tabla(String nombre,List<Columna> tab)
 		{
 			this.Nombre = nombre;
 			this.columnas = tab;
-			this.datos = new List<Fila>();
 		}
 
 		//*****************************COLUMNAS**************************************************
@@ -74,12 +71,26 @@ namespace Proyecto1Compi2.com.db
 			return null;
 		}
 
+		internal int ContarCounters()
+		{
+			int contador = 0;
+			foreach (Columna cl in columnas) {
+				if (cl.Tipo.Tipo==TipoDatoDB.COUNTER) {
+					contador++;
+				}
+			}
+
+			return contador;
+		}
+
 		//*****************************OPERACIONES***********************************************
 
 		internal void Truncar()
 		{
 			contadorFilas = 0;
-			this.datos.Clear();
+			foreach (Columna cl in columnas) {
+				cl.Datos.Clear();
+			}
 		}
 
 		public void MostrarCabecera()
@@ -96,29 +107,22 @@ namespace Proyecto1Compi2.com.db
 			Console.WriteLine("_____________________________________________________________");
 		}
 
-		internal void AgregarValores(List<Expresion> valores,TablaSimbolos ts)
+		internal void AgregarValores(Queue<object> valores)
 		{
-			Fila f = new Fila(valores.Count);
-			foreach (Expresion ex in valores) {
-				f.Add(ex.GetValor(ts));
+			foreach (Columna cl in columnas) {
+				cl.Datos.Add(valores.Dequeue());
 			}
-			this.datos.Add(f);
 			contadorFilas++;
 		}
 
 		internal void MostrarDatos()
 		{
-			int i = 0;
-			while (i < ContadorFilas)
-			{
-				foreach (Fila cl in datos)
-				{
-					foreach (object val in cl) {
-						Console.Write("|"+val.ToString()+"|");
-					}
-					Console.WriteLine();
+			int contador = 0;
+			for (contador=0;contador<contadorFilas;contador++) {
+				foreach (Columna cl in columnas) {
+					Console.Write("|"+cl.Datos.ElementAt(contador)+"|");
 				}
-				i++;
+				Console.WriteLine();
 			}
 		}
 

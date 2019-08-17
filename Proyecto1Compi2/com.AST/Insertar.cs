@@ -48,34 +48,144 @@ namespace Proyecto1Compi2.com.AST
 					if (this.columnas == null)
 					{
 						//INSERSION NORMAL
-						if (this.valores.Count == tab.Columnas.Count)
+						int counters = tab.ContarCounters();
+						if (this.valores.Count == (tab.Columnas.Count-counters))
 						{
 							//VALIDANDO
-							int contador = 0;
+							int indiceDatos= 0;
+							int indiceColumnas = 0;
+							Queue<object> valoresAInsertar = new Queue<object>();
 							foreach (Columna cl in tab.Columnas) {
-								object respuesta = this.valores.ElementAt(contador).GetValor(tb);
+								object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb);
 								if (respuesta.GetType()==typeof(ThrowError)) {
 									return respuesta;
 								}
-								if (!Datos.IsTipoCompatible(cl.Tipo,respuesta) ) {
-									return new ThrowError(TipoThrow.ValuesException,
-									"El valor No."+(contador+1)+" no concuerda con el tipo de dato '"+cl.Nombre+"'("+cl.Tipo.ToString()+")",
-									Linea, Columna);
+								//no es un error
+								if (cl.Tipo.Tipo != TipoDatoDB.COUNTER)
+								{
+									if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
+									{
+										if (cl.IsPrimary)
+										{
+											if (!cl.ExisteDato(respuesta))
+											{
+												valoresAInsertar.Enqueue(respuesta);
+												indiceDatos++;
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.ValuesException,
+													"El valor '" + respuesta.ToString() + "' no puede repetirse en la columna '" + cl.Nombre + "'",
+													Linea, Columna);
+											}
+										}
+										else {
+											valoresAInsertar.Enqueue(respuesta);
+											indiceDatos++;
+										}
+									}
+									else
+									{
+										return new ThrowError(TipoThrow.ValuesException,
+										"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+										Linea, Columna);
+									}
 								}
-								contador++;
+								else {
+									int UltimoValor = cl.GetUltimoValorCounter();
+									UltimoValor++;
+									valoresAInsertar.Enqueue(UltimoValor);
+								}
+								indiceColumnas++;
 							}
 							//INSERTANDO
-							tab.AgregarValores(valores,tb);
+							if (tab.Columnas.Count==valoresAInsertar.Count) {
+								tab.AgregarValores(valoresAInsertar);
+							}
 						}
 						else {
 							return new ThrowError(TipoThrow.ValuesException,
-								"La cantidad de valores no concuerda con la cantidad de columnas",
+								"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
 								Linea, Columna);
 						}
 					}
 					else {
 						//INSERSION ESPECIAL
-
+						if (this.columnas.Count == this.valores.Count)
+						{
+							//VALIDANDO DATOS
+							foreach (string nombreColumna in this.columnas) {
+								if (!tab.ExisteColumna(nombreColumna))
+								{
+									return new ThrowError(TipoThrow.ColumnException,
+								"La columna '" + nombreColumna + "' no existe",
+								Linea, Columna);
+								}
+								else {
+									Columna cl = tab.BuscarColumna(nombreColumna);
+									if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+									{
+										return new ThrowError(TipoThrow.CounterTypeException,
+										"No se puede insertar datos en una columna autoincrementable",
+										Linea, Columna);
+									}
+								}
+							}
+							//VALIDANDO COMPATIBILIDAD DE DATOS
+							int indiceDatos = 0;
+							Queue<object> valoresAInsertar = new Queue<object>();
+							foreach (Columna cl in tab.Columnas) {
+								if (this.columnas.Contains(cl.Nombre))
+								{
+									//comparar datos
+									indiceDatos = this.columnas.IndexOf(cl.Nombre);
+									object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb);
+									if (respuesta.GetType() == typeof(ThrowError))
+									{
+										return respuesta;
+									}
+									if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
+									{
+										if (!cl.ExisteDato(respuesta))
+										{
+											valoresAInsertar.Enqueue(respuesta);
+										}
+										else {
+											return new ThrowError(TipoThrow.ValuesException,
+													"El valor '" + respuesta.ToString() + "' no puede repetirse en la columna '" + cl.Nombre + "'",
+													Linea, Columna);
+										}
+									}
+									else {
+										return new ThrowError(TipoThrow.ValuesException,
+										"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+										Linea, Columna);
+									}
+								}
+								else {
+									if (cl.IsPrimary)
+									{
+										return new ThrowError(TipoThrow.ValuesException,
+											"No se puede insertar un dato nulo en una llave primaria",
+											Linea, Columna);
+									}
+									else {
+										valoresAInsertar.Enqueue("null");
+									}
+								}
+							}
+							//INSERTANDO
+							if (tab.Columnas.Count ==valoresAInsertar.Count)
+							{
+								tab.AgregarValores(valoresAInsertar);
+							}
+						}
+						else {
+							return new ThrowError(TipoThrow.ValuesException,
+								"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
+								Linea, Columna);
+						}
+						
 					}
 				//**************************************************************************
 				}
