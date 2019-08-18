@@ -23,18 +23,18 @@ namespace Proyecto1Compi2
 
 		private void ToolStripButton1_Click(object sender, EventArgs e)
 		{
-			this.textBox2.Clear();
+			textBox2.Clear();
 			if (Analizador.AnalizarCql(this.textBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count==0) {
 					//si no hay ErroresCQL semánticos
-					this.textBox2.Text = "Finalizado con éxito\n";
+					textBox2.AppendText("Finalizado con éxito\n");
 				}
 				else
 				{
 					foreach (Error er in Analizador.ErroresCQL)
 					{
-						this.textBox2.AppendText(er.ToString());
+						textBox2.AppendText(er.ToString());
 					}
 				}
 			}
@@ -42,7 +42,7 @@ namespace Proyecto1Compi2
 			{
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					this.textBox2.AppendText(er.ToString());
+					textBox2.AppendText(er.ToString());
 				}
 			}
 		}
@@ -50,35 +50,35 @@ namespace Proyecto1Compi2
 		private void Btn_leerXml_Click(object sender, EventArgs e)
 		{
 
-			this.textBox2.Clear();
+			textBox2.Clear();
 				if (Analizador.AnalizarChison(this.textBox1.Text))
 				{
-					this.textBox2.Text = "Finalizado con éxito\n";
+					textBox2.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
 				foreach (Error er in Analizador.ErroresChison)
 				{
-					this.textBox2.AppendText(er + "\n");
+					textBox2.AppendText(er + "\n");
 				}
 			}
 		}
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
-			this.textBox2.Clear();
+			textBox2.Clear();
 			if (Analizador.AnalizarLup(this.textBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count == 0)
 				{
 					//si no hay ErroresCQL semánticos
-					this.textBox2.Text = "Finalizado con éxito\n";
+					textBox2.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
 					foreach (Error er in Analizador.ErroresCQL)
 					{
-						this.textBox2.AppendText(er.ToString());
+						textBox2.AppendText(er.ToString());
 					}
 				}
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
@@ -87,7 +87,7 @@ namespace Proyecto1Compi2
 			{
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					this.textBox2.AppendText(er.ToString());
+					textBox2.AppendText(er.ToString());
 				}
 			}
 		}
@@ -104,20 +104,25 @@ namespace Proyecto1Compi2
 
 		private void Btn_cargarChison_Click(object sender, EventArgs e)
 		{
-			this.textBox2.Clear();
+			textBox2.Clear();
 			String chi = HandlerFiles.AbrirArchivo(Analizador.PATH + "principal.chison");
 			if (chi != null)
 			{
 				if (Analizador.AnalizarChison(chi))
 				{
-					this.textBox2.Text = "Finalizado con éxito\n";
+					textBox2.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
-					this.textBox2.Text="Finalizado con errores";
+					textBox2.Text="Finalizado con errores";
 					
 				}
 			}
+		}
+
+		public static void MostrarMensajeAUsuario(string mensaje) {
+			textBox2.AppendText(mensaje);
+			textBox2.AppendText("\r\n");
 		}
 	}
 }

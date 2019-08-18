@@ -111,9 +111,71 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetCrearUserType(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					//SENTENCIAS FCL
+					case "IF":
+						n = GetIf(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "LOG":
+						n = GetLog(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetLog(ParseTreeNode sentencia)
+		{
+			return new Log(GetExpresion(sentencia.ChildNodes.ElementAt(0)), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+		}
+
+		private static Sentencia GetIf(ParseTreeNode sentencia)
+		{
+			switch (sentencia.ChildNodes.Count) {
+				case 2: //if normal
+					Condicion condicion = GetCondicion(sentencia.ChildNodes.ElementAt(0));
+					List<Sentencia> sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(1));
+					return new If(condicion,null,sentencias,null,sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+				case 3:
+					//if elseifs sin else 
+					condicion = GetCondicion(sentencia.ChildNodes.ElementAt(0));
+					sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(1));
+					List<ElseIf> elseifs =null;
+					List<Sentencia> sentenclasElse = null;
+					if (sentencia.ChildNodes.ElementAt(2).Term.Name == "ELSEIFS")
+					{
+						elseifs = GetElseIfs(sentencia.ChildNodes.ElementAt(2));
+					}
+					else {
+						sentenclasElse = GetSentencias(sentencia.ChildNodes.ElementAt(2)); 
+					}
+					return new If(condicion, elseifs, sentencias, sentenclasElse, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+				case 4://if elseifs con else 
+					condicion = GetCondicion(sentencia.ChildNodes.ElementAt(0));
+					sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(1));
+					 elseifs = GetElseIfs(sentencia.ChildNodes.ElementAt(2));
+					 sentenclasElse = GetSentencias(sentencia.ChildNodes.ElementAt(3));
+					return new If(condicion, elseifs, sentencias, sentenclasElse, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			}
+			return null;
+		}
+
+		private static List<ElseIf> GetElseIfs(ParseTreeNode parseTreeNode)
+		{
+			List<ElseIf> lista = new List<ElseIf>();
+
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				lista.Add(GetElseIf(nodo));
+			}
+			return lista;
+		}
+
+		private static ElseIf GetElseIf(ParseTreeNode nodo)
+		{
+			Condicion condicion = GetCondicion(nodo.ChildNodes.ElementAt(0));
+			List<Sentencia> sentencias = GetSentencias(nodo.ChildNodes.ElementAt(1));
+			return new ElseIf(condicion,sentencias,nodo.Span.Location.Line, nodo.Span.Location.Column);
 		}
 
 		#region Sentencias DB
@@ -642,8 +704,7 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			switch (raiz.ChildNodes.Count) {
 				case 1://true o false
-					return new Condicion(new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoOperacion.Booleano,
-						raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column), TipoOperacion.Booleano, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					return new Condicion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower()=="true", TipoOperacion.Booleano, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 2://not
 					return new Condicion(GetCondicion(raiz.ChildNodes.ElementAt(1)),TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 3://operaciones
@@ -661,6 +722,12 @@ namespace Proyecto1Compi2.com.Analisis
 				case "/": return TipoOperacion.Division;
 				case "**": return TipoOperacion.Potencia;
 				case "%": return TipoOperacion.Modulo;
+				case "<": return TipoOperacion.Menor;
+				case "<=": return TipoOperacion.MenorIgual;
+				case ">": return TipoOperacion.Mayor;
+				case ">=": return TipoOperacion.MayorIgual;
+				case "==": return TipoOperacion.Igual;
+				case "!=": return TipoOperacion.Diferente;
 			}
 			return TipoOperacion.Nulo;
 		}

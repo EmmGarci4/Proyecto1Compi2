@@ -91,13 +91,16 @@
     <Compile Include="com.AST\EliminarBaseDatos.cs" />
     <Compile Include="com.AST\EliminarTabla.cs" />
     <Compile Include="com.AST\EliminarUserType.cs" />
+    <Compile Include="com.AST\ElseIf.cs" />
     <Compile Include="com.AST\Expresion.cs" />
     <Compile Include="com.AST\Funcion.cs" />
     <Compile Include="com.AST\FuncionAgregacion.cs" />
+    <Compile Include="com.AST\If.cs" />
     <Compile Include="com.AST\Insertar.cs" />
     <Compile Include="com.AST\Limit.cs" />
     <Compile Include="com.AST\LlamadaFuncion.cs" />
     <Compile Include="com.AST\LlamadaFuncionExp.cs" />
+    <Compile Include="com.AST\Log.cs" />
     <Compile Include="com.AST\ModificadorExp.cs" />
     <Compile Include="com.AST\NodoAST.cs" />
     <Compile Include="com.AST\Operacion.cs" />

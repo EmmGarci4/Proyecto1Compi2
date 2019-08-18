@@ -191,7 +191,6 @@ namespace com.Analisis
 				CREAR_FUNCION = new NonTerminal("CREAR_FUNCION"),
 				ELIMINARUSUARIO = new NonTerminal("ELIMINARUSUARIO"),
 				BLOQUESENTENCIAS = new NonTerminal("BLOQUESENTENCIAS"),
-				LISTA_SENTENCIAS=new NonTerminal("LISTA_SENTENCIAS"),
 				SENTENCIABLOQUE = new NonTerminal("SENTENCIABLOQUE"),
 				LISTAPARAMETROS = new NonTerminal("LISTAPARAMETROS"),
 				PARAMETRO = new NonTerminal("PARAMETRO");
@@ -503,10 +502,8 @@ namespace com.Analisis
 
 			#region sentencias FCL
 
-			BLOQUESENTENCIAS.Rule =llave1+LISTA_SENTENCIAS+llave2;
-
-			LISTA_SENTENCIAS.Rule = MakeStarRule(LISTA_SENTENCIAS, SENTENCIABLOQUE);
-
+			BLOQUESENTENCIAS.Rule = MakeStarRule(BLOQUESENTENCIAS, SENTENCIABLOQUE) ;
+			
 			SENTENCIABLOQUE.Rule = SENTENCIADDL
 				| SENTENCIADML
 				|SENTENCIAFCL
@@ -549,42 +546,42 @@ namespace com.Analisis
 				| id + punto + ACCESO + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma;
 
 
-			IF.Rule = pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS
-				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS + pr_else+BLOQUESENTENCIAS
-				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS+ELSEIFS
-				 | pr_if + par1 + CONDICION + par2 + BLOQUESENTENCIAS+ELSEIFS + pr_else + BLOQUESENTENCIAS;
+			IF.Rule = pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
+				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else+ llave1 + BLOQUESENTENCIAS + llave2
+				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + ELSEIFS
+				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + ELSEIFS + pr_else + llave1 + BLOQUESENTENCIAS + llave2;
 
 			ELSEIFS.Rule = MakePlusRule(ELSEIFS,ELSEIF);
 
-			ELSEIF.Rule = pr_else + pr_if + par1 + CONDICION + par2  + BLOQUESENTENCIAS ;
+			ELSEIF.Rule = pr_else + pr_if + par1 + CONDICION + par2  + llave1 + BLOQUESENTENCIAS + llave2;
 
 			SWITCH.Rule = pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + DEFAULT + llave2
 				| pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + llave2;
 
 			LISTACASE.Rule = MakePlusRule(LISTACASE,CASE);
 
-			CASE.Rule = pr_case + EXPRESION + dospuntos + LISTA_SENTENCIAS;
+			CASE.Rule = pr_case + EXPRESION + dospuntos + llave1 + BLOQUESENTENCIAS + llave2;
 
-			DEFAULT.Rule = pr_default + dospuntos + LISTA_SENTENCIAS;
+			DEFAULT.Rule = pr_default + dospuntos + llave1 + BLOQUESENTENCIAS + llave2;
 
 			BREAK.Rule = pr_break + puntoycoma;
 
-			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + EXPRESION + par2 +  BLOQUESENTENCIAS;
+			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 			INIFOR.Rule = id + igual + EXPRESION
 				| TIPODATO+id + igual + EXPRESION;
 
-			WHILE.Rule =pr_while+par1+CONDICION+par2+BLOQUESENTENCIAS;
+			WHILE.Rule =pr_while+par1+CONDICION+par2+ llave1 + BLOQUESENTENCIAS + llave2;
 
-			DOWHILE.Rule = pr_do + BLOQUESENTENCIAS +pr_while + par1 + CONDICION + par2 + puntoycoma;
+			DOWHILE.Rule = pr_do + llave1 + BLOQUESENTENCIAS + llave2 + pr_while + par1 + CONDICION + par2 + puntoycoma;
 
-			CREAR_PROC.Rule = pr_proc + nombre + par1 + LISTAPARAMETROS + par2+coma + par1 + LISTAPARAMETROS + par2  + BLOQUESENTENCIAS;
+			CREAR_PROC.Rule = pr_proc + nombre + par1 + LISTAPARAMETROS + par2+coma + par1 + LISTAPARAMETROS + par2  + llave1 + BLOQUESENTENCIAS + llave2;
 
 			LISTAPARAMETROS.Rule = MakeStarRule(LISTAPARAMETROS, coma, PARAMETRO);
 
 			PARAMETRO.Rule = TIPODATO + id;
 
-			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ BLOQUESENTENCIAS;
+			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ llave1 + BLOQUESENTENCIAS + llave2;
 
 			RETORNO.Rule = pr_return+LISTAEXPRESIONES+puntoycoma;
 
@@ -594,8 +591,8 @@ namespace com.Analisis
 
 			CREAR_CURSOR.Rule = pr_cursor + id + pr_is + SELECCIONAR + puntoycoma;
 
-			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + BLOQUESENTENCIAS
-			| pr_for + pr_each + par1 + TIPODATO + id + par2 + pr_in + id + BLOQUESENTENCIAS;
+			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2
+			| pr_for + pr_each + par1 + TIPODATO + id + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2;
 
 			OPENCURSOR.Rule = pr_open + id + puntoycoma;
 
@@ -605,7 +602,7 @@ namespace com.Analisis
 
 			THROW.Rule = pr_throw + pr_new + nombre + puntoycoma;
 
-			TRYCATCH.Rule = pr_try + BLOQUESENTENCIAS + pr_catch + par1 + nombre + id + par2 + BLOQUESENTENCIAS;
+			TRYCATCH.Rule = pr_try + llave1 + BLOQUESENTENCIAS + llave2 + pr_catch + par1 + nombre + id + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 
 			OPERACIONASIGNACION.Rule = id + mas + igual + EXPRESION + puntoycoma 
@@ -638,13 +635,14 @@ namespace com.Analisis
 				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
 				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString(),pr_eliminar.ToString());
 			//NODOS A OMITIR
-			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA);
+			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA,
+				SENTENCIABLOQUE,SENTENCIAFCL);
 			//TERMINALES IGNORADO
 			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
 				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_in,pr_null,
-				pr_from,pr_limit,pr_begin,pr_batch,pr_apply);		
+				pr_from,pr_limit,pr_begin,pr_batch,pr_apply,pr_log);		
 			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);

@@ -36,7 +36,7 @@
 			this.Btn_LimpiarDB = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.textBox2 = new System.Windows.Forms.TextBox();
+			textBox2 = new System.Windows.Forms.TextBox();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -101,7 +101,7 @@
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.Controls.Add(this.textBox1, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.textBox2, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(textBox2, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -124,13 +124,13 @@
 			// 
 			// textBox2
 			// 
-			this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textBox2.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.textBox2.Location = new System.Drawing.Point(3, 215);
-			this.textBox2.Multiline = true;
-			this.textBox2.Name = "textBox2";
-			this.textBox2.Size = new System.Drawing.Size(794, 207);
-			this.textBox2.TabIndex = 1;
+			textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+			textBox2.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			textBox2.Location = new System.Drawing.Point(3, 215);
+			textBox2.Multiline = true;
+			textBox2.Name = "textBox2";
+			textBox2.Size = new System.Drawing.Size(794, 207);
+			textBox2.TabIndex = 1;
 			// 
 			// Form1
 			// 
@@ -156,7 +156,7 @@
 		private System.Windows.Forms.ToolStripButton Btn_EjecutarSql;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.TextBox textBox2;
+		private static System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.ToolStripButton Btn_leerXml;
 		private System.Windows.Forms.ToolStripButton Bt_EjecutarLup;
 		private System.Windows.Forms.ToolStripButton Btn_LimpiarDB;
