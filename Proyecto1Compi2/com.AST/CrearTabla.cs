@@ -91,6 +91,28 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						{
+							//VALIDANDO COUNTER EN LLAVES PRIMARIAS COMPUESTAS
+							if (cl.IsPrimary) {
+								bool hayCounter = false;
+								foreach (Columna col in tabla.Columnas)
+								{
+									if (col.Tipo.Tipo == TipoDatoDB.COUNTER)
+									{
+										hayCounter = true;
+										break;
+									}
+								}
+								if (hayCounter) {
+									if (cl.Tipo.Tipo!=TipoDatoDB.COUNTER) {
+										if (cl.IsPrimary && cl.Tipo.Tipo != TipoDatoDB.COUNTER)
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+										"Si existe una columna de tipo Counter, todas las llaves primarias deben ser de este tipo",
+										Linea, Columna);
+										}
+									}
+								}
+							}
 							//VALIDANDO TIPO
 							if (!EsListaDeLista(cl))
 							{
@@ -120,6 +142,24 @@ namespace Proyecto1Compi2.com.AST
 								return new ThrowError(Util.TipoThrow.Exception,
 								"No existe la columna '" + llave + "' para asignarla como llave primaria",
 								Linea, Columna);
+							}
+						}
+						//VALIDANDO COUNTER EN LLAVES PRIMARIAS COMPUESTAS
+						bool hayCounter = false;
+						foreach (Columna cl in tabla.Columnas) {
+							if (cl.Tipo.Tipo==TipoDatoDB.COUNTER) {
+								hayCounter = true;
+								break;
+							}
+						}
+						if (hayCounter) {
+							foreach (Columna cl in tabla.Columnas)
+							{
+								if (cl.IsPrimary && cl.Tipo.Tipo!=TipoDatoDB.COUNTER) {
+									return new ThrowError(Util.TipoThrow.Exception,
+								"Si existe una columna de tipo Counter, todas las llaves primarias deben ser de este tipo",
+								Linea, Columna);
+								}
 							}
 						}
 					}
