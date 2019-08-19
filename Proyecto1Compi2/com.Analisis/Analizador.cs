@@ -109,8 +109,15 @@ namespace com.Analisis
 				{
 					Analizador.AddUsuario(new Usuario("admin", "admin"));
 					Sesion sesion = new Sesion("admin", null);
-					TablaSimbolos ts = new TablaSimbolos("Global");
-					ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+					TablaSimbolos ts = new TablaSimbolos();
+					if (!ts.ExisteSimboloEnAmbito("@variable"))
+					{
+						ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+					}
+					else {
+						Analizador.erroresCQL.Add(new Error(TipoError.Semantico,"Ya existe la variable '@variable'",1,1));
+					}
+
 					foreach (Sentencia sentencia in sentencias)
 					{
 						object respuesta = sentencia.Ejecutar(sesion, ts);
@@ -294,6 +301,7 @@ namespace com.Analisis
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static string PATH => path;
 		internal static List<Error> ErroresChison { get => errors; set => errors = value; }
+		internal static List<Funcion> Funciones { get => funciones; set => funciones = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{

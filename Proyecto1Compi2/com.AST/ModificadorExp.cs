@@ -36,9 +36,9 @@ namespace Proyecto1Compi2.com.AST
 			if (this.variable != null)
 			{
 				//buscar variable en ts
-				if (ts.existeSimbolo(this.variable))
+				if (ts.ExisteSimbolo(this.variable))
 				{
-					Simbolo s = ts.getSimbolo(this.variable);
+					Simbolo s = ts.GetSimbolo(this.variable);
 					return Operacion.GetTipoDatoDB(s.TipoDato.Tipo);
 				}
 			}
@@ -54,9 +54,9 @@ namespace Proyecto1Compi2.com.AST
 			if (this.variable != null)
 			{
 				//buscar variable en ts
-				if (ts.existeSimbolo(this.variable))
+				if (ts.ExisteSimbolo(this.variable))
 				{
-					Simbolo s = ts.getSimbolo(this.variable);
+					Simbolo s = ts.GetSimbolo(this.variable);
 					object valor = s.Valor;
 					if (valor != null)
 					{

@@ -76,9 +76,9 @@ namespace Proyecto1Compi2.com.AST
 				case TipoOperacion.Hora:
 					return this.tipoOp;
 				case TipoOperacion.Identificador:
-					if (ts.existeSimbolo(this.Valor.ToString()))
+					if (ts.ExisteSimbolo(this.Valor.ToString()))
 					{
-						Simbolo s = ts.getSimbolo(this.Valor.ToString());
+						Simbolo s = ts.GetSimbolo(this.Valor.ToString());
 						return GetTipoDatoDB(s.TipoDato.Tipo);
 					}
 					break;
@@ -356,9 +356,9 @@ namespace Proyecto1Compi2.com.AST
 				if (this.TipoOp == TipoOperacion.Identificador)
 				{
 					//buscar en tabla de simbolos
-					if (ts.existeSimbolo(this.Valor.ToString()))
+					if (ts.ExisteSimbolo(this.Valor.ToString()))
 					{
-						Simbolo s = ts.getSimbolo(this.Valor.ToString());
+						Simbolo s = ts.GetSimbolo(this.Valor.ToString());
 						object val = s.Valor;
 						if (val != null)
 						{

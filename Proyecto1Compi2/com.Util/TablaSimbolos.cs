@@ -7,56 +7,81 @@ using System.Threading.Tasks;
 
 namespace com.Analisis.Util
 {
-	class TablaSimbolos
+	class TablaSimbolos:Stack<Simbolo>
 	{
-		private Hashtable simbolos;
-		private string ambito;
-
-		public TablaSimbolos(string ambito)
+		
+		public TablaSimbolos():base()
 		{
-			this.simbolos = new Hashtable();
-			this.ambito = ambito;
+
 		}
 
-		public void AgregarSimbolo(Simbolo s) {
-			this.simbolos.Add(s.Nombre, s);
-		}
-
-		public Simbolo getSimbolo(string nombre) {
-			return (Simbolo)this.simbolos[nombre];
-		}
-
-		public bool existeSimbolo(string nombre) {
-			return this.simbolos.ContainsKey(nombre);
-		}
-
-		public void eliminarSimbolo(String nombre) {
-			this.simbolos.Remove(nombre);
-		}
-
-		public void mostrar() {
-			Console.WriteLine("********** Tabla de simbolos "+ambito+ "**********");
-			foreach (string HashKey in simbolos.Keys)
-			{
-				Console.WriteLine("Key: " + HashKey + " Value: " + ((Simbolo)simbolos[HashKey]).GetDatos());
+		public TablaSimbolos(TablaSimbolos tpadre) : base()
+		{
+			while (tpadre.Count>0) {
+				Push(tpadre.Pop());
 			}
 		}
 
-		public List<Simbolo> GetSimbolos()
+		public void AgregarSimbolo(Simbolo s)
 		{
-			List<Simbolo> sims = new List<Simbolo>();
-			foreach (string HashKey in simbolos.Keys)
-			{
-				sims.Add((Simbolo)simbolos[HashKey]);
-			}
-			return sims;
+			Push(s);
 		}
 
-		public string Ambito { get => ambito; set => ambito = value; }
+		public Simbolo GetSimbolo(string nombre)
+		{
+			foreach (Simbolo s in this)
+			{
+				if (s.Nombre == nombre)
+				{
+					return s;
+				}
+			}
+			return null;
+		}
+
+		public bool ExisteSimboloEnAmbito(string nombre) {
+				foreach (Simbolo s in this)
+				{
+					if (s.Nombre == nombre)
+					{
+						return true;
+					}
+					if (s.Nombre == "%$SEPARADOR$%")
+					{
+						return false;
+					}
+				}
+				return false;
+			}
+
+		public bool ExisteSimbolo(string nombre)
+		{
+			foreach (Simbolo s in this)
+			{
+				if (s.Nombre==nombre) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void Mostrar() {
+			Console.WriteLine("********** Tabla de simbolos **********");
+			foreach (Simbolo sim in this)
+			{
+				Console.WriteLine("Nombre: " + sim.Nombre + " Valor: " + sim.GetDatos());
+			}
+		}
+
+		public Stack<Simbolo> GetSimbolos()
+		{
+			return this;
+		}
+
 
 		internal void Limpiar()
 		{
-			this.simbolos.Clear();
+			Clear();
 		}
 	}
 }

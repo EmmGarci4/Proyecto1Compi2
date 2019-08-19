@@ -138,9 +138,26 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetDoWhile(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "DECLARACION":
+						n = GetDeclaracion(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetDeclaracion(ParseTreeNode sentencia)
+		{
+			TipoDatoDB tipo = GeneradorDB.GetTipo(sentencia.ChildNodes.ElementAt(0));
+			string nombreTipo = GeneradorDB.GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(0), true);
+			List<string> variables = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
+			Expresion exp = null;
+			if (sentencia.ChildNodes.Count == 3)
+			{
+				exp = GetExpresion(sentencia.ChildNodes.ElementAt(2));
+			}
+			return new Declaracion(variables,new TipoObjetoDB(tipo,nombreTipo),exp,sentencia.Span.Location.Line,sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetDoWhile(ParseTreeNode sentencia)

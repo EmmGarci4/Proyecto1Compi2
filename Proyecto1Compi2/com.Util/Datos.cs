@@ -192,13 +192,7 @@ namespace Proyecto1Compi2.com.Util
 						}
 					}
 					break;
-				case TipoDatoDB.MAP_BOOLEAN:
-				case TipoDatoDB.MAP_DATE:
-				case TipoDatoDB.MAP_DOUBLE:
-				case TipoDatoDB.MAP_INT:
 				case TipoDatoDB.MAP_OBJETO:
-				case TipoDatoDB.MAP_STRING:
-				case TipoDatoDB.MAP_TIME:
 				case TipoDatoDB.OBJETO:
 					return true;
 			}
