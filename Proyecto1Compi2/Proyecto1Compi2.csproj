@@ -101,9 +101,11 @@
     <Compile Include="com.AST\LlamadaFuncion.cs" />
     <Compile Include="com.AST\LlamadaFuncionExp.cs" />
     <Compile Include="com.AST\Log.cs" />
+    <Compile Include="com.AST\Modificador.cs" />
     <Compile Include="com.AST\ModificadorExp.cs" />
     <Compile Include="com.AST\NodoAST.cs" />
     <Compile Include="com.AST\Operacion.cs" />
+    <Compile Include="com.AST\OperacionAsignacion.cs" />
     <Compile Include="com.AST\OrderBy.cs" />
     <Compile Include="com.AST\OtorgarPermiso.cs" />
     <Compile Include="com.AST\Return.cs" />
@@ -114,6 +116,8 @@
     <Compile Include="com.AST\TruncarTabla.cs" />
     <Compile Include="com.AST\UsarBaseDatos.cs" />
     <Compile Include="com.AST\Where.cs" />
+    <Compile Include="com.AST\DoWhile.cs" />
+    <Compile Include="com.AST\While.cs" />
     <Compile Include="com.db\Atributo.cs" />
     <Compile Include="com.db\CollectionLista.cs" />
     <Compile Include="com.db\Sesion.cs" />

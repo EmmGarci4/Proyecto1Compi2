@@ -428,7 +428,8 @@ namespace Proyecto1Compi2.com.AST
 		Igual,
 		Not,
 		And,
-		Or
+		Or,
+		Xor
 
 	}
 }

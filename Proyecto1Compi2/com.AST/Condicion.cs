@@ -444,6 +444,19 @@ namespace Proyecto1Compi2.com.AST
 									"No se puede aplicar OR a los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
 								   Linea, Columna);
 						}
+					case TipoOperacion.Xor:
+						//BOOLEANO-BOOLEANO
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
+						{
+							bool valor = bool.Parse(izq.ToString()) == bool.Parse(der.ToString());
+							return !valor;
+						}
+						else
+						{
+							return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede aplicar OR a los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+								   Linea, Columna);
+						}
 				}
 			}//operaciones de tipo unarias
 			else if (izq != null)

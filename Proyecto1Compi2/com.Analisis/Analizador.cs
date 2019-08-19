@@ -95,7 +95,7 @@ namespace com.Analisis
 				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
 				//funciones.Add(new Funcion("llamada",new TipoObjetoDB(TipoDatoDB.STRING,"string"),1,1));
 				//TablaSimbolos ts = new TablaSimbolos("Global");
-				//ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+				
 				//object respuesta = ex.GetValor(ts);
 				//if (respuesta.GetType() == typeof(ThrowError)) {
 				//	erroresCQL.Add(new Error((ThrowError)respuesta));
@@ -110,6 +110,7 @@ namespace com.Analisis
 					Analizador.AddUsuario(new Usuario("admin", "admin"));
 					Sesion sesion = new Sesion("admin", null);
 					TablaSimbolos ts = new TablaSimbolos("Global");
+					ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
 					foreach (Sentencia sentencia in sentencias)
 					{
 						object respuesta = sentencia.Ejecutar(sesion, ts);
