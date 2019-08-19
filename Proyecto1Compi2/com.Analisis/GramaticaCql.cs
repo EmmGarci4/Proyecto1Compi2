@@ -31,6 +31,7 @@ namespace com.Analisis
 			var por = ToTerm("*");
 			var div = ToTerm("/");
 			var pot = ToTerm("**");
+			var xor = ToTerm("^");
 			var mod = ToTerm("%");
 			var khe = ToTerm("?");
 			var masmas = ToTerm("++");
@@ -329,7 +330,8 @@ namespace com.Analisis
 				| EXPRESION + notigual + EXPRESION
 				| EXPRESION + and + EXPRESION
 				| EXPRESION + or + EXPRESION
-				| EXPRESION + pot + EXPRESION
+				| EXPRESION + xor + EXPRESION
+				| par1 +CONDICION+par2
 				| not + CONDICION
 				| pr_true
 				| pr_false;

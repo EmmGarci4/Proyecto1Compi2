@@ -22,11 +22,13 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			object respuesta = valor.GetValor(tb);
-			if (respuesta.GetType()==typeof(ThrowError)) {
-				return respuesta;
-			}
-			sesion.Mensajes.Add(respuesta.ToString());
-			Form1.MostrarMensajeAUsuario(respuesta.ToString());
+				if (respuesta.GetType() == typeof(ThrowError))
+				{
+					return respuesta;
+				}
+				sesion.Mensajes.Add(respuesta.ToString());
+				Form1.MostrarMensajeAUsuario(respuesta.ToString());
+			
 			return null;
 		}
 	}

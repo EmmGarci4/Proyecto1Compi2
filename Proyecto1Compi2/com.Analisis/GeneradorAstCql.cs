@@ -820,6 +820,9 @@ namespace Proyecto1Compi2.com.Analisis
 			switch (raiz.ChildNodes.Count)
 			{
 				case 1://true o false
+					if (raiz.ChildNodes.ElementAt(0).Term.Name=="CONDICION") {
+						return GetCondicion(raiz.ChildNodes.ElementAt(0));
+					}
 					return new Condicion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower() == "true", TipoOperacion.Booleano, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 2://not
 					return new Condicion(GetCondicion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
@@ -845,6 +848,8 @@ namespace Proyecto1Compi2.com.Analisis
 				case ">=": return TipoOperacion.MayorIgual;
 				case "==": return TipoOperacion.Igual;
 				case "!=": return TipoOperacion.Diferente;
+				case "&&": return TipoOperacion.And;
+				case "||": return TipoOperacion.Or;
 				case "^": return TipoOperacion.Xor;
 			}
 			return TipoOperacion.Nulo;

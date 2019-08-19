@@ -311,8 +311,18 @@ namespace Proyecto1Compi2.com.AST
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
-							double valor = double.Parse(izq.ToString()) % double.Parse(der.ToString());
-							return valor;
+							if (double.Parse(der.ToString()) != 0)
+							{
+								double valor = double.Parse(izq.ToString()) % double.Parse(der.ToString());
+								return valor;
+							}
+							else
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+								 "No se puede hacer una división por cero",
+								Linea, Columna);
+							}
+
 						}
 						else
 						{
@@ -372,7 +382,9 @@ namespace Proyecto1Compi2.com.AST
 				return this.Valor;
 			}
 
-			return null;
+			return new ThrowError(TipoThrow.Exception,
+									"Ha ocurrido un error grave al evaluar la expresión",
+								   Linea, Columna);
 		}
 
 		public static TipoOperacion GetTipoDatoDB(TipoDatoDB tipo)

@@ -45,7 +45,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)
 		{
-			throw new NotImplementedException();
+			return TipoOperacion.Booleano;
 		}
 
 		public override object GetValor(TablaSimbolos ts)
@@ -463,7 +463,7 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (tipoOp == TipoOperacion.Not)
 				{
-					if (izquierda.GetTipo(ts) == TipoOperacion.Numero)
+					if (izquierda.GetTipo(ts) == TipoOperacion.Booleano)
 					{
 						bool valor = !bool.Parse(izq.ToString());
 						return valor;
@@ -480,10 +480,11 @@ namespace Proyecto1Compi2.com.AST
 			else
 			{
 
-				//return this.valor;
+				return this.valor;
 			}
-			//VALIDAR TIPO DE LA EXPRESION DEL NOT
-			return null;
+			return new ThrowError(TipoThrow.Exception,
+									"Ha ocurrido un error grave al evaluar la condición",
+								   Linea, Columna);
 		}
 	}
 }
