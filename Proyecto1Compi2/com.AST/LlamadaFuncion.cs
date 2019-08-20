@@ -36,14 +36,19 @@ namespace Proyecto1Compi2.com.AST
 			foreach (Expresion ex in parametros)
 			{
 				TipoOperacion t= ex.GetTipo(ts);
-				if (t==TipoOperacion.Numero) {
+				if (t == TipoOperacion.Numero)
+				{
 					if (ex.GetValor(ts).ToString().Contains("."))
 					{
 						llave.Append("double");
 					}
-					else {
+					else
+					{
 						llave.Append("int");
 					}
+				}
+				else {
+					llave.Append(t.ToString().ToLower());
 				}
 				if (contador < parametros.Count - 1)
 				{

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Analisis;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -191,7 +192,93 @@ namespace Proyecto1Compi2.com.AST
 								case "insert":
 									if (llamada.Parametros.Count == 1)
 									{
-
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										switch (t) {
+											case TipoOperacion.Numero:
+												if (collection.TipoDato.Tipo == TipoDatoDB.INT)
+												{
+													if (!nuevo.ToString().Contains("."))
+													{
+														collection.AddItem(nuevo);
+													}
+													else
+													{
+														return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor double en un Collection tipo int",
+															Linea, Columna);
+													}
+												}
+												else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
+												{
+													collection.AddItem(nuevo);
+												}
+												else {
+													return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor numerico en un Collection tipo '"+collection.TipoDato.ToString()+"'",
+															Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Booleano:
+												if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
+												{
+													collection.AddItem(nuevo);
+												}
+												else {
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Fecha:
+												if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
+												{
+													collection.AddItem(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor de fecha en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Hora:
+												if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
+												{
+													collection.AddItem(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor de hora en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Objeto:
+												if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
+												{
+													collection.AddItem(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor de objeto en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.String:
+												if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
+												{
+													collection.AddItem(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor string en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+										}
 
 									}
 									else
@@ -200,13 +287,42 @@ namespace Proyecto1Compi2.com.AST
 											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 									}
-
 									return null;
 								case "get":
 									if (llamada.Parametros.Count == 1)
 									{
-
-
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (t == TipoOperacion.Numero)
+										{
+											if (!nuevo.ToString().Contains("."))
+											{
+												//es entero
+												int posicion = (int)nuevo;
+												if (posicion>=0 && posicion < collection.Count)
+												{
+													object nuevoValor = collection.ElementAt(posicion);
+													Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, nuevoValor,
+														new Util.TipoObjetoDB(collection.TipoDato.Tipo, collection.TipoDato.Nombre), 0, 0);
+													return RetornarValorSobreVariable(s, ts);
+												}
+												else {
+													return new ThrowError(Util.TipoThrow.IndexOutException,
+														"El valor está fuera de rango",
+														Linea, Columna);
+												}
+											}
+											else {
+												return new ThrowError(Util.TipoThrow.Exception,
+													"No se puede acceder a una posición decimal en una lista",
+													Linea, Columna);
+											}
+										}
+										else {
+											return new ThrowError(Util.TipoThrow.Exception,
+												"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre un Collection'",
+												Linea, Columna);
+										}
 									}
 									else
 									{
@@ -214,13 +330,133 @@ namespace Proyecto1Compi2.com.AST
 											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 									}
-
-									return null;
 								case "set":
-									if (llamada.Parametros.Count == 1)
+									if (llamada.Parametros.Count == 2)
 									{
-
-
+										//PRIMER PARAMETRO = POSICION
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (t == TipoOperacion.Numero)
+										{
+											if (!nuevo.ToString().Contains("."))
+											{
+												//es entero
+												int posicion = (int)nuevo;
+												if (posicion >= 0 && posicion < collection.Count)
+												{
+													//SEGUNDO PARAMETRO= VALOR
+													object nuevoValor = llamada.Parametros.ElementAt(1).GetValor(ts);
+													TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts);
+													switch (t2)
+													{
+														case TipoOperacion.Numero:
+															if (collection.TipoDato.Tipo == TipoDatoDB.INT)
+															{
+																if (!nuevoValor.ToString().Contains("."))
+																{
+																	collection.SetItem(posicion,nuevoValor);
+																}
+																else
+																{
+																	return new ThrowError(Util.TipoThrow.Exception,
+																		"No se puede almacenar un valor double en un Collection tipo int",
+																		Linea, Columna);
+																}
+															}
+															else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
+															{
+																collection.SetItem(posicion, nuevoValor);
+															}
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																		"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																		Linea, Columna);
+															}
+															break;
+														case TipoOperacion.Booleano:
+															if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
+															{
+																collection.SetItem(posicion, nuevoValor);
+															}
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																	"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																	Linea, Columna);
+															}
+															break;
+														case TipoOperacion.Fecha:
+															if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
+															{
+																collection.SetItem(posicion, nuevoValor);
+															}
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																	"No se puede almacenar un valor de fecha en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																	Linea, Columna);
+															}
+															break;
+														case TipoOperacion.Hora:
+															if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
+															{
+																collection.SetItem(posicion, nuevoValor);
+															}
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																	"No se puede almacenar un valor de hora en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																	Linea, Columna);
+															}
+															break;
+														case TipoOperacion.Objeto:
+															if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
+															{
+																collection.SetItem(posicion, nuevoValor);
+															}
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																	"No se puede almacenar un valor de objeto en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																	Linea, Columna);
+															}
+															break;
+														case TipoOperacion.String:
+															if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
+															{
+																collection.SetItem(posicion, nuevoValor);
+															}
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																	"No se puede almacenar un valor string en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																	Linea, Columna);
+															}
+															break;
+													}
+												//******
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.IndexOutException,
+														"El valor está fuera de rango",
+														Linea, Columna);
+												}
+											}
+											else
+											{
+												return new ThrowError(Util.TipoThrow.Exception,
+													"No se puede acceder a una posición decimal en una lista",
+													Linea, Columna);
+											}
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+												"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre un Collection'",
+												Linea, Columna);
+										}
 									}
 									else
 									{
@@ -228,12 +464,42 @@ namespace Proyecto1Compi2.com.AST
 											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 									}
-
 									return null;
 								case "remove":
 									if (llamada.Parametros.Count == 1)
 									{
-
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (t == TipoOperacion.Numero)
+										{
+											if (!nuevo.ToString().Contains("."))
+											{
+												//es entero
+												int posicion = (int)nuevo;
+												if (posicion >= 0 && posicion < collection.Count)
+												{
+													collection.EliminarItem(posicion);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.IndexOutException,
+														"El valor está fuera de rango",
+														Linea, Columna);
+												}
+											}
+											else
+											{
+												return new ThrowError(Util.TipoThrow.Exception,
+													"No se puede acceder a una posición decimal en una lista",
+													Linea, Columna);
+											}
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+												"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre un Collection'",
+												Linea, Columna);
+										}
 
 									}
 									else
@@ -242,13 +508,13 @@ namespace Proyecto1Compi2.com.AST
 											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 									}
-
 									return null;
 								case "size":
-									if (llamada.Parametros.Count == 1)
+									if (llamada.Parametros.Count == 0)
 									{
-
-
+										Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, collection.Count,
+											new Util.TipoObjetoDB(TipoDatoDB.INT,"int"), 0, 0);
+										return RetornarValorSobreVariable(s, ts);
 									}
 									else
 									{
@@ -256,13 +522,10 @@ namespace Proyecto1Compi2.com.AST
 											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 									}
-
-									return null;
 								case "clear":
-									if (llamada.Parametros.Count == 1)
+									if (llamada.Parametros.Count == 0)
 									{
-
-
+										collection.Clear();
 									}
 									else
 									{
@@ -274,8 +537,106 @@ namespace Proyecto1Compi2.com.AST
 								case "contains":
 									if (llamada.Parametros.Count == 1)
 									{
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										bool respuesta = false;
+										switch (t)
+										{
+											case TipoOperacion.Numero:
+												if (collection.TipoDato.Tipo == TipoDatoDB.INT)
+												{
+													if (!nuevo.ToString().Contains("."))
+													{
+														respuesta=collection.Contains(nuevo);
+													}
+													else
+													{
+														return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor double en un Collection tipo int",
+															Linea, Columna);
+													}
+												}
+												else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
+												{
+													respuesta = collection.Contains(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+															Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Booleano:
+												if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
+												{
+													respuesta = collection.Contains(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Fecha:
+												if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
+												{
+													respuesta = collection.Contains(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor de fecha en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Hora:
+												if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
+												{
+													respuesta = collection.Contains(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor de hora en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.Objeto:
+												if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
+												{
+													respuesta = collection.Contains(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor de objeto en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
+												break;
+											case TipoOperacion.String:
+												if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
+												{
+													respuesta = collection.Contains(nuevo);
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor string en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														Linea, Columna);
+												}
 
-
+												break;
+											default:
+												return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+										Linea, Columna);
+										}
+										//retornando el resultado
+										Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, respuesta,
+											new Util.TipoObjetoDB(TipoDatoDB.BOOLEAN, "boolean"), 0, 0);
+										return RetornarValorSobreVariable(s, ts);
 									}
 									else
 									{
@@ -283,8 +644,6 @@ namespace Proyecto1Compi2.com.AST
 											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 									}
-
-									return null;
 								default:
 									return new ThrowError(Util.TipoThrow.Exception,
 										"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",

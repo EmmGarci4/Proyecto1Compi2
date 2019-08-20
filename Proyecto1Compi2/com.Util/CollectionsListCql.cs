@@ -162,5 +162,15 @@ namespace Proyecto1Compi2.com.Util
 		{
 			Console.WriteLine("ORDENANDO LISTA...");
 		}
+
+		internal void SetItem(int posicion, object nuevoValor)
+		{
+			this[posicion] = nuevoValor;
+		}
+
+		internal void EliminarItem(int posicion)
+		{
+			this.RemoveAt(posicion);
+		}
 	}
 }

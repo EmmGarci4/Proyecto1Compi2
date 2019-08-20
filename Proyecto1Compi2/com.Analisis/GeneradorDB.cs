@@ -381,16 +381,16 @@ namespace Proyecto1Compi2.com.Analisis
 		//		if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
 		//		{
 		//			//DATO primitivo
-		//			valores.AddItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
+		//			valores.SetItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
 		//		}
 		//		else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
 		//			//lista
-		//			valores.AddItem(GetListaDatos(nod.ChildNodes.ElementAt(0)));
+		//			valores.SetItem(GetListaDatos(nod.ChildNodes.ElementAt(0)));
 		//		}else
 		//		{
 		//			//objeto
 		//			Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
-		//			valores.AddItem(new Objeto(atributos));
+		//			valores.SetItem(new Objeto(atributos));
 		//		}
 		//	}
 
