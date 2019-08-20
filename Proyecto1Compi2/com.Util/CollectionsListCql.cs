@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto1Compi2.com.AST;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,17 +13,17 @@ namespace Proyecto1Compi2.com.Util
 		bool isList;
 		TipoObjetoDB tipoDato;
 
-		public CollectionListCql(TipoObjetoDB tipo)
+		public CollectionListCql(TipoObjetoDB tipo, bool isList)
 		{
 			this.tipoDato = tipo;
-			isList = true;
+			this.isList = isList;
 		}
 
 		public bool IsLista { get => isList; set => isList = value; }
 		public bool IsSet { get => !isList; }
 		public TipoObjetoDB TipoDato { get => tipoDato; set => tipoDato = value; }
 
-		public void AddItem(object obj)
+		public object AddItem(object obj, int linea, int columna)
 		{
 			if (isList)
 			{
@@ -30,9 +31,40 @@ namespace Proyecto1Compi2.com.Util
 			}
 			else
 			{
-				//insersion unica y ordenada
-
+				//insersion unica
+				foreach (object objeto in this)
+				{
+					if (objeto.Equals(obj))
+					{
+						return new ThrowError(TipoThrow.Exception, "El elemento ya existe en el Set",
+							linea, columna);
+					}
+				}
+				switch (tipoDato.Tipo)
+				{
+					case TipoDatoDB.BOOLEAN:
+					case TipoDatoDB.STRING:
+					case TipoDatoDB.DOUBLE:
+					case TipoDatoDB.INT:
+					case TipoDatoDB.TIME:
+					case TipoDatoDB.DATE:
+						//insersion ordenada
+						this.Add(obj);
+						this.Sort();
+						break;
+					case TipoDatoDB.LISTA_OBJETO:
+					case TipoDatoDB.LISTA_PRIMITIVO:
+					case TipoDatoDB.MAP_OBJETO:
+					case TipoDatoDB.MAP_PRIMITIVO:
+					case TipoDatoDB.OBJETO:
+					case TipoDatoDB.SET_OBJETO:
+					case TipoDatoDB.SET_PRIMITIVO:
+						//insersion al final
+						this.Add(obj);
+						break;
+				}
 			}
+			return null;
 		}
 
 		public override string ToString()
@@ -52,7 +84,8 @@ namespace Proyecto1Compi2.com.Util
 			cad.Append("]");
 			return cad.ToString();
 		}
-
+		
+		//Metodos usados desde GeneradorDB
 		public bool IsAllInteger()
 		{
 			foreach (object ob in this)
@@ -163,9 +196,20 @@ namespace Proyecto1Compi2.com.Util
 			Console.WriteLine("ORDENANDO LISTA...");
 		}
 
-		internal void SetItem(int posicion, object nuevoValor)
+		internal object SetItem(int posicion, object nuevoValor, int linea, int columna)
 		{
+			//insersion unica y ordenada
+			foreach (object objeto in this)
+			{
+				if (objeto.Equals(nuevoValor))
+				{
+					return new ThrowError(TipoThrow.Exception, "El elemento ya existe en el Set",
+						linea, columna);
+				}
+			}
+			//no existe el objeto en la lista
 			this[posicion] = nuevoValor;
+			return null;
 		}
 
 		internal void EliminarItem(int posicion)

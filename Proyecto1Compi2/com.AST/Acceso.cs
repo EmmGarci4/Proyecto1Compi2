@@ -200,7 +200,14 @@ namespace Proyecto1Compi2.com.AST
 												{
 													if (!nuevo.ToString().Contains("."))
 													{
-														collection.AddItem(nuevo);
+														object posibleError = collection.AddItem(nuevo,Linea,Columna);
+														if (posibleError != null)
+														{
+															if (posibleError.GetType() == typeof(ThrowError))
+															{
+																return posibleError;
+															}
+														}
 													}
 													else
 													{
@@ -211,18 +218,33 @@ namespace Proyecto1Compi2.com.AST
 												}
 												else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
 												{
-													collection.AddItem(nuevo);
-												}
-												else {
-													return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor numerico en un Collection tipo '"+collection.TipoDato.ToString()+"'",
-															Linea, Columna);
-												}
+													object posibleError = collection.AddItem(nuevo, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
+													}
+													else
+													{
+														return new ThrowError(Util.TipoThrow.Exception,
+																"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+																Linea, Columna);
+													}
 												break;
 											case TipoOperacion.Booleano:
 												if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
 												{
-													collection.AddItem(nuevo);
+													object posibleError=collection.AddItem(nuevo, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
 												}
 												else {
 													return new ThrowError(Util.TipoThrow.Exception,
@@ -233,7 +255,14 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.Fecha:
 												if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
 												{
-													collection.AddItem(nuevo);
+													object posibleError=collection.AddItem(nuevo, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
 												}
 												else
 												{
@@ -245,7 +274,14 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.Hora:
 												if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
 												{
-													collection.AddItem(nuevo);
+													object posibleError= collection.AddItem(nuevo, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
 												}
 												else
 												{
@@ -257,7 +293,14 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.Objeto:
 												if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
 												{
-													collection.AddItem(nuevo);
+													object posibleError=collection.AddItem(nuevo, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
 												}
 												else
 												{
@@ -269,7 +312,14 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.String:
 												if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
 												{
-													collection.AddItem(nuevo);
+													object posibleError = collection.AddItem(nuevo, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
 												}
 												else
 												{
@@ -354,7 +404,14 @@ namespace Proyecto1Compi2.com.AST
 															{
 																if (!nuevoValor.ToString().Contains("."))
 																{
-																	collection.SetItem(posicion,nuevoValor);
+																	object posibleError = collection.SetItem(posicion,nuevoValor, Linea, Columna);
+																	if (posibleError != null)
+																	{
+																		if (posibleError.GetType() == typeof(ThrowError))
+																		{
+																			return posibleError;
+																		}
+																	}
 																}
 																else
 																{
@@ -365,7 +422,14 @@ namespace Proyecto1Compi2.com.AST
 															}
 															else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
 															{
-																collection.SetItem(posicion, nuevoValor);
+																object posibleError= collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
+																	{
+																		return posibleError;
+																	}
+																}
 															}
 															else
 															{
@@ -377,7 +441,14 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Booleano:
 															if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
 															{
-																collection.SetItem(posicion, nuevoValor);
+																object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
+																	{
+																		return posibleError;
+																	}
+																}
 															}
 															else
 															{
@@ -389,7 +460,14 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Fecha:
 															if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
 															{
-																collection.SetItem(posicion, nuevoValor);
+																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
+																	{
+																		return posibleError;
+																	}
+																}
 															}
 															else
 															{
@@ -401,7 +479,14 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Hora:
 															if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
 															{
-																collection.SetItem(posicion, nuevoValor);
+																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
+																	{
+																		return posibleError;
+																	}
+																}
 															}
 															else
 															{
@@ -413,7 +498,14 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Objeto:
 															if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
 															{
-																collection.SetItem(posicion, nuevoValor);
+																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
+																	{
+																		return posibleError;
+																	}
+																}
 															}
 															else
 															{
@@ -425,7 +517,14 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.String:
 															if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
 															{
-																collection.SetItem(posicion, nuevoValor);
+																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
+																	{
+																		return posibleError;
+																	}
+																}
 															}
 															else
 															{
@@ -552,7 +651,7 @@ namespace Proyecto1Compi2.com.AST
 													else
 													{
 														return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor double en un Collection tipo int",
+															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 															Linea, Columna);
 													}
 												}
@@ -563,7 +662,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '"+nuevo+"'",
 															Linea, Columna);
 												}
 												break;
@@ -575,7 +674,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 														Linea, Columna);
 												}
 												break;
@@ -587,7 +686,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor de fecha en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 														Linea, Columna);
 												}
 												break;
@@ -599,7 +698,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor de hora en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 														Linea, Columna);
 												}
 												break;
@@ -611,7 +710,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor de objeto en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 														Linea, Columna);
 												}
 												break;
@@ -623,7 +722,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor string en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+														"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 														Linea, Columna);
 												}
 
@@ -654,6 +753,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_OBJETO ||sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_PRIMITIVO)
 						{
+
 							return null;
 						}
 						else

@@ -110,7 +110,11 @@ namespace com.Analisis
 					Analizador.AddUsuario(new Usuario("admin", "admin"));
 					Sesion sesion = new Sesion("admin", null);
 					TablaSimbolos ts = new TablaSimbolos();
-					ts.AgregarSimbolo(new Simbolo("@lista", new CollectionListCql(new TipoObjetoDB(TipoDatoDB.INT,"int")), new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<int>"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@lista", new CollectionListCql(new TipoObjetoDB(TipoDatoDB.INT,"int"),true), new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<int>"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@set", new CollectionListCql(
+						new TipoObjetoDB(TipoDatoDB.DOUBLE, "double"),false), 
+						new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<int>"), 1, 1));
+
 					ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
 					ts.AgregarSimbolo(new Simbolo("@fecha", "1997-08-6", new TipoObjetoDB(TipoDatoDB.DATE, "date"), 1, 1));
 					ts.AgregarSimbolo(new Simbolo("@hora", "6:32", new TipoObjetoDB(TipoDatoDB.TIME, "time"), 1, 1));
