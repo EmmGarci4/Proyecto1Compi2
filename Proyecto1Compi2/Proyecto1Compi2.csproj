@@ -122,7 +122,7 @@
     <Compile Include="com.AST\DoWhile.cs" />
     <Compile Include="com.AST\While.cs" />
     <Compile Include="com.db\Atributo.cs" />
-    <Compile Include="com.db\CollectionLista.cs" />
+    <Compile Include="com.Util\CollectionsListCql.cs" />
     <Compile Include="com.db\Sesion.cs" />
     <Compile Include="com.db\UserType.cs" />
     <Compile Include="com.db\Usuario.cs" />

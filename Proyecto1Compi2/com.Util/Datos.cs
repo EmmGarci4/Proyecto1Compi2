@@ -42,156 +42,24 @@ namespace Proyecto1Compi2.com.Util
 						return Regex.IsMatch(v.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
 					}
 					return false;
-				case TipoDatoDB.LISTA_BOOLEAN:
-					if (v.GetType() == typeof(CollectionLista))
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					if (v.GetType() == typeof(CollectionListCql))
 					{
-						CollectionLista list = (CollectionLista)v;
+						CollectionListCql list = (CollectionListCql)v;
 						if (list.IsLista)
 						{
-							return list.IsAllBool();
+							return list.IsAllBool() ||
+								list.IsAllDate() ||
+								list.IsAllDouble() ||
+								list.IsAllInteger() ||
+								list.IsAllObjeto() ||
+								list.IsAllString() ||
+								list.IsAllTime();
 						}
 					}
 					break;
-				case TipoDatoDB.LISTA_DATE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllDate();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_DOUBLE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllDouble();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_INT:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllInteger();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_OBJETO:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllObjeto();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_STRING:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllString();
-						}
-					}
-					break;
-				case TipoDatoDB.LISTA_TIME:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllTime();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_BOOLEAN:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllBool();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_DATE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							return list.IsAllDate();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_DOUBLE:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllDouble();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_INT:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllInteger();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_OBJETO:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							return list.IsAllObjeto();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_STRING:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							list.IsLista = false;
-							list.Ordenar();
-							return list.IsAllString();
-						}
-					}
-					break;
-				case TipoDatoDB.SET_TIME:
-					if (v.GetType() == typeof(CollectionLista))
-					{
-						CollectionLista list = (CollectionLista)v;
-						if (list.IsLista)
-						{
-							return list.IsAllTime();
-						}
-					}
-					break;
+				case TipoDatoDB.MAP_PRIMITIVO:
 				case TipoDatoDB.MAP_OBJETO:
 				case TipoDatoDB.OBJETO:
 					return true;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -31,35 +32,51 @@ namespace Proyecto1Compi2.com.AST
 			switch (valor.Tipo)
 			{
 				case TipoAcceso.AccesoArreglo:
+				//acceso a arreglo
+				//enviar sobre variable o campo
 				case TipoAcceso.Campo:
+				//tablas Y COLUMNAS
+				//enviar sobre campo
 				case TipoAcceso.LlamadaFuncion:
+					//ejecutar llamada de funcion y retornar el valor 
 					break;
 				case TipoAcceso.Variable:
 					if (ts.ExisteSimbolo(valor.Value.ToString()))
 					{
 						Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
 						object respuesta = RetornarValorSobreVariable(sim, ts);
-						
+
 						return respuesta;
 					}
-					else {
-						return new ThrowError(Util.TipoThrow.Exception, 
-							"La variable '"+valor.Value.ToString()+"' no existe",
-							Linea,Columna);
+					else
+					{
+						return new ThrowError(Util.TipoThrow.Exception,
+							"La variable '" + valor.Value.ToString() + "' no existe",
+							Linea, Columna);
 					}
 			}
 			return null;
 		}
 
-		private object RetornarValorSobreVariable(Simbolo sim,TablaSimbolos ts)
+		private object RetornarValorSobreVariable(Simbolo sim, TablaSimbolos ts)
 		{
-			if (objetos.Count>0) {
+			if (objetos.Count > 0)
+			{
 				AccesoPar valor = objetos.Dequeue();
 				switch (valor.Tipo)
 				{
 					case TipoAcceso.AccesoArreglo:
 					case TipoAcceso.Campo:
-						
+						if (sim.TipoDato.Tipo == Util.TipoDatoDB.OBJETO)
+						{
+							//OBTENER OBJETO Y ACCEDER A PROPIEDADES
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"No se puede acceder a un valor en '" + sim.Nombre + "' por que no contiene la propiedad '" + valor.ToString() + "'",
+								Linea, Columna);
+						}
 						break;
 					case TipoAcceso.LlamadaFuncion:
 						if (sim.TipoDato.Tipo == Util.TipoDatoDB.STRING)
@@ -162,9 +179,128 @@ namespace Proyecto1Compi2.com.AST
 							}
 							#endregion
 						}
-						else {
+						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.LISTA_OBJETO || sim.TipoDato.Tipo == Util.TipoDatoDB.LISTA_PRIMITIVO ||
+						  sim.TipoDato.Tipo == Util.TipoDatoDB.SET_OBJETO ||sim.TipoDato.Tipo == Util.TipoDatoDB.SET_PRIMITIVO)
+						{
+							#region FuncionesNativasSobreListYSet
+							LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
+							CollectionListCql collection = (CollectionListCql)sim.Valor;
+							string llaveFuncion = llamada.Nombre;
+							switch (llaveFuncion.ToLower())
+							{
+								case "insert":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+
+									return null;
+								case "get":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+
+									return null;
+								case "set":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+
+									return null;
+								case "remove":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+
+									return null;
+								case "size":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+
+									return null;
+								case "clear":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+									return null;
+								case "contains":
+									if (llamada.Parametros.Count == 1)
+									{
+
+
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+
+									return null;
+								default:
+									return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+										Linea, Columna);
+
+							}
+							#endregion
+						}
+						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_OBJETO ||sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_PRIMITIVO)
+						{
+							return null;
+						}
+						else
+						{
 							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede aplicar la función '"+valor.ToString()+"' sobre el valor tipo '"+sim.TipoDato.ToString()+"'",
+								"No se puede aplicar la función '" + valor.ToString() + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 								Linea, Columna);
 						}
 				}

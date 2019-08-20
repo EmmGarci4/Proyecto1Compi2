@@ -259,16 +259,19 @@ namespace Proyecto1Compi2.com.Analisis
 		public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode,bool b)
 		{
 			switch (td) {
+				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.LISTA_OBJETO:
 					TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
 					string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
 					if (!b) return "list<" + nombreTipo + ">";
 					return nombreTipo;
+				case TipoDatoDB.SET_PRIMITIVO:
 				case TipoDatoDB.SET_OBJETO:
 					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
 					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
 					if (!b) return "set<" + nombreTipo + ">";
 					return nombreTipo;
+				case TipoDatoDB.MAP_PRIMITIVO:
 				case TipoDatoDB.MAP_OBJETO:
 					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
 					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
@@ -288,66 +291,18 @@ namespace Proyecto1Compi2.com.Analisis
 					else {
 						return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
 					}
-				case TipoDatoDB.LISTA_BOOLEAN:
-					if (!b) return "list<boolean>";
-					return "boolean";
-				case TipoDatoDB.SET_BOOLEAN:
-					if (!b) return "set<boolean>";
-					return "boolean";
-				case TipoDatoDB.MAP_BOOLEAN:
 				case TipoDatoDB.BOOLEAN:
 					return "boolean";
-
-				case TipoDatoDB.LISTA_DATE:
-					if (!b) return "list<date>";
-					return "date";
-				case TipoDatoDB.SET_DATE:
-					if (!b) return "set<date>";
-					return "boolean";
-				case TipoDatoDB.MAP_DATE:
 				case TipoDatoDB.DATE:
 					return "date";
-
-				case TipoDatoDB.LISTA_DOUBLE:
-					if (!b) return "list<doulbe>";
-					return "double";
-				case TipoDatoDB.SET_DOUBLE:
-					if (!b) return "set<double>";
-					return "boolean";
-				case TipoDatoDB.MAP_DOUBLE:
 				case TipoDatoDB.DOUBLE:
 					return "double";
-
-				case TipoDatoDB.LISTA_INT:
-					if (!b) return "list<int>";
-					return "int";
-				case TipoDatoDB.SET_INT:
-					if (!b) return "set<int>";
-					return "int";
-				case TipoDatoDB.MAP_INT:
 				case TipoDatoDB.INT:
 					return "int";
-
-				case TipoDatoDB.LISTA_STRING:
-					if (!b) return "list<string>";
-					return "string";
-				case TipoDatoDB.SET_STRING:
-					if (!b) return "set<string>";
-					return "string";
-				case TipoDatoDB.MAP_STRING:
 				case TipoDatoDB.STRING:
 					return "string";
-
-				case TipoDatoDB.SET_TIME:
-					if (!b) return "set<time>";
-					return "time";
-				case TipoDatoDB.LISTA_TIME:
-					if (!b) return "list<ime>";
-					return "time";
-				case TipoDatoDB.MAP_TIME:
 				case TipoDatoDB.TIME:
 					return "time";
-
 				case TipoDatoDB.COUNTER:
 					return "counter";
 				case TipoDatoDB.NULO:
@@ -388,8 +343,8 @@ namespace Proyecto1Compi2.com.Analisis
 					if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATOS"))
 					{
 						//ES UNA LISTA
-						CollectionLista valores = GetListaDatos(nod.ChildNodes.ElementAt(1));
-						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, valores);
+						//CollectionLista valores = GetListaDatos(nod.ChildNodes.ElementAt(1));
+						//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, valores);
 					}
 					else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
 						//ES UN OBJETO
@@ -418,29 +373,29 @@ namespace Proyecto1Compi2.com.Analisis
 			return datos;
 		}
 
-		private static CollectionLista GetListaDatos(ParseTreeNode parseTreeNode)
-		{
-			CollectionLista valores = new CollectionLista();
-			foreach (ParseTreeNode nod in parseTreeNode.ChildNodes)
-			{
-				if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
-				{
-					//DATO primitivo
-					valores.AddItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
-				}
-				else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
-					//lista
-					valores.AddItem(GetListaDatos(nod.ChildNodes.ElementAt(0)));
-				}else
-				{
-					//objeto
-					Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
-					valores.AddItem(new Objeto(atributos));
-				}
-			}
+		//private static CollectionLista GetListaDatos(ParseTreeNode parseTreeNode)
+		//{
+		//	CollectionLista valores = new CollectionLista();
+		//	foreach (ParseTreeNode nod in parseTreeNode.ChildNodes)
+		//	{
+		//		if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
+		//		{
+		//			//DATO primitivo
+		//			valores.AddItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
+		//		}
+		//		else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
+		//			//lista
+		//			valores.AddItem(GetListaDatos(nod.ChildNodes.ElementAt(0)));
+		//		}else
+		//		{
+		//			//objeto
+		//			Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
+		//			valores.AddItem(new Objeto(atributos));
+		//		}
+		//	}
 
-			return valores;
-		}
+		//	return valores;
+		//}
 
 		private static List<Columna> GetColumnas(List<object> objetosdb,ParseTreeNode raiz)
 		{
@@ -525,43 +480,28 @@ namespace Proyecto1Compi2.com.Analisis
 					return TipoDatoDB.COUNTER;
 				//listas
 				case "list<string>":
-					return TipoDatoDB.LISTA_STRING;
 				case "list<int>":
-					return TipoDatoDB.LISTA_INT;
 				case "list<double>":
-					return TipoDatoDB.LISTA_DOUBLE;
 				case "list<boolean>":
-					return TipoDatoDB.LISTA_BOOLEAN;
 				case "list<date>":
-					return TipoDatoDB.LISTA_DATE;
 				case "list<time>":
-					return TipoDatoDB.LISTA_TIME;
+					return TipoDatoDB.LISTA_PRIMITIVO;
 				//sets
 				case "set<string>":
-					return TipoDatoDB.SET_STRING;
 				case "set<int>":
-					return TipoDatoDB.SET_INT;
 				case "set<double>":
-					return TipoDatoDB.SET_DOUBLE;
 				case "set<boolean>":
-					return TipoDatoDB.SET_BOOLEAN;
 				case "set<date>":
-					return TipoDatoDB.SET_DATE;
 				case "set<time>":
-					return TipoDatoDB.SET_TIME;
+					return TipoDatoDB.SET_PRIMITIVO;
 				//maps
 				case "map<string>":
-					return TipoDatoDB.MAP_STRING;
 				case "map<int>":
-					return TipoDatoDB.MAP_INT;
 				case "map<double>":
-					return TipoDatoDB.MAP_DOUBLE;
 				case "map<boolean>":
-					return TipoDatoDB.MAP_BOOLEAN;
 				case "map<date>":
-					return TipoDatoDB.MAP_DATE;
 				case "map<time>":
-					return TipoDatoDB.MAP_TIME;
+					return TipoDatoDB.MAP_PRIMITIVO;
 				default:
 					if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("list")||
 						parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("list"))

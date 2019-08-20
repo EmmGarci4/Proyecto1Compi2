@@ -5,26 +5,31 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Proyecto1Compi2.com.db
+namespace Proyecto1Compi2.com.Util
 {
-	class CollectionLista : List<object>
+	class CollectionListCql : List<object>
 	{
 		bool isList;
+		TipoObjetoDB tipoDato;
 
-		public CollectionLista()
+		public CollectionListCql(TipoObjetoDB tipo)
 		{
+			this.tipoDato = tipo;
 			isList = true;
 		}
 
 		public bool IsLista { get => isList; set => isList = value; }
 		public bool IsSet { get => !isList; }
+		public TipoObjetoDB TipoDato { get => tipoDato; set => tipoDato = value; }
 
-		public void AddItem(object obj) {
+		public void AddItem(object obj)
+		{
 			if (isList)
 			{
 				this.Add(obj);
 			}
-			else {
+			else
+			{
 				//insersion unica y ordenada
 
 			}
@@ -35,9 +40,11 @@ namespace Proyecto1Compi2.com.db
 			StringBuilder cad = new StringBuilder();
 			cad.Append("[");
 			int i = 0;
-			foreach (object ib in this) {
+			foreach (object ib in this)
+			{
 				cad.Append(ib.ToString());
-				if (i<this.Count-1) {
+				if (i < this.Count - 1)
+				{
 					cad.Append(",");
 				}
 				i++;
@@ -46,9 +53,12 @@ namespace Proyecto1Compi2.com.db
 			return cad.ToString();
 		}
 
-		public bool IsAllInteger() {
-			foreach (object ob in this) {
-				if (ob.GetType()!=typeof(int)) {
+		public bool IsAllInteger()
+		{
+			foreach (object ob in this)
+			{
+				if (ob.GetType() != typeof(int))
+				{
 					Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 					return false;
 				}
@@ -90,8 +100,10 @@ namespace Proyecto1Compi2.com.db
 				{
 					return false;
 				}
-				else {
-					if (Regex.IsMatch(ob.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'")|| Regex.IsMatch(ob.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'")) {
+				else
+				{
+					if (Regex.IsMatch(ob.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'") || Regex.IsMatch(ob.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+					{
 						Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 						return false;
 					}
@@ -106,7 +118,8 @@ namespace Proyecto1Compi2.com.db
 			{
 				if (ob.GetType() == typeof(string))
 				{
-					if (!Regex.IsMatch(ob.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'")) {
+					if (!Regex.IsMatch(ob.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
+					{
 						Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 						return false;
 					}
@@ -121,7 +134,8 @@ namespace Proyecto1Compi2.com.db
 			{
 				if (ob.GetType() == typeof(string))
 				{
-					if (!Regex.IsMatch(ob.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'")) {
+					if (!Regex.IsMatch(ob.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+					{
 						Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 						return false;
 					}
@@ -134,8 +148,8 @@ namespace Proyecto1Compi2.com.db
 		{
 			foreach (object ob in this)
 			{
-				if (ob.GetType() == typeof(string)|| ob.GetType() == typeof(bool)|| ob.GetType() == typeof(int)
-					|| ob.GetType() == typeof(double)|| ob.GetType() == typeof(CollectionLista))
+				if (ob.GetType() == typeof(string) || ob.GetType() == typeof(bool) || ob.GetType() == typeof(int)
+					|| ob.GetType() == typeof(double) || ob.GetType() == typeof(CollectionListCql))
 				{
 					Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 					return false;
