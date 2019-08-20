@@ -269,24 +269,9 @@ namespace Proyecto1Compi2.com.AST
 				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.SET_OBJETO:
 				case TipoDatoDB.MAP_OBJETO:
-				case TipoDatoDB.MAP_BOOLEAN:
-				case TipoDatoDB.LISTA_BOOLEAN:
-				case TipoDatoDB.SET_BOOLEAN:
-				case TipoDatoDB.LISTA_DATE:
-				case TipoDatoDB.SET_DATE:
-				case TipoDatoDB.MAP_DATE:
-				case TipoDatoDB.LISTA_DOUBLE:
-				case TipoDatoDB.SET_DOUBLE:
-				case TipoDatoDB.MAP_DOUBLE:
-				case TipoDatoDB.LISTA_INT:
-				case TipoDatoDB.SET_INT:
-				case TipoDatoDB.MAP_INT:
-				case TipoDatoDB.LISTA_STRING:
-				case TipoDatoDB.SET_STRING:
-				case TipoDatoDB.MAP_STRING:
-				case TipoDatoDB.SET_TIME:
-				case TipoDatoDB.LISTA_TIME:
-				case TipoDatoDB.MAP_TIME:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.SET_PRIMITIVO:
+				case TipoDatoDB.MAP_PRIMITIVO:
 					return true;
 				case TipoDatoDB.OBJETO:
 				case TipoDatoDB.BOOLEAN:
@@ -323,43 +308,28 @@ namespace Proyecto1Compi2.com.AST
 					return TipoDatoDB.COUNTER;
 				//listas
 				case "list<string>":
-					return TipoDatoDB.LISTA_STRING;
 				case "list<int>":
-					return TipoDatoDB.LISTA_INT;
 				case "list<double>":
-					return TipoDatoDB.LISTA_DOUBLE;
 				case "list<boolean>":
-					return TipoDatoDB.LISTA_BOOLEAN;
 				case "list<date>":
-					return TipoDatoDB.LISTA_DATE;
 				case "list<time>":
-					return TipoDatoDB.LISTA_TIME;
+					return TipoDatoDB.LISTA_PRIMITIVO;
 				//sets
 				case "set<string>":
-					return TipoDatoDB.SET_STRING;
 				case "set<int>":
-					return TipoDatoDB.SET_INT;
 				case "set<double>":
-					return TipoDatoDB.SET_DOUBLE;
 				case "set<boolean>":
-					return TipoDatoDB.SET_BOOLEAN;
 				case "set<date>":
-					return TipoDatoDB.SET_DATE;
 				case "set<time>":
-					return TipoDatoDB.SET_TIME;
+					return TipoDatoDB.SET_PRIMITIVO;
 				//maps
 				case "map<string>":
-					return TipoDatoDB.MAP_STRING;
 				case "map<int>":
-					return TipoDatoDB.MAP_INT;
 				case "map<double>":
-					return TipoDatoDB.MAP_DOUBLE;
 				case "map<boolean>":
-					return TipoDatoDB.MAP_BOOLEAN;
 				case "map<date>":
-					return TipoDatoDB.MAP_DATE;
 				case "map<time>":
-					return TipoDatoDB.MAP_TIME;
+					return TipoDatoDB.MAP_PRIMITIVO;
 				default:
 					if (nombre.ToLower().StartsWith("list"))
 					{

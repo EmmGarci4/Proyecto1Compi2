@@ -13,7 +13,7 @@ namespace Proyecto1Compi2.com.AST
 		TipoOperacion tipoOp;
 		Expresion izquierda;
 		Expresion derecha;
-		bool valor;
+		readonly bool valor;
 
 		public Condicion(Expresion izquierda, Expresion derecha, TipoOperacion tipoOp, int linea, int columna) : base(linea, columna)
 		{
@@ -91,15 +91,13 @@ namespace Proyecto1Compi2.com.AST
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + der.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
@@ -111,14 +109,13 @@ namespace Proyecto1Compi2.com.AST
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1)) {
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
+							{
 								return new ThrowError(TipoThrow.ArithmeticException,
-									"La hora '"+izq.ToString()+"' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
+									"La hora '" + izq.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
@@ -156,15 +153,13 @@ namespace Proyecto1Compi2.com.AST
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + der.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
@@ -176,15 +171,13 @@ namespace Proyecto1Compi2.com.AST
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + izq.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
@@ -210,15 +203,13 @@ namespace Proyecto1Compi2.com.AST
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + der.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
@@ -230,15 +221,13 @@ namespace Proyecto1Compi2.com.AST
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + izq.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
@@ -264,15 +253,13 @@ namespace Proyecto1Compi2.com.AST
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + der.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
@@ -285,15 +272,13 @@ namespace Proyecto1Compi2.com.AST
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + izq.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
@@ -319,15 +304,13 @@ namespace Proyecto1Compi2.com.AST
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + der.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
@@ -340,15 +323,13 @@ namespace Proyecto1Compi2.com.AST
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + izq.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
@@ -374,15 +355,13 @@ namespace Proyecto1Compi2.com.AST
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La fecha '" + der.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
@@ -395,15 +374,13 @@ namespace Proyecto1Compi2.com.AST
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
-							DateTime d1;
-							DateTime d2;
-							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out d1))
+							if (!DateTime.TryParse(izq.ToString().Replace("'", String.Empty), out DateTime d1))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + izq.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
 								   Linea, Columna);
 							}
-							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out d2))
+							if (!DateTime.TryParse(der.ToString().Replace("'", String.Empty), out DateTime d2))
 							{
 								return new ThrowError(TipoThrow.ArithmeticException,
 									"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS a 24 horas",
