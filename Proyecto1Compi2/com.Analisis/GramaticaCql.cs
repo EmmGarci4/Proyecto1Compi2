@@ -178,7 +178,8 @@ namespace com.Analisis
 				ATRIBUTO = new NonTerminal("ATRIBUTO"),
 				LISTAATRIBUTOS = new NonTerminal("LISTAATRIBUTOS"),
 				LISTANOMBRESPURA = new NonTerminal("LISTANOMBRESPURA"),
-				OPERACIONASIGNACION=new NonTerminal("OPERACIONASIGNACION")
+				OPERACIONASIGNACION = new NonTerminal("OPERACIONASIGNACION"),
+				CASTEO = new NonTerminal("CASTEO")
 				;
 
 			NonTerminal SENTENCIATCL = new NonTerminal("SENTENCIATCL"),
@@ -513,6 +514,7 @@ namespace com.Analisis
 
 			SENTENCIAFCL.Rule = ASIGNACION
 				|DECLARACION
+				|CASTEO
 				|MODIFICADORES+puntoycoma
 				|IF
 				|SWITCH
@@ -541,9 +543,9 @@ namespace com.Analisis
 
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
 				| id + cor1 + EXPRESION + cor2 + igual + EXPRESION + puntoycoma
-				| id + punto + ACCESO + igual + EXPRESION + puntoycoma
-				//casteos
-				| id + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
+				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
+
+			CASTEO.Rule= id + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
 				| id + cor1 + EXPRESION + cor2 + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
 				| id + punto + ACCESO + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma;
 

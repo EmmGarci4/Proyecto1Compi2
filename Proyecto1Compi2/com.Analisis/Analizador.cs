@@ -110,14 +110,10 @@ namespace com.Analisis
 					Analizador.AddUsuario(new Usuario("admin", "admin"));
 					Sesion sesion = new Sesion("admin", null);
 					TablaSimbolos ts = new TablaSimbolos();
-					if (!ts.ExisteSimboloEnAmbito("@variable"))
-					{
-						ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
-					}
-					else {
-						Analizador.erroresCQL.Add(new Error(TipoError.Semantico,"Ya existe la variable '@variable'",1,1));
-					}
-
+					ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@fecha", "1997-08-6", new TipoObjetoDB(TipoDatoDB.DATE, "date"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@hora", "6:32", new TipoObjetoDB(TipoDatoDB.TIME, "time"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@cadena", "Hola Mundo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), 1, 1));
 					foreach (Sentencia sentencia in sentencias)
 					{
 						object respuesta = sentencia.Ejecutar(sesion, ts);

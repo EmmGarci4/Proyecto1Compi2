@@ -69,7 +69,7 @@ namespace Proyecto1Compi2.com.AST
 			switch (tipoOp)
 			{
 				case TipoOperacion.Numero:
-				case TipoOperacion.Cadena:
+				case TipoOperacion.String:
 				case TipoOperacion.Booleano:
 				case TipoOperacion.Caracter:
 				case TipoOperacion.Fecha:
@@ -84,9 +84,9 @@ namespace Proyecto1Compi2.com.AST
 					break;
 				case TipoOperacion.Suma:
 					//BOOLEANO-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//NUMERO-NUMERO
 					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
@@ -94,44 +94,44 @@ namespace Proyecto1Compi2.com.AST
 						return TipoOperacion.Numero;
 					}
 					//NUMERO-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//CADENA-BOOLEANO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//CADENA-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//CADENA-FECHA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//CADENA-HORA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//CADENA-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//FECHA-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					//HORA-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 					{
-						return TipoOperacion.Cadena;
+						return TipoOperacion.String;
 					}
 					break;
 				case TipoOperacion.Resta:
@@ -189,7 +189,7 @@ namespace Proyecto1Compi2.com.AST
 				{
 					case TipoOperacion.Suma:
 						//BOOLEANO-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
@@ -200,42 +200,42 @@ namespace Proyecto1Compi2.com.AST
 							return valor;
 						}
 						//NUMERO-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-BOOLEANO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-FECHA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-HORA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//FECHA-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//HORA-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
@@ -400,7 +400,7 @@ namespace Proyecto1Compi2.com.AST
 				case TipoDatoDB.INT:
 					return TipoOperacion.Numero;
 				case TipoDatoDB.STRING:
-					return TipoOperacion.Cadena;
+					return TipoOperacion.String;
 				case TipoDatoDB.TIME:
 					return TipoOperacion.Hora;
 				case TipoDatoDB.NULO:
@@ -416,7 +416,7 @@ namespace Proyecto1Compi2.com.AST
 		Numero,
 		Booleano,
 		Identificador,
-		Cadena,
+		String,
 		Caracter,
 		Fecha,
 		Hora,

@@ -72,7 +72,9 @@
     <Compile Include="com.Analisis\GramaticaCql.cs" />
     <Compile Include="com.AST\Acceso.cs" />
     <Compile Include="com.AST\AccesoArreglo.cs" />
+    <Compile Include="com.AST\AccesoPar.cs" />
     <Compile Include="com.AST\Actualizar.cs" />
+    <Compile Include="com.AST\Asignacion.cs" />
     <Compile Include="com.AST\CrearUserType.cs" />
     <Compile Include="com.AST\AlterarUserType.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />

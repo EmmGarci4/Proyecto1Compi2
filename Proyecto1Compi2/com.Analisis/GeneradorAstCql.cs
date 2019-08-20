@@ -142,9 +142,47 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetDeclaracion(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "ASIGNACION":
+						n = GetAsignacion(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetAsignacion(ParseTreeNode sentencia)
+		{
+			Acceso ac2 = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			Expresion exp = null;
+			if (sentencia.ChildNodes.Count == 2)
+			{
+				ac2.Objetos.Enqueue(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+				 exp = GetExpresion(sentencia.ChildNodes.ElementAt(1));
+				
+			}
+			else {
+				if (sentencia.ChildNodes.ElementAt(1).Term.Name == "ACCESO")
+				{
+					Acceso ac = GetAcceso(sentencia.ChildNodes.ElementAt(1));
+					ac2.Objetos.Enqueue(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
+					while (ac.Objetos.Count > 0)
+					{
+						ac2.Objetos.Enqueue(ac.Objetos.Dequeue());
+					}
+					exp = GetExpresion(sentencia.ChildNodes.ElementAt(2));
+				}
+				else {
+					//acceso a algo []
+					ac2.Objetos.Enqueue(new AccesoPar(
+						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+						sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+						sentencia.ChildNodes.ElementAt(0).Token.Location.Column),
+						TipoAcceso.AccesoArreglo));
+					exp = GetExpresion(sentencia.ChildNodes.ElementAt(2));
+				}
+			}
+			return new Asignacion(ac2, exp, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetDeclaracion(ParseTreeNode sentencia)
@@ -183,7 +221,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//variable
 				Acceso ac = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				ac.Objetos.Enqueue(sentencia.ChildNodes.ElementAt(0).Token.ValueString);
+				ac.Objetos.Enqueue(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
 				switch (sentencia.ChildNodes.ElementAt(1).Token.ValueString)
 				{
 					case "+":
@@ -202,7 +240,7 @@ namespace Proyecto1Compi2.com.Analisis
 				Acceso ac = GetAcceso(sentencia.ChildNodes.ElementAt(1));
 
 				Acceso ac2 = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				ac2.Objetos.Enqueue(sentencia.ChildNodes.ElementAt(0).Token.ValueString);
+				ac2.Objetos.Enqueue(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
 				while (ac.Objetos.Count>0) {
 					ac2.Objetos.Enqueue(ac.Objetos.Dequeue());
 				}
@@ -614,34 +652,36 @@ namespace Proyecto1Compi2.com.Analisis
 			Acceso accesss = new Acceso(nodo.Span.Location.Line, nodo.Span.Location.Column);
 			foreach (ParseTreeNode ac_campo in nodo.ChildNodes)
 			{
-				object ac = GetAcCampo(ac_campo);
+				AccesoPar ac = GetAcCampo(ac_campo);
 				if (ac != null) accesss.Objetos.Enqueue(ac);
 			}
 			return accesss;
 		}
 
-		private static object GetAcCampo(ParseTreeNode ac_campo)
+		private static AccesoPar GetAcCampo(ParseTreeNode ac_campo)
 		{
 			if (ac_campo.ChildNodes.Count == 1)
 			{
 				//nombre
-				return ac_campo.ChildNodes.ElementAt(0).Token.ValueString;
+				return new AccesoPar(ac_campo.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Campo);
 			}
 			else if (ac_campo.ChildNodes.Count == 2)
 			{
 				if (ac_campo.ChildNodes.ElementAt(1).Term.Name == "LISTAEXPRESIONES")
 				{
 					//llamada a funcion
-					return new LlamadaFuncion(ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
+					return new AccesoPar(new LlamadaFuncion(ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
 						GetListaExpresiones(ac_campo.ChildNodes.ElementAt(1)), ac_campo.ChildNodes.ElementAt(0).Token.Location.Line,
-						ac_campo.ChildNodes.ElementAt(0).Token.Location.Column);
+						ac_campo.ChildNodes.ElementAt(0).Token.Location.Column),
+						TipoAcceso.LlamadaFuncion);
 				}
 				else
 				{
 					//acceso a arreglo
-					return new AccesoArreglo(GetExpresion(ac_campo.ChildNodes.ElementAt(1)),
+					return new AccesoPar(new AccesoArreglo(GetExpresion(ac_campo.ChildNodes.ElementAt(1)),
 						ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
-						ac_campo.ChildNodes.ElementAt(0).Token.Location.Line, ac_campo.ChildNodes.ElementAt(0).Token.Location.Column);
+						ac_campo.ChildNodes.ElementAt(0).Token.Location.Line, ac_campo.ChildNodes.ElementAt(0).Token.Location.Column),
+						TipoAcceso.AccesoArreglo);
 				}
 
 			}
@@ -884,7 +924,7 @@ namespace Proyecto1Compi2.com.Analisis
 						case "numero":
 							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Numero, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "cadena":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Cadena, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "id":
 							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "nombre":
@@ -927,10 +967,10 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						//id punto acceso
 						Acceso acc = new Acceso(raiz.Span.Location.Line, raiz.Span.Location.Column);
-						acc.Objetos.Enqueue(raiz.ChildNodes.ElementAt(0).Token.ValueString);
+						acc.Objetos.Enqueue(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
 						foreach (ParseTreeNode ac_campo in raiz.ChildNodes.ElementAt(1).ChildNodes)
 						{
-							object ac = GetAcCampo(ac_campo);
+							AccesoPar ac = GetAcCampo(ac_campo);
 							if (ac != null) acc.Objetos.Enqueue(ac);
 						}
 						return acc;

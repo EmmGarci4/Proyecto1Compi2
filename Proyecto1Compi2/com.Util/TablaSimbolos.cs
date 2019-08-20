@@ -17,9 +17,18 @@ namespace com.Analisis.Util
 
 		public TablaSimbolos(TablaSimbolos tpadre) : base()
 		{
-			while (tpadre.Count>0) {
-				Push(tpadre.Pop());
+			//COPIANDO LA TABLA
+			//LOS SIMBOLOS COPIADOS COMO REFERENCIA
+			Stack<Simbolo> auxiliar = new Stack<Simbolo>();
+			foreach (Simbolo sim in tpadre) {
+				auxiliar.Push(sim);
 			}
+			while (auxiliar.Count>0) {
+				Push(auxiliar.Pop());
+			}
+			//AGREGANDO SEPARADOR DE LAS VARIABLES PADRE 
+			Push(new Simbolo("%$SEPARADOR$%",null,new Proyecto1Compi2.com.Util.TipoObjetoDB(Proyecto1Compi2.com.Util.TipoDatoDB.NULO,""),
+				1,1));
 		}
 
 		public void AgregarSimbolo(Simbolo s)

@@ -20,11 +20,10 @@ namespace com.Analisis.Util
 	}
 	public enum TipoAcceso
 	{
+		Variable,
 		Campo,
-		Arreglo,
-		CampoDeCampo,
-		ArregloDeCampo,
-		Indefinido
+		LlamadaFuncion,
+		AccesoArreglo
 	}
 	public enum TipoObjeto
 	{

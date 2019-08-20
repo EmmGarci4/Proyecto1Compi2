@@ -71,7 +71,7 @@ namespace Proyecto1Compi2.com.AST
 
 					case TipoOperacion.Diferente:
 						//STRING-STRING
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							bool valor = izq.ToString() != der.ToString();
 							return valor;
@@ -136,7 +136,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 					case TipoOperacion.Igual:
 						//STRING-STRING
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Cadena) && Derecha.GetTipo(ts).Equals(TipoOperacion.Cadena))
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
 						{
 							bool valor = izq.ToString() == der.ToString();
 							return valor;

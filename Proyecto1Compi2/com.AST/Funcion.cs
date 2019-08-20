@@ -51,6 +51,7 @@ namespace Proyecto1Compi2.com.AST
 				{
 					llave.Append(",");
 				}
+				contador++;
 			}
 			llave.Append(")");
 			return llave.ToString();

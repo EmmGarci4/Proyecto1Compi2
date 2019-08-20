@@ -28,9 +28,10 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Sentencia> CuerpoVerdadero { get => cuerpoVerdadero; set => cuerpoVerdadero = value; }
 		internal List<Sentencia> CuerpoFalso { get => cuerpoFalso; set => cuerpoFalso = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
 		{
-			object respuesta = condicion.GetValor(tb);
+			TablaSimbolos tsLocal = new TablaSimbolos(ts);
+			object respuesta = condicion.GetValor(tsLocal);
 			if (respuesta.GetType()==typeof(ThrowError)) {
 				return respuesta;
 			}
@@ -38,13 +39,12 @@ namespace Proyecto1Compi2.com.AST
 			{
 				foreach (Sentencia sentencia in cuerpoVerdadero)
 				{
-					respuesta = sentencia.Ejecutar(sesion, tb);
+					respuesta = sentencia.Ejecutar(sesion, tsLocal);
 					if (respuesta != null)
 					{
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
-							//Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
 						}
 						else
 						{
@@ -57,7 +57,7 @@ namespace Proyecto1Compi2.com.AST
 				bool evaluado = false;
 				if (elseIfs!=null) {
 					foreach (ElseIf elseif in elseIfs) {
-						respuesta = elseif.Condicion.GetValor(tb);
+						respuesta = elseif.Condicion.GetValor(tsLocal);
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
@@ -65,13 +65,12 @@ namespace Proyecto1Compi2.com.AST
 						if ((bool)respuesta) {
 							evaluado = true;
 							if (respuesta!=null) {
-								respuesta = elseif.Ejecutar(sesion, tb);
+								respuesta = elseif.Ejecutar(sesion, tsLocal);
 								if (respuesta != null)
 								{
 									if (respuesta.GetType() == typeof(ThrowError))
 									{
 										return respuesta;
-										//Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
 									}
 									else
 									{
@@ -87,13 +86,12 @@ namespace Proyecto1Compi2.com.AST
 				if (CuerpoFalso!=null && !evaluado) {
 					foreach (Sentencia sentencia in CuerpoFalso)
 					{
-						respuesta = sentencia.Ejecutar(sesion, tb);
+						respuesta = sentencia.Ejecutar(sesion, tsLocal);
 						if (respuesta != null)
 						{
 							if (respuesta.GetType() == typeof(ThrowError))
 							{
 								return respuesta;
-								//Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
 							}
 							else
 							{
