@@ -26,15 +26,20 @@ namespace Proyecto1Compi2.com.AST
 
 		public Queue<AccesoPar> Objetos { get => objetos; set => objetos = value; }
 
-
 		public override object GetValor(TablaSimbolos ts)
 		{
 			AccesoPar valor = objetos.Dequeue();
 			switch (valor.Tipo)
 			{
 				case TipoAcceso.AccesoArreglo:
-				//acceso a arreglo
-				//enviar sobre variable o campo
+					AccesoArreglo acceso = (AccesoArreglo)valor.Value;
+					object respuesta = acceso.GetValor(ts);
+					if (respuesta.GetType()==typeof(ThrowError)) {
+						return respuesta;
+					}
+					TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
+					Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta,tipoRespuesta , Linea, Columna);
+					return RetornarValorSobreVariable(nuevoSimbolo, ts);
 				case TipoAcceso.Campo:
 				//tablas Y COLUMNAS
 				//enviar sobre campo
@@ -45,7 +50,7 @@ namespace Proyecto1Compi2.com.AST
 					if (ts.ExisteSimbolo(valor.Value.ToString()))
 					{
 						Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-						object respuesta = RetornarValorSobreVariable(sim, ts);
+						respuesta = RetornarValorSobreVariable(sim, ts);
 
 						return respuesta;
 					}
@@ -67,15 +72,27 @@ namespace Proyecto1Compi2.com.AST
 				switch (valor.Tipo)
 				{
 					case TipoAcceso.AccesoArreglo:
+						if (sim.TipoDato.Tipo==TipoDatoDB.OBJETO)
+						{
+							//VERIFICAR SI EL OBJETO TIENE UNA LISTA ADENTRO
+
+						}
+						else {
+							return new ThrowError(Util.TipoThrow.Exception,
+								"'" + sim.Nombre + "' no contiene un arreglo",
+								Linea, Columna);
+						}
+						break;
 					case TipoAcceso.Campo:
 						if (sim.TipoDato.Tipo == Util.TipoDatoDB.OBJETO)
 						{
 							//OBTENER OBJETO Y ACCEDER A PROPIEDADES
+
 						}
 						else
 						{
 							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede acceder a un valor en '" + sim.Nombre + "' por que no contiene la propiedad '" + valor.ToString() + "'",
+								"No se puede acceder a un valor en '" + sim.Nombre + "' por que no contiene la propiedad '" + valor.Value.ToString() + "'",
 								Linea, Columna);
 						}
 						break;
@@ -770,12 +787,12 @@ namespace Proyecto1Compi2.com.AST
 									{
 										object clave = llamada.Parametros.ElementAt(0).GetValor(ts);
 										TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts);
-										if (Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
+										if (Datos.Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
 										{
 
 											object valorr = llamada.Parametros.ElementAt(1).GetValor(ts);
 											TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts);
-											if (Equivale(collection.TipoValor, valorr.ToString(), tipoValorr))
+											if (Datos.Equivale(collection.TipoValor, valorr.ToString(), tipoValorr))
 											{
 												object respuesta = collection.AddItem(clave, valorr, Linea, Columna);
 												return respuesta;
@@ -805,7 +822,7 @@ namespace Proyecto1Compi2.com.AST
 									{
 										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
 										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
-										if (Equivale(collection.TipoLlave,nuevo.ToString(),t))
+										if (Datos.Equivale(collection.TipoLlave,nuevo.ToString(),t))
 										{
 											object respuesta = collection.GetItem(nuevo,Linea,Columna);
 											return respuesta;
@@ -828,12 +845,12 @@ namespace Proyecto1Compi2.com.AST
 									{
 										object clave = llamada.Parametros.ElementAt(0).GetValor(ts);
 										TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts);
-										if (Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
+										if (Datos.Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
 										{
 
 											object valorr = llamada.Parametros.ElementAt(1).GetValor(ts);
 											TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts);
-											if (Equivale(collection.TipoValor, valorr.ToString(), tipoValorr))
+											if (Datos.Equivale(collection.TipoValor, valorr.ToString(), tipoValorr))
 											{
 												object respuesta = collection.SetItem(clave, valorr, Linea, Columna);
 												return respuesta;
@@ -863,7 +880,7 @@ namespace Proyecto1Compi2.com.AST
 									{
 										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
 										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
-										if (Equivale(collection.TipoLlave, nuevo.ToString(), t))
+										if (Datos.Equivale(collection.TipoLlave, nuevo.ToString(), t))
 										{
 											object respuesta = collection.EliminarItem(nuevo, Linea, Columna);
 											return respuesta;
@@ -911,7 +928,7 @@ namespace Proyecto1Compi2.com.AST
 									{
 										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
 										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
-										if (Equivale(collection.TipoLlave, nuevo.ToString(), t))
+										if (Datos.Equivale(collection.TipoLlave, nuevo.ToString(), t))
 										{
 
 											Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, collection.ContainsKey(nuevo),
@@ -942,84 +959,13 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede aplicar la función '" + valor.ToString() + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+								"No se puede aplicar la función '" + valor.Value.ToString() + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 								Linea, Columna);
 						}
 				}
 			}
 
 			return sim.Valor;
-		}
-
-		private bool Equivale(TipoObjetoDB tipo, string valor, TipoOperacion tipoClave)
-		{
-			switch (tipo.Tipo)
-			{
-				case TipoDatoDB.BOOLEAN:
-					if (tipoClave == TipoOperacion.Booleano)
-					{
-						return true;
-					}
-					break;
-				case TipoDatoDB.DATE:
-					if (tipoClave == TipoOperacion.Fecha)
-					{
-						return true;
-					}
-					break;
-				case TipoDatoDB.DOUBLE:
-					if (tipoClave == TipoOperacion.Numero && valor.Contains("."))
-					{
-						return true;
-					}
-					break;
-				case TipoDatoDB.INT:
-					if (tipoClave == TipoOperacion.Numero && !valor.Contains("."))
-					{
-						return true;
-					}
-					break;
-				case TipoDatoDB.LISTA_OBJETO:
-				case TipoDatoDB.LISTA_PRIMITIVO:
-				case TipoDatoDB.MAP_OBJETO:
-				case TipoDatoDB.MAP_PRIMITIVO:
-				case TipoDatoDB.OBJETO:
-				case TipoDatoDB.SET_OBJETO:
-				case TipoDatoDB.SET_PRIMITIVO:
-					if (tipoClave == TipoOperacion.Objeto)
-					{
-						return true;
-					}
-					break;
-				case TipoDatoDB.STRING:
-					if (tipoClave == TipoOperacion.String)
-					{
-						return true;
-					}
-					break;
-				case TipoDatoDB.TIME:
-					if (tipoClave == TipoOperacion.Hora)
-					{
-						return true;
-					}
-					break;
-			}
-			return false;
-		}
-
-		private bool IsPrimitivo(TipoOperacion tipoClave)
-		{
-			switch (tipoClave)
-			{
-				case TipoOperacion.Booleano:
-				case TipoOperacion.String:
-				case TipoOperacion.Numero:
-				case TipoOperacion.Hora:
-				case TipoOperacion.Fecha:
-					return true;
-				default:
-					return false;
-			}
 		}
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)

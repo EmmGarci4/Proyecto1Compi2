@@ -80,7 +80,7 @@ namespace Proyecto1Compi2.com.AST
 					if (ts.ExisteSimbolo(this.Valor.ToString()))
 					{
 						Simbolo s = ts.GetSimbolo(this.Valor.ToString());
-						return GetTipoDatoDB(s.TipoDato.Tipo);
+						return Datos.GetTipoDatoDB(s.TipoDato.Tipo);
 					}
 					break;
 				case TipoOperacion.Suma:
@@ -410,28 +410,7 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 		}
 
-		public static TipoOperacion GetTipoDatoDB(TipoDatoDB tipo)
-		{
-			switch (tipo)
-			{
-				case TipoDatoDB.BOOLEAN:
-					return TipoOperacion.Booleano;
-				case TipoDatoDB.DATE:
-					return TipoOperacion.Fecha;
-				case TipoDatoDB.COUNTER:
-				case TipoDatoDB.DOUBLE:
-				case TipoDatoDB.INT:
-					return TipoOperacion.Numero;
-				case TipoDatoDB.STRING:
-					return TipoOperacion.String;
-				case TipoDatoDB.TIME:
-					return TipoOperacion.Hora;
-				case TipoDatoDB.NULO:
-					return TipoOperacion.Nulo;
-				default:
-					return TipoOperacion.Objeto;
-			}
-		}
+		
 	}
 	public enum TipoOperacion
 	{

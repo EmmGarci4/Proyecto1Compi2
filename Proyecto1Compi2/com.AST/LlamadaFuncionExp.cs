@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -30,7 +31,7 @@ namespace Proyecto1Compi2.com.AST
 			if (Analizador.ExisteFuncion(llave))
 			{
 				Funcion funcion = Analizador.BuscarFuncion(llave);
-				return Operacion.GetTipoDatoDB(funcion.TipoRetorno.Tipo);
+				return Datos.GetTipoDatoDB(funcion.TipoRetorno.Tipo);
 			}
 			return TipoOperacion.Nulo;
 		}

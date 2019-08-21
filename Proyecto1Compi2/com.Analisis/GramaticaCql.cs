@@ -295,6 +295,8 @@ namespace com.Analisis
 				| LLAMADAFUNCION
 				| nombre
 				| ACCESO
+				| id + cor1 + EXPRESION + cor2
+				| id + cor1 + EXPRESION + cor2+punto + ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2
 				| cor1 + LISTAEXPRESIONES + cor2
 				| MODIFICADORES

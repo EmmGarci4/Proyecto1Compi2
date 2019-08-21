@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -39,7 +40,7 @@ namespace Proyecto1Compi2.com.AST
 				if (ts.ExisteSimbolo(this.variable))
 				{
 					Simbolo s = ts.GetSimbolo(this.variable);
-					return Operacion.GetTipoDatoDB(s.TipoDato.Tipo);
+					return Datos.GetTipoDatoDB(s.TipoDato.Tipo);
 				}
 			}
 			else

@@ -254,38 +254,12 @@ namespace Proyecto1Compi2.com.AST
 		{
 			if (cl.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO || cl.Tipo.Tipo == TipoDatoDB.MAP_OBJETO)
 			{
-				if (IsLista(GetTipoDatoConNombre(cl.Tipo.Nombre)))
+				if (Datos.IsLista(GetTipoDatoConNombre(cl.Tipo.Nombre)))
 				{
 					return true;
 				}
 			}
 			return false;
-		}
-
-		private static bool IsLista(TipoDatoDB td)
-		{
-			switch (td)
-			{
-				case TipoDatoDB.LISTA_OBJETO:
-				case TipoDatoDB.SET_OBJETO:
-				case TipoDatoDB.MAP_OBJETO:
-				case TipoDatoDB.LISTA_PRIMITIVO:
-				case TipoDatoDB.SET_PRIMITIVO:
-				case TipoDatoDB.MAP_PRIMITIVO:
-					return true;
-				case TipoDatoDB.OBJETO:
-				case TipoDatoDB.BOOLEAN:
-				case TipoDatoDB.DOUBLE:
-				case TipoDatoDB.INT:
-				case TipoDatoDB.STRING:
-				case TipoDatoDB.COUNTER:
-				case TipoDatoDB.TIME:
-				case TipoDatoDB.DATE:
-				case TipoDatoDB.NULO:
-					return false;
-				default:
-					return false;
-			}
 		}
 
 		private static TipoDatoDB GetTipoDatoConNombre(string nombre)
