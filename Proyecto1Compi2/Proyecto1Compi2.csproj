@@ -122,6 +122,7 @@
     <Compile Include="com.AST\DoWhile.cs" />
     <Compile Include="com.AST\While.cs" />
     <Compile Include="com.db\Atributo.cs" />
+    <Compile Include="com.Util\CollectionMapCql.cs" />
     <Compile Include="com.Util\CollectionsListCql.cs" />
     <Compile Include="com.db\Sesion.cs" />
     <Compile Include="com.db\UserType.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="com.Util\Datos.cs" />
     <Compile Include="com.Util\Error.cs" />
     <Compile Include="com.Util\HandlerFiles.cs" />
+    <Compile Include="com.Util\MyDateTime.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
     <Compile Include="com.Util\TablaSimbolos.cs" />
     <Compile Include="com.Util\TipoObjetoDB.cs" />

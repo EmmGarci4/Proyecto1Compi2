@@ -191,25 +191,48 @@ namespace Proyecto1Compi2.com.Util
 			return true;
 		}
 
-		internal void Ordenar()
-		{
-			Console.WriteLine("ORDENANDO LISTA...");
-		}
-
 		internal object SetItem(int posicion, object nuevoValor, int linea, int columna)
 		{
-			//insersion unica y ordenada
-			foreach (object objeto in this)
+			if (isList)
 			{
-				if (objeto.Equals(nuevoValor))
-				{
-					return new ThrowError(TipoThrow.Exception, "El elemento ya existe en el Set",
-						linea, columna);
-				}
+				this[posicion] = nuevoValor;
+				return null;
 			}
-			//no existe el objeto en la lista
-			this[posicion] = nuevoValor;
-			return null;
+			else {
+				//insersion unica
+				foreach (object objeto in this)
+				{
+					if (objeto.Equals(nuevoValor))
+					{
+						return new ThrowError(TipoThrow.Exception, "El elemento ya existe en el Set",
+							linea, columna);
+					}
+				}
+				//insersion ordenada
+				switch (tipoDato.Tipo)
+				{
+					case TipoDatoDB.BOOLEAN:
+					case TipoDatoDB.STRING:
+					case TipoDatoDB.DOUBLE:
+					case TipoDatoDB.INT:
+					case TipoDatoDB.TIME:
+					case TipoDatoDB.DATE:
+						this[posicion] = nuevoValor;
+						this.Sort();
+						break;
+					case TipoDatoDB.LISTA_OBJETO:
+					case TipoDatoDB.LISTA_PRIMITIVO:
+					case TipoDatoDB.MAP_OBJETO:
+					case TipoDatoDB.MAP_PRIMITIVO:
+					case TipoDatoDB.OBJETO:
+					case TipoDatoDB.SET_OBJETO:
+					case TipoDatoDB.SET_PRIMITIVO:
+						//insersion al final
+						this[posicion] = nuevoValor;
+						break;
+				}				
+				return null;
+			}
 		}
 
 		internal void EliminarItem(int posicion)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using com.Analisis;
 using com.Analisis.Util;
@@ -377,6 +378,28 @@ namespace Proyecto1Compi2.com.AST
 						return new ThrowError(Util.TipoThrow.ArithmeticException,
 											"la variable '" + this.Valor + "' no existe",
 											Linea, Columna);
+					}
+				} else if (Regex.IsMatch(this.Valor.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'")) {
+					//fecha
+					if (DateTime.TryParse(this.Valor.ToString().Replace("'", string.Empty), out DateTime dt)) {
+						return new MyDateTime(TipoDatoDB.DATE, dt);
+					}
+					else {
+						return new ThrowError(TipoThrow.ArithmeticException,
+									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
+								   Linea, Columna);
+					}
+					
+				} else if (Regex.IsMatch(this.Valor.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'")) {
+					//hora 
+					if (DateTime.TryParse(this.Valor.ToString().Replace("'", String.Empty), out DateTime d2)) {
+						return new MyDateTime(TipoDatoDB.TIME, d2);
+					}
+					else
+					{
+						return new ThrowError(TipoThrow.ArithmeticException,
+							"La hora '" + der.ToString() + "' es incorrecta, el formato debe ser HH:MM:SS",
+						   Linea, Columna);
 					}
 				}
 				return this.Valor;

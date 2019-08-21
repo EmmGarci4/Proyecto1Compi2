@@ -129,21 +129,21 @@ namespace Proyecto1Compi2.com.AST
 						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.DATE)
 						{
 							#region FuncionesNativasSobreFecha
-							DateTime hora = DateTime.Parse(sim.Valor.ToString().Replace("'", string.Empty));
+							MyDateTime hora = (MyDateTime)sim.Valor;
 							LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
 							string llaveFuncion = llamada.getLlave(ts);
 							switch (llaveFuncion.ToLower())
 							{
 								case "getyear()":
-									Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Year,
+									Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Dato.Year,
 										new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 									return RetornarValorSobreVariable(s, ts);
 								case "getmonth()":
-									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Month,
+									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Dato.Month,
 									   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 									return RetornarValorSobreVariable(s, ts);
 								case "getday()":
-									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Day,
+									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Dato.Day,
 									   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 									return RetornarValorSobreVariable(s, ts);
 								default:
@@ -156,21 +156,22 @@ namespace Proyecto1Compi2.com.AST
 						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.TIME)
 						{
 							#region FuncionesNativasSobreHora
-							DateTime hora = DateTime.Parse(sim.Valor.ToString().Replace("'", string.Empty));
+
+							MyDateTime hora = (MyDateTime)sim.Valor;
 							LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
 							string llaveFuncion = llamada.getLlave(ts);
 							switch (llaveFuncion.ToLower())
 							{
 								case "gethour()":
-									Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Hour,
+									Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Dato.Hour,
 										new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 									return RetornarValorSobreVariable(s, ts);
 								case "getminuts()":
-									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Minute,
+									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Dato.Minute,
 									   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 									return RetornarValorSobreVariable(s, ts);
 								case "getseconds()":
-									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Second,
+									s = new Simbolo(sim.Nombre + "." + llaveFuncion, hora.Dato.Second,
 									   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 									return RetornarValorSobreVariable(s, ts);
 								default:
@@ -181,7 +182,7 @@ namespace Proyecto1Compi2.com.AST
 							#endregion
 						}
 						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.LISTA_OBJETO || sim.TipoDato.Tipo == Util.TipoDatoDB.LISTA_PRIMITIVO ||
-						  sim.TipoDato.Tipo == Util.TipoDatoDB.SET_OBJETO ||sim.TipoDato.Tipo == Util.TipoDatoDB.SET_PRIMITIVO)
+						  sim.TipoDato.Tipo == Util.TipoDatoDB.SET_OBJETO || sim.TipoDato.Tipo == Util.TipoDatoDB.SET_PRIMITIVO)
 						{
 							#region FuncionesNativasSobreListYSet
 							LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
@@ -194,13 +195,14 @@ namespace Proyecto1Compi2.com.AST
 									{
 										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
 										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
-										switch (t) {
+										switch (t)
+										{
 											case TipoOperacion.Numero:
 												if (collection.TipoDato.Tipo == TipoDatoDB.INT)
 												{
 													if (!nuevo.ToString().Contains("."))
 													{
-														object posibleError = collection.AddItem(nuevo,Linea,Columna);
+														object posibleError = collection.AddItem(nuevo, Linea, Columna);
 														if (posibleError != null)
 														{
 															if (posibleError.GetType() == typeof(ThrowError))
@@ -226,18 +228,18 @@ namespace Proyecto1Compi2.com.AST
 															return posibleError;
 														}
 													}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-																"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																Linea, Columna);
-													}
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
+															Linea, Columna);
+												}
 												break;
 											case TipoOperacion.Booleano:
 												if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
 												{
-													object posibleError=collection.AddItem(nuevo, Linea, Columna);
+													object posibleError = collection.AddItem(nuevo, Linea, Columna);
 													if (posibleError != null)
 													{
 														if (posibleError.GetType() == typeof(ThrowError))
@@ -246,7 +248,8 @@ namespace Proyecto1Compi2.com.AST
 														}
 													}
 												}
-												else {
+												else
+												{
 													return new ThrowError(Util.TipoThrow.Exception,
 														"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
 														Linea, Columna);
@@ -255,7 +258,7 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.Fecha:
 												if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
 												{
-													object posibleError=collection.AddItem(nuevo, Linea, Columna);
+													object posibleError = collection.AddItem(nuevo, Linea, Columna);
 													if (posibleError != null)
 													{
 														if (posibleError.GetType() == typeof(ThrowError))
@@ -274,7 +277,7 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.Hora:
 												if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
 												{
-													object posibleError= collection.AddItem(nuevo, Linea, Columna);
+													object posibleError = collection.AddItem(nuevo, Linea, Columna);
 													if (posibleError != null)
 													{
 														if (posibleError.GetType() == typeof(ThrowError))
@@ -293,7 +296,7 @@ namespace Proyecto1Compi2.com.AST
 											case TipoOperacion.Objeto:
 												if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
 												{
-													object posibleError=collection.AddItem(nuevo, Linea, Columna);
+													object posibleError = collection.AddItem(nuevo, Linea, Columna);
 													if (posibleError != null)
 													{
 														if (posibleError.GetType() == typeof(ThrowError))
@@ -349,26 +352,29 @@ namespace Proyecto1Compi2.com.AST
 											{
 												//es entero
 												int posicion = (int)nuevo;
-												if (posicion>=0 && posicion < collection.Count)
+												if (posicion >= 0 && posicion < collection.Count)
 												{
 													object nuevoValor = collection.ElementAt(posicion);
 													Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, nuevoValor,
 														new Util.TipoObjetoDB(collection.TipoDato.Tipo, collection.TipoDato.Nombre), 0, 0);
 													return RetornarValorSobreVariable(s, ts);
 												}
-												else {
+												else
+												{
 													return new ThrowError(Util.TipoThrow.IndexOutException,
 														"El valor está fuera de rango",
 														Linea, Columna);
 												}
 											}
-											else {
+											else
+											{
 												return new ThrowError(Util.TipoThrow.Exception,
 													"No se puede acceder a una posición decimal en una lista",
 													Linea, Columna);
 											}
 										}
-										else {
+										else
+										{
 											return new ThrowError(Util.TipoThrow.Exception,
 												"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre un Collection'",
 												Linea, Columna);
@@ -404,7 +410,7 @@ namespace Proyecto1Compi2.com.AST
 															{
 																if (!nuevoValor.ToString().Contains("."))
 																{
-																	object posibleError = collection.SetItem(posicion,nuevoValor, Linea, Columna);
+																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
 																	if (posibleError != null)
 																	{
 																		if (posibleError.GetType() == typeof(ThrowError))
@@ -422,7 +428,7 @@ namespace Proyecto1Compi2.com.AST
 															}
 															else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
 															{
-																object posibleError= collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
 																if (posibleError != null)
 																{
 																	if (posibleError.GetType() == typeof(ThrowError))
@@ -460,7 +466,7 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Fecha:
 															if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
 															{
-																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
 																if (posibleError != null)
 																{
 																	if (posibleError.GetType() == typeof(ThrowError))
@@ -479,7 +485,7 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Hora:
 															if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
 															{
-																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
 																if (posibleError != null)
 																{
 																	if (posibleError.GetType() == typeof(ThrowError))
@@ -498,7 +504,7 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.Objeto:
 															if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
 															{
-																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
 																if (posibleError != null)
 																{
 																	if (posibleError.GetType() == typeof(ThrowError))
@@ -517,7 +523,7 @@ namespace Proyecto1Compi2.com.AST
 														case TipoOperacion.String:
 															if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
 															{
-																object posibleError=collection.SetItem(posicion, nuevoValor, Linea, Columna);
+																object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
 																if (posibleError != null)
 																{
 																	if (posibleError.GetType() == typeof(ThrowError))
@@ -534,7 +540,7 @@ namespace Proyecto1Compi2.com.AST
 															}
 															break;
 													}
-												//******
+													//******
 												}
 												else
 												{
@@ -612,7 +618,7 @@ namespace Proyecto1Compi2.com.AST
 									if (llamada.Parametros.Count == 0)
 									{
 										Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, collection.Count,
-											new Util.TipoObjetoDB(TipoDatoDB.INT,"int"), 0, 0);
+											new Util.TipoObjetoDB(TipoDatoDB.INT, "int"), 0, 0);
 										return RetornarValorSobreVariable(s, ts);
 									}
 									else
@@ -646,7 +652,7 @@ namespace Proyecto1Compi2.com.AST
 												{
 													if (!nuevo.ToString().Contains("."))
 													{
-														respuesta=collection.Contains(nuevo);
+														respuesta = collection.Contains(nuevo);
 													}
 													else
 													{
@@ -662,7 +668,7 @@ namespace Proyecto1Compi2.com.AST
 												else
 												{
 													return new ThrowError(Util.TipoThrow.Exception,
-															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '"+nuevo+"'",
+															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
 															Linea, Columna);
 												}
 												break;
@@ -751,10 +757,187 @@ namespace Proyecto1Compi2.com.AST
 							}
 							#endregion
 						}
-						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_OBJETO ||sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_PRIMITIVO)
+						else if (sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_OBJETO || sim.TipoDato.Tipo == Util.TipoDatoDB.MAP_PRIMITIVO)
 						{
+							#region FuncionesNativasSobreMap
+							LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
+							CollectionMapCql collection = (CollectionMapCql)sim.Valor;
+							string llaveFuncion = llamada.Nombre;
+							switch (llaveFuncion.ToLower())
+							{
+								case "insert":
+									if (llamada.Parametros.Count == 2)
+									{
+										object clave = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
+										{
 
-							return null;
+											object valorr = llamada.Parametros.ElementAt(1).GetValor(ts);
+											TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts);
+											if (Equivale(collection.TipoValor, valorr.ToString(), tipoValorr))
+											{
+												object respuesta = collection.AddItem(clave, valorr, Linea, Columna);
+												return respuesta;
+											}
+											else
+											{
+												return new ThrowError(Util.TipoThrow.Exception,
+												"El valor '" + valorr + "' no corresponde con el tipo '" + collection.TipoValor.ToString() + "' de clave del collection map",
+												Linea, Columna);
+											}
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+											"El valor '" + clave + "' no corresponde con el tipo '" + collection.TipoLlave.ToString() + "' de clave del collection map",
+											Linea, Columna);
+										}
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+								case "get":
+									if (llamada.Parametros.Count == 1)
+									{
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (Equivale(collection.TipoLlave,nuevo.ToString(),t))
+										{
+											object respuesta = collection.GetItem(nuevo,Linea,Columna);
+											return respuesta;
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+												"El valor '" + nuevo.ToString() + "' no corresponde con el tipo '" + collection.TipoValor.ToString() + "' de clave del collection map",
+												Linea, Columna);
+										}
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+								case "set":
+									if (llamada.Parametros.Count == 2)
+									{
+										object clave = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
+										{
+
+											object valorr = llamada.Parametros.ElementAt(1).GetValor(ts);
+											TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts);
+											if (Equivale(collection.TipoValor, valorr.ToString(), tipoValorr))
+											{
+												object respuesta = collection.SetItem(clave, valorr, Linea, Columna);
+												return respuesta;
+											}
+											else
+											{
+												return new ThrowError(Util.TipoThrow.Exception,
+												"El valor '" + valorr + "' no corresponde con el tipo '" + collection.TipoValor.ToString() + "' de clave del collection map",
+												Linea, Columna);
+											}
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+											"El valor '" + clave + "' no corresponde con el tipo '" + collection.TipoLlave.ToString() + "' de clave del collection map",
+											Linea, Columna);
+										}
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+								case "remove":
+									if (llamada.Parametros.Count == 1)
+									{
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (Equivale(collection.TipoLlave, nuevo.ToString(), t))
+										{
+											object respuesta = collection.EliminarItem(nuevo, Linea, Columna);
+											return respuesta;
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+												"El valor '" + nuevo.ToString() + "' no corresponde con el tipo '" + collection.TipoValor.ToString() + "' de clave del collection map",
+												Linea, Columna);
+										}
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+								case "size":
+									if (llamada.Parametros.Count == 0)
+									{
+										Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, collection.Count,
+											new Util.TipoObjetoDB(TipoDatoDB.INT, "int"), 0, 0);
+										return RetornarValorSobreVariable(s, ts);
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+								case "clear":
+									if (llamada.Parametros.Count == 0)
+									{
+										collection.Clear();
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+									return null;
+								case "contains":
+									if (llamada.Parametros.Count == 1)
+									{
+										object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts);
+										TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts);
+										if (Equivale(collection.TipoLlave, nuevo.ToString(), t))
+										{
+
+											Simbolo s = new Simbolo(sim.Nombre + "." + llaveFuncion, collection.ContainsKey(nuevo),
+												new Util.TipoObjetoDB(TipoDatoDB.BOOLEAN, "boolean"), 0, 0);
+											return RetornarValorSobreVariable(s, ts);
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+												"El valor '" + nuevo.ToString() + "' no corresponde con el tipo '" + collection.TipoValor.ToString() + "' de clave del collection map",
+												Linea, Columna);
+										}
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											Linea, Columna);
+									}
+								default:
+									return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede aplicar la función '" + llamada.getLlave(ts) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+										Linea, Columna);
+
+							}
+							#endregion
 						}
 						else
 						{
@@ -766,6 +949,77 @@ namespace Proyecto1Compi2.com.AST
 			}
 
 			return sim.Valor;
+		}
+
+		private bool Equivale(TipoObjetoDB tipo, string valor, TipoOperacion tipoClave)
+		{
+			switch (tipo.Tipo)
+			{
+				case TipoDatoDB.BOOLEAN:
+					if (tipoClave == TipoOperacion.Booleano)
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.DATE:
+					if (tipoClave == TipoOperacion.Fecha)
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.DOUBLE:
+					if (tipoClave == TipoOperacion.Numero && valor.Contains("."))
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.INT:
+					if (tipoClave == TipoOperacion.Numero && !valor.Contains("."))
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					if (tipoClave == TipoOperacion.Objeto)
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.STRING:
+					if (tipoClave == TipoOperacion.String)
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.TIME:
+					if (tipoClave == TipoOperacion.Hora)
+					{
+						return true;
+					}
+					break;
+			}
+			return false;
+		}
+
+		private bool IsPrimitivo(TipoOperacion tipoClave)
+		{
+			switch (tipoClave)
+			{
+				case TipoOperacion.Booleano:
+				case TipoOperacion.String:
+				case TipoOperacion.Numero:
+				case TipoOperacion.Hora:
+				case TipoOperacion.Fecha:
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)
