@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Analisis;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
@@ -25,13 +27,95 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
 		{
-			object respuesta = izquierda.GetValor(ts);
-			if (respuesta!=null) {
-				if (respuesta.GetType() == typeof(ThrowError)) {
+			//OBTENIENDO RESPUESTA DE EXPRESION
+			object respuesta = derecha.GetValor(ts);
+			TipoOperacion tipoRespuesta = derecha.GetTipo(ts);
+			if (respuesta != null)
+			{
+				if (respuesta.GetType() == typeof(ThrowError))
+				{
 					return respuesta;
 				}
 			}
+			//si es una instancia
+			//se genera aquí pues no tengo acceso a la sesion desde la operacion
+			if (tipoRespuesta == TipoOperacion.NuevaInstancia)
+			{
+				TipoObjetoDB tipoInstancia = (TipoObjetoDB)respuesta;
 
+				if (Datos.IsLista(tipoInstancia.Tipo))
+				{
+					object instanciaLista = GetInstanciaLista(tipoInstancia);
+					//Simbolo s = Izquierda.getSimbolo();
+					//if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, instanciaLista) {
+					//	s.Valor = instanciaLista;
+					//}
+					//else {
+					//	return new ThrowError(Util.TipoThrow.Exception,
+					//	"No se puede asignar el valor a la variable porque los tipos no concuerdan",
+					//	Linea, Columna);
+					//}
+				}
+				else
+				{
+					if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
+					{
+						object instanciaLista = GetInstanciaObjeto(tipoInstancia, sesion);
+					}
+					else
+					{
+						//ERROR NO SE PUEDE INSTANCIAR UN TIPO PRIMITIVO
+						return new ThrowError(Util.TipoThrow.Exception,
+						"No se puede instanciar un tipo primitivo",
+						Linea, Columna);
+
+					}
+				}
+			}
+			else {
+				////NO ES UNA INSTANCIA
+				//Simbolo s = Izquierda.getSimbolo();
+				//if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, respuesta) {
+				//	s.Valor = respuesta;
+				//}
+				//else
+				//{
+				//	return new ThrowError(Util.TipoThrow.Exception,
+				//	"No se puede asignar el valor a la variable porque los tipos no concuerdan",
+				//	Linea, Columna);
+				//}
+			}
+
+			return null;
+		}
+
+		private object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion)
+		{
+			return null;
+		}
+
+		private object GetInstanciaLista(TipoObjetoDB tipoInstancia)
+		{
+
+			switch (tipoInstancia.Tipo) {
+				case TipoDatoDB.LISTA_OBJETO:
+					break;
+				case TipoDatoDB.LISTA_PRIMITIVO:
+					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					CollectionListCql nueva = new CollectionListCql(tipoDatoLista,true);
+					return nueva;
+				case TipoDatoDB.SET_OBJETO:
+					break;
+				case TipoDatoDB.SET_PRIMITIVO:
+					tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					nueva = new CollectionListCql(tipoDatoLista, false);
+					return nueva;
+				case TipoDatoDB.MAP_OBJETO:
+					break;
+				case TipoDatoDB.MAP_PRIMITIVO:
+					//UFFFF JODER
+					break;
+			}
 			return null;
 		}
 	}

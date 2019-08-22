@@ -33,13 +33,23 @@ namespace Proyecto1Compi2.com.AST
 			{
 				case TipoAcceso.AccesoArreglo:
 					AccesoArreglo acceso = (AccesoArreglo)valor.Value;
-					object respuesta = acceso.GetValor(ts);
-					if (respuesta.GetType()==typeof(ThrowError)) {
-						return respuesta;
+					if (acceso.Nombre.StartsWith("@"))
+					{
+
+						object respuesta = acceso.GetValor(ts);
+						if (respuesta.GetType() == typeof(ThrowError))
+						{
+							return respuesta;
+						}
+						TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
+						Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
+						return RetornarValorSobreVariable(nuevoSimbolo, ts);
 					}
-					TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
-					Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta,tipoRespuesta , Linea, Columna);
-					return RetornarValorSobreVariable(nuevoSimbolo, ts);
+					else {
+						//ACCESO A ALGO EN LAS TABLAS 
+
+					}
+					break;
 				case TipoAcceso.Campo:
 				//tablas Y COLUMNAS
 				//enviar sobre campo
@@ -50,7 +60,7 @@ namespace Proyecto1Compi2.com.AST
 					if (ts.ExisteSimbolo(valor.Value.ToString()))
 					{
 						Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-						respuesta = RetornarValorSobreVariable(sim, ts);
+						object respuesta = RetornarValorSobreVariable(sim, ts);
 
 						return respuesta;
 					}

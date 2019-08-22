@@ -63,10 +63,68 @@ namespace Proyecto1Compi2.com.Util
 					break;
 				case TipoDatoDB.MAP_PRIMITIVO:
 				case TipoDatoDB.MAP_OBJETO:
+					if (v.GetType() == typeof(CollectionMapCql))
+					{
+						//comparar tipos
+						return true;
+					}
+					break;
 				case TipoDatoDB.OBJETO:
 					return true;
 			}
 
+			return false;
+		}
+
+		internal static bool IsTipoCompatibleParaAsignar(TipoObjetoDB tipoDato, object v)
+		{
+			switch (tipoDato.Tipo)
+			{
+				case TipoDatoDB.BOOLEAN:
+					return v.GetType() == typeof(bool);
+				case TipoDatoDB.COUNTER:
+					return v.GetType() == typeof(double) || v.GetType() == typeof(int);
+				case TipoDatoDB.DOUBLE:
+					return v.GetType() == typeof(double);
+				case TipoDatoDB.INT:
+					return v.GetType() == typeof(int);
+				case TipoDatoDB.DATE:
+					if (v.GetType() == typeof(string))
+					{
+						return Regex.IsMatch(v.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
+					}
+					return false;
+				case TipoDatoDB.NULO:
+					if (v.GetType() == typeof(string))
+					{
+						return v.ToString().ToLower().Equals("null");
+					}
+					return false;
+				case TipoDatoDB.STRING:
+					return true;
+				case TipoDatoDB.TIME:
+					if (v.GetType() == typeof(string))
+					{
+						return Regex.IsMatch(v.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
+					}
+					return false;
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					if (v.GetType() == typeof(CollectionListCql))
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+					if (v.GetType() == typeof(CollectionMapCql))
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.OBJETO:
+					return true;
+			}
 			return false;
 		}
 
@@ -124,6 +182,71 @@ namespace Proyecto1Compi2.com.Util
 
 
 			return new TipoObjetoDB(TipoDatoDB.NULO, "null");
+		}
+
+		internal static TipoObjetoDB GetTipoObjetoDBPorCadena(string nombre)
+		{
+			switch (nombre)
+			{
+				case "string":
+					return new TipoObjetoDB(TipoDatoDB.STRING,"string");
+				case "int":
+					return new TipoObjetoDB(TipoDatoDB.INT,"int");
+				case "double":
+					return new TipoObjetoDB(TipoDatoDB.DOUBLE,"double");
+				case "boolean":
+					return new TipoObjetoDB(TipoDatoDB.BOOLEAN,"boolean");
+				case "date":
+					return new TipoObjetoDB(TipoDatoDB.DATE,"date");
+				case "time":
+					return new TipoObjetoDB(TipoDatoDB.TIME,"time");
+				case "counter":
+					return new TipoObjetoDB(TipoDatoDB.COUNTER,"counter");
+				//listas
+				case "list<string>":
+				case "list<int>":
+				case "list<double>":
+				case "list<boolean>":
+				case "list<date>":
+				case "list<time>":
+					return new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO,nombre.Replace("list|<|>",string.Empty));
+				//sets
+				case "set<string>":
+				case "set<int>":
+				case "set<double>":
+				case "set<boolean>":
+				case "set<date>":
+				case "set<time>":
+					return new TipoObjetoDB(TipoDatoDB.SET_PRIMITIVO, nombre.Replace("´set|<|>", string.Empty));
+				//maps
+				case "map<string>":
+				case "map<int>":
+				case "map<double>":
+				case "map<boolean>":
+				case "map<date>":
+				case "map<time>":
+					return new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, nombre.Replace("map|<|>", string.Empty));
+				default:
+					if (nombre.Equals("list") ||
+						nombre.StartsWith("list"))
+					{
+						return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, nombre.Replace("list|<|>", string.Empty));
+					}
+					else if (nombre.Equals("set") ||
+						nombre.StartsWith("set"))
+					{
+						return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, nombre.Replace(">", string.Empty));
+					}
+					else if (nombre.Equals("map") ||
+						nombre.StartsWith("map"))
+					{
+						return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, nombre.Replace("map|<|>", string.Empty));
+					}
+					else {
+						return new TipoObjetoDB(TipoDatoDB.OBJETO,nombre);
+					}
+
+			}
 		}
 
 		public static object GetValor(string valueString)
@@ -286,6 +409,29 @@ namespace Proyecto1Compi2.com.Util
 		internal static string GetTime()
 		{
 			return "'" + DateTime.Now.ToString("HH:mm:ss") + "'";
+		}
+
+		internal static bool IsPrimitivo(TipoDatoDB ti)
+		{
+			switch (ti) {
+				case TipoDatoDB.BOOLEAN:
+				case TipoDatoDB.COUNTER:
+				case TipoDatoDB.DATE:
+				case TipoDatoDB.DOUBLE:
+				case TipoDatoDB.INT:
+				case TipoDatoDB.STRING:
+				case TipoDatoDB.TIME:
+					return true;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					return false;
+			}
+			return false;
 		}
 	}
 }

@@ -187,8 +187,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetDeclaracion(ParseTreeNode sentencia)
 		{
-			TipoDatoDB tipo = GeneradorDB.GetTipo(sentencia.ChildNodes.ElementAt(0));
-			string nombreTipo = GeneradorDB.GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(0), true);
+			TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(0));
+			string nombreTipo = GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(0), true);
 			List<string> variables = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
 			Expresion exp = null;
 			if (sentencia.ChildNodes.Count == 3)
@@ -323,8 +323,8 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(1).ChildNodes)
 				{
-					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
+					TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
 					try
 					{
 						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
@@ -344,8 +344,8 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(2).ChildNodes)
 				{
-					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
+					TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
 					try
 					{
 						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
@@ -612,8 +612,8 @@ namespace Proyecto1Compi2.com.Analisis
 				Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 				foreach (ParseTreeNode nodo in sentencia.ChildNodes.ElementAt(2).ChildNodes)
 				{
-					TipoDatoDB tipo = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
-					string nombreTipo = GeneradorDB.GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
+					TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
+					string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
 					try
 					{
 						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
@@ -794,7 +794,7 @@ namespace Proyecto1Compi2.com.Analisis
 			if (nodo.ChildNodes.Count == 2)
 			{
 				//nombre -- tipo
-				TipoDatoDB t = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
+				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), false);
 			}
@@ -806,7 +806,7 @@ namespace Proyecto1Compi2.com.Analisis
 			else if (nodo.ChildNodes.Count == 4)
 			{
 				//columna con llave primaria
-				TipoDatoDB t = GeneradorDB.GetTipo(nodo.ChildNodes.ElementAt(1));
+				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), true);
 			}
@@ -957,10 +957,16 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Menos, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					}
-					else if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("new"))
+					else if (raiz.ChildNodes.ElementAt(0).Term.Name.ToLower().Equals("new"))
 					{
 						//new tipodato
-						return new Operacion(raiz.ChildNodes.ElementAt(1).Token.ValueString, TipoOperacion.Objeto, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+						TipoDatoDB tipo = GetTipo(raiz.ChildNodes.ElementAt(1));
+						string nombreTipo = GetNombreTipo(tipo, raiz.ChildNodes.ElementAt(1), true);
+
+						return new Operacion(new TipoObjetoDB(tipo,nombreTipo), 
+							TipoOperacion.NuevaInstancia, 
+							raiz.ChildNodes.ElementAt(0).Token.Location.Line,
+							raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 
 					} else if (raiz.ChildNodes.ElementAt(1).Term.Name.Equals("EXPRESION")) {
 						//arreglo[]
@@ -992,6 +998,111 @@ namespace Proyecto1Compi2.com.Analisis
 					return aces;
 			}
 			return null;
+		}
+
+		public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode, bool b)
+		{
+			switch (td)
+			{
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.LISTA_OBJETO:
+					TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					if (!b) return "list<" + nombreTipo + ">";
+					return nombreTipo;
+				case TipoDatoDB.SET_PRIMITIVO:
+				case TipoDatoDB.SET_OBJETO:
+					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					if (!b) return "set<" + nombreTipo + ">";
+					return nombreTipo;
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+
+					TipoDatoDB t1 = GetTipo(parseTreeNode.ChildNodes.ElementAt(3));
+					string nombreTipo1 = GetNombreTipo(t1, parseTreeNode.ChildNodes.ElementAt(3), false);
+					if (!b) return "map<" + nombreTipo + "," + nombreTipo1 + ">";
+					return nombreTipo + "," + nombreTipo1;
+				case TipoDatoDB.OBJETO:
+					if (parseTreeNode.ChildNodes.Count == 4)
+					{
+						t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+						nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+						return nombreTipo;
+
+					}
+					else
+					{
+						return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
+					}
+				case TipoDatoDB.BOOLEAN:
+					return "boolean";
+				case TipoDatoDB.DATE:
+					return "date";
+				case TipoDatoDB.DOUBLE:
+					return "double";
+				case TipoDatoDB.INT:
+					return "int";
+				case TipoDatoDB.STRING:
+					return "string";
+				case TipoDatoDB.TIME:
+					return "time";
+				case TipoDatoDB.COUNTER:
+					return "counter";
+				case TipoDatoDB.NULO:
+					return "nulo";
+				default:
+					return "";
+			}
+		}
+
+		public static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
+		{
+			switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
+				{
+					case "string":
+						return TipoDatoDB.STRING;
+					case "int":
+						return TipoDatoDB.INT;
+					case "double":
+						return TipoDatoDB.DOUBLE;
+					case "boolean":
+						return TipoDatoDB.BOOLEAN;
+					case "date":
+						return TipoDatoDB.DATE;
+					case "time":
+						return TipoDatoDB.TIME;
+					case "counter":
+						return TipoDatoDB.COUNTER;
+					//listas
+					case "list":
+					 TipoDatoDB ti=GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					if (Datos.IsPrimitivo(ti))
+					{
+						return TipoDatoDB.LISTA_PRIMITIVO;
+					}
+						return TipoDatoDB.LISTA_OBJETO;
+					//sets
+					case "set":
+					ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					if (Datos.IsPrimitivo(ti))
+					{
+						return TipoDatoDB.SET_PRIMITIVO;
+					}
+					return TipoDatoDB.SET_OBJETO;
+				//maps
+				case "map":
+					ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					if (Datos.IsPrimitivo(ti))
+					{
+						return TipoDatoDB.MAP_PRIMITIVO;
+					}
+					return TipoDatoDB.MAP_OBJETO;
+				default:
+					return TipoDatoDB.OBJETO;
+			}
 		}
 
 		private static Expresion GetmodificadorExp(ParseTreeNode raiz)

@@ -315,7 +315,6 @@ namespace com.Analisis
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
 
 			AC_CAMPO.Rule = nombre + cor1 + EXPRESION + cor2
-				| nombre
 				| nombre + par1 + LISTAEXPRESIONES + par2;
 
 			INFOCOLLECTIONS.Rule = MakePlusRule(INFOCOLLECTIONS, coma, INFO)

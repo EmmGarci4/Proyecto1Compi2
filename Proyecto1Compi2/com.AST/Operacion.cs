@@ -75,6 +75,7 @@ namespace Proyecto1Compi2.com.AST
 				case TipoOperacion.Caracter:
 				case TipoOperacion.Fecha:
 				case TipoOperacion.Hora:
+				case TipoOperacion.NuevaInstancia:
 					return this.tipoOp;
 				case TipoOperacion.Identificador:
 					if (ts.ExisteSimbolo(this.Valor.ToString()))
@@ -389,7 +390,7 @@ namespace Proyecto1Compi2.com.AST
 									"La fecha '" + izq.ToString() + "' es incorrecta, el formato debe ser AAAA-MM-DD",
 								   Linea, Columna);
 					}
-					
+
 				} else if (Regex.IsMatch(this.Valor.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'")) {
 					//hora 
 					if (DateTime.TryParse(this.Valor.ToString().Replace("'", String.Empty), out DateTime d2)) {
@@ -425,6 +426,7 @@ namespace Proyecto1Compi2.com.AST
 		Nulo,
 		Objeto,
 		Nombre,
+		NuevaInstancia,
 		//operaciones
 		Suma,
 		Resta,
