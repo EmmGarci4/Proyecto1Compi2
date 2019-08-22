@@ -95,7 +95,7 @@ namespace com.Analisis
 				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
 				//funciones.Add(new Funcion("llamada",new TipoObjetoDB(TipoDatoDB.STRING,"string"),1,1));
 				//TablaSimbolos ts = new TablaSimbolos("Global");
-				
+
 				//object respuesta = ex.GetValor(ts);
 				//if (respuesta.GetType() == typeof(ThrowError)) {
 				//	erroresCQL.Add(new Error((ThrowError)respuesta));
@@ -104,44 +104,50 @@ namespace com.Analisis
 				//	Console.WriteLine(respuesta.ToString());
 				//}
 
-				//List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
-				//if (Analizador.ErroresCQL.Count == 0)
-				//{
-				//	Analizador.AddUsuario(new Usuario("admin", "admin"));
-				//	Sesion sesion = new Sesion("admin", null);
-				//	TablaSimbolos ts = new TablaSimbolos();
-				//	ts.AgregarSimbolo(new Simbolo("@lista", new CollectionListCql(new TipoObjetoDB(TipoDatoDB.INT,"int"),true), new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<int>"), 1, 1));
-				//	ts.AgregarSimbolo(new Simbolo("@set", new CollectionListCql(
-				//		new TipoObjetoDB(TipoDatoDB.TIME, "time"),false), 
-				//		new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<time>"), 1, 1));
-				//	ts.AgregarSimbolo(new Simbolo("@map", new CollectionMapCql(
-				//		new TipoObjetoDB(TipoDatoDB.INT, "int"), new TipoObjetoDB(TipoDatoDB.STRING, "string")),
-				//		new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, "map<int,string>"), 1, 1));
-				//	ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
-				//	ts.AgregarSimbolo(new Simbolo("@fecha",new MyDateTime( TipoDatoDB.DATE,DateTime.Parse("1997-08-6")), new TipoObjetoDB(TipoDatoDB.DATE, "date"), 1, 1));
-				//	ts.AgregarSimbolo(new Simbolo("@hora", new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("12:00:00")), new TipoObjetoDB(TipoDatoDB.TIME, "time"), 1, 1));
-				//	ts.AgregarSimbolo(new Simbolo("@cadena", "Hola Mundo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), 1, 1));
-				//	Dictionary<string, object> valores = new Dictionary<string, object>();
-				//	valores.Add("Nombre","Emely Garcia");
-				//	valores.Add("Edad",22);
-				//	valores.Add("EsMujer",true);
-				//	valores.Add("FechaNacimiento", new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("1997-08-6")));
-				//	Objeto estudiante = new Objeto(valores);
-				//	ts.AgregarSimbolo(new Simbolo("@emely", estudiante, new TipoObjetoDB(TipoDatoDB.OBJETO, "Estudiante"), 1, 1));
+				List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
+				if (Analizador.ErroresCQL.Count == 0)
+				{
+					Analizador.AddUsuario(new Usuario("admin", "admin"));
+					Sesion sesion = new Sesion("admin", null);
+					TablaSimbolos ts = new TablaSimbolos();
+					Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
+					atributos.Add("Nombre",new TipoObjetoDB(TipoDatoDB.STRING,"string"));
+					atributos.Add("Edad", new TipoObjetoDB(TipoDatoDB.INT,"int"));
+					atributos.Add("EsMujer", new TipoObjetoDB(TipoDatoDB.BOOLEAN,"boolean"));
+					atributos.Add("FechaNacimiento",new TipoObjetoDB(TipoDatoDB.DATE,"date"));
+					UserType ut = new UserType("Estudiante", atributos);
+					ts.AgregarSimbolo(new Simbolo("@lista", new CollectionListCql(new TipoObjetoDB(TipoDatoDB.INT, "int"), true), new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<int>"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@set", new CollectionListCql(
+						new TipoObjetoDB(TipoDatoDB.TIME, "time"), false),
+						new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<time>"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@map", new CollectionMapCql(
+						new TipoObjetoDB(TipoDatoDB.INT, "int"), new TipoObjetoDB(TipoDatoDB.STRING, "string")),
+						new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, "map<int,string>"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@fecha", new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("1997-08-6")), new TipoObjetoDB(TipoDatoDB.DATE, "date"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@hora", new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("12:00:00")), new TipoObjetoDB(TipoDatoDB.TIME, "time"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@cadena", "Hola Mundo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), 1, 1));
+					Dictionary<string, object> valores = new Dictionary<string, object>();
+					valores.Add("Nombre", "Emely Garcia");
+					valores.Add("Edad", 22);
+					valores.Add("EsMujer", true);
+					valores.Add("FechaNacimiento", new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("1997-08-6")));
+					Objeto estudiante = new Objeto(valores,ut);
+					ts.AgregarSimbolo(new Simbolo("@emely", estudiante, new TipoObjetoDB(TipoDatoDB.OBJETO, "Estudiante"), 1, 1));
 
-				//	foreach (Sentencia sentencia in sentencias)
-				//	{
-				//		object respuesta = sentencia.Ejecutar(sesion, ts);
-				//		if (respuesta != null)
-				//		{
-				//			if (respuesta.GetType() == typeof(ThrowError))
-				//			{
-				//				Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
-				//			}
-				//		}
-				//	}
-					//MostrarReporteDeEstado(sesion);
-				//}
+					foreach (Sentencia sentencia in sentencias)
+					{
+						object respuesta = sentencia.Ejecutar(sesion, ts);
+						if (respuesta != null)
+						{
+							if (respuesta.GetType() == typeof(ThrowError))
+							{
+								Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
+							}
+						}
+					}
+					MostrarReporteDeEstado(sesion);
+				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{

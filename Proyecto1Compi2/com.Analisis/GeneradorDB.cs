@@ -349,7 +349,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
 						//ES UN OBJETO
 						Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
-						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
+						//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
 					}else {
 						datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, Datos.GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
 

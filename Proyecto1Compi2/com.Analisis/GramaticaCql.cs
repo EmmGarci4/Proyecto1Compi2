@@ -293,7 +293,7 @@ namespace com.Analisis
 				| par1 + EXPRESION + par2
 				| menos + EXPRESION
 				| LLAMADAFUNCION
-				| nombre
+		//		| nombre
 				| ACCESO
 				| id + cor1 + EXPRESION + cor2
 				| id + cor1 + EXPRESION + cor2+punto + ACCESO
@@ -315,7 +315,8 @@ namespace com.Analisis
 			ACCESO.Rule = MakePlusRule(ACCESO, punto, AC_CAMPO);
 
 			AC_CAMPO.Rule = nombre + cor1 + EXPRESION + cor2
-				| nombre + par1 + LISTAEXPRESIONES + par2;
+				| nombre + par1 + LISTAEXPRESIONES + par2
+				| nombre;
 
 			INFOCOLLECTIONS.Rule = MakePlusRule(INFOCOLLECTIONS, coma, INFO)
 				| MakePlusRule(INFOCOLLECTIONS,coma,cadena); 

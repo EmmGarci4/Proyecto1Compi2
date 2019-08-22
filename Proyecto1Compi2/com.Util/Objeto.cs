@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,21 +7,21 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Proyecto1Compi2.com.db
+namespace Proyecto1Compi2.com.Util
 {
 	class Objeto
 	{
 		Dictionary<string, object> atributos;
-		string tipo;
+		UserType plantilla;
 
-		public Objeto(Dictionary<string, object> atributos)
+		public Objeto(Dictionary<string, object> atributos,UserType plantilla)
 		{
 			this.atributos = atributos;
-			Tipo = "";
+			this.plantilla = plantilla;
 		}
 
 		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
-		public string Tipo { get => tipo; set => tipo = value; }
+		internal UserType Plantilla { get => plantilla; set => plantilla = value; }
 
 		public override string ToString()
 		{

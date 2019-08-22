@@ -135,7 +135,7 @@
     <Compile Include="com.Util\TablaSimbolos.cs" />
     <Compile Include="com.Util\TipoObjetoDB.cs" />
     <Compile Include="com.Util\Tipos.cs" />
-    <Compile Include="com.db\Objeto.cs" />
+    <Compile Include="com.Util\Objeto.cs" />
     <Compile Include="com.db\BaseDatos.cs" />
     <Compile Include="com.db\Columna.cs" />
     <Compile Include="com.db\Procedimiento.cs" />

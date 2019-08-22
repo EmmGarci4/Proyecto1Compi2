@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.Analisis;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -13,6 +14,7 @@ namespace Proyecto1Compi2.com.AST
 	{
 
 		Queue<AccesoPar> objetos;
+		Sesion sesion;
 
 		public Acceso(Queue<AccesoPar> objetos, int linea, int columna) : base(linea, columna)
 		{
@@ -25,51 +27,53 @@ namespace Proyecto1Compi2.com.AST
 		}
 
 		public Queue<AccesoPar> Objetos { get => objetos; set => objetos = value; }
+		public Sesion Sesion { get => sesion; set => sesion = value; }
 
 		public override object GetValor(TablaSimbolos ts)
 		{
-			AccesoPar valor = objetos.Dequeue();
-			switch (valor.Tipo)
-			{
-				case TipoAcceso.AccesoArreglo:
-					AccesoArreglo acceso = (AccesoArreglo)valor.Value;
-					if (acceso.Nombre.StartsWith("@"))
-					{
-
-						object respuesta = acceso.GetValor(ts);
-						if (respuesta.GetType() == typeof(ThrowError))
+			if (objetos.Count>0) {
+				AccesoPar valor = objetos.Dequeue();
+				switch (valor.Tipo)
+				{
+					case TipoAcceso.AccesoArreglo:
+						AccesoArreglo acceso = (AccesoArreglo)valor.Value;
+						if (acceso.Nombre.StartsWith("@"))
 						{
+							object respuesta = acceso.GetValor(ts);
+							if (respuesta.GetType() == typeof(ThrowError))
+							{
+								return respuesta;
+							}
+							TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
+							Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
+							return RetornarValorSobreVariable(nuevoSimbolo, ts);
+						}
+						else
+						{
+							//ACCESO A ALGO EN LAS TABLAS 
+							return "ACCESANDO ALGO EN UNA TABLA";
+						}
+					case TipoAcceso.Campo:
+						//tablas Y COLUMNAS
+						return "ACCESANDO ALGO EN UNA TABLA";
+					//enviar sobre campo
+					case TipoAcceso.LlamadaFuncion:
+						//ejecutar llamada de funcion y retornar el valor 
+						break;
+					case TipoAcceso.Variable:
+						if (ts.ExisteSimbolo(valor.Value.ToString()))
+						{
+							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
+							object respuesta = RetornarValorSobreVariable(sim, ts);
 							return respuesta;
 						}
-						TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
-						Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
-						return RetornarValorSobreVariable(nuevoSimbolo, ts);
-					}
-					else {
-						//ACCESO A ALGO EN LAS TABLAS 
-
-					}
-					break;
-				case TipoAcceso.Campo:
-				//tablas Y COLUMNAS
-				//enviar sobre campo
-				case TipoAcceso.LlamadaFuncion:
-					//ejecutar llamada de funcion y retornar el valor 
-					break;
-				case TipoAcceso.Variable:
-					if (ts.ExisteSimbolo(valor.Value.ToString()))
-					{
-						Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-						object respuesta = RetornarValorSobreVariable(sim, ts);
-
-						return respuesta;
-					}
-					else
-					{
-						return new ThrowError(Util.TipoThrow.Exception,
-							"La variable '" + valor.Value.ToString() + "' no existe",
-							Linea, Columna);
-					}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"La variable '" + valor.Value.ToString() + "' no existe",
+								Linea, Columna);
+						}
+				}
 			}
 			return null;
 		}
@@ -82,30 +86,47 @@ namespace Proyecto1Compi2.com.AST
 				switch (valor.Tipo)
 				{
 					case TipoAcceso.AccesoArreglo:
-						if (sim.TipoDato.Tipo==TipoDatoDB.OBJETO)
+						if (Datos.IsLista(sim.TipoDato.Tipo))
 						{
-							//VERIFICAR SI EL OBJETO TIENE UNA LISTA ADENTRO
-
+							AccesoArreglo acceso = (AccesoArreglo)valor.Value;
+								object respuesta = acceso.GetValor(ts);
+								if (respuesta.GetType() == typeof(ThrowError))
+								{
+									return respuesta;
+								}
+								TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
+								Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
+								return RetornarValorSobreVariable(nuevoSimbolo, ts);
 						}
 						else {
 							return new ThrowError(Util.TipoThrow.Exception,
-								"'" + sim.Nombre + "' no contiene un arreglo",
-								Linea, Columna);
+									"'"+sim.Nombre+"' no contiene un arreglo",
+									Linea, Columna);
 						}
-						break;
 					case TipoAcceso.Campo:
 						if (sim.TipoDato.Tipo == Util.TipoDatoDB.OBJETO)
 						{
-							//OBTENER OBJETO Y ACCEDER A PROPIEDADES
-
+							Objeto objeto = (Objeto)sim.Valor;
+							if (objeto.Atributos.ContainsKey(valor.Value.ToString()))
+							{
+								TipoObjetoDB tipo = objeto.Plantilla.Atributos[valor.Value.ToString()];
+								object val = objeto.Atributos[valor.Value.ToString()];
+								Simbolo s = new Simbolo(sim.Nombre + "." + valor.Value.ToString(),
+										val,tipo, 0, 0);
+								return RetornarValorSobreVariable(s, ts);
+							}
+							else {
+								return new ThrowError(Util.TipoThrow.Exception,
+									"No existe el atributo '"+valor.Value.ToString()+"' en el objeto '"+sim.TipoDato.ToString()+"'",
+									Linea, Columna);
+							}
 						}
 						else
 						{
 							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede acceder a un valor en '" + sim.Nombre + "' por que no contiene la propiedad '" + valor.Value.ToString() + "'",
+								"No se puede acceder a un valor en '" + sim.Nombre + "' por que no es un objeto",
 								Linea, Columna);
 						}
-						break;
 					case TipoAcceso.LlamadaFuncion:
 						if (sim.TipoDato.Tipo == Util.TipoDatoDB.STRING)
 						{
