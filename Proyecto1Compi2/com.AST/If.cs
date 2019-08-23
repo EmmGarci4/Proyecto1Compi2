@@ -37,21 +37,8 @@ namespace Proyecto1Compi2.com.AST
 			}
 			if ((bool)respuesta)
 			{
-				foreach (Sentencia sentencia in cuerpoVerdadero)
-				{
-					respuesta = sentencia.Ejecutar(sesion, tsLocal);
-					if (respuesta != null)
-					{
-						if (respuesta.GetType() == typeof(ThrowError))
-						{
-							return respuesta;
-						}
-						else
-						{
-							//EVALUAR SI ES RETURN, BREAK O CONTINUE
-						}
-					}
-				}
+				respuesta=EjecutarSentencias(CuerpoVerdadero, sesion, tsLocal);
+				if (respuesta != null) return respuesta;
 			}
 			else {
 				bool evaluado = false;
@@ -66,17 +53,7 @@ namespace Proyecto1Compi2.com.AST
 							evaluado = true;
 							if (respuesta!=null) {
 								respuesta = elseif.Ejecutar(sesion, tsLocal);
-								if (respuesta != null)
-								{
-									if (respuesta.GetType() == typeof(ThrowError))
-									{
-										return respuesta;
-									}
-									else
-									{
-										//EVALUAR SI ES RETURN, BREAK O CONTINUE
-									}
-								}
+								if (respuesta != null) return respuesta;
 							}
 							break;
 						}
@@ -84,24 +61,22 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				if (CuerpoFalso!=null && !evaluado) {
-					foreach (Sentencia sentencia in CuerpoFalso)
-					{
-						respuesta = sentencia.Ejecutar(sesion, tsLocal);
-						if (respuesta != null)
-						{
-							if (respuesta.GetType() == typeof(ThrowError))
-							{
-								return respuesta;
-							}
-							else
-							{
-								//EVALUAR SI ES RETURN, BREAK O CONTINUE
-							}
-						}
-					}
+					respuesta = EjecutarSentencias(CuerpoFalso, sesion, tsLocal);
+					if (respuesta != null) return respuesta;
 				}
 			}
 
+			return null;
+		}
+
+		public static object EjecutarSentencias(List<Sentencia> MisSentencias, Sesion sesion, TablaSimbolos tsLocal)
+		{
+			object respuesta;
+			foreach (Sentencia sentencia in MisSentencias)
+			{
+				respuesta = sentencia.Ejecutar(sesion, tsLocal);
+				if (respuesta!=null)return respuesta;
+			}
 			return null;
 		}
 	}

@@ -99,6 +99,7 @@
     <Compile Include="com.AST\EliminarUserType.cs" />
     <Compile Include="com.AST\ElseIf.cs" />
     <Compile Include="com.AST\Expresion.cs" />
+    <Compile Include="com.AST\For.cs" />
     <Compile Include="com.AST\Funcion.cs" />
     <Compile Include="com.AST\FuncionAgregacion.cs" />
     <Compile Include="com.AST\If.cs" />

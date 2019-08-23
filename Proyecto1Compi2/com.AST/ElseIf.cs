@@ -23,10 +23,18 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
+			TablaSimbolos tlocal = new TablaSimbolos(tb);
+			object res =EjecutarSentencias(sentencias, sesion, tlocal);
+			if (res != null) return res;
+			return null;
+		}
+
+		public static object EjecutarSentencias(List<Sentencia> MisSentencias, Sesion sesion, TablaSimbolos tsLocal)
+		{
 			object respuesta;
-			foreach (Sentencia sentencia in sentencias)
+			foreach (Sentencia sentencia in MisSentencias)
 			{
-				respuesta = sentencia.Ejecutar(sesion, tb);
+				respuesta = sentencia.Ejecutar(sesion, tsLocal);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

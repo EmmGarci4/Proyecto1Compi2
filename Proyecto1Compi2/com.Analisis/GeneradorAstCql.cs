@@ -158,9 +158,35 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetBreak(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "FOR":
+						n = GetFor(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetFor(ParseTreeNode sentencia)
+		{
+			Asignacion asignacion=null;
+			Declaracion dec=null;
+			Expresion op=GetExpresion(sentencia.ChildNodes.ElementAt(2));
+			Condicion cond=GetCondicion(sentencia.ChildNodes.ElementAt(1));
+			List<Sentencia> lista = GetSentencias(sentencia.ChildNodes.ElementAt(3));
+			if (sentencia.ChildNodes.ElementAt(0).ChildNodes.Count == 3)
+			{
+				Sentencia n=GetDeclaracion(sentencia.ChildNodes.ElementAt(0));
+				if (n != null) dec = (Declaracion)n;
+			}
+			else {
+			Sentencia n=GetAsignacion(sentencia.ChildNodes.ElementAt(0));
+				if (n != null) asignacion = (Asignacion)n;
+			}
+			if (asignacion!=null || dec!=null) {
+				return new For(asignacion, dec, cond, op, lista, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			}
+			return null;
 		}
 
 		private static Sentencia GetBreak(ParseTreeNode sentencia)

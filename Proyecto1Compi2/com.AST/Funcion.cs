@@ -56,5 +56,16 @@ namespace Proyecto1Compi2.com.AST
 			llave.Append(")");
 			return llave.ToString();
 		}
+
+		public static object LeerRespuesta(object res) {
+			if (res!=null) {
+				if (res.GetType()==typeof(ThrowError)) {
+					return res;
+				}
+			}
+			return null;
+		}
+
+
 	}
 }
