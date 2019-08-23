@@ -51,5 +51,10 @@ namespace Proyecto1Compi2.com.Util
 			cadena.Append("\n>");
 			return cadena.ToString();
 		}
+
+		internal bool IsObjetoTipo(string nombre)
+		{
+			return plantilla.Nombre == nombre;
+		}
 	}
 }

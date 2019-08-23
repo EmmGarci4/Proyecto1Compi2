@@ -101,7 +101,7 @@ namespace Proyecto1Compi2.com.Util
 					}
 					return false;
 				case TipoDatoDB.STRING:
-					return true;
+					return (v.GetType() == typeof(string));
 				case TipoDatoDB.TIME:
 					if (v.GetType() == typeof(string))
 					{
@@ -123,7 +123,10 @@ namespace Proyecto1Compi2.com.Util
 					}
 					break;
 				case TipoDatoDB.OBJETO:
-					return true;
+					if (v.GetType()==typeof(Objeto)) {
+						return ((Objeto)v).IsObjetoTipo(tipoDato.Nombre);
+					}
+					return false;
 			}
 			return false;
 		}
