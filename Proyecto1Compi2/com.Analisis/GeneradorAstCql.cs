@@ -917,11 +917,23 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						return GetCondicion(raiz.ChildNodes.ElementAt(0));
 					}
+					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("TERNARIO"))
+					{
+						return GetTernario(raiz.ChildNodes.ElementAt(0));
+					}
 					break;
 				case 3: //operaciones 
 					return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(0)), GetExpresion(raiz.ChildNodes.ElementAt(2)), GetTipoOperacion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(1).Token.Location.Line, raiz.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 			return null;
+		}
+
+		private static Expresion GetTernario(ParseTreeNode parseTreeNode)
+		{
+			Condicion condicion = GetCondicion(parseTreeNode.ChildNodes.ElementAt(0));
+			Expresion exp1 = GetExpresion(parseTreeNode.ChildNodes.ElementAt(1));
+			Expresion exp2 = GetExpresion(parseTreeNode.ChildNodes.ElementAt(2));
+			return new Ternario(condicion,exp1,exp2, parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column);
 		}
 
 		private static Condicion GetCondicion(ParseTreeNode raiz)

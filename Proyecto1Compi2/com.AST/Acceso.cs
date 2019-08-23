@@ -1036,66 +1036,55 @@ namespace Proyecto1Compi2.com.AST
 
 		internal object Asignar(object respuesta, TipoObjetoDB tipoObjetoDB, TablaSimbolos ts, Sesion sesion)
 		{
+			
+			return null;
+		}
+
+		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		{
 			if (objetos.Count > 0)
 			{
 				AccesoPar valor = objetos.Dequeue();
 				switch (valor.Tipo)
 				{
 					case TipoAcceso.AccesoArreglo:
+						AccesoArreglo acceso = (AccesoArreglo)valor.Value;
+						if (acceso.Nombre.StartsWith("@"))
+						{
+							object respuesta = acceso.GetValor(ts);
+							if (respuesta.GetType() == typeof(ThrowError))
+							{
+								return TipoOperacion.Nulo;
+							}
+							TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
+							Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
+							object val= RetornarValorSobreVariable(nuevoSimbolo, ts);
+							return Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(val).Tipo);
+						}
+						else
+						{
+							return TipoOperacion.Nombre;
+						}
+					case TipoAcceso.Campo:
+						//tablas Y COLUMNAS
+						return TipoOperacion.Nombre;
 					case TipoAcceso.LlamadaFuncion:
+						//ejecutar llamada de funcion y retornar el valor 
+						break;
 					case TipoAcceso.Variable:
 						if (ts.ExisteSimbolo(valor.Value.ToString()))
 						{
 							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-							if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
-							{
-								//VALIDAR QUE EL VALOR NO SEA NULO
-								if (sim.Valor.ToString().Equals("null"))
-								{
-									return new ThrowError(Util.TipoThrow.NullPointerException,
-												"la variable '" + sim.Nombre + "' no se ha inicializado",
-												Linea, Columna);
-								}
-							}
-							if (objetos.Count == 0)
-							{
-								//VALIDAR TIPOS
-								if (Datos.IsTipoCompatibleParaAsignar(sim.TipoDato, respuesta))
-								{
-									object nuevaRespuesta = Datos.CasteoImplicito(sim.TipoDato.Tipo,respuesta);
-									sim.Valor = nuevaRespuesta;
-								}
-								else
-								{
-									return new ThrowError(TipoThrow.Exception,
-										"Un valor tipo '" + tipoObjetoDB.ToString() + "' no se puede asignar a una variable tipo '" + sim.TipoDato.ToString() + "'",
-										Linea, Columna);
-								}
-							}
-							else {
-								//VALIDAR QUE SE PUEDA ACCEDER A MAS 
-							}
-						}
-						else
-						{
-							return new ThrowError(Util.TipoThrow.Exception,
-								"La variable '" + valor.Value.ToString() + "' no existe",
-								Linea, Columna);
+							object respuesta = RetornarValorSobreVariable(sim, ts);
+							return Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(respuesta).Tipo);
 						}
 						break;
-					default:
-						return new ThrowError(TipoThrow.Exception,
-								"No se puede realizar la asignación",
-								Linea, Columna);
 				}
 			}
-			return null;
-		}
-
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
-		{
 			return TipoOperacion.Nulo;
 		}
+
+
 	}
 
 }

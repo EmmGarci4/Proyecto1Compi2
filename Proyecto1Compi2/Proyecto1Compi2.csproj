@@ -116,6 +116,7 @@
     <Compile Include="com.AST\Rollback.cs" />
     <Compile Include="com.AST\Seleccionar.cs" />
     <Compile Include="com.AST\Sentencia.cs" />
+    <Compile Include="com.AST\Ternario.cs" />
     <Compile Include="com.AST\ThrowError.cs" />
     <Compile Include="com.AST\TruncarTabla.cs" />
     <Compile Include="com.AST\UsarBaseDatos.cs" />
