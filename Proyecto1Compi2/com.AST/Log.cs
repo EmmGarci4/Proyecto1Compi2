@@ -34,8 +34,6 @@ namespace Proyecto1Compi2.com.AST
 			else {
 				Form1.MostrarMensajeAUsuario("null");
 			}
-				
-			
 			return null;
 		}
 	}

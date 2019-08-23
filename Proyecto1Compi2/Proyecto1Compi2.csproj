@@ -76,6 +76,8 @@
     <Compile Include="com.AST\Actualizar.cs" />
     <Compile Include="com.AST\Asignacion.cs" />
     <Compile Include="com.AST\AsignacionCasteo.cs" />
+    <Compile Include="com.AST\Break.cs" />
+    <Compile Include="com.AST\Case.cs" />
     <Compile Include="com.AST\CrearUserType.cs" />
     <Compile Include="com.AST\AlterarUserType.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="com.AST\Rollback.cs" />
     <Compile Include="com.AST\Seleccionar.cs" />
     <Compile Include="com.AST\Sentencia.cs" />
+    <Compile Include="com.AST\Switch.cs" />
     <Compile Include="com.AST\Ternario.cs" />
     <Compile Include="com.AST\ThrowError.cs" />
     <Compile Include="com.AST\TruncarTabla.cs" />
@@ -187,17 +190,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="WINGRAPHVIZLib">
-      <Guid>{052DB09C-95F7-43BD-B7F8-492373D1151E}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -150,9 +150,46 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetCasteo(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "SWITCH":
+						n = GetSwitch(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "BREAK":
+						n = GetBreak(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetBreak(ParseTreeNode sentencia)
+		{
+			return new Break(sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+		}
+
+		private static Sentencia GetSwitch(ParseTreeNode sentencia)
+		{
+			
+				Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(0));
+				List<Case> cases = GetListaCases(sentencia.ChildNodes.ElementAt(1));
+			List<Sentencia> sentenciasDef = null;
+			if (sentencia.ChildNodes.Count == 3)
+			{
+				 sentenciasDef = GetSentencias(sentencia.ChildNodes.ElementAt(2).ChildNodes.ElementAt(0));
+			}
+			return new Switch(expresion, cases, sentenciasDef, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+		}
+
+		private static List<Case> GetListaCases(ParseTreeNode parseTreeNode)
+		{
+			List<Case> lista = new List<Case>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				Expresion ex = GetExpresion(nodo.ChildNodes.ElementAt(0));
+				List<Sentencia> sentencias = GetSentencias(nodo.ChildNodes.ElementAt(1));
+				lista.Add(new Case(ex,sentencias,nodo.Span.Location.Line,nodo.Span.Location.Column));
+			}
+			return lista;
 		}
 
 		private static Sentencia GetCasteo(ParseTreeNode sentencia)
