@@ -46,21 +46,18 @@ namespace Proyecto1Compi2.com.AST
 				if (Datos.IsLista(tipoInstancia.Tipo))
 				{
 					object instanciaLista = GetInstanciaLista(tipoInstancia);
-					//Simbolo s = Izquierda.getSimbolo();
-					//if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, instanciaLista) {
-					//	s.Valor = instanciaLista;
-					//}
-					//else {
-					//	return new ThrowError(Util.TipoThrow.Exception,
-					//	"No se puede asignar el valor a la variable porque los tipos no concuerdan",
-					//	Linea, Columna);
-					//}
+					if (instanciaLista!=null) {
+						//izquierda.Asignar(instanciaLista, tipoInstancia, ts, sesion);
+					}
 				}
 				else
 				{
 					if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 					{
-						object instanciaLista = GetInstanciaObjeto(tipoInstancia, sesion);
+						object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion);
+						if (instanciaObjeto!=null) {
+							//izquierda.Asignar(instanciaObjeto, tipoInstancia, ts, sesion);
+						}
 					}
 					else
 					{
@@ -74,16 +71,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 			else {
 				////NO ES UNA INSTANCIA
-				//Simbolo s = Izquierda.getSimbolo();
-				//if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, respuesta) {
-				//	s.Valor = respuesta;
-				//}
-				//else
-				//{
-				//	return new ThrowError(Util.TipoThrow.Exception,
-				//	"No se puede asignar el valor a la variable porque los tipos no concuerdan",
-				//	Linea, Columna);
-				//}
+				return izquierda.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), ts, sesion);
 			}
 
 			return null;

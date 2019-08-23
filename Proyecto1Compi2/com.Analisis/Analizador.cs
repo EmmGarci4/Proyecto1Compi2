@@ -123,7 +123,9 @@ namespace com.Analisis
 					ts.AgregarSimbolo(new Simbolo("@map", new CollectionMapCql(
 						new TipoObjetoDB(TipoDatoDB.INT, "int"), new TipoObjetoDB(TipoDatoDB.STRING, "string")),
 						new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, "map<int,string>"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@variable", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@decimal", 0, new TipoObjetoDB(TipoDatoDB.DOUBLE, "double"), 1, 1));
+					ts.AgregarSimbolo(new Simbolo("@entero", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
+
 					ts.AgregarSimbolo(new Simbolo("@fecha", new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("1997-08-6")), new TipoObjetoDB(TipoDatoDB.DATE, "date"), 1, 1));
 					ts.AgregarSimbolo(new Simbolo("@hora", new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("12:00:00")), new TipoObjetoDB(TipoDatoDB.TIME, "time"), 1, 1));
 					ts.AgregarSimbolo(new Simbolo("@cadena", "Hola Mundo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), 1, 1));

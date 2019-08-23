@@ -64,6 +64,14 @@ namespace Proyecto1Compi2.com.AST
 						if (ts.ExisteSimbolo(valor.Value.ToString()))
 						{
 							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
+							if (sim.TipoDato.Tipo!=TipoDatoDB.NULO) {
+								if (sim.Valor.ToString().Equals("null"))
+								{
+									return new ThrowError(Util.TipoThrow.NullPointerException,
+												"la variable '" + sim.Nombre+ "' no se ha inicializado",
+												Linea, Columna);
+								}
+							}
 							object respuesta = RetornarValorSobreVariable(sim, ts);
 							return respuesta;
 						}
@@ -86,6 +94,15 @@ namespace Proyecto1Compi2.com.AST
 				switch (valor.Tipo)
 				{
 					case TipoAcceso.AccesoArreglo:
+						if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
+						{
+							if (sim.Valor.ToString().Equals("null"))
+							{
+								return new ThrowError(Util.TipoThrow.NullPointerException,
+											"la variable '" + sim.Nombre + "' no se ha inicializado",
+											Linea, Columna);
+							}
+						}
 						if (Datos.IsLista(sim.TipoDato.Tipo))
 						{
 							AccesoArreglo acceso = (AccesoArreglo)valor.Value;
@@ -104,6 +121,15 @@ namespace Proyecto1Compi2.com.AST
 									Linea, Columna);
 						}
 					case TipoAcceso.Campo:
+						if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
+						{
+							if (sim.Valor.ToString().Equals("null"))
+							{
+								return new ThrowError(Util.TipoThrow.NullPointerException,
+											"la variable '" + sim.Nombre + "' no se ha inicializado",
+											Linea, Columna);
+							}
+						}
 						if (sim.TipoDato.Tipo == Util.TipoDatoDB.OBJETO)
 						{
 							Objeto objeto = (Objeto)sim.Valor;
@@ -128,6 +154,15 @@ namespace Proyecto1Compi2.com.AST
 								Linea, Columna);
 						}
 					case TipoAcceso.LlamadaFuncion:
+						if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
+						{
+							if (sim.Valor.ToString().Equals("null"))
+							{
+								return new ThrowError(Util.TipoThrow.NullPointerException,
+											"la variable '" + sim.Nombre + "' no se ha inicializado",
+											Linea, Columna);
+							}
+						}
 						if (sim.TipoDato.Tipo == Util.TipoDatoDB.STRING)
 						{
 							#region FuncionesNativasSobreCadenas
@@ -997,6 +1032,64 @@ namespace Proyecto1Compi2.com.AST
 			}
 
 			return sim.Valor;
+		}
+
+		internal object Asignar(object respuesta, TipoObjetoDB tipoObjetoDB, TablaSimbolos ts, Sesion sesion)
+		{
+			if (objetos.Count > 0)
+			{
+				AccesoPar valor = objetos.Dequeue();
+				switch (valor.Tipo)
+				{
+					case TipoAcceso.AccesoArreglo:
+					case TipoAcceso.LlamadaFuncion:
+					case TipoAcceso.Variable:
+						if (ts.ExisteSimbolo(valor.Value.ToString()))
+						{
+							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
+							if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
+							{
+								//VALIDAR QUE EL VALOR NO SEA NULO
+								if (sim.Valor.ToString().Equals("null"))
+								{
+									return new ThrowError(Util.TipoThrow.NullPointerException,
+												"la variable '" + sim.Nombre + "' no se ha inicializado",
+												Linea, Columna);
+								}
+							}
+							if (objetos.Count == 0)
+							{
+								//VALIDAR TIPOS
+								if (Datos.IsTipoCompatibleParaAsignar(sim.TipoDato, respuesta))
+								{
+									object nuevaRespuesta = Datos.CasteoImplicito(sim.TipoDato.Tipo,respuesta);
+									sim.Valor = nuevaRespuesta;
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.Exception,
+										"Un valor tipo '" + tipoObjetoDB.ToString() + "' no se puede asignar a una variable tipo '" + sim.TipoDato.ToString() + "'",
+										Linea, Columna);
+								}
+							}
+							else {
+								//VALIDAR QUE SE PUEDA ACCEDER A MAS 
+							}
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"La variable '" + valor.Value.ToString() + "' no existe",
+								Linea, Columna);
+						}
+						break;
+					default:
+						return new ThrowError(TipoThrow.Exception,
+								"No se puede realizar la asignación",
+								Linea, Columna);
+				}
+			}
+			return null;
 		}
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)

@@ -38,10 +38,12 @@ namespace Proyecto1Compi2.com.AST
 			}
 			if (expresion != null)
 			{
-				if (!Datos.IsTipoCompatible(tipo, expresion.GetValor(tb)))
+				//VALIDAR TIPOS
+				object nuevoValor = expresion.GetValor(tb);
+				if (!Datos.IsTipoCompatibleParaAsignar(tipo,nuevoValor ))
 				{
 					return new ThrowError(TipoThrow.Exception,
-						"El valor '" + expresion.GetValor(tb) + "' no se puede asignar al tipo '" + tipo.ToString() + "'",
+						"Un valor tipo '" +expresion.GetValor(tb) + "' no se puede asignar a una variable tipo '" + tipo.ToString() + "'",
 						Linea, Columna);
 				}
 			}
@@ -50,16 +52,44 @@ namespace Proyecto1Compi2.com.AST
 			int contador = 0;
 			foreach (string variable in variables)
 			{
-				if (contador == variables.Count - 1)
+				if (contador == variables.Count - 1 && expresion!=null)
 				{
-					tb.AgregarSimbolo(new Simbolo(variable, expresion.GetValor(tb), tipo, Linea, Columna));
+					object nuevaRespuesta = Datos.CasteoImplicito(tipo.Tipo, expresion.GetValor(tb));
+
+					tb.AgregarSimbolo(new Simbolo(variable, nuevaRespuesta, tipo, Linea, Columna));
 				}
 				else {
-					tb.AgregarSimbolo(new Simbolo(variable, null, tipo, Linea, Columna));
+					tb.AgregarSimbolo(new Simbolo(variable, GetValorPredeterminado(), tipo, Linea, Columna));
 				}
 				contador++;
 			}
 			return null;
+		}
+
+		private object GetValorPredeterminado()
+		{
+			switch (this.Tipo.Tipo) {
+				case TipoDatoDB.BOOLEAN:
+					return false;
+				case TipoDatoDB.DOUBLE:
+					return 0.0;
+				case TipoDatoDB.COUNTER:
+				case TipoDatoDB.INT:
+					return 0;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+				case TipoDatoDB.DATE:
+				case TipoDatoDB.SET_PRIMITIVO:
+				case TipoDatoDB.STRING:
+				case TipoDatoDB.TIME:
+					return "null";
+				default:
+					return null;
+			}
 		}
 	}
 }

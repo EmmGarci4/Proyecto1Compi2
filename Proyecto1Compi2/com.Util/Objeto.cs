@@ -31,8 +31,8 @@ namespace Proyecto1Compi2.com.Util
 			foreach (KeyValuePair<string, object> val in atributos)
 			{
 				cadena.Append("\"" + val.Key + "\"=");
-				if (val.Value.GetType() == typeof(string) & !Regex.IsMatch(val.Value.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'") &&
-					!Regex.IsMatch(val.Value.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+				if (val.Value.GetType() == typeof(string) & !Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'") &&
+					!Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 				{
 					cadena.Append("\"" + val.Value + "\"");
 				}

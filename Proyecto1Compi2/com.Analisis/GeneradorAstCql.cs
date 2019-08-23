@@ -146,9 +146,52 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetAsignacion(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "CASTEO":
+						n = GetCasteo(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetCasteo(ParseTreeNode sentencia)
+		{
+			if (sentencia.ChildNodes.Count == 3)
+			{
+				Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+				acceso.Objetos.Enqueue(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
+				TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(1));
+				string nombreTipo = GetNombreTipo(tipo,sentencia.ChildNodes.ElementAt(1),true);
+				Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(2));
+				return new AsignacionCasteo(acceso, new TipoObjetoDB(tipo, nombreTipo),expresion,sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			}
+			else {
+				if (sentencia.ChildNodes.ElementAt(1).Term.Name.Equals("EXPRESION"))
+				{
+					Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+					acceso.Objetos.Enqueue(new AccesoPar(
+						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+						sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column), 
+						TipoAcceso.AccesoArreglo));
+					TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(2));
+					string nombreTipo = GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(2), true);
+					Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(3));
+					return new AsignacionCasteo(acceso, new TipoObjetoDB(tipo, nombreTipo), expresion, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+				}
+				else {
+					Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+					acceso.Objetos.Enqueue(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+					Acceso acceso2 = GetAcceso(sentencia.ChildNodes.ElementAt(1));
+					foreach (AccesoPar par in acceso2.Objetos) {
+						acceso.Objetos.Enqueue(par);
+					}
+					TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(2));
+					string nombreTipo = GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(2), true);
+					Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(3));
+					return new AsignacionCasteo(acceso, new TipoObjetoDB(tipo, nombreTipo), expresion, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+				}
+			}
 		}
 
 		private static Sentencia GetAsignacion(ParseTreeNode sentencia)
@@ -189,14 +232,23 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(0));
 			string nombreTipo = GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(0), true);
-			List<string> variables = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
-			Expresion exp = null;
-			if (sentencia.ChildNodes.Count == 3)
+			if (tipo == TipoDatoDB.LISTA_OBJETO || tipo == TipoDatoDB.SET_OBJETO || tipo == TipoDatoDB.MAP_OBJETO ||
+				tipo == TipoDatoDB.LISTA_PRIMITIVO || tipo == TipoDatoDB.SET_PRIMITIVO || tipo == TipoDatoDB.MAP_PRIMITIVO)
 			{
-				exp = GetExpresion(sentencia.ChildNodes.ElementAt(2));
+				if (!nombreTipo.Equals("null")) {
+					Analizador.ErroresCQL.Add(new Error(
+				TipoError.Semantico, "No se puede declarar una lista con tipos definidos", sentencia.Span.Location.Line, sentencia.Span.Location.Column));
+
+				}
 			}
-			return new Declaracion(variables,new TipoObjetoDB(tipo,nombreTipo),exp,sentencia.Span.Location.Line,sentencia.Span.Location.Column);
-		}
+			List<string> variables = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
+				Expresion exp = null;
+				if (sentencia.ChildNodes.Count == 3)
+				{
+					exp = GetExpresion(sentencia.ChildNodes.ElementAt(2));
+				}
+				return new Declaracion(variables, new TipoObjetoDB(tipo, nombreTipo), exp, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			}
 
 		private static Sentencia GetDoWhile(ParseTreeNode sentencia)
 		{
@@ -1006,32 +1058,61 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.LISTA_OBJETO:
-					TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					TipoDatoDB t;
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
 					string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
 					if (!b) return "list<" + nombreTipo + ">";
 					return nombreTipo;
+					}
+					else
+					{
+						return "null";
+					}
 				case TipoDatoDB.SET_PRIMITIVO:
 				case TipoDatoDB.SET_OBJETO:
-					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
 					if (!b) return "set<" + nombreTipo + ">";
 					return nombreTipo;
+					}
+					else
+					{
+						return "null";
+					}
 				case TipoDatoDB.MAP_PRIMITIVO:
 				case TipoDatoDB.MAP_OBJETO:
-					t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-					nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
 
-					TipoDatoDB t1 = GetTipo(parseTreeNode.ChildNodes.ElementAt(3));
+					TipoDatoDB t1;
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						t1 = GetTipo(parseTreeNode.ChildNodes.ElementAt(3));
+					}
+					else
+					{
+						t1= TipoDatoDB.NULO;
+					}
 					string nombreTipo1 = GetNombreTipo(t1, parseTreeNode.ChildNodes.ElementAt(3), false);
 					if (!b) return "map<" + nombreTipo + "," + nombreTipo1 + ">";
 					return nombreTipo + "," + nombreTipo1;
+					}
+					else
+					{
+						return "null";
+					}
 				case TipoDatoDB.OBJETO:
 					if (parseTreeNode.ChildNodes.Count == 4)
 					{
 						t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-						nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
+						string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
 						return nombreTipo;
-
 					}
 					else
 					{
@@ -1078,7 +1159,15 @@ namespace Proyecto1Compi2.com.Analisis
 						return TipoDatoDB.COUNTER;
 					//listas
 					case "list":
-					 TipoDatoDB ti=GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					TipoDatoDB ti;
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						 ti= GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					}
+					else
+					{
+						ti = TipoDatoDB.NULO;
+					}
 					if (Datos.IsPrimitivo(ti))
 					{
 						return TipoDatoDB.LISTA_PRIMITIVO;
@@ -1086,7 +1175,14 @@ namespace Proyecto1Compi2.com.Analisis
 						return TipoDatoDB.LISTA_OBJETO;
 					//sets
 					case "set":
-					ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					}
+					else
+					{
+						ti = TipoDatoDB.NULO;
+					}
 					if (Datos.IsPrimitivo(ti))
 					{
 						return TipoDatoDB.SET_PRIMITIVO;
@@ -1094,7 +1190,14 @@ namespace Proyecto1Compi2.com.Analisis
 					return TipoDatoDB.SET_OBJETO;
 				//maps
 				case "map":
-					ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					if (parseTreeNode.ChildNodes.Count != 1)
+					{
+						ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+					}
+					else {
+						ti = TipoDatoDB.NULO;
+					}
+					
 					if (Datos.IsPrimitivo(ti))
 					{
 						return TipoDatoDB.MAP_PRIMITIVO;

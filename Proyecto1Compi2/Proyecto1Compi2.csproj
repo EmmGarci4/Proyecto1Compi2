@@ -75,6 +75,7 @@
     <Compile Include="com.AST\AccesoPar.cs" />
     <Compile Include="com.AST\Actualizar.cs" />
     <Compile Include="com.AST\Asignacion.cs" />
+    <Compile Include="com.AST\AsignacionCasteo.cs" />
     <Compile Include="com.AST\CrearUserType.cs" />
     <Compile Include="com.AST\AlterarUserType.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />

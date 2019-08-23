@@ -27,7 +27,7 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.DATE:
 					if (v.GetType() == typeof(string))
 					{
-						return Regex.IsMatch(v.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
+						return Regex.IsMatch(v.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
 					}
 					return false;
 				case TipoDatoDB.NULO:
@@ -41,7 +41,7 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.TIME:
 					if (v.GetType() == typeof(string))
 					{
-						return Regex.IsMatch(v.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
+						return Regex.IsMatch(v.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
 					}
 					return false;
 				case TipoDatoDB.LISTA_PRIMITIVO:
@@ -85,13 +85,13 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.COUNTER:
 					return v.GetType() == typeof(double) || v.GetType() == typeof(int);
 				case TipoDatoDB.DOUBLE:
-					return v.GetType() == typeof(double);
 				case TipoDatoDB.INT:
-					return v.GetType() == typeof(int);
+					bool b=double.TryParse(v.ToString(),out double va);
+					return b;
 				case TipoDatoDB.DATE:
 					if (v.GetType() == typeof(string))
 					{
-						return Regex.IsMatch(v.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
+						return Regex.IsMatch(v.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
 					}
 					return false;
 				case TipoDatoDB.NULO:
@@ -105,7 +105,7 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.TIME:
 					if (v.GetType() == typeof(string))
 					{
-						return Regex.IsMatch(v.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
+						return Regex.IsMatch(v.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
 					}
 					return false;
 				case TipoDatoDB.LISTA_PRIMITIVO:
@@ -140,7 +140,13 @@ namespace Proyecto1Compi2.com.Util
 				else {
 					return new TipoObjetoDB(TipoDatoDB.INT, "int");
 				}
-			} else if (respuesta.GetType() == typeof(string)) {
+			}
+			if (respuesta.GetType() == typeof(int))
+			{
+				return new TipoObjetoDB(TipoDatoDB.INT, "int");
+			}
+			else if (respuesta.GetType() == typeof(string))
+			{
 				return new TipoObjetoDB(TipoDatoDB.STRING, "string");
 			}
 			else if (respuesta.GetType() == typeof(MyDateTime))
@@ -150,20 +156,23 @@ namespace Proyecto1Compi2.com.Util
 				{
 					return new TipoObjetoDB(TipoDatoDB.TIME, "time");
 				}
-				else {
+				else
+				{
 					return new TipoObjetoDB(TipoDatoDB.DATE, "hour");
 				}
-			}else if (respuesta.GetType() == typeof(CollectionListCql))
+			}
+			else if (respuesta.GetType() == typeof(CollectionListCql))
 			{
 				CollectionListCql list = (CollectionListCql)respuesta;
 				if (IsPrimitivo(GetTipoDatoDB(list.TipoDato.Tipo)))
 				{
-					if (list.IsLista) return new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<"+list.TipoDato.ToString()+">");
-					return new TipoObjetoDB(TipoDatoDB.SET_PRIMITIVO, "set<"+list.TipoDato.ToString()+">");
+					if (list.IsLista) return new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<" + list.TipoDato.ToString() + ">");
+					return new TipoObjetoDB(TipoDatoDB.SET_PRIMITIVO, "set<" + list.TipoDato.ToString() + ">");
 				}
-				else {
-					if (list.IsLista) return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, "list<"+list.TipoDato.ToString()+">");
-					return new TipoObjetoDB(TipoDatoDB.SET_OBJETO, "set<"+list.TipoDato.ToString()+">");
+				else
+				{
+					if (list.IsLista) return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, "list<" + list.TipoDato.ToString() + ">");
+					return new TipoObjetoDB(TipoDatoDB.SET_OBJETO, "set<" + list.TipoDato.ToString() + ">");
 				}
 			}
 			else if (respuesta.GetType() == typeof(CollectionMapCql))
@@ -171,11 +180,12 @@ namespace Proyecto1Compi2.com.Util
 				CollectionMapCql list = (CollectionMapCql)respuesta;
 				if (IsPrimitivo(GetTipoDatoDB(list.TipoValor.Tipo)))
 				{
-					return new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, "map<"+list.TipoLlave.ToString()+","+list.TipoValor.ToString()+">");
+					return new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, "map<" + list.TipoLlave.ToString() + "," + list.TipoValor.ToString() + ">");
 
 				}
-				else {
-					return new TipoObjetoDB(TipoDatoDB.MAP_OBJETO, "map<"+list.TipoLlave.ToString()+","+list.TipoValor.ToString()+">");
+				else
+				{
+					return new TipoObjetoDB(TipoDatoDB.MAP_OBJETO, "map<" + list.TipoLlave.ToString() + "," + list.TipoValor.ToString() + ">");
 
 				}
 			}
@@ -432,6 +442,20 @@ namespace Proyecto1Compi2.com.Util
 					return false;
 			}
 			return false;
+		}
+
+		public static object CasteoImplicito(TipoDatoDB tipo,object res) {
+			if (tipo == TipoDatoDB.INT) {
+				if (double.TryParse(res.ToString(), out double d2))
+				{
+					return (int)d2;
+				}
+			} else if (tipo==TipoDatoDB.DOUBLE) {
+				if (double.TryParse(res.ToString(),out double d2)) {
+					return d2;
+				}
+			}
+			return res;
 		}
 	}
 }

@@ -135,7 +135,7 @@ namespace Proyecto1Compi2.com.Util
 				}
 				else
 				{
-					if (Regex.IsMatch(ob.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'") || Regex.IsMatch(ob.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+					if (Regex.IsMatch(ob.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'") || Regex.IsMatch(ob.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 					{
 						Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 						return false;
@@ -151,7 +151,7 @@ namespace Proyecto1Compi2.com.Util
 			{
 				if (ob.GetType() == typeof(string))
 				{
-					if (!Regex.IsMatch(ob.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
+					if (!Regex.IsMatch(ob.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
 					{
 						Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 						return false;
@@ -167,7 +167,7 @@ namespace Proyecto1Compi2.com.Util
 			{
 				if (ob.GetType() == typeof(string))
 				{
-					if (!Regex.IsMatch(ob.ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+					if (!Regex.IsMatch(ob.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 					{
 						Console.WriteLine("ERROR LA LISTA NO ES HOMOGENEA");
 						return false;
