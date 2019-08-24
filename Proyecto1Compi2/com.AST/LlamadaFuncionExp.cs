@@ -5,68 +5,51 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
 	class LlamadaFuncionExp : Expresion
 	{
-		string nombre;
-		List<Expresion> parametros;
-		private bool ejecutado = false;
-		private object resultado;
+		LlamadaFuncion llamada;
+		private bool ejecutado;
+		private TipoOperacion tipoRetorno;
+		Sesion sesion; 
 
 		public LlamadaFuncionExp(string nombre, List<Expresion> parametros,int linea, int columna) : base(linea, columna)
 		{
-			this.nombre = nombre;
-			this.parametros = parametros;
+			llamada = new LlamadaFuncion(nombre, parametros, linea, columna);
 		}
 
-		public string Nombre { get => nombre; set => nombre = value; }
-		internal List<Expresion> Parametros { get => parametros; set => parametros = value; }
+		internal Sesion Sesion { get => sesion; set => sesion = value; }
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)
 		{
-			String llave = GetLlave(ts);
-			if (Analizador.ExisteFuncion(llave))
+			if (ejecutado)
 			{
-				Funcion funcion = Analizador.BuscarFuncion(llave);
-				return Datos.GetTipoDatoDB(funcion.TipoRetorno.Tipo);
+				return tipoRetorno;
 			}
 			return TipoOperacion.Nulo;
 		}
 
 		public override object GetValor(TablaSimbolos ts)
 		{
-			String llave = GetLlave(ts);
-			if (Analizador.ExisteFuncion(llave))
+			object res = llamada.Ejecutar(sesion, ts);
+			ejecutado = true;
+			if (res != null)
 			{
-				Funcion funcion = Analizador.BuscarFuncion(llave);
-				return 1;
+				this.tipoRetorno = Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(res).Tipo);
 			}
 			else {
-				
-				return new ThrowError(Util.TipoThrow.Exception,
-					"La función '"+llave+"' no existe",
-					Linea, Columna);
+				this.tipoRetorno = TipoOperacion.Nulo;
 			}
+				return res;
 		}
 
 		private string GetLlave(TablaSimbolos ts)
 		{
-			StringBuilder llave = new StringBuilder();
-			llave.Append(Nombre + "(");
-			int contador = 0;
-			foreach (Expresion ex in parametros)
-			{
-				llave.Append(ex.GetTipo(ts).ToString().ToLower());
-				if (contador < parametros.Count - 1)
-				{
-					llave.Append(",");
-				}
-			}
-			llave.Append(")");
-			return llave.ToString();
+			return llamada.getLlave(ts);
 		}
 	}
 }

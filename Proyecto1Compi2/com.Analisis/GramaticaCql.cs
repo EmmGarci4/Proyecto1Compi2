@@ -140,6 +140,7 @@ namespace com.Analisis
 			var pr_try = ToTerm("TRY");
 			var pr_catch = ToTerm("CATCH");
 			var pr_throw = ToTerm("THROW");
+			var pr_void = ToTerm("void");
 			#endregion
 		
 			#region NoTerm
@@ -587,7 +588,8 @@ namespace com.Analisis
 
 			PARAMETRO.Rule = TIPODATO + id;
 
-			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ llave1 + BLOQUESENTENCIAS + llave2;
+			CREAR_FUNCION.Rule = TIPODATO + nombre + par1 + LISTAPARAMETROS + par2+ llave1 + BLOQUESENTENCIAS + llave2
+				|pr_void + nombre + par1 + LISTAPARAMETROS + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 			RETORNO.Rule = pr_return+LISTAEXPRESIONES+puntoycoma;
 
@@ -639,7 +641,7 @@ namespace com.Analisis
 				pr_time.ToString(), pr_null.ToString(), pr_counter.ToString(), pr_map.ToString(), pr_set.ToString(), pr_list.ToString(), pr_type.ToString(),
 				pr_not.ToString(), pr_new.ToString(), pr_llave.ToString(), pr_primaria.ToString(), pr_truncar.ToString(), pr_exists.ToString(), pr_catch.ToString(),
 				pr_min.ToString(), pr_max.ToString(), pr_sum.ToString(), pr_avg.ToString(), pr_in.ToString(), pr_do.ToString(), pr_continue.ToString(), pr_cursor.ToString(),
-				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString(),pr_eliminar.ToString());
+				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString(),pr_eliminar.ToString(),pr_void.ToString());
 			//NODOS A OMITIR
 			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA,
 				SENTENCIABLOQUE,SENTENCIAFCL);
@@ -648,7 +650,7 @@ namespace com.Analisis
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
 				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_in,pr_null,
-				pr_from,pr_limit,pr_begin,pr_batch,pr_apply,pr_log);		
+				pr_from,pr_limit,pr_begin,pr_batch,pr_apply,pr_log,pr_void);		
 			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);

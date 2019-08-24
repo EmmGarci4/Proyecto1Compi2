@@ -10,17 +10,27 @@ namespace Proyecto1Compi2.com.AST
 {
 	class Return : Sentencia
 	{
-		Expresion valor;
+		List<Expresion> valor;
 
-		protected Return(Expresion valor, int linea, int columna) : base(linea, columna)
+		public Return(List<Expresion> valor, int linea, int columna) : base(linea, columna)
 		{
 			this.valor = valor;
 		}
 
 		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
-			Console.WriteLine("Retornando...");
-			return null;
+			List<object> valores = new List<object>();
+			object respuesta;
+			foreach (Expresion ex in valor) {
+				respuesta = ex.GetValor(tb);
+				if (respuesta != null) {
+					if (respuesta.GetType()==typeof(ThrowError)) {
+						return respuesta;
+					}
+					valores.Add(respuesta);
+				} 
+			}
+			return valores;
 		}
 	}
 }

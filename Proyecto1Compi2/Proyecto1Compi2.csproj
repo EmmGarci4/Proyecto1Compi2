@@ -115,6 +115,7 @@
     <Compile Include="com.AST\OperacionAsignacion.cs" />
     <Compile Include="com.AST\OrderBy.cs" />
     <Compile Include="com.AST\OtorgarPermiso.cs" />
+    <Compile Include="com.AST\Parametro.cs" />
     <Compile Include="com.AST\Return.cs" />
     <Compile Include="com.AST\Rollback.cs" />
     <Compile Include="com.AST\Seleccionar.cs" />

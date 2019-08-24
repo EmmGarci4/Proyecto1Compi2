@@ -48,7 +48,6 @@ namespace com.Analisis
 			return null;
 		}
 
-
 		internal static void ElminarPermisoDeUsuario(string nombre)
 		{
 			foreach (Usuario us in Usuariosdb) {
@@ -57,7 +56,6 @@ namespace com.Analisis
 				}
 			}
 		}
-
 
 		internal static Usuario BuscarUsuario(string usuario)
 		{
@@ -81,13 +79,13 @@ namespace com.Analisis
 			}
 		}
 		
-
 		public static bool AnalizarCql(String texto){
 			GramaticaCql gramatica = new GramaticaCql();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
 			ParseTree arbol = parser.Parse(texto);
 			Analizador.ErroresCQL.Clear();
+			Analizador.funciones.Clear();
 			Analizador.raiz = arbol.Root;
 			if (raiz!=null) {
 				//PRUEBAS DE EXPRESIONES
@@ -157,6 +155,11 @@ namespace com.Analisis
 			}
 
 			return Analizador.raiz != null;
+		}
+
+		internal static void AddFuncion(Funcion n)
+		{
+			funciones.Add(n);
 		}
 
 		public static bool AnalizarChison(String texto)
@@ -237,6 +240,7 @@ namespace com.Analisis
 			ErroresChison.Clear();
 			Usuariosdb.Clear();
 			BasesDeDatos.Clear();
+			funciones.Clear();
 			ast = null;
 			raiz = null;
 			Console.WriteLine("****************************************************************************");

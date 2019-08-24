@@ -17,7 +17,32 @@ namespace Proyecto1Compi2.com.Analisis
 
 		public static List<Sentencia> GetAST(ParseTreeNode raiz)
 		{
+			GuardarFunciones(raiz.ChildNodes.ElementAt(0));
 			return GetSentencias(raiz.ChildNodes.ElementAt(0));
+		}
+
+		public static void GuardarFunciones(ParseTreeNode nodo)
+		{
+			foreach (ParseTreeNode sentencia in nodo.ChildNodes) {
+				if (sentencia.Term.Name.Equals("CREAR_FUNCION"))
+				{
+					Sentencia n = GetFuncion(sentencia);
+					if (n != null)
+					{
+						String llave = ((Funcion)n).GetLlave();
+						if (!Analizador.ExisteFuncion(llave))
+						{
+							Analizador.AddFuncion((Funcion)n);
+						}
+						else
+						{
+							Analizador.ErroresCQL.Add(new Error(
+								new ThrowError(TipoThrow.FunctionAlreadyExists, 
+								"La función '" + llave + "' ya existe", n.Linea, n.Columna)));
+						}
+					}
+				}
+			}
 		}
 
 		//public static Expresion GetAST(ParseTreeNode raiz)
@@ -162,9 +187,63 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetFor(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "LLAMADAFUNCION":
+						n= GetLlamadaFuncionSent(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "RETORNO":
+						n = GetRetrun(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetRetrun(ParseTreeNode sentencia)
+		{
+			return new Return(GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)),sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+		}
+
+		private static Sentencia GetLlamadaFuncionSent(ParseTreeNode parseTreeNode)
+		{
+			return new LlamadaFuncion(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
+				parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column);
+		}
+
+		private static Sentencia GetFuncion(ParseTreeNode sentencia)
+		{
+			if (sentencia.ChildNodes.Count == 4)
+			{
+				//funcion con tipo
+				TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(0));
+				string nombreTipo = GetNombreTipo(tipo,sentencia.ChildNodes.ElementAt(0),true);
+				string nombreFuncion = sentencia.ChildNodes.ElementAt(1).Token.ValueString;
+				List<Parametro> parametros = GetParametros(sentencia.ChildNodes.ElementAt(2));
+				List<Sentencia> sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(3));
+					return new Funcion(nombreFuncion, parametros, new TipoObjetoDB(tipo, nombreTipo), sentencias,
+						sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			
+			}
+			else {
+				//funcion void
+				string nombreFuncion = sentencia.ChildNodes.ElementAt(0).Token.ValueString;
+					List < Parametro > parametros = GetParametros(sentencia.ChildNodes.ElementAt(1));
+				List<Sentencia> sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(2));
+					return new Funcion(nombreFuncion, parametros, null, sentencias,
+						sentencia.Span.Location.Line, sentencia.Span.Location.Column);				
+			}
+		}
+
+		private static List<Parametro> GetParametros(ParseTreeNode parseTreeNode)
+		{
+			List<Parametro> param = new List<Parametro>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(0));
+				string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(0), true);
+					param.Add(new Parametro(nodo.ChildNodes.ElementAt(1).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo)));
+			}
+			return param;
 		}
 
 		private static Sentencia GetFor(ParseTreeNode sentencia)
@@ -304,7 +383,14 @@ namespace Proyecto1Compi2.com.Analisis
 
 				}
 			}
-			List<string> variables = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
+			List<string> variables;
+			if (sentencia.ChildNodes.ElementAt(1).Term.Name.Equals("LISTAVARIABLES")) {
+				variables = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
+			}
+			else {
+				variables = new List<string>();
+				variables.Add(sentencia.ChildNodes.ElementAt(1).Token.ValueString);
+			}
 				Expresion exp = null;
 				if (sentencia.ChildNodes.Count == 3)
 				{

@@ -1,4 +1,5 @@
-﻿using com.Analisis.Util;
+﻿using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 using System;
@@ -9,34 +10,102 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class Funcion:Sentencia
+	class Funcion : Sentencia
 	{
 		string nombre;
-		Dictionary<string, TipoObjetoDB> parametros;
+		List<Parametro> parametros;
+		List<object> valoresParametros;
 		TipoObjetoDB tipoRetorno;
+		List<Sentencia> sentencias;
 
 		public string Nombre { get => nombre; set => nombre = value; }
-		public Dictionary<string, TipoObjetoDB> Parametros { get => parametros; set => parametros = value; }
+		public List<Parametro> Parametros { get => parametros; set => parametros = value; }
 		public TipoObjetoDB TipoRetorno { get => tipoRetorno; set => tipoRetorno = value; }
 
-		public Funcion(string nombre, Dictionary<string, TipoObjetoDB> parametros, TipoObjetoDB retorno, int linea,int columna):base(linea,columna)
+		public Funcion(string nombre, List<Parametro> parametros, TipoObjetoDB retorno, List<Sentencia> sent, int linea, int columna) : base(linea, columna)
 		{
 			this.nombre = nombre;
 			this.parametros = parametros;
 			this.tipoRetorno = retorno;
+			this.sentencias = sent;
 		}
 
-		public Funcion(string nombre, TipoObjetoDB retorno, int linea, int columna) : base(linea, columna)
+		internal void pasarParametros(List<object> parametros)
 		{
-			this.nombre = nombre;
-			this.tipoRetorno = retorno;
-			this.parametros = new Dictionary<string, TipoObjetoDB>();
+			valoresParametros = parametros;
 		}
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(Sesion sesion, TablaSimbolos t)
 		{
+			TablaSimbolos local = new TablaSimbolos(t);
+			int contador = 0;
+			object RETORNO = null;
+			//AGREGANDO PARAMETROS
+			foreach (Parametro param in parametros)
+			{
+				if (!local.ExisteSimboloEnAmbito(param.Nombre))
+				{
+					local.AgregarSimbolo(new Simbolo(param.Nombre, valoresParametros.ElementAt(contador), param.Tipo, Linea, Columna));
+				}
+				else
+				{
+					//ERROR
+					return new ThrowError(TipoThrow.Exception,
+						"La variable '" + param.Nombre + "' ya existe",
+						Linea, Columna);
+				}
+				contador++;
+			}
+			//EJECUTANDO SENTENCIAS
+			object respuesta;
+			foreach (Sentencia sentencia in sentencias)
+			{
+				respuesta = sentencia.Ejecutar(sesion, local);
+				if (respuesta != null)
+				{
+					if (respuesta.GetType() == typeof(ThrowError))
+					{
+						Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
+					}
+					else if (respuesta.GetType() == typeof(List<object>))
+					{
+						List<object> valoresRetornados = (List<object>)respuesta;
+						if (valoresRetornados.Count == 1)
+						{
+							RETORNO = valoresRetornados.ElementAt(0);
+						}
+						else
+						{
+							return new ThrowError(TipoThrow.Exception,
+								"La cantidad de valores retornados es incorrecta, solo se puede retornar un valor",
+								Linea, Columna);
+						}
 
-			return 1;
+					}
+				}
+			}
+
+			//EVALUAR RETORNO
+			if (RETORNO != null)
+			{
+				TipoObjetoDB ti = Datos.GetTipoObjetoDB(RETORNO);
+				if (Datos.IsTipoCompatibleParaAsignar(this.tipoRetorno, RETORNO))
+				{
+					return Datos.CasteoImplicito(this.tipoRetorno.Tipo, RETORNO);
+				}
+				else
+				{
+					return new ThrowError(TipoThrow.Exception,
+							"El retorno de la función debe ser de tipo '" + this.tipoRetorno.ToString() + "'",
+							Linea, Columna);
+				}
+			}
+			if (this.tipoRetorno!=null) {
+				return new ThrowError(TipoThrow.Exception,
+							"La función debe retornar algún valor tipo '" + this.tipoRetorno.ToString() + "'",
+							Linea, Columna);
+			}
+			return null;
 		}
 
 		public string GetLlave()
@@ -44,9 +113,9 @@ namespace Proyecto1Compi2.com.AST
 			StringBuilder llave = new StringBuilder();
 			llave.Append(Nombre + "(");
 			int contador = 0;
-			foreach (KeyValuePair<string,TipoObjetoDB> par in this.parametros)
+			foreach (Parametro par in this.parametros)
 			{
-				llave.Append(par.Value.Tipo.ToString());
+				llave.Append(par.Tipo.ToString());
 				if (contador < parametros.Count - 1)
 				{
 					llave.Append(",");
@@ -57,9 +126,17 @@ namespace Proyecto1Compi2.com.AST
 			return llave.ToString();
 		}
 
-		public static object LeerRespuesta(object res) {
-			if (res!=null) {
-				if (res.GetType()==typeof(ThrowError)) {
+		internal void LimpiarParametros()
+		{
+			valoresParametros = null;
+		}
+
+		public static object LeerRespuesta(object res)
+		{
+			if (res != null)
+			{
+				if (res.GetType() == typeof(ThrowError))
+				{
 					return res;
 				}
 			}

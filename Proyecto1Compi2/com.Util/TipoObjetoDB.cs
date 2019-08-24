@@ -34,6 +34,15 @@ namespace Proyecto1Compi2.com.Util
 			}
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (obj.GetType() == typeof(TipoObjetoDB)) {
+				TipoObjetoDB t = (TipoObjetoDB)obj;
+				return (t.Nombre.Equals(this.nombre) && t.tipo == this.tipo) ;
+			}
+			return false;
+		}
+
 		public TipoObjetoDB(TipoDatoDB tipo, string nombre)
 		{
 			this.tipo = tipo;
