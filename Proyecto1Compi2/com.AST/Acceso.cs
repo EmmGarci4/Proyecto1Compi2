@@ -13,24 +13,27 @@ namespace Proyecto1Compi2.com.AST
 	class Acceso : Expresion
 	{
 
-		Queue<AccesoPar> objetos;
+		List<AccesoPar> accesos;
 		Sesion sesion;
+		private Queue<AccesoPar> objetos;
 
-		public Acceso(Queue<AccesoPar> objetos, int linea, int columna) : base(linea, columna)
+		public Acceso(List<AccesoPar> objetos, int linea, int columna) : base(linea, columna)
 		{
-			this.objetos = objetos;
+			this.accesos = objetos;
 		}
 
 		public Acceso(int linea, int columna) : base(linea, columna)
 		{
-			this.objetos = new Queue<AccesoPar>();
+			this.accesos = new List<AccesoPar>();
 		}
 
-		public Queue<AccesoPar> Objetos { get => objetos; set => objetos = value; }
+		public List<AccesoPar> Objetos { get => accesos; set => accesos = value; }
+
 		public Sesion Sesion { get => sesion; set => sesion = value; }
 
 		public override object GetValor(TablaSimbolos ts)
 		{
+			LlenarCola();
 			if (objetos.Count>0) {
 				AccesoPar valor = objetos.Dequeue();
 				switch (valor.Tipo)
@@ -84,6 +87,14 @@ namespace Proyecto1Compi2.com.AST
 				}
 			}
 			return null;
+		}
+
+		private void LlenarCola()
+		{
+			objetos = new Queue<AccesoPar>();
+			foreach (AccesoPar acceso in this.accesos) {
+				objetos.Enqueue(acceso);
+			}
 		}
 
 		private object RetornarValorSobreVariable(Simbolo sim, TablaSimbolos ts)
@@ -1036,6 +1047,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal object Asignar(object nuevoValor, TipoObjetoDB tipoObjetoDB, TablaSimbolos ts, Sesion sesion)
 		{
+			LlenarCola();
 			object respuesta = GetSimbolosApilados(ts);
 			Stack<Simbolo> simbolos;
 			if (respuesta.GetType() == typeof(ThrowError))
@@ -2168,7 +2180,6 @@ namespace Proyecto1Compi2.com.AST
 			}
 			return TipoOperacion.Nulo;
 		}
-
 
 	}
 

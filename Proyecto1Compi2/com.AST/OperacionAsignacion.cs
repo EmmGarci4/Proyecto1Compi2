@@ -29,8 +29,7 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
 			//VALOR DE ACCESO
-			Acceso ParaObtenerValor = acceso;
-			object respuesta=ParaObtenerValor.GetValor(tb);
+			object respuesta=acceso.GetValor(tb);
 			if (respuesta!=null) {
 				if (respuesta.GetType()==typeof(ThrowError)) {
 					return respuesta;

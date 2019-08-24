@@ -4,113 +4,68 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
 	class ModificadorExp : Expresion
 	{
-		string variable;
 		bool sumar;
 		Acceso acceso;
-
-		public ModificadorExp(string variable, bool sumar, int linea, int columna) : base(linea, columna)
-		{
-			this.variable = variable;
-			this.sumar = sumar;
-			this.acceso = null;
-		}
+		Sesion sesion;
+		private TipoOperacion tipo;
 
 		public ModificadorExp(Acceso variable, bool sumar, int linea, int columna) : base(linea, columna)
 		{
 			this.acceso = variable;
 			this.sumar = sumar;
-			this.variable = null;
 		}
 
-		public string Variable { get => variable; set => variable = value; }
 		public bool Sumar { get => sumar; set => sumar = value; }
 		internal Acceso Acceso { get => acceso; set => acceso = value; }
+		internal Sesion Sesion { get => sesion; set => sesion = value; }
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)
 		{
-			if (this.variable != null)
-			{
-				//buscar variable en ts
-				if (ts.ExisteSimbolo(this.variable))
-				{
-					Simbolo s = ts.GetSimbolo(this.variable);
-					return Datos.GetTipoDatoDB(s.TipoDato.Tipo);
-				}
-			}
-			else
-			{
-				//buscar acceso
-			}
-			return TipoOperacion.Nulo;
+			return this.tipo;
 		}
 
-		public override object GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos tb)
 		{
-			if (this.variable != null)
+			//VALOR DE ACCESO
+			object respuesta1 = acceso.GetValor(tb);
+			if (respuesta1 != null)
 			{
-				//buscar variable en ts
-				if (ts.ExisteSimbolo(this.variable))
+				if (respuesta1.GetType() == typeof(ThrowError))
 				{
-					Simbolo s = ts.GetSimbolo(this.variable);
-					object valor = s.Valor;
-					if (valor != null)
-					{
-						if (s.TipoDato.Tipo == Util.TipoDatoDB.INT)
-						{
-
-							if (sumar)
-							{
-								s.Valor = (int)valor + 1;
-							}
-							else {
-								s.Valor = (int)valor - 1;
-							}
-							return valor;
-						}
-						else if (s.TipoDato.Tipo == Util.TipoDatoDB.DOUBLE)
-						{
-							if (sumar)
-							{
-								s.Valor = (double)valor + 1;
-							}
-							else {
-								s.Valor = (double)valor - 1;
-							}
-							return valor;
-						}
-						else
-						{
-							return new ThrowError(Util.TipoThrow.ArithmeticException,
-											"la variable '" + this.variable + "' no se puede aumentar en valor",
-											Linea, Columna);
-						}
-
-					}
-					else {
-						return new ThrowError(Util.TipoThrow.ArithmeticException,
-											"la variable '" + this.variable + "' no se ha inicializado",
-											Linea, Columna);
-					}
-
+					return respuesta1;
 				}
-				else
-				{
-					return new ThrowError(Util.TipoThrow.ArithmeticException,
-										"la variable '" + this.variable + "' no existe",
-										Linea, Columna);
-				}
+			}
+			TipoOperacion tipo = Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(respuesta1).Tipo);
+			Operacion op = null;
+			if (sumar)
+			{
+				op = new Operacion(new Operacion(respuesta1, tipo, Linea, Columna), acceso, TipoOperacion.Suma, Linea, Columna);
 			}
 			else
 			{
-				//buscar acceso
+				op = new Operacion(new Operacion(respuesta1, tipo, Linea, Columna), acceso, TipoOperacion.Resta, Linea, Columna);
 			}
-			return null;
+			if (op != null)
+			{
+				object respuesta = op.GetValor(tb);
+				if (respuesta != null)
+				{
+					if (respuesta.GetType() == typeof(ThrowError))
+					{
+						return respuesta;
+					}
+				}
+				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb, sesion);
+			}
+			return respuesta1;
 		}
+
 	}
 }
