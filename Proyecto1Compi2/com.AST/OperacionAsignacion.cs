@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -27,8 +28,41 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
 		{
-			object respuesta=acceso.GetValor(tb);
-
+			//VALOR DE ACCESO
+			Acceso ParaObtenerValor = acceso;
+			object respuesta=ParaObtenerValor.GetValor(tb);
+			if (respuesta!=null) {
+				if (respuesta.GetType()==typeof(ThrowError)) {
+					return respuesta;
+				}
+			}
+			TipoOperacion tipo = Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(respuesta).Tipo);
+			Operacion op = null;
+			switch (operacion) {
+				case TipoOperacion.Suma:
+					op =new Operacion(new Operacion(respuesta, tipo, Linea, Columna), exp, TipoOperacion.Suma, Linea, Columna);
+					break;
+				case TipoOperacion.Resta:
+					op = new Operacion(new Operacion(respuesta, tipo, Linea, Columna), exp, TipoOperacion.Resta, Linea, Columna);
+					break;
+				case TipoOperacion.Multiplicacion:
+					op = new Operacion(new Operacion(respuesta, tipo, Linea, Columna), exp, TipoOperacion.Multiplicacion, Linea, Columna);
+					break;
+				case TipoOperacion.Division:
+					op = new Operacion(new Operacion(respuesta, tipo, Linea, Columna), exp, TipoOperacion.Division, Linea, Columna);
+					break;
+			}
+			if (op!=null) {
+				respuesta = op.GetValor(tb);
+				if (respuesta != null)
+				{
+					if (respuesta.GetType() == typeof(ThrowError))
+					{
+						return respuesta;
+					}
+				}
+				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb, sesion);
+			}
 			return null;
 		}
 	}
