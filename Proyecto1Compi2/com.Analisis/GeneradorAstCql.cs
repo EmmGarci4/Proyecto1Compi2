@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.Analisis
@@ -44,11 +45,6 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 		}
-
-		//public static Expresion GetAST(ParseTreeNode raiz)
-		//{
-		//	return GetExpresion(raiz.ChildNodes.ElementAt(0));
-		//}
 
 		private static List<Sentencia> GetSentencias(ParseTreeNode parseTreeNode)
 		{
@@ -200,6 +196,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return sentencias;
 		}
 
+		#region Lenguaje_FCL
 		private static Sentencia GetRetrun(ParseTreeNode sentencia)
 		{
 			return new Return(GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)),sentencia.Span.Location.Line,sentencia.Span.Location.Column);
@@ -510,6 +507,7 @@ namespace Proyecto1Compi2.com.Analisis
 			List<Sentencia> sentencias = GetSentencias(nodo.ChildNodes.ElementAt(1));
 			return new ElseIf(condicion, sentencias, nodo.Span.Location.Line, nodo.Span.Location.Column);
 		}
+		#endregion
 
 		#region Sentencias DB
 		private static Sentencia GetCrearUserType(ParseTreeNode sentencia)
@@ -1055,7 +1053,9 @@ namespace Proyecto1Compi2.com.Analisis
 				case 1://valor o condicion
 					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("VALOR"))
 					{
-						return GetValor(raiz.ChildNodes.ElementAt(0));
+						object ob = GetValor(raiz.ChildNodes.ElementAt(0));
+						if (ob != null)
+							return (Expresion)ob;
 					}
 					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("CONDICION"))
 					{
@@ -1138,9 +1138,34 @@ namespace Proyecto1Compi2.com.Analisis
 						case "nombre":
 							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "date":
-							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							MyDateTime di;
+								if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("'", string.Empty), out DateTime dt)&&
+								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
+								{
+									di= new MyDateTime(TipoDatoDB.DATE, dt);
+								}
+								else
+								{
+									Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+												"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
+											   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+								return null;
+								}
+							return new Operacion(di, TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "time":
-							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Hora, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("'", string.Empty), out DateTime dt1)&&
+								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToString(),"'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+							{
+								di = new MyDateTime(TipoDatoDB.TIME, dt1);
+							}
+							else
+							{
+								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+											"La hora es incorrecta, el formato debe ser HH:MM:SS",
+										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+								return null;
+							}
+							return new Operacion(di, TipoOperacion.Hora, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "EXPRESION":
 							return GetExpresion(raiz.ChildNodes.ElementAt(0));
 						case "ACCESO":
@@ -1155,8 +1180,9 @@ namespace Proyecto1Compi2.com.Analisis
 						case "MODIFICADORES":
 							return GetmodificadorExp(raiz.ChildNodes.ElementAt(0));
 						case "FUNCIONAGREGACION":
-
 							break;
+						case "OBJETO":
+							return GetObjeto(raiz.ChildNodes.ElementAt(0));
 
 					}
 					break;
@@ -1206,6 +1232,12 @@ namespace Proyecto1Compi2.com.Analisis
 					return aces;
 			}
 			return null;
+		}
+
+		private static Expresion GetObjeto(ParseTreeNode raiz)
+		{
+			return new InstanciaObjeto(raiz.ChildNodes.ElementAt(2).Token.ValueString, GetListaExpresiones(raiz.ChildNodes.ElementAt(0)),
+				raiz.ChildNodes.ElementAt(2).Token.Location.Line, raiz.ChildNodes.ElementAt(2).Token.Location.Column);
 		}
 
 		public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode, bool b)

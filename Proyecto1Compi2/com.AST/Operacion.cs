@@ -387,28 +387,6 @@ namespace Proyecto1Compi2.com.AST
 											"la variable '" + this.Valor + "' no existe",
 											Linea, Columna);
 					}
-				} else if (Regex.IsMatch(this.Valor.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'")) {
-					//fecha
-					if (DateTime.TryParse(this.Valor.ToString().Replace("'", string.Empty), out DateTime dt)) {
-						return new MyDateTime(TipoDatoDB.DATE, dt);
-					}
-					else {
-						return new ThrowError(TipoThrow.ArithmeticException,
-									"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
-								   Linea, Columna);
-					}
-
-				} else if (Regex.IsMatch(this.Valor.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'")) {
-					//hora 
-					if (DateTime.TryParse(this.Valor.ToString().Replace("'", String.Empty), out DateTime d2)) {
-						return new MyDateTime(TipoDatoDB.TIME, d2);
-					}
-					else
-					{
-						return new ThrowError(TipoThrow.ArithmeticException,
-							"La hora es incorrecta, el formato debe ser HH:MM:SS",
-						   Linea, Columna);
-					}
 				}
 				return this.Valor;
 			}
@@ -434,6 +412,7 @@ namespace Proyecto1Compi2.com.AST
 		Objeto,
 		Nombre,
 		NuevaInstancia,
+		InstanciaObjeto,
 		//operaciones
 		Suma,
 		Resta,

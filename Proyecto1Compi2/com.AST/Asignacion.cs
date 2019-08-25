@@ -54,7 +54,7 @@ namespace Proyecto1Compi2.com.AST
 				{
 					if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 					{
-						object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion);
+						object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion,Linea,Columna);
 						if (instanciaObjeto!=null) {
 							//izquierda.Asignar(instanciaObjeto, tipoInstancia, ts, sesion);
 						}
@@ -77,12 +77,32 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
-		private object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion)
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion,int linea,int columna)
 		{
+			//VALIDANDO BASEDATOS
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				if (db.ExisteUserType(tipoInstancia.ToString()))
+				{
+					UserType ut = db.BuscarUserType(tipoInstancia.ToString());
+					Objeto nuevaInstancia = new Objeto(ut);
+					foreach (KeyValuePair<string,TipoObjetoDB> atributo in ut.Atributos) {
+						nuevaInstancia.Atributos.Add(atributo.Key, Declaracion.GetValorPredeterminado(atributo.Value.Tipo));
+					}
+					return nuevaInstancia;
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+					linea, columna);
+			}
 			return null;
 		}
 
-		private object GetInstanciaLista(TipoObjetoDB tipoInstancia)
+		public static object GetInstanciaLista(TipoObjetoDB tipoInstancia)
 		{
 
 			switch (tipoInstancia.Tipo) {

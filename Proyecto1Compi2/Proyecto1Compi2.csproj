@@ -104,6 +104,7 @@
     <Compile Include="com.AST\FuncionAgregacion.cs" />
     <Compile Include="com.AST\If.cs" />
     <Compile Include="com.AST\Insertar.cs" />
+    <Compile Include="com.AST\InstanciaObjeto.cs" />
     <Compile Include="com.AST\Limit.cs" />
     <Compile Include="com.AST\LlamadaFuncion.cs" />
     <Compile Include="com.AST\LlamadaFuncionExp.cs" />

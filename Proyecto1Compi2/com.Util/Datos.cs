@@ -29,6 +29,10 @@ namespace Proyecto1Compi2.com.Util
 					{
 						return Regex.IsMatch(v.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
 					}
+					if (v.GetType() == typeof(MyDateTime))
+					{
+						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.DATE);
+					}
 					return false;
 				case TipoDatoDB.NULO:
 					if (v.GetType() == typeof(string))
@@ -42,6 +46,9 @@ namespace Proyecto1Compi2.com.Util
 					if (v.GetType() == typeof(string))
 					{
 						return Regex.IsMatch(v.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
+					}else if (v.GetType() == typeof(MyDateTime))
+					{
+						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.TIME);
 					}
 					return false;
 				case TipoDatoDB.LISTA_PRIMITIVO:
@@ -89,9 +96,9 @@ namespace Proyecto1Compi2.com.Util
 					bool b=double.TryParse(v.ToString(),out double va);
 					return b;
 				case TipoDatoDB.DATE:
-					if (v.GetType() == typeof(string))
+					if (v.GetType() == typeof(MyDateTime))
 					{
-						return Regex.IsMatch(v.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
+						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.DATE);
 					}
 					return false;
 				case TipoDatoDB.NULO:
@@ -103,9 +110,9 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.STRING:
 					return (v.GetType() == typeof(string));
 				case TipoDatoDB.TIME:
-					if (v.GetType() == typeof(string))
+					if (v.GetType() == typeof(MyDateTime))
 					{
-						return Regex.IsMatch(v.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
+						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.TIME);
 					}
 					return false;
 				case TipoDatoDB.LISTA_PRIMITIVO:

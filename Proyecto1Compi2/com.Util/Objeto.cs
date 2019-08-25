@@ -20,6 +20,12 @@ namespace Proyecto1Compi2.com.Util
 			this.plantilla = plantilla;
 		}
 
+		public Objeto( UserType plantilla)
+		{
+			this.atributos = new Dictionary<string, object>();
+			this.plantilla = plantilla;
+		}
+
 		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
 		internal UserType Plantilla { get => plantilla; set => plantilla = value; }
 
