@@ -16,15 +16,18 @@ namespace Proyecto1Compi2.com.AST
 		List<AccesoPar> accesos;
 		Sesion sesion;
 		private Queue<AccesoPar> objetos;
+		private TipoOperacion tipo;
 
 		public Acceso(List<AccesoPar> objetos, int linea, int columna) : base(linea, columna)
 		{
 			this.accesos = objetos;
+			this.tipo = TipoOperacion.Nulo;
 		}
 
 		public Acceso(int linea, int columna) : base(linea, columna)
 		{
 			this.accesos = new List<AccesoPar>();
+			this.tipo = TipoOperacion.Nulo;
 		}
 
 		public List<AccesoPar> Objetos { get => accesos; set => accesos = value; }
@@ -34,59 +37,22 @@ namespace Proyecto1Compi2.com.AST
 		public override object GetValor(TablaSimbolos ts)
 		{
 			LlenarCola();
-			if (objetos.Count>0) {
-				AccesoPar valor = objetos.Dequeue();
-				switch (valor.Tipo)
-				{
-					case TipoAcceso.AccesoArreglo:
-						AccesoArreglo acceso = (AccesoArreglo)valor.Value;
-						if (acceso.Nombre.StartsWith("@"))
-						{
-							object respuesta = acceso.GetValor(ts);
-							if (respuesta.GetType() == typeof(ThrowError))
-							{
-								return respuesta;
-							}
-							TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
-							Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
-							return RetornarValorSobreVariable(nuevoSimbolo, ts);
-						}
-						else
-						{
-							//ACCESO A ALGO EN LAS TABLAS 
-							return "ACCESANDO ALGO EN UNA TABLA";
-						}
-					case TipoAcceso.Campo:
-						//tablas Y COLUMNAS
-						return "ACCESANDO ALGO EN UNA TABLA";
-					//enviar sobre campo
-					case TipoAcceso.LlamadaFuncion:
-						//ejecutar llamada de funcion y retornar el valor 
-						break;
-					case TipoAcceso.Variable:
-						if (ts.ExisteSimbolo(valor.Value.ToString()))
-						{
-							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-							if (sim.TipoDato.Tipo!=TipoDatoDB.NULO) {
-								if (sim.Valor.ToString().Equals("null"))
-								{
-									return new ThrowError(Util.TipoThrow.NullPointerException,
-												"la variable '" + sim.Nombre+ "' no se ha inicializado",
-												Linea, Columna);
-								}
-							}
-							object respuesta = RetornarValorSobreVariable(sim, ts);
-							return respuesta;
-						}
-						else
-						{
-							return new ThrowError(Util.TipoThrow.Exception,
-								"La variable '" + valor.Value.ToString() + "' no existe",
-								Linea, Columna);
-						}
-				}
+			object respuesta = GetSimbolosApilados(ts);
+			Stack<Simbolo> simbolos;
+			if (respuesta.GetType() == typeof(ThrowError))
+			{
+				return respuesta;
 			}
-			return null;
+			else
+			{
+				simbolos = (Stack<Simbolo>)respuesta;
+			}
+			if (simbolos.Count>0) {
+				Simbolo s = simbolos.Pop();
+				this.tipo = Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(s.Valor).Tipo);
+				return s.Valor;
+			}
+				return null;
 		}
 
 		private void LlenarCola()
@@ -2139,46 +2105,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)
 		{
-			if (objetos.Count > 0)
-			{
-				AccesoPar valor = objetos.Dequeue();
-				switch (valor.Tipo)
-				{
-					case TipoAcceso.AccesoArreglo:
-						AccesoArreglo acceso = (AccesoArreglo)valor.Value;
-						if (acceso.Nombre.StartsWith("@"))
-						{
-							object respuesta = acceso.GetValor(ts);
-							if (respuesta.GetType() == typeof(ThrowError))
-							{
-								return TipoOperacion.Nulo;
-							}
-							TipoObjetoDB tipoRespuesta = Datos.GetTipoObjetoDB(respuesta);
-							Simbolo nuevoSimbolo = new Simbolo(acceso.ToString(), respuesta, tipoRespuesta, Linea, Columna);
-							object val= RetornarValorSobreVariable(nuevoSimbolo, ts);
-							return Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(val).Tipo);
-						}
-						else
-						{
-							return TipoOperacion.Nombre;
-						}
-					case TipoAcceso.Campo:
-						//tablas Y COLUMNAS
-						return TipoOperacion.Nombre;
-					case TipoAcceso.LlamadaFuncion:
-						//ejecutar llamada de funcion y retornar el valor 
-						break;
-					case TipoAcceso.Variable:
-						if (ts.ExisteSimbolo(valor.Value.ToString()))
-						{
-							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-							object respuesta = RetornarValorSobreVariable(sim, ts);
-							return Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(respuesta).Tipo);
-						}
-						break;
-				}
-			}
-			return TipoOperacion.Nulo;
+			return this.tipo;
 		}
 
 	}

@@ -8,12 +8,12 @@ using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class AccesoArreglo:Expresion
+	class AccesoArreglo : Expresion
 	{
 		Expresion valor;
 		string nombre;
 
-		public AccesoArreglo(Expresion valor, string nombre,int linea,int columna):base(linea,columna)
+		public AccesoArreglo(Expresion valor, string nombre, int linea, int columna) : base(linea, columna)
 		{
 			this.valor = valor;
 			this.nombre = nombre;
@@ -21,7 +21,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override string ToString()
 		{
-			return this.nombre+"[valor]";
+			return this.nombre + "[valor]";
 		}
 
 		public string Nombre { get => nombre; set => nombre = value; }
@@ -50,7 +50,7 @@ namespace Proyecto1Compi2.com.AST
 						CollectionMapCql collection = (CollectionMapCql)sim.Valor;
 						return Datos.GetTipoDatoDB(collection.TipoValor.Tipo);
 					}
-					
+
 				}
 			}
 			return TipoOperacion.Nulo;
@@ -102,18 +102,20 @@ namespace Proyecto1Compi2.com.AST
 						}
 					}
 					//ES UN MAP
-					else if(sim.Valor.GetType() == typeof(CollectionMapCql)){
+					else if (sim.Valor.GetType() == typeof(CollectionMapCql))
+					{
 						//map
 						CollectionMapCql collection = (CollectionMapCql)sim.Valor;
 						if (Datos.Equivale(collection.TipoLlave, indice.ToString(), tipoIndice))
 						{
-								object respuesta = collection.GetItem(indice, Linea, Columna);
-							if (respuesta==null) {
+							object respuesta = collection.GetItem(indice, Linea, Columna);
+							if (respuesta == null)
+							{
 								return new ThrowError(Util.TipoThrow.Exception,
 								"La llave '" + indice.ToString() + "' no existe en el map",
 								Linea, Columna);
 							}
-								return respuesta;
+							return respuesta;
 						}
 						else
 						{
@@ -122,26 +124,29 @@ namespace Proyecto1Compi2.com.AST
 								Linea, Columna);
 						}
 					}
-					else{
+					else
+					{
 						return new ThrowError(Util.TipoThrow.Exception,
 							"'" + nombre + "' no es un arreglo",
 							Linea, Columna);
 					}
 				}
-				else {
+				else
+				{
 					return new ThrowError(Util.TipoThrow.Exception,
-							"'"+nombre+"' no es un arreglo",
+							"'" + nombre + "' no es un arreglo",
 							Linea, Columna);
 				}
 			}
-			else {
+			else
+			{
 				return new ThrowError(Util.TipoThrow.Exception,
 							"El arreglo '" + nombre + "' no existe",
 							Linea, Columna);
 			}
 		}
 
-		internal object SetValor(TablaSimbolos ts,object nuevoValor)
+		internal object SetValor(TablaSimbolos ts, object nuevoValor)
 		{
 			if (ts.ExisteSimbolo(nombre))
 			{
@@ -162,10 +167,12 @@ namespace Proyecto1Compi2.com.AST
 								int posicion = (int)indice;
 								if (posicion >= 0 && posicion < collection.Count)
 								{
-									if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor)) {
-										collection.SetItem(posicion,nuevoValor,Linea,Columna);
+									if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor))
+									{
+										collection.SetItem(posicion, nuevoValor, Linea, Columna);
 									}
-									else {
+									else
+									{
 										return new ThrowError(Util.TipoThrow.IndexOutException,
 										"El valor no se puede asignar porque los tipos no son compatibles",
 										Linea, Columna);
@@ -200,8 +207,9 @@ namespace Proyecto1Compi2.com.AST
 						if (Datos.Equivale(collection.TipoLlave, indice.ToString(), tipoIndice))
 						{
 							object respuesta = null;
-							if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, nuevoValor)){
-								respuesta=collection.SetItem(indice, nuevoValor, Linea, Columna);
+							if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, nuevoValor))
+							{
+								respuesta = collection.SetItem(indice, nuevoValor, Linea, Columna);
 							}
 							else
 							{

@@ -46,11 +46,11 @@ namespace Proyecto1Compi2.com.AST
 			Operacion op = null;
 			if (sumar)
 			{
-				op = new Operacion(new Operacion(respuesta1, tipo, Linea, Columna), acceso, TipoOperacion.Suma, Linea, Columna);
+				op = new Operacion( acceso, new Operacion(1,TipoOperacion.Numero, Linea, Columna), TipoOperacion.Suma, Linea, Columna);
 			}
 			else
 			{
-				op = new Operacion(new Operacion(respuesta1, tipo, Linea, Columna), acceso, TipoOperacion.Resta, Linea, Columna);
+				op = new Operacion(acceso, new Operacion(1, TipoOperacion.Numero, Linea, Columna), TipoOperacion.Resta, Linea, Columna);
 			}
 			if (op != null)
 			{

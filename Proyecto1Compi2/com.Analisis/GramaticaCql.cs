@@ -141,6 +141,7 @@ namespace com.Analisis
 			var pr_catch = ToTerm("CATCH");
 			var pr_throw = ToTerm("THROW");
 			var pr_void = ToTerm("void");
+			var pr_as = ToTerm("AS");
 			#endregion
 		
 			#region NoTerm
@@ -174,13 +175,12 @@ namespace com.Analisis
 				ELIMINAR_DB = new NonTerminal("ELIMINAR_DB"),
 				TRUNCAR_TABLA = new NonTerminal("TRUNCAR_TABLA"),
 				CREAR_USERTYPE = new NonTerminal("CREAR_USERTYPE"),
-				ALTERAR_USERTYPE = new NonTerminal("ALTERAR_USERTYPE"),
-				ELIMINAR_USERTYPE = new NonTerminal("ELIMINAR_USERTYPE"),
 				ATRIBUTO = new NonTerminal("ATRIBUTO"),
 				LISTAATRIBUTOS = new NonTerminal("LISTAATRIBUTOS"),
 				LISTANOMBRESPURA = new NonTerminal("LISTANOMBRESPURA"),
 				OPERACIONASIGNACION = new NonTerminal("OPERACIONASIGNACION"),
-				CASTEO = new NonTerminal("CASTEO")
+				CASTEO = new NonTerminal("CASTEO"),
+				OBJETO = new NonTerminal("OBJETO")
 				;
 
 			NonTerminal SENTENCIATCL = new NonTerminal("SENTENCIATCL"),
@@ -234,13 +234,13 @@ namespace com.Analisis
 				LISTAVARIABLES = new NonTerminal("LISTAVARIABLES"),
 				WHILE = new NonTerminal("WHILE"),
 				SENTENCIAFCL = new NonTerminal("SENTENCIAFCL"),
-				MODIFICADORES= new NonTerminal("MODIFICADORES"),
-				TERNARIO=new NonTerminal("TERNARIO"),
-				ELSEIFS=new NonTerminal("ELSEIFS"),
-				ELSEIF=new NonTerminal("ELSEIF"),
-				DOWHILE=new NonTerminal("DOWHILE"),
-				INIFOR=new NonTerminal("INIFOR"),
-				CALLPROC=new NonTerminal("CALLPROC"),
+				MODIFICADORES = new NonTerminal("MODIFICADORES"),
+				TERNARIO = new NonTerminal("TERNARIO"),
+				ELSEIFS = new NonTerminal("ELSEIFS"),
+				ELSEIF = new NonTerminal("ELSEIF"),
+				DOWHILE = new NonTerminal("DOWHILE"),
+				INIFOR = new NonTerminal("INIFOR"),
+				CALLPROC = new NonTerminal("CALLPROC"),
 				CONTINUE = new NonTerminal("CONTINUE"),
 				CREAR_CURSOR = new NonTerminal("CREAR_CURSOR"),
 				FOREACH = new NonTerminal("FOREACH"),
@@ -249,7 +249,9 @@ namespace com.Analisis
 				LOG = new NonTerminal("LOG"),
 				THROW = new NonTerminal("THROW"),
 				TRYCATCH = new NonTerminal("TRYCATCH"),
-				NULL=new NonTerminal("NULL")
+				NULL = new NonTerminal("NULL"),
+				SENTENCIASTRY = new NonTerminal("SENTENCIASTRY"),
+				SENTENCIATRY=new NonTerminal("SENTENCIATRY")
 				;
 
 			#endregion
@@ -296,15 +298,17 @@ namespace com.Analisis
 				| LLAMADAFUNCION
 		//		| nombre
 				| ACCESO
-				| id + cor1 + EXPRESION + cor2
-				| id + cor1 + EXPRESION + cor2+punto + ACCESO
-				| llave1 + INFOCOLLECTIONS + llave2
-				| cor1 + LISTAEXPRESIONES + cor2
+				| llave1 + INFOCOLLECTIONS + llave2 //map
+				| cor1 + LISTAEXPRESIONES + cor2 //listas
+				| llave1 + LISTAEXPRESIONES + llave2 // set 
+				| OBJETO
 				| MODIFICADORES
 				| FUNCIONAGREGACION
 				| pr_new + TIPODATO
 				| id + punto + ACCESO
 				;
+
+			OBJETO.Rule = llave1 + LISTAEXPRESIONES + llave2 + pr_as +nombre;
 
 			NULL.Rule = pr_null;
 
@@ -374,9 +378,7 @@ namespace com.Analisis
 				| CREAR_TABLA
 				| ALTERAR_TABLA
 				| ELIMINAR_TABLA
-				| TRUNCAR_TABLA
-				| ALTERAR_USERTYPE
-				| ELIMINAR_USERTYPE;
+				| TRUNCAR_TABLA;
 
 			SENTENCIATCL.Rule =BACKUP
 				| RESTAURAR;
@@ -428,12 +430,6 @@ namespace com.Analisis
 			LISTAATRIBUTOS.Rule = MakePlusRule(LISTAATRIBUTOS,coma,ATRIBUTO);
 
 			ATRIBUTO.Rule = nombre + TIPODATO;
-
-			ALTERAR_USERTYPE.Rule = pr_alterar + pr_type + nombre + pr_agregar + par1 + LISTAATRIBUTOS + par2 + puntoycoma
-				| pr_alterar + pr_type + nombre + pr_borrar + par1 + LISTA_ACCESOS + par2 + puntoycoma;
-
-			ELIMINAR_USERTYPE.Rule =pr_borrar+pr_type+nombre+puntoycoma;
-
 			/*
 			ALTERAR_USUARIO.Rule=pr_alterar+pr_usuario+nombre+pr_cambiar+pr_password+igual+cadena+puntoycoma;
 
@@ -534,7 +530,6 @@ namespace com.Analisis
 				|OPENCURSOR
 				|CLOSECURSOR
 				|LOG
-				|THROW
 				|TRYCATCH
 				|OPERACIONASIGNACION
 				;
@@ -545,11 +540,9 @@ namespace com.Analisis
 			LISTAVARIABLES.Rule =MakePlusRule(LISTAVARIABLES,coma,id);
 
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
-				| id + cor1 + EXPRESION + cor2 + igual + EXPRESION + puntoycoma
 				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
 
 			CASTEO.Rule= id + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
-				| id + cor1 + EXPRESION + cor2 + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
 				| id + punto + ACCESO + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma;
 
 
@@ -610,8 +603,12 @@ namespace com.Analisis
 
 			THROW.Rule = pr_throw + pr_new + nombre + puntoycoma;
 
-			TRYCATCH.Rule = pr_try + llave1 + BLOQUESENTENCIAS + llave2 + pr_catch + par1 + nombre + id + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			TRYCATCH.Rule = pr_try + llave1 + SENTENCIASTRY + llave2 + pr_catch + par1 + nombre + id + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
+			SENTENCIASTRY.Rule =MakeStarRule(SENTENCIASTRY,SENTENCIATRY);
+
+			SENTENCIATRY.Rule = THROW
+				| SENTENCIABLOQUE;
 
 			OPERACIONASIGNACION.Rule = id + mas + igual + EXPRESION + puntoycoma 
 				| id + punto + ACCESO + mas + igual + EXPRESION + puntoycoma
@@ -644,7 +641,7 @@ namespace com.Analisis
 				pr_throw.ToString(), pr_log.ToString(), pr_from.ToString(),pr_eliminar.ToString(),pr_void.ToString());
 			//NODOS A OMITIR
 			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA,
-				SENTENCIABLOQUE,SENTENCIAFCL);
+				SENTENCIABLOQUE,SENTENCIAFCL,SENTENCIATRY);
 			//TERMINALES IGNORADO
 			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
