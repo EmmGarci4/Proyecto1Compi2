@@ -191,12 +191,23 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetRetrun(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "CONTINUE":
+						n = GetContinue(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
 		}
 
 		#region Lenguaje_FCL
+
+		private static Sentencia GetContinue(ParseTreeNode sentencia)
+		{
+			return new Continue(sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+		}
+
+
 		private static Sentencia GetRetrun(ParseTreeNode sentencia)
 		{
 			return new Return(GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)),sentencia.Span.Location.Line,sentencia.Span.Location.Column);

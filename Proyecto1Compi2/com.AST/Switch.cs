@@ -28,6 +28,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos ts)
 		{
+			List<ThrowError> errores = new List<ThrowError>();
 			object exVal = expresion.GetValor(ts);
 			if (exVal.GetType() == typeof(ThrowError))
 			{
@@ -48,50 +49,69 @@ namespace Proyecto1Compi2.com.AST
 								Linea, Columna);
 					}
 				}
-				bool evaluado = false;
-				bool ejecutar = true;
 				if (exVal.GetType()==typeof(ThrowError)) {
 					return exVal;
 				}
+				bool evaluado = false;
+				bool ejecutar = true;
+
 				foreach (Case cs in ListaCase) {
 					if (exVal.Equals(cs.Exp.GetValor(ts))||(evaluado&&ejecutar)) {
 						evaluado = true;
-						object res = cs.Ejecutar( ts);
+						//EJECUTANDO SENTENCIAS ******************************************************************
+						object res = cs.Ejecutar(ts);
 						if (res!=null) {
 							if (res.GetType() == typeof(ThrowError))
 							{
-								return res;
+								errores.Add((ThrowError)res);
+							}
+							else if (res.GetType() == typeof(List<ThrowError>))
+							{
+								errores.AddRange((List<ThrowError>)res);
 							}
 							else if (res.GetType() == typeof(Break))
 							{
 								ejecutar = false;
 								break;
 							}
+							else {
+								//continue - return
+								if (errores.Count > 0) return errores;
+								return res;
+							}
 						}
 					}
 				}
 
 				if (default_!=null && !evaluado) {
+					TablaSimbolos local = new TablaSimbolos(ts);
 					foreach (Sentencia sentencia in default_)
 					{
-						object respuesta = sentencia.Ejecutar( ts);
-						if (respuesta != null)
+						//EJECUTANDO SENTENCIAS ******************************************************************
+						object res = sentencia.Ejecutar(local);
+						if (res != null)
 						{
-							if (respuesta.GetType() == typeof(ThrowError))
+							if (res.GetType() == typeof(ThrowError))
 							{
-								return respuesta;
+								errores.Add((ThrowError)res);
 							}
-							else if (respuesta.GetType() == typeof(Break))
+							else if (res.GetType() == typeof(List<ThrowError>))
 							{
-								evaluado = true;
+								errores.AddRange((List<ThrowError>)res);
+							}
+							else if (res.GetType() == typeof(Break))
+							{
+								ejecutar = false;
 								break;
 							}
+							else
 							{
-								//EVALUAR SI ES RETURN, O CONTINUE
+								//continue - return
+								if (errores.Count > 0) return errores;
+								return res;
 							}
 						}
 					}
-
 				}
 			}
 			else {
@@ -99,6 +119,7 @@ namespace Proyecto1Compi2.com.AST
 								"La expresión a evaluar debe ser un entero, decimal, booleano o string",
 								Linea, Columna);
 			}
+			if (errores.Count > 0) return errores;
 			return null;
 		}
 	}

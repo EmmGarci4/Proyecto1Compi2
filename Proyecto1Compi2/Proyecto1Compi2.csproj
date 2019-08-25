@@ -78,6 +78,7 @@
     <Compile Include="com.AST\AsignacionCasteo.cs" />
     <Compile Include="com.AST\Break.cs" />
     <Compile Include="com.AST\Case.cs" />
+    <Compile Include="com.AST\Continue.cs" />
     <Compile Include="com.AST\CrearUserType.cs" />
     <Compile Include="com.AST\AlterarUserType.cs" />
     <Compile Include="com.AST\AlterarTabla.cs" />

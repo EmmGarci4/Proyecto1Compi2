@@ -26,50 +26,71 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(TablaSimbolos ts)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
+			List<ThrowError> errores = new List<ThrowError>();
 			int contador = 0;
 			object respuesta;
 			//repetir y evaluar
-			while (contador < 2000)
+			bool ejecutar = true;
+			while (contador < For.ITERACIONESMAXIMAS && ejecutar && errores.Count == 0)
 			{
-				//EJECUTANDO SENTENCIAS
+				//EJECUTANDO SENTENCIAS ******************************************************************
 				foreach (Sentencia sentencia in sentencias)
 				{
-					respuesta = sentencia.Ejecutar( tsLocal);
+					respuesta = sentencia.Ejecutar(tsLocal);
+					if (respuesta != null)
+					{
+						if (respuesta.GetType() == typeof(ThrowError))
+						{
+							errores.Add((ThrowError)respuesta);
+						}
+						else if (respuesta.GetType() == typeof(List<ThrowError>))
+						{
+							errores.AddRange((List<ThrowError>)respuesta);
+						}
+						else if (respuesta.GetType() == typeof(Break))
+						{
+							ejecutar = false;
+							break;
+						}
+						else if (respuesta.GetType() == typeof(Continue))
+						{
+							break;
+						}
+						else
+						{
+							//return 
+							if (errores.Count > 0) return errores;
+							return respuesta;
+						}
+					}
+				}
+				//******************************************************************************************
+				//EVALUANDO CONDICION
+				if (ejecutar)
+				{
+					respuesta = condicion.GetValor(tsLocal);
 					if (respuesta != null)
 					{
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
 						}
-						else
+						if (!(bool)respuesta)
 						{
-							//EVALUAR SI ES RETURN, BREAK O CONTINUE
+							break;
 						}
 					}
+					contador++;
 				}
-				//EVALUANDO CONDICION
-				respuesta = condicion.GetValor(tsLocal);
-				if (respuesta != null)
+				if (contador == For.ITERACIONESMAXIMAS)
 				{
-					if (respuesta.GetType() == typeof(ThrowError))
-					{
-						return respuesta;
-					}
-					if (!(bool)respuesta)
-					{
-						break;
-					}
+					//error ciclo infinito
+					return new ThrowError(TipoThrow.Exception,
+							"Posiblemente existe un ciclo infinito en su código",
+						   Linea, Columna);
 				}
-				contador++;
 			}
-			if (contador == 5000)
-			{
-				//error ciclo infinito
-				return new ThrowError(TipoThrow.Exception,
-						"Posiblemente existe un ciclo infinito en su código",
-					   Linea, Columna);
-			}
-
+			if (errores.Count > 0) return errores;
 			return null;
 		}
 	}

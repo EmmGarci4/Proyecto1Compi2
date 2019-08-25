@@ -121,6 +121,14 @@ namespace Proyecto1Compi2.com.AST
 						}
 						#endregion
 						break;
+					default:
+						if (!Datos.IsTipoCompatibleParaAsignar(this.tipo, respuesta))
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"No se puede asignar el valor '"+respuesta.ToString()+"' a un tipo '" + this.tipo.ToString() + "'",
+								Linea, Columna);
+						}
+						break;
 				}
 			}
 

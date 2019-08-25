@@ -140,20 +140,20 @@ namespace Proyecto1Compi2.com.AST
 					//enviar sobre campo
 					case TipoAcceso.LlamadaFuncion:
 						//ejecutar llamada de funcion y retornar el valor 
-						break;
+						LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
+						object res = llamada.Ejecutar(ts);
+						if (res!=null) {
+							if (res.GetType()==typeof(ThrowError)) {
+								return res;
+							}
+						}
+						Simbolo s = new Simbolo(llamada.getLlave(ts), res, Datos.GetTipoObjetoDB(res), Linea, Columna);
+						simbolosApilados.Push(s);
+						return GetSimbolosApilados(simbolosApilados, s, ts);
 					case TipoAcceso.Variable:
 						if (ts.ExisteSimbolo(valor.Value.ToString()))
 						{
 							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
-							//if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
-							//{
-							//	if (sim.Valor.ToString().Equals("null"))
-							//	{
-							//		return new ThrowError(Util.TipoThrow.NullPointerException,
-							//					"la variable '" + sim.Nombre + "' no se ha inicializado",
-							//					Linea, Columna);
-							//	}
-							//}
 							simbolosApilados.Push(sim);
 							object respuesta = GetSimbolosApilados(simbolosApilados, sim, ts);
 							return respuesta;

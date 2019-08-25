@@ -31,13 +31,15 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(TablaSimbolos ts)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
+
 			object respuesta = condicion.GetValor(tsLocal);
 			if (respuesta.GetType()==typeof(ThrowError)) {
 				return respuesta;
 			}
 			if ((bool)respuesta)
 			{
-				respuesta=EjecutarSentencias(CuerpoVerdadero, tsLocal);
+				//EJECUTANDO SENTENCIAS ******************************************************************
+				respuesta = EjecutarSentencias(CuerpoVerdadero, tsLocal);
 				if (respuesta != null) return respuesta;
 			}
 			else {
@@ -49,9 +51,11 @@ namespace Proyecto1Compi2.com.AST
 						{
 							return respuesta;
 						}else 
+						//evaluando condicion de if
 						if ((bool)respuesta) {
 							evaluado = true;
 							if (respuesta!=null) {
+								//EJECUTANDO SENTENCIAS ******************************************************************
 								respuesta = elseif.Ejecutar( tsLocal);
 								if (respuesta != null) return respuesta;
 							}
@@ -61,22 +65,39 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				if (CuerpoFalso!=null && !evaluado) {
+					//EJECUTANDO SENTENCIAS ******************************************************************
 					respuesta = EjecutarSentencias(CuerpoFalso, tsLocal);
 					if (respuesta != null) return respuesta;
 				}
 			}
-
 			return null;
 		}
 
 		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal)
 		{
 			object respuesta;
+			List<ThrowError> errores = new List<ThrowError>();
 			foreach (Sentencia sentencia in MisSentencias)
 			{
 				respuesta = sentencia.Ejecutar( tsLocal);
-				if (respuesta!=null)return respuesta;
+				if (respuesta != null) {
+					if (respuesta.GetType() == typeof(ThrowError))
+					{
+						errores.Add((ThrowError)respuesta);
+					}
+					else if (respuesta.GetType() == typeof(List<ThrowError>))
+					{
+						errores.AddRange((List<ThrowError>)respuesta);
+					}
+					else {
+						//return-break-continue
+						if (errores.Count > 0) return errores;
+						return respuesta;
+					}
+					
+				}
 			}
+			if (errores.Count > 0) return errores;
 			return null;
 		}
 	}

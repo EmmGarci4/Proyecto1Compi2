@@ -28,6 +28,9 @@ namespace com.Analisis
 
 		internal static bool ExisteFuncion(string nombre)
 		{
+			if (nombre.ToLower().Equals("today")|| nombre.ToLower().Equals("now")) {
+				return true;
+			}
 			foreach (Funcion fun in funciones) {
 				if (fun.GetLlave()==nombre) {
 					return true;
@@ -142,7 +145,16 @@ namespace com.Analisis
 						{
 							if (respuesta.GetType() == typeof(ThrowError))
 							{
-								Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
+								ErroresCQL.Add(new Error((ThrowError)respuesta));
+							}
+							else if (respuesta.GetType() == typeof(List<ThrowError>))
+							{
+								//AGREGANDO ERRORES A LISTA PRINCIPAL
+								List<ThrowError> errores = (List<ThrowError>)respuesta;
+								foreach (ThrowError error in errores)
+								{
+									ErroresCQL.Add(new Error(error));
+								}
 							}
 						}
 					}

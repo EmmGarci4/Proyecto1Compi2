@@ -24,24 +24,33 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos ts)
 		{
+			TablaSimbolos local = new TablaSimbolos(ts);
+			List<ThrowError> errores = new List<ThrowError>();
+			object respuesta;
+			//EJECUTANDO SENTENCIAS ******************************************************************
 			foreach (Sentencia sentencia in sentencias)
 			{
-				object respuesta = sentencia.Ejecutar( ts);
+				respuesta = sentencia.Ejecutar(local);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
 					{
+						errores.Add((ThrowError)respuesta);
+					}
+					else if (respuesta.GetType() == typeof(List<ThrowError>))
+					{
+						errores.AddRange((List<ThrowError>)respuesta);
+					}
+					else
+					{
+						//return-break-continue
+						if (errores.Count > 0) return errores;
 						return respuesta;
 					}
-					else if (respuesta.GetType() == typeof(Break))
-					{
-						return respuesta;
-					}
-					{
-						//EVALUAR SI ES RETURN, O CONTINUE
-					}
+
 				}
 			}
+			if (errores.Count > 0) return errores;
 			return null;
 		}
 	}

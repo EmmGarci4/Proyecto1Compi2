@@ -27,6 +27,14 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(TablaSimbolos ts)
 		{
 			String llave = getLlave(ts);
+			//FUNCIONES NATIVAS
+			//***************************************************************
+			if (llave.Equals("today()")) {
+				return new MyDateTime(TipoDatoDB.DATE, DateTime.Today);
+			} else if (llave.Equals("now()")) {
+				return new MyDateTime(TipoDatoDB.TIME, DateTime.Now);
+			}
+			//***************************************************************
 			if (Analizador.ExisteFuncion(llave))
 			{
 				Funcion funcion = Analizador.BuscarFuncion(llave);
@@ -61,6 +69,7 @@ namespace Proyecto1Compi2.com.AST
 					return res;
 				}
 				funcion.LimpiarParametros();
+				return res;
 			}
 			else
 			{
@@ -68,7 +77,6 @@ namespace Proyecto1Compi2.com.AST
 					"La función '" + llave + "' no existe",
 					Linea, Columna);
 			}
-			return null;
 		}
 
 		internal string getLlave(TablaSimbolos ts)

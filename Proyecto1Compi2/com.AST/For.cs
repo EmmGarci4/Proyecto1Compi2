@@ -11,6 +11,7 @@ namespace Proyecto1Compi2.com.AST
 {
 	class For:Sentencia
 	{
+		public static int ITERACIONESMAXIMAS = 2000;
 		Asignacion asignacion;
 		Declaracion declaracion;
 		Condicion condicion;
@@ -35,6 +36,7 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(TablaSimbolos ts)
 		{
 			TablaSimbolos local = new TablaSimbolos(ts);
+			List<ThrowError> errores = new List<ThrowError>();
 			if (asignacion != null) {
 				object res = Funcion.LeerRespuesta(asignacion.Ejecutar( local));
 				if (res != null) return res;
@@ -43,7 +45,8 @@ namespace Proyecto1Compi2.com.AST
 				if (res != null) return res;
 			}
 			int contador = 0;
-			while (contador<2000) {
+			bool ejecutar = true;
+			while (contador<ITERACIONESMAXIMAS && ejecutar && errores.Count==0) {
 				object res = condicion.GetValor(local);
 				if (res != null)
 				{
@@ -54,16 +57,48 @@ namespace Proyecto1Compi2.com.AST
 				}
 				if ((bool)res)
 				{
-					//ejecutar
-					res = EjecutarSentencias(sentencias,local);
-					if (res != null) return res;
-					//ejecutando operacion
-					res = operacion.GetValor(local);
-					if (res != null)
+					//EJECUTANDO SENTENCIAS ******************************************************************
+					object respuesta;
+					foreach (Sentencia sentencia in sentencias)
 					{
-						if (res.GetType() == typeof(ThrowError))
+						respuesta = sentencia.Ejecutar(local);
+						if (respuesta != null)
 						{
-							return res;
+							if (respuesta.GetType() == typeof(ThrowError))
+							{
+								errores.Add((ThrowError)respuesta);
+							}
+							else if (respuesta.GetType() == typeof(List<ThrowError>))
+							{
+								errores.AddRange((List<ThrowError>)respuesta);
+							}
+							else if (respuesta.GetType() == typeof(Break))
+							{
+								ejecutar = false;
+								break;
+							}
+							else if (respuesta.GetType() == typeof(Continue))
+							{
+								break;
+							}
+							else
+							{
+								//return 
+								if (errores.Count > 0) return errores;
+								return respuesta;
+							}
+						}
+					}
+					//******************************************************************************************
+					//ejecutando operacion
+					if (ejecutar) {
+						res = operacion.GetValor(local);
+						if (res != null)
+						{
+							if (res.GetType() == typeof(ThrowError))
+							{
+								return res;
+							}
 						}
 					}
 				}
@@ -73,34 +108,14 @@ namespace Proyecto1Compi2.com.AST
 
 				contador++;
 			}
-			if (contador == 5000)
+			if (contador == ITERACIONESMAXIMAS && ejecutar)
 			{
 				//error ciclo infinito
 				return new ThrowError(TipoThrow.Exception,
 						"Posiblemente existe un ciclo infinito en su código",
 					   Linea, Columna);
 			}
-			return null;
-		}
-
-		private object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal)
-		{
-			object respuesta;
-			foreach (Sentencia sentencia in MisSentencias)
-			{
-				respuesta = sentencia.Ejecutar( tsLocal);
-				if (respuesta != null)
-				{
-					if (respuesta.GetType() == typeof(ThrowError))
-					{
-						return respuesta;
-					}
-					else
-					{
-						//EVALUAR SI ES RETURN, BREAK O CONTINUE
-					}
-				}
-			}
+			if (errores.Count > 0) return errores;
 			return null;
 		}
 	}

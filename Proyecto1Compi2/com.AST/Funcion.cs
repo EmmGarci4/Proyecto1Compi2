@@ -35,9 +35,9 @@ namespace Proyecto1Compi2.com.AST
 			valoresParametros = parametros;
 		}
 
-		public override object Ejecutar(TablaSimbolos t)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
-			TablaSimbolos local = new TablaSimbolos(t);
+			TablaSimbolos local = new TablaSimbolos(ts);
 			int contador = 0;
 			object RETORNO = null;
 			//AGREGANDO PARAMETROS
@@ -56,19 +56,31 @@ namespace Proyecto1Compi2.com.AST
 				}
 				contador++;
 			}
-			//EJECUTANDO SENTENCIAS
+			//EJECUTANDO SENTENCIAS ******************************************************************
 			object respuesta;
 			foreach (Sentencia sentencia in sentencias)
 			{
-				respuesta = sentencia.Ejecutar( local);
+				respuesta = sentencia.Ejecutar(local);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
 					{
 						Analizador.ErroresCQL.Add(new Error((ThrowError)respuesta));
 					}
-					else if (respuesta.GetType() == typeof(List<object>))
+					else if (respuesta.GetType() == typeof(List<ThrowError>))
 					{
+						//AGREGANDO ERRORES A LISTA PRINCIPAL
+						List<ThrowError> errores = (List<ThrowError>)respuesta;
+						foreach (ThrowError error in errores)
+						{
+							Analizador.ErroresCQL.Add(new Error(error));
+						}
+					}
+					else if (respuesta.GetType() == typeof(Return))
+					{
+						Return ret = (Return)respuesta;
+						respuesta = ret.ValoresRetornados;
+						if (respuesta.GetType() == typeof(ThrowError)) return respuesta;
 						List<object> valoresRetornados = (List<object>)respuesta;
 						if (valoresRetornados.Count == 1)
 						{
@@ -80,11 +92,17 @@ namespace Proyecto1Compi2.com.AST
 								"La cantidad de valores retornados es incorrecta, solo se puede retornar un valor",
 								Linea, Columna);
 						}
-
+						break;
+					}
+					else {
+						//break - continue
+						Sentencia sent = (Sentencia)respuesta;
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,"La sentencia no está en un bloque de código adecuado",
+							sent.Linea,sent.Columna));
 					}
 				}
 			}
-
+			//******************************************************************************************
 			//EVALUAR RETORNO
 			if (RETORNO != null)
 			{
