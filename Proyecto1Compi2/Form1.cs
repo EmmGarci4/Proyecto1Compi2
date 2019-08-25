@@ -95,6 +95,7 @@ namespace Proyecto1Compi2
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
 		{
 			Analizador.Clear();
+			textBox2.Clear();
 		}
 
 		private void Btn_GenerarArchivos_Click(object sender, EventArgs e)

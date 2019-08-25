@@ -17,7 +17,7 @@ namespace Proyecto1Compi2.com.AST
 			this.valor = valor;
 		}
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			List<object> valores = new List<object>();
 			object respuesta;

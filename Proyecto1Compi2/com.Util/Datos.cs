@@ -151,14 +151,17 @@ namespace Proyecto1Compi2.com.Util
 					return new TipoObjetoDB(TipoDatoDB.INT, "int");
 				}
 			}
+			//entero
 			if (respuesta.GetType() == typeof(int))
 			{
 				return new TipoObjetoDB(TipoDatoDB.INT, "int");
 			}
+			//cadena
 			else if (respuesta.GetType() == typeof(string))
 			{
 				return new TipoObjetoDB(TipoDatoDB.STRING, "string");
 			}
+			//fecha u hora
 			else if (respuesta.GetType() == typeof(MyDateTime))
 			{
 				MyDateTime dt = (MyDateTime)respuesta;
@@ -171,6 +174,7 @@ namespace Proyecto1Compi2.com.Util
 					return new TipoObjetoDB(TipoDatoDB.DATE, "hour");
 				}
 			}
+			//lista o set
 			else if (respuesta.GetType() == typeof(CollectionListCql))
 			{
 				CollectionListCql list = (CollectionListCql)respuesta;
@@ -185,6 +189,7 @@ namespace Proyecto1Compi2.com.Util
 					return new TipoObjetoDB(TipoDatoDB.SET_OBJETO, "set<" + list.TipoDato.ToString() + ">");
 				}
 			}
+			//map
 			else if (respuesta.GetType() == typeof(CollectionMapCql))
 			{
 				CollectionMapCql list = (CollectionMapCql)respuesta;
@@ -199,8 +204,11 @@ namespace Proyecto1Compi2.com.Util
 
 				}
 			}
-
-
+			else if (respuesta.GetType() == typeof(Objeto))
+			{
+				return new TipoObjetoDB(TipoDatoDB.OBJETO, ((Objeto)respuesta).Plantilla.Nombre);
+			}
+			
 			return new TipoObjetoDB(TipoDatoDB.NULO, "null");
 		}
 

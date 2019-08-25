@@ -24,7 +24,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal List<Expresion> Parametros { get => parametros; set => parametros = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			String llave = getLlave(ts);
 			if (Analizador.ExisteFuncion(llave))
@@ -56,7 +56,7 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				funcion.pasarParametros(valores);
-				object res = funcion.Ejecutar(sesion, ts);
+				object res = funcion.Ejecutar( ts);
 				if (res!=null) {
 					return res;
 				}

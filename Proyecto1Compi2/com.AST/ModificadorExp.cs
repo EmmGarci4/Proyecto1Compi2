@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using com.Analisis;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
@@ -13,7 +14,6 @@ namespace Proyecto1Compi2.com.AST
 	{
 		bool sumar;
 		Acceso acceso;
-		Sesion sesion;
 		private TipoOperacion tipo;
 
 		public ModificadorExp(Acceso variable, bool sumar, int linea, int columna) : base(linea, columna)
@@ -24,7 +24,6 @@ namespace Proyecto1Compi2.com.AST
 
 		public bool Sumar { get => sumar; set => sumar = value; }
 		internal Acceso Acceso { get => acceso; set => acceso = value; }
-		internal Sesion Sesion { get => sesion; set => sesion = value; }
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts)
 		{
@@ -62,7 +61,7 @@ namespace Proyecto1Compi2.com.AST
 						return respuesta;
 					}
 				}
-				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb, sesion);
+				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb);
 			}
 			return respuesta1;
 		}

@@ -47,7 +47,7 @@ namespace Proyecto1Compi2.com.AST
 		public object Algo { get => algo; set => algo = value; }
 		internal Where Condicion { get => condicion; set => condicion = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			throw new NotImplementedException();
 		}

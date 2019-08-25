@@ -26,7 +26,7 @@ namespace Proyecto1Compi2.com.AST
 		internal Acceso Acceso { get => acceso; set => acceso = value; }
 		internal Expresion Exp { get => exp; set => exp = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			//VALOR DE ACCESO
 			object respuesta=acceso.GetValor(tb);
@@ -60,7 +60,7 @@ namespace Proyecto1Compi2.com.AST
 						return respuesta;
 					}
 				}
-				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb, sesion);
+				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb);
 			}
 			return null;
 		}

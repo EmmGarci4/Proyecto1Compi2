@@ -31,74 +31,48 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object GetValor(TablaSimbolos ts)
 		{
-			return this;
-		}
-
-		internal object getInstanciaObjeto(TipoObjetoDB tipoAsignacion,Sesion sesion,TablaSimbolos ts)
-		{
-			if (tipoAsignacion.Equals(NombreUserType))
+			//VALIDANDO BASEDATOS
+			if (Analizador.Sesion.DBActual != null)
 			{
-				object resultadoValidacion = IsObjetoValido(sesion);
-				if (resultadoValidacion.GetType() == typeof(ThrowError))
+				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				if (db.ExisteUserType(this.nombreUserType))
 				{
-					return resultadoValidacion;
-				}
-				if ((bool)resultadoValidacion)
-				{
-					UserType ut = Analizador.BuscarDB(sesion.DBActual).BuscarUserType(NombreUserType);
+					UserType ut = db.BuscarUserType(this.nombreUserType);
 					Objeto nuevaInstancia = new Objeto(ut);
 					int indice = 0;
 					object resExp;
-					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
+					if (ut.Atributos.Count == this.expresiones.Count)
 					{
-						resExp = Expresiones.ElementAt(indice).GetValor(ts);
-						if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, resExp))
+						foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
 						{
-							resExp = Datos.CasteoImplicito(atributo.Value.Tipo, resExp);
-							nuevaInstancia.Atributos.Add(atributo.Key, resExp);
+							resExp = Expresiones.ElementAt(indice).GetValor(ts);
+							if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, resExp))
+							{
+								resExp = Datos.CasteoImplicito(atributo.Value.Tipo, resExp);
+								nuevaInstancia.Atributos.Add(atributo.Key, resExp);
+							}
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+									"Los atributos no corresponden al tipo '" + this.nombreUserType + "'",
+									Linea, Columna);
+							}
+							indice++;
 						}
-						else
-						{
-							return new ThrowError(Util.TipoThrow.Exception,
-								"Los atributos no corresponden al tipo '" + tipoAsignacion.ToString() + "'",
-								Linea, Columna);
-						}
-						indice++;
+					}
+					else {
+						return new ThrowError(Util.TipoThrow.Exception,
+							"Los atributos no corresponden en numero al tipo '" + nombreUserType + "'",
+							Linea, Columna);
 					}
 					//asignando la nueva instancia despues de todas las validaciones
 					return nuevaInstancia;
 				}
 				else
 				{
-					return new ThrowError(Util.TipoThrow.Exception,
-						"Los atributos no corresponden al tipo '" + tipoAsignacion.ToString() + "'",
-						Linea, Columna);
-				}
-			}
-			else
-			{
-				return new ThrowError(Util.TipoThrow.Exception,
-				"No se puede asignar un objeto '" + NombreUserType + "' a un tipo '" + tipoAsignacion.ToString() + "'",
-				Linea, Columna);
-			}
-		}
-
-		private object IsObjetoValido(Sesion sesion)
-		{
-			//VALIDANDO BASEDATOS
-			if (sesion.DBActual != null)
-			{
-				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
-				if (db.ExisteUserType(NombreUserType))
-				{
-					//validando cantidad
-					return db.BuscarUserType(NombreUserType).Atributos.Count == Expresiones.Count;
-				}
-				else
-				{
-					return new ThrowError(Util.TipoThrow.TypeDontExists,
-				"El user Type '" + NombreUserType + "' no existe",
-				Linea, Columna);
+					return new ThrowError(Util.TipoThrow.TypeAlreadyExists,
+					"El user Type '" + this.nombreUserType + "' no existe",
+					Linea, Columna);
 				}
 			}
 			else
@@ -108,6 +82,5 @@ namespace Proyecto1Compi2.com.AST
 					Linea, Columna);
 			}
 		}
-
 	}
 }

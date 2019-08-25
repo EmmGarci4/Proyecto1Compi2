@@ -25,7 +25,7 @@ namespace Proyecto1Compi2.com.AST
 		internal Acceso Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Derecha { get => derecha; set => derecha = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			//OBTENIENDO RESPUESTA DE EXPRESION
 			object respuesta = derecha.GetValor(ts);
@@ -37,52 +37,49 @@ namespace Proyecto1Compi2.com.AST
 					return respuesta;
 				}
 			}
-			//si es una instancia
-			//se genera aquí pues no tengo acceso a la sesion desde la operacion
-			if (tipoRespuesta == TipoOperacion.NuevaInstancia)
-			{
-				TipoObjetoDB tipoInstancia = (TipoObjetoDB)respuesta;
-
-				if (Datos.IsLista(tipoInstancia.Tipo))
-				{
-					object instanciaLista = GetInstanciaLista(tipoInstancia);
-					if (instanciaLista!=null) {
-						//izquierda.Asignar(instanciaLista, tipoInstancia, ts, sesion);
-					}
-				}
-				else
-				{
-					if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
+			switch (tipoRespuesta) {
+				case TipoOperacion.NuevaInstancia:
+					TipoObjetoDB tipoInstancia = (TipoObjetoDB)respuesta;
+					if (Datos.IsLista(tipoInstancia.Tipo))
 					{
-						object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion,Linea,Columna);
-						if (instanciaObjeto!=null) {
-							//izquierda.Asignar(instanciaObjeto, tipoInstancia, ts, sesion);
+						object instanciaLista = Asignacion.GetInstanciaLista(tipoInstancia);
+						if (instanciaLista != null)
+						{
+							//respuesta = instanciaLista; ASIGNAR AQUI
 						}
 					}
 					else
 					{
-						//ERROR NO SE PUEDE INSTANCIAR UN TIPO PRIMITIVO
-						return new ThrowError(Util.TipoThrow.Exception,
-						"No se puede instanciar un tipo primitivo",
-						Linea, Columna);
-
+						if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
+						{
+							object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna);
+							if (instanciaObjeto != null)
+							{
+								return izquierda.Asignar(instanciaObjeto, Datos.GetTipoObjetoDB(respuesta), ts);
+							}
+						}
+						else
+						{
+							//ERROR NO SE PUEDE INSTANCIAR UN TIPO PRIMITIVO
+							return new ThrowError(Util.TipoThrow.Exception,
+							"No se puede instanciar un tipo primitivo",
+							Linea, Columna);
+						}
 					}
-				}
-			}
-			else {
-				////NO ES UNA INSTANCIA
-				return izquierda.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), ts, sesion);
+					break;
+				default:
+					return izquierda.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), ts);
 			}
 
 			return null;
 		}
 
-		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion,int linea,int columna)
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia,int linea,int columna)
 		{
 			//VALIDANDO BASEDATOS
-			if (sesion.DBActual != null)
+			if (Analizador.Sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
 				if (db.ExisteUserType(tipoInstancia.ToString()))
 				{
 					UserType ut = db.BuscarUserType(tipoInstancia.ToString());

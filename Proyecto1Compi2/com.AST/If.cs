@@ -28,7 +28,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Sentencia> CuerpoVerdadero { get => cuerpoVerdadero; set => cuerpoVerdadero = value; }
 		internal List<Sentencia> CuerpoFalso { get => cuerpoFalso; set => cuerpoFalso = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
 			object respuesta = condicion.GetValor(tsLocal);
@@ -37,7 +37,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 			if ((bool)respuesta)
 			{
-				respuesta=EjecutarSentencias(CuerpoVerdadero, sesion, tsLocal);
+				respuesta=EjecutarSentencias(CuerpoVerdadero, tsLocal);
 				if (respuesta != null) return respuesta;
 			}
 			else {
@@ -52,7 +52,7 @@ namespace Proyecto1Compi2.com.AST
 						if ((bool)respuesta) {
 							evaluado = true;
 							if (respuesta!=null) {
-								respuesta = elseif.Ejecutar(sesion, tsLocal);
+								respuesta = elseif.Ejecutar( tsLocal);
 								if (respuesta != null) return respuesta;
 							}
 							break;
@@ -61,7 +61,7 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				if (CuerpoFalso!=null && !evaluado) {
-					respuesta = EjecutarSentencias(CuerpoFalso, sesion, tsLocal);
+					respuesta = EjecutarSentencias(CuerpoFalso, tsLocal);
 					if (respuesta != null) return respuesta;
 				}
 			}
@@ -69,12 +69,12 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
-		public static object EjecutarSentencias(List<Sentencia> MisSentencias, Sesion sesion, TablaSimbolos tsLocal)
+		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal)
 		{
 			object respuesta;
 			foreach (Sentencia sentencia in MisSentencias)
 			{
-				respuesta = sentencia.Ejecutar(sesion, tsLocal);
+				respuesta = sentencia.Ejecutar( tsLocal);
 				if (respuesta!=null)return respuesta;
 			}
 			return null;

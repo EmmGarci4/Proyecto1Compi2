@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using com.Analisis;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 
@@ -19,7 +20,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal Expresion Valor { get => valor; set => valor = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			object respuesta = valor.GetValor(tb);
 			if (respuesta != null)
@@ -28,7 +29,7 @@ namespace Proyecto1Compi2.com.AST
 				{
 					return respuesta;
 				}
-				sesion.Mensajes.Add(respuesta.ToString());
+				Analizador.Sesion.Mensajes.Add(respuesta.ToString());
 				Form1.MostrarMensajeAUsuario(respuesta.ToString());
 			}
 			else {

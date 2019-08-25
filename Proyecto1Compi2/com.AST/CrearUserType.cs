@@ -27,12 +27,12 @@ namespace Proyecto1Compi2.com.AST
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 		internal Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			//VALIDANDO BASEDATOS
-			if (sesion.DBActual != null)
+			if (Analizador.Sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
 				if (!db.ExisteUserType(nombre))
 				{
 					db.AgregarUserType(new UserType(nombre, atributos));

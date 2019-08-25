@@ -22,11 +22,11 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Exp { get => exp; set => exp = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			foreach (Sentencia sentencia in sentencias)
 			{
-				object respuesta = sentencia.Ejecutar(sesion, ts);
+				object respuesta = sentencia.Ejecutar( ts);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

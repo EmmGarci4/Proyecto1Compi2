@@ -24,10 +24,10 @@ namespace Proyecto1Compi2.com.AST
 		public string Usuario { get => usuario; set => usuario = value; }
 		public string BaseDatos { get => baseDatos; set => baseDatos = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
-			if (Analizador.BuscarUsuario(sesion.Usuario)!=null) {
-				if (Analizador.BuscarUsuario(sesion.Usuario).ExistePermiso(baseDatos))
+			if (Analizador.BuscarUsuario(Analizador.Sesion.Usuario)!=null) {
+				if (Analizador.BuscarUsuario(Analizador.Sesion.Usuario).ExistePermiso(baseDatos))
 				{
 					if (Analizador.ExisteUsuario(usuario))
 					{

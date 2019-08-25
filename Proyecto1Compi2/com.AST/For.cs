@@ -32,14 +32,14 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Operacion { get => operacion; set => operacion = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			TablaSimbolos local = new TablaSimbolos(ts);
 			if (asignacion != null) {
-				object res = Funcion.LeerRespuesta(asignacion.Ejecutar(sesion, local));
+				object res = Funcion.LeerRespuesta(asignacion.Ejecutar( local));
 				if (res != null) return res;
 			} else if (declaracion!=null) {
-				object res = Funcion.LeerRespuesta(declaracion.Ejecutar(sesion, local));
+				object res = Funcion.LeerRespuesta(declaracion.Ejecutar( local));
 				if (res != null) return res;
 			}
 			int contador = 0;
@@ -55,7 +55,7 @@ namespace Proyecto1Compi2.com.AST
 				if ((bool)res)
 				{
 					//ejecutar
-					res = EjecutarSentencias(sentencias,sesion,local);
+					res = EjecutarSentencias(sentencias,local);
 					if (res != null) return res;
 					//ejecutando operacion
 					res = operacion.GetValor(local);
@@ -83,12 +83,12 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
-		private object EjecutarSentencias(List<Sentencia> MisSentencias, Sesion sesion, TablaSimbolos tsLocal)
+		private object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal)
 		{
 			object respuesta;
 			foreach (Sentencia sentencia in MisSentencias)
 			{
-				respuesta = sentencia.Ejecutar(sesion, tsLocal);
+				respuesta = sentencia.Ejecutar( tsLocal);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

@@ -29,7 +29,7 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Derecha { get => derecha; set => derecha = value; }
 		internal Acceso Acceso { get => acceso; set => acceso = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			object respuesta = derecha.GetValor(ts);
 			if (respuesta.GetType()==typeof(ThrowError)) {

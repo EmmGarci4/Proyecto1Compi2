@@ -27,7 +27,7 @@ namespace Proyecto1Compi2.com.AST
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 		internal Expresion Expresion { get => expresion; set => expresion = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			//VALIDANDO NOMBRE DE VARIABLE
 			foreach (string variable in variables) {
@@ -41,7 +41,7 @@ namespace Proyecto1Compi2.com.AST
 			//***********VALIDAR LISTAS TAMBIEN
 			if (this.Tipo.Tipo == TipoDatoDB.OBJETO)
 			{
-				object respuestaComprobacion = ExisteUserType(this.tipo, sesion);
+				object respuestaComprobacion = ExisteUserType(this.tipo);
 				if (respuestaComprobacion.GetType() == typeof(ThrowError))
 				{
 					return respuestaComprobacion;
@@ -72,6 +72,7 @@ namespace Proyecto1Compi2.com.AST
 				//se genera aquí pues no tengo acceso a la sesion desde la operacion
 				switch (tipoRespuesta) {
 					case TipoOperacion.NuevaInstancia:
+						#region New Instancia
 						TipoObjetoDB tipoInstancia = (TipoObjetoDB)respuesta;
 						if (Datos.IsLista(tipoInstancia.Tipo))
 						{
@@ -85,7 +86,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 							{
-								object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, sesion, Linea, Columna);
+								object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna);
 								if (instanciaObjeto != null)
 								{
 									respuesta = instanciaObjeto;
@@ -99,21 +100,26 @@ namespace Proyecto1Compi2.com.AST
 								Linea, Columna);
 							}
 						}
+						#endregion
 						break;
 					case TipoOperacion.InstanciaObjeto:
-						InstanciaObjeto instancia = (InstanciaObjeto)respuesta;
+						#region {valores}
 						if (this.tipo.Tipo == TipoDatoDB.OBJETO)
 						{
-							respuesta = instancia.getInstanciaObjeto(this.tipo,sesion,ts);
-							if (respuesta.GetType()==typeof(ThrowError)) {
-								return respuesta;
+							TipoObjetoDB tipoExp = Datos.GetTipoObjetoDB(respuesta);
+							if (!this.tipo.Equals(tipoExp))
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+									"No se puede asignar un objeto '" + tipoExp.ToString() + "' a un tipo '" + this.tipo.ToString() + "'",
+									Linea, Columna);
 							}
 						}
 						else {
 							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede asignar un objeto '"+instancia.NombreUserType+"' a un tipo primitivo '"+this.tipo.ToString()+"'",
+								"No se puede asignar un objeto a un tipo primitivo '"+this.tipo.ToString()+"'",
 								Linea, Columna);
 						}
+						#endregion
 						break;
 				}
 			}
@@ -136,12 +142,12 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
-		private object ExisteUserType(TipoObjetoDB tipo, Sesion sesion)
+		private object ExisteUserType(TipoObjetoDB tipo)
 		{
 			//VALIDANDO BASEDATOS
-			if (sesion.DBActual != null)
+			if (Analizador.Sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
 				return (db.ExisteUserType(tipo.ToString())) ;
 			}
 			else

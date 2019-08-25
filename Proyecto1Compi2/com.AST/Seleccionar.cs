@@ -31,7 +31,7 @@ namespace Proyecto1Compi2.com.AST
 		internal OrderBy PropiedadOrderBy { get => order; set => order = value; }
 		internal Limit PropiedadLimit { get => limit; set => limit = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			throw new NotImplementedException();
 		}

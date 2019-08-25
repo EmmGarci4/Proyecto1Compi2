@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public string Passwd { get => passwd; set => passwd = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb)
 		{
 			if (!Analizador.ExisteUsuario(nombre))
 			{

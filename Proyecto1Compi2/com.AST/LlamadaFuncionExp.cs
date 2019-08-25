@@ -35,7 +35,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object GetValor(TablaSimbolos ts)
 		{
-			object res = llamada.Ejecutar(sesion, ts);
+			object res = llamada.Ejecutar( ts);
 			ejecutado = true;
 			if (res != null)
 			{

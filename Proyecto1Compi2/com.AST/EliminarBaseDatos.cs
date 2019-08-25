@@ -21,17 +21,17 @@ namespace Proyecto1Compi2.com.AST
 
 			public string Nombre { get => nombre; set => nombre = value; }
 
-			public override object Ejecutar(Sesion sesion, TablaSimbolos tb)
+			public override object Ejecutar(TablaSimbolos tb)
 			{
 			if (Analizador.ExisteDB(nombre))
 			{
 				Analizador.EliminarDB(nombre);
 				Analizador.ElminarPermisoDeUsuario(nombre);
 
-				if (sesion.DBActual!=null) {
-					if (sesion.DBActual == nombre)
+				if (Analizador.Sesion.DBActual!=null) {
+					if (Analizador.Sesion.DBActual == nombre)
 					{
-						sesion.DBActual = null;
+						Analizador.Sesion.DBActual = null;
 
 					}
 				}

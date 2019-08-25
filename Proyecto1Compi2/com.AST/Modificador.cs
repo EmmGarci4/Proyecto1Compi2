@@ -22,11 +22,9 @@ namespace Proyecto1Compi2.com.AST
 
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
-			modificador.Sesion = sesion;
 			object respuesta = modificador.GetValor(ts);
-			modificador.Sesion = null;
 			if (respuesta!=null) {
 				if (respuesta.GetType()==typeof(ThrowError)) {
 					return respuesta;

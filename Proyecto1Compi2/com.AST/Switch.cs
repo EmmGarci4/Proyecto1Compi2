@@ -26,7 +26,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Case> ListaCase { get => listaCase; set => listaCase = value; }
 		internal List<Sentencia> Default_ { get => default_; set => default_ = value; }
 
-		public override object Ejecutar(Sesion sesion, TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts)
 		{
 			object exVal = expresion.GetValor(ts);
 			if (exVal.GetType() == typeof(ThrowError))
@@ -56,7 +56,7 @@ namespace Proyecto1Compi2.com.AST
 				foreach (Case cs in ListaCase) {
 					if (exVal.Equals(cs.Exp.GetValor(ts))||(evaluado&&ejecutar)) {
 						evaluado = true;
-						object res = cs.Ejecutar(sesion, ts);
+						object res = cs.Ejecutar( ts);
 						if (res!=null) {
 							if (res.GetType() == typeof(ThrowError))
 							{
@@ -74,7 +74,7 @@ namespace Proyecto1Compi2.com.AST
 				if (default_!=null && !evaluado) {
 					foreach (Sentencia sentencia in default_)
 					{
-						object respuesta = sentencia.Ejecutar(sesion, ts);
+						object respuesta = sentencia.Ejecutar( ts);
 						if (respuesta != null)
 						{
 							if (respuesta.GetType() == typeof(ThrowError))

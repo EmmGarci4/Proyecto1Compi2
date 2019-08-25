@@ -24,7 +24,7 @@ namespace com.Analisis
 		private static NodoAST ast = null;
 		static List<Error> errors = new List<Error>();
 		static private ParseTreeNode raiz;
-
+		static Sesion sesion;
 
 		internal static bool ExisteFuncion(string nombre)
 		{
@@ -106,7 +106,7 @@ namespace com.Analisis
 				if (Analizador.ErroresCQL.Count == 0)
 				{
 					Analizador.AddUsuario(new Usuario("admin", "admin"));
-					Sesion sesion = new Sesion("admin", null);
+					sesion = new Sesion("admin", null);
 					TablaSimbolos ts = new TablaSimbolos();
 					Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
 					atributos.Add("Nombre",new TipoObjetoDB(TipoDatoDB.STRING,"string"));
@@ -137,7 +137,7 @@ namespace com.Analisis
 
 					foreach (Sentencia sentencia in sentencias)
 					{
-						object respuesta = sentencia.Ejecutar(sesion, ts);
+						object respuesta = sentencia.Ejecutar(ts);
 						if (respuesta != null)
 						{
 							if (respuesta.GetType() == typeof(ThrowError))
@@ -325,6 +325,7 @@ namespace com.Analisis
 		public static string PATH => path;
 		internal static List<Error> ErroresChison { get => errors; set => errors = value; }
 		internal static List<Funcion> Funciones { get => funciones; set => funciones = value; }
+		internal static Sesion Sesion { get => sesion; set => sesion = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{
@@ -379,9 +380,9 @@ namespace com.Analisis
 					Console.WriteLine(per);
 				}
 			}
-			if ( sesion.DBActual!= null)
+			if ( Analizador.Sesion.DBActual!= null)
 			{
-				BaseDatos dbActual = BuscarDB(sesion.DBActual);
+				BaseDatos dbActual = BuscarDB(Analizador.Sesion.DBActual);
 				if (dbActual!=null) {
 					Console.WriteLine("------------------------------------------------------");
 					Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
