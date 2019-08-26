@@ -70,6 +70,9 @@
     <Compile Include="com.Analisis\GramaticaChison.cs" />
     <Compile Include="com.Analisis\GramaticaLup.cs" />
     <Compile Include="com.Analisis\GramaticaCql.cs" />
+    <Compile Include="com.AST\AsignacionCall.cs" />
+    <Compile Include="com.AST\LlamadaProcedimiento.cs" />
+    <Compile Include="com.AST\Throw.cs" />
     <Compile Include="com.AST\Acceso.cs" />
     <Compile Include="com.AST\AccesoArreglo.cs" />
     <Compile Include="com.AST\AccesoPar.cs" />
@@ -126,6 +129,7 @@
     <Compile Include="com.AST\Ternario.cs" />
     <Compile Include="com.AST\ThrowError.cs" />
     <Compile Include="com.AST\TruncarTabla.cs" />
+    <Compile Include="com.AST\TryCatch.cs" />
     <Compile Include="com.AST\UsarBaseDatos.cs" />
     <Compile Include="com.AST\Where.cs" />
     <Compile Include="com.AST\DoWhile.cs" />

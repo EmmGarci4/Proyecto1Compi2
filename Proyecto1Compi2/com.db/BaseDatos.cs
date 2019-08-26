@@ -108,7 +108,7 @@ namespace Proyecto1Compi2.com.db
 		{
 			foreach (Procedimiento tb in this.procedimientos)
 			{
-				if (tb.Nombre.Equals(nombre))
+				if (tb.GetLlave().Equals(nombre))
 				{
 					return true;
 				}
@@ -116,11 +116,11 @@ namespace Proyecto1Compi2.com.db
 			return false;
 		}
 
-		private Procedimiento BuscarProcedimiento(string nombre)
+		public Procedimiento BuscarProcedimiento(string nombre)
 		{
 			foreach (Procedimiento tb in this.procedimientos)
 			{
-				if (tb.Nombre.Equals(nombre))
+				if (tb.GetLlave().Equals(nombre))
 				{
 					return tb;
 				}

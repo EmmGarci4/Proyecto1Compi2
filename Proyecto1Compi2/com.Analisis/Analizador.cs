@@ -25,6 +25,7 @@ namespace com.Analisis
 		static List<Error> errors = new List<Error>();
 		static private ParseTreeNode raiz;
 		static Sesion sesion;
+		static string codigoAnalizado;
 
 		internal static bool ExisteFuncion(string nombre)
 		{
@@ -83,6 +84,7 @@ namespace com.Analisis
 		}
 		
 		public static bool AnalizarCql(String texto){
+			codigoAnalizado = texto;
 			GramaticaCql gramatica = new GramaticaCql();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
@@ -156,9 +158,16 @@ namespace com.Analisis
 									ErroresCQL.Add(new Error(error));
 								}
 							}
+							else if(respuesta.GetType() == typeof(Break)|| respuesta.GetType() == typeof(Continue)||
+								respuesta.GetType() == typeof(Return)) {
+								Sentencia sent = (Sentencia)respuesta;
+								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, 
+									"La sentencia no está en un bloque de código adecuado",
+									sent.Linea, sent.Columna));
+							}
 						}
 					}
-					MostrarReporteDeEstado(sesion);
+					//MostrarReporteDeEstado(sesion);
 				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
@@ -338,6 +347,7 @@ namespace com.Analisis
 		internal static List<Error> ErroresChison { get => errors; set => errors = value; }
 		internal static List<Funcion> Funciones { get => funciones; set => funciones = value; }
 		internal static Sesion Sesion { get => sesion; set => sesion = value; }
+		public static string CodigoAnalizado { get => codigoAnalizado; set => codigoAnalizado = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{

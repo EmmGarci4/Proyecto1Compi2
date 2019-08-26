@@ -86,7 +86,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							RETORNO = valoresRetornados.ElementAt(0);
 						}
-						else
+						else if (this.tipoRetorno != null)
 						{
 							return new ThrowError(TipoThrow.Exception,
 								"La cantidad de valores retornados es incorrecta, solo se puede retornar un valor",
@@ -97,7 +97,8 @@ namespace Proyecto1Compi2.com.AST
 					else {
 						//break - continue
 						Sentencia sent = (Sentencia)respuesta;
-						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,"La sentencia no está en un bloque de código adecuado",
+						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+							"La sentencia no está en un bloque de código adecuado",
 							sent.Linea,sent.Columna));
 					}
 				}
@@ -148,19 +149,5 @@ namespace Proyecto1Compi2.com.AST
 		{
 			valoresParametros = null;
 		}
-
-		public static object LeerRespuesta(object res)
-		{
-			if (res != null)
-			{
-				if (res.GetType() == typeof(ThrowError))
-				{
-					return res;
-				}
-			}
-			return null;
-		}
-
-
 	}
 }

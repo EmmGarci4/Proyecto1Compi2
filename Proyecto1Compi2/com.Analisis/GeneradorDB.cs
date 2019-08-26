@@ -1,6 +1,7 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
 using Irony.Parsing;
+using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 using System;
@@ -138,8 +139,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Procedimiento GetProcedimiento(ParseTreeNode nodo)
 		{
-			Dictionary<string, TipoObjetoDB> par = GetParametros(nodo.ChildNodes.ElementAt(1));
-			Dictionary<string, TipoObjetoDB> ret = GeRetornos(nodo.ChildNodes.ElementAt(1));
+			List<Parametro> par = GetParametros(nodo.ChildNodes.ElementAt(1));
+			List<Parametro> ret = GeRetornos(nodo.ChildNodes.ElementAt(1));
 			String codigo = nodo.ChildNodes.ElementAt(2).Token.ValueString;
 			codigo = codigo.TrimStart('$');
 			codigo = codigo.TrimEnd('$');
@@ -150,12 +151,12 @@ namespace Proyecto1Compi2.com.Analisis
 				//Analizador.ErroresCHISON.AddRange(erroresInst);
 				codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
 			}
-			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, codigo);
+			return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, null,codigo,nodo.Span.Location.Line,nodo.Span.Location.Column);
 		}
 
-		private static Dictionary<string, TipoObjetoDB> GeRetornos(ParseTreeNode parseTreeNode)
+		private static List<Parametro> GeRetornos(ParseTreeNode parseTreeNode)
 		{
-			Dictionary<string, TipoObjetoDB> ret = new Dictionary<string, TipoObjetoDB>();
+			List<Parametro> ret = new List<Parametro>();
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
 			{
 				if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("out"))
@@ -165,9 +166,7 @@ namespace Proyecto1Compi2.com.Analisis
 						TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
 
-							ret.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString,new TipoObjetoDB(t,nombreTipo));
-						
-						
+							ret.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo)));
 					}
 					catch (ArgumentException ex)
 					{
@@ -187,9 +186,9 @@ namespace Proyecto1Compi2.com.Analisis
 			return ret;
 		}
 
-		private static Dictionary<string, TipoObjetoDB> GetParametros(ParseTreeNode parseTreeNode)
+		private static List<Parametro> GetParametros(ParseTreeNode parseTreeNode)
 		{
-			Dictionary<string, TipoObjetoDB> param = new Dictionary<string, TipoObjetoDB>();
+			List<Parametro> param = new List<Parametro>();
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
 			{
 				if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("in"))
@@ -198,9 +197,7 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 						string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
-						param.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo));
-						
-
+						param.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo)));
 					}
 					catch (ArgumentException ex)
 					{

@@ -31,7 +31,6 @@ namespace Proyecto1Compi2.com.AST
 
 		public List<AccesoPar> Objetos { get => accesos; set => accesos = value; }
 
-
 		public override object GetValor(TablaSimbolos ts)
 		{
 			LlenarCola();

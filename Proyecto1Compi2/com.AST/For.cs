@@ -38,11 +38,14 @@ namespace Proyecto1Compi2.com.AST
 			TablaSimbolos local = new TablaSimbolos(ts);
 			List<ThrowError> errores = new List<ThrowError>();
 			if (asignacion != null) {
-				object res = Funcion.LeerRespuesta(asignacion.Ejecutar( local));
-				if (res != null) return res;
+				object res = asignacion.Ejecutar(local);
+				if (res != null)if (res.GetType() == typeof(ThrowError))
+						return res;
+				
 			} else if (declaracion!=null) {
-				object res = Funcion.LeerRespuesta(declaracion.Ejecutar( local));
-				if (res != null) return res;
+				object res = declaracion.Ejecutar(local);
+				if (res != null) if (res.GetType() == typeof(ThrowError))
+						return res;
 			}
 			int contador = 0;
 			bool ejecutar = true;
