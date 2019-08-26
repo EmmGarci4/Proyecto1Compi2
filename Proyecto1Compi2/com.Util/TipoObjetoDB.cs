@@ -78,6 +78,7 @@ namespace Proyecto1Compi2.com.Util
 		//ESPECIALES
 		COUNTER,
 		NULO,
+		CURSOR,
 		//LISTAS
 		LISTA_PRIMITIVO,
 		LISTA_OBJETO,

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -20,6 +21,11 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos ts)
 		{
+			if (Datos.GetExceptcion(nombreExeption)==TipoThrow.Exception) {
+				return new ThrowError(TipoThrow.Exception,
+							"Excepción '"+nombreExeption+"' no reconocida",
+							Linea, Columna);
+			}
 			return this;
 		}
 	}

@@ -93,13 +93,15 @@ namespace Proyecto1Compi2.com.AST
 								Linea, Columna);
 						}
 						break;
+					} else if (respuesta.GetType()==typeof(Throw)) {
+						return respuesta;
 					}
 					else {
 						//break - continue
 						Sentencia sent = (Sentencia)respuesta;
 						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
 							"La sentencia no está en un bloque de código adecuado",
-							sent.Linea,sent.Columna));
+							sent.Linea, sent.Columna));
 					}
 				}
 			}

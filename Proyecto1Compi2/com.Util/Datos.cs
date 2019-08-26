@@ -83,6 +83,56 @@ namespace Proyecto1Compi2.com.Util
 			return false;
 		}
 
+		internal static TipoThrow GetExceptcion(string nombreExeption)
+		{
+			switch (nombreExeption.ToLower()) {
+				case "bdalreadyexists":
+					return TipoThrow.BDAlreadyExists;
+				case "typealreadyexists":
+					return TipoThrow.TypeAlreadyExists;
+				case  "typeDontexists":
+					return TipoThrow.TypeDontExists;
+				case "bddontexists":
+					return TipoThrow.BDDontExists;
+				case "usebdexception":
+					return TipoThrow.UseBDException;
+				case "tablealreadyexists":
+					return TipoThrow.TableAlreadyExists;
+				case "tabledontexists":
+					return TipoThrow.TableDontExists;
+				case "countertypeexception":
+					return TipoThrow.CounterTypeException;
+				case "useraleadyexists":
+					return TipoThrow.UserAleadyExists;
+				case "userdontexists":
+					return TipoThrow.UserDontExists;
+				case "valuesexception":
+					return TipoThrow.ValuesException;
+				case "columnexception":
+					return TipoThrow.ColumnException;
+				case "batchexception":
+					return TipoThrow.BatchException;
+				case "indexoutexception":
+					return TipoThrow.IndexOutException;
+				case "arithmeticexception":
+					return TipoThrow.ArithmeticException;
+				case "nullpointerexception":
+					return TipoThrow.NullPointerException;
+				case "numerreturnsexception":
+					return TipoThrow.NumerReturnsException;
+				case "functionalreadyexists":
+					return TipoThrow.FunctionAlreadyExists;
+				case "procedurealreadyexists":
+					return TipoThrow.ProcedureAlreadyExists;
+				case "objectalreadyexists":
+					return TipoThrow.ObjectAlreadyExists;
+				case "exception":
+				default:
+					return TipoThrow.Exception;
+			}
+			throw new NotImplementedException();
+		}
+
 		internal static bool IsTipoCompatibleParaAsignar(TipoObjetoDB tipoDato, object v)
 		{
 			switch (tipoDato.Tipo)

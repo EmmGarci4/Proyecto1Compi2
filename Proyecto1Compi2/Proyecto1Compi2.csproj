@@ -70,7 +70,12 @@
     <Compile Include="com.Analisis\GramaticaChison.cs" />
     <Compile Include="com.Analisis\GramaticaLup.cs" />
     <Compile Include="com.Analisis\GramaticaCql.cs" />
+    <Compile Include="com.AST\AbrirCursor.cs" />
     <Compile Include="com.AST\AsignacionCall.cs" />
+    <Compile Include="com.AST\CerrarCursor.cs" />
+    <Compile Include="com.AST\CrearCursor.cs" />
+    <Compile Include="com.AST\Cursor.cs" />
+    <Compile Include="com.AST\Foreach.cs" />
     <Compile Include="com.AST\LlamadaProcedimiento.cs" />
     <Compile Include="com.AST\Throw.cs" />
     <Compile Include="com.AST\Acceso.cs" />

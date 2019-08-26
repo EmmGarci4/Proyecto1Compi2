@@ -98,6 +98,10 @@ namespace Proyecto1Compi2.com.db
 						}
 						break;
 					}
+					else if (respuesta.GetType() == typeof(Throw))
+					{
+						return respuesta;
+					}
 					else
 					{
 						//break - continue

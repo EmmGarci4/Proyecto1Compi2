@@ -26,6 +26,14 @@ namespace com.Analisis
 		static private ParseTreeNode raiz;
 		static Sesion sesion;
 		static string codigoAnalizado;
+		static UserType errorCatch = GetErrorCatch();
+
+		private static UserType GetErrorCatch()
+		{
+			Dictionary<string, TipoObjetoDB> at = new Dictionary<string, TipoObjetoDB>();
+			at.Add("message", new TipoObjetoDB(TipoDatoDB.STRING,"string"));
+			return new UserType("error",at);
+		}
 
 		internal static bool ExisteFuncion(string nombre)
 		{
@@ -158,10 +166,17 @@ namespace com.Analisis
 									ErroresCQL.Add(new Error(error));
 								}
 							}
+							else if (respuesta.GetType() == typeof(Throw))
+							{
+								ErroresCQL.Add(new Error(TipoError.Semantico,
+									"La sentencia throw de tipo "+((Throw)respuesta).NombreExeption+" no está contenida en una estructura try-catch",
+									((Throw)respuesta).Linea, ((Throw)respuesta).Columna));
+								break;
+							}
 							else if(respuesta.GetType() == typeof(Break)|| respuesta.GetType() == typeof(Continue)||
 								respuesta.GetType() == typeof(Return)) {
 								Sentencia sent = (Sentencia)respuesta;
-								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico, 
+								ErroresCQL.Add(new Error(TipoError.Semantico, 
 									"La sentencia no está en un bloque de código adecuado",
 									sent.Linea, sent.Columna));
 							}
@@ -348,6 +363,7 @@ namespace com.Analisis
 		internal static List<Funcion> Funciones { get => funciones; set => funciones = value; }
 		internal static Sesion Sesion { get => sesion; set => sesion = value; }
 		public static string CodigoAnalizado { get => codigoAnalizado; set => codigoAnalizado = value; }
+		internal static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
 
 		internal static void AddUsuario(Usuario usu)
 		{

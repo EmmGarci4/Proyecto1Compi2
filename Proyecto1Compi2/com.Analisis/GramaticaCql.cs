@@ -603,8 +603,7 @@ namespace com.Analisis
 
 			CREAR_CURSOR.Rule = pr_cursor + id + pr_is + SELECCIONAR + puntoycoma;
 
-			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2
-			| pr_for + pr_each + par1 + TIPODATO + id + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2;
+			FOREACH.Rule = pr_for + pr_each + par1 + LISTAPARAMETROS + par2 + pr_in + id + llave1 + BLOQUESENTENCIAS + llave2;
 
 			OPENCURSOR.Rule = pr_open + id + puntoycoma;
 
@@ -658,7 +657,7 @@ namespace com.Analisis
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
 				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_in,pr_null,
-				pr_from,pr_limit,pr_begin,pr_batch,pr_apply,pr_log,pr_void,pr_try,pr_catch,pr_call);		
+				pr_from,pr_limit,pr_begin,pr_batch,pr_apply,pr_log,pr_void,pr_try,pr_catch,pr_call,pr_cursor,pr_each,pr_open,pr_close);		
 			//COMENTARIOS IGNORADOS
 			NonGrammarTerminals.Add(comentario_bloque);
 			NonGrammarTerminals.Add(comentario_linea);

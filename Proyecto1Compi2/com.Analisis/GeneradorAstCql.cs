@@ -215,15 +215,61 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetAsignacionCall(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "CREAR_CURSOR":
+						n = GetCrearCursor(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "FOREACH":
+						n = GetForeach(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "OPENCURSOR":
+						n = GetOpenCursor(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
+					case "CLOSECURSOR":
+						n = GetCloseCursor(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
 		}
 
+		private static Sentencia GetOpenCursor(ParseTreeNode sentencia)
+		{
+			return new AbrirCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+		}
+
+		private static Sentencia GetCloseCursor(ParseTreeNode sentencia)
+		{
+			return new CerrarCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+		}
+
+		private static Sentencia GetForeach(ParseTreeNode sentencia)
+		{
+			List<Parametro> parametros = GetParametros(sentencia.ChildNodes.ElementAt(0));
+			if (parametros.Count==0) {
+				Analizador.ErroresCQL.Add(new Error(TipoError.Sintactico,"Debe escribir al menos una variable en el foreach",
+					sentencia.Span.Location.Line,sentencia.Span.Location.Column));
+				return null;
+			}
+			
+			return new Foreach(parametros, sentencia.ChildNodes.ElementAt(1).Token.ValueString,
+				GetSentencias(sentencia.ChildNodes.ElementAt(2)), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+		}
+
+		private static Sentencia GetCrearCursor(ParseTreeNode sentencia)
+		{
+			return new CrearCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString,(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(1)),
+				sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+		}
+
+		#region Lenguaje_FCL
 		private static Sentencia GetAsignacionCall(ParseTreeNode sentencia)
 		{
-			List<Acceso> variables=GetListaAcceso2(sentencia.ChildNodes.ElementAt(0));
-			LlamadaProcedimiento callProc =(LlamadaProcedimiento)GetLlamadaProc(sentencia.ChildNodes.ElementAt(1));
+			List<Acceso> variables = GetListaAcceso2(sentencia.ChildNodes.ElementAt(0));
+			LlamadaProcedimiento callProc = (LlamadaProcedimiento)GetLlamadaProc(sentencia.ChildNodes.ElementAt(1));
 			return new AsignacionCall(variables, callProc, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
@@ -240,10 +286,11 @@ namespace Proyecto1Compi2.com.Analisis
 		private static Acceso GetAccesoID(ParseTreeNode nodo)
 		{
 			Acceso accesss = new Acceso(nodo.Span.Location.Line, nodo.Span.Location.Column);
-			accesss.Objetos.Add(new AccesoPar(nodo.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
-			if (nodo.ChildNodes.Count>1) {
+			accesss.Objetos.Add(new AccesoPar(nodo.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+			if (nodo.ChildNodes.Count > 1)
+			{
 				Acceso derecha = GetAcceso(nodo.ChildNodes.ElementAt(1));
-					accesss.Objetos.AddRange(derecha.Objetos);
+				accesss.Objetos.AddRange(derecha.Objetos);
 			}
 
 			return accesss;
@@ -251,17 +298,17 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetLlamadaProc(ParseTreeNode sentencia)
 		{
-			return new LlamadaProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString, 
+			return new LlamadaProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
 				GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)),
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetCrearProcedimiento(ParseTreeNode sentencia)
 		{
-			String codigo = Analizador.CodigoAnalizado.Substring(sentencia.ChildNodes.ElementAt(3).Span.Location.Position, 
+			String codigo = Analizador.CodigoAnalizado.Substring(sentencia.ChildNodes.ElementAt(3).Span.Location.Position,
 				sentencia.ChildNodes.ElementAt(3).Span.Length);
 			return new CrearProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString, GetParametros(sentencia.ChildNodes.ElementAt(1)),
-				GetParametros(sentencia.ChildNodes.ElementAt(2)), GetSentencias(sentencia.ChildNodes.ElementAt(3)),codigo,
+				GetParametros(sentencia.ChildNodes.ElementAt(2)), GetSentencias(sentencia.ChildNodes.ElementAt(3)), codigo,
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
@@ -276,8 +323,6 @@ namespace Proyecto1Compi2.com.Analisis
 				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(2).Token.ValueString,
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
-
-		#region Lenguaje_FCL
 
 		private static Sentencia GetContinue(ParseTreeNode sentencia)
 		{
