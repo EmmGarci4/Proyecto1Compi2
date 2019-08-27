@@ -188,7 +188,7 @@ namespace Proyecto1Compi2.com.AST
 				case TipoDatoDB.TIME:
 					return "null";
 				default:
-					return null;
+					return "null";
 			}
 		}
 	}

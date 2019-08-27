@@ -20,7 +20,7 @@ namespace Proyecto1Compi2.com.AST
 			this.tipoOp = tipoOp;
 			this.izquierda = izquierda;
 			this.derecha = derecha;
-			this.valor =false;
+			this.valor = false;
 		}
 
 		public Condicion(Expresion izquierda, TipoOperacion tipoOp, int linea, int columna) : base(linea, columna)
@@ -75,27 +75,31 @@ namespace Proyecto1Compi2.com.AST
 						{
 							bool valor = izq.ToString() != der.ToString();
 							return valor;
-						}else
+						}
+						else
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							bool valor = double.Parse(izq.ToString()) != double.Parse(der.ToString());
 							return valor;
-						}else
+						}
+						else
 						//BOOLEANO-BOOLEANO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
 						{
 							bool valor = bool.Parse(izq.ToString()) != bool.Parse(der.ToString());
 							return valor;
-						}else
+						}
+						else
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
-							return valor!=0;
-						}else
+							return valor != 0;
+						}
+						else
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
@@ -104,7 +108,24 @@ namespace Proyecto1Compi2.com.AST
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor != 0;
 						}
-						//OBJETO-OBJETO **PENDIENTE
+						else
+						//OBJETO - NULL
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Nulo))
+						{
+							return izq.GetType() == typeof(Objeto);
+						}
+						else
+						//NULL - OBJETO
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
+						{
+							return der.GetType() == typeof(Objeto);
+						}
+						//else
+						////OBJETO-OBJETO 
+						//if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
+						//{
+						//	return izq.Equals(der);
+						//}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
@@ -117,19 +138,22 @@ namespace Proyecto1Compi2.com.AST
 						{
 							bool valor = izq.ToString() == der.ToString();
 							return valor;
-						}else
+						}
+						else
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
 							bool valor = double.Parse(izq.ToString()) == double.Parse(der.ToString());
 							return valor;
-						}else
+						}
+						else
 						//BOOLEANO-BOOLEANO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
 						{
 							bool valor = bool.Parse(izq.ToString()) == bool.Parse(der.ToString());
 							return valor;
-						}else
+						}
+						else
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
@@ -137,7 +161,8 @@ namespace Proyecto1Compi2.com.AST
 							MyDateTime d2 = (MyDateTime)der;
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor == 0;
-						}else
+						}
+						else
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
@@ -145,8 +170,25 @@ namespace Proyecto1Compi2.com.AST
 							MyDateTime d2 = (MyDateTime)der;
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor == 0;
+						}else
+						//OBJETO - NULL
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Nulo))
+						{
+							return izq.GetType() != typeof(Objeto);
 						}
-						//OBJETO-OBJETO **PENDIENTE
+						else
+						//NULL - OBJETO
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
+						{
+							return der.GetType() != typeof(Objeto);
+						}
+						//else
+						////OBJETO-OBJETO 
+						//if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
+						//{
+							
+						//	return izq.Equals(der);
+						//}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
@@ -159,7 +201,8 @@ namespace Proyecto1Compi2.com.AST
 						{
 							bool valor = double.Parse(izq.ToString()) > double.Parse(der.ToString());
 							return valor;
-						}else
+						}
+						else
 						//FECHA-FECHA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
 						{
@@ -167,7 +210,8 @@ namespace Proyecto1Compi2.com.AST
 							MyDateTime d2 = (MyDateTime)der;
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor > 0;
-						}else
+						}
+						else
 						//HORA-HORA
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
 						{
@@ -248,7 +292,7 @@ namespace Proyecto1Compi2.com.AST
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
 						{
-							bool valor = double.Parse(izq.ToString()) <=double.Parse(der.ToString());
+							bool valor = double.Parse(izq.ToString()) <= double.Parse(der.ToString());
 							return valor;
 						}
 						else

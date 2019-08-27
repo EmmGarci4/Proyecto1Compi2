@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.Util
 {
-	class Objeto
+	class Objeto:IEquatable<Objeto>
 	{
 		Dictionary<string, object> atributos;
 		UserType plantilla;
@@ -61,6 +61,15 @@ namespace Proyecto1Compi2.com.Util
 		internal bool IsObjetoTipo(string nombre)
 		{
 			return plantilla.Nombre == nombre;
+		}
+
+		public bool Equals(Objeto other)
+		{
+			if (other.GetType()==typeof(Objeto))
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 }
