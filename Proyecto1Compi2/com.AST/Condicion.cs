@@ -121,11 +121,13 @@ namespace Proyecto1Compi2.com.AST
 							return der.GetType() == typeof(Objeto);
 						}
 						//else
-						////OBJETO-OBJETO 
-						//if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
-						//{
-						//	return izq.Equals(der);
-						//}
+						//OBJETO-OBJETO 
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
+						{
+							//Console.WriteLine(izq.GetHashCode());
+							//Console.WriteLine(der.GetHashCode());
+							return !izq.Equals(der);
+						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
@@ -182,13 +184,12 @@ namespace Proyecto1Compi2.com.AST
 						{
 							return der.GetType() != typeof(Objeto);
 						}
-						//else
-						////OBJETO-OBJETO 
-						//if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
-						//{
-							
-						//	return izq.Equals(der);
-						//}
+						else
+						//OBJETO-OBJETO 
+						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts).Equals(TipoOperacion.Objeto))
+						{
+							return izq.Equals(der);
+						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,

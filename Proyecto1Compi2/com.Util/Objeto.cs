@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.Util
 {
-	class Objeto:IEquatable<Objeto>
+	class Objeto
 	{
 		Dictionary<string, object> atributos;
 		UserType plantilla;
@@ -63,13 +63,19 @@ namespace Proyecto1Compi2.com.Util
 			return plantilla.Nombre == nombre;
 		}
 
-		public bool Equals(Objeto other)
+		public override int GetHashCode()
 		{
-			if (other.GetType()==typeof(Objeto))
+			unchecked
 			{
-				return true;
+				// Choose large primes to avoid hashing collisions
+				const int HashingBase = (int)2166136261;
+				const int HashingMultiplier = 16777619;
+
+				int hash = HashingBase;
+				hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, atributos) ? atributos.GetHashCode() : 0);
+				hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, plantilla) ? plantilla.GetHashCode() : 0);
+				return hash;
 			}
-			return false;
 		}
 	}
 }
