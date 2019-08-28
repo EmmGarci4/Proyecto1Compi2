@@ -25,11 +25,11 @@ namespace Proyecto1Compi2.com.AST
 		internal Acceso Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Derecha { get => derecha; set => derecha = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			//OBTENIENDO RESPUESTA DE EXPRESION
-			object respuesta = derecha.GetValor(ts);
-			TipoOperacion tipoRespuesta = derecha.GetTipo(ts);
+			object respuesta = derecha.GetValor(ts,sesion);
+			TipoOperacion tipoRespuesta = derecha.GetTipo(ts,sesion);
 			if (respuesta != null)
 			{
 				if (respuesta.GetType() == typeof(ThrowError))
@@ -52,10 +52,10 @@ namespace Proyecto1Compi2.com.AST
 					{
 						if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 						{
-							object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna);
+							object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna,sesion);
 							if (instanciaObjeto != null)
 							{
-								return izquierda.Asignar(instanciaObjeto, Datos.GetTipoObjetoDB(respuesta), ts);
+								return izquierda.Asignar(instanciaObjeto, Datos.GetTipoObjetoDB(respuesta), ts,sesion);
 							}
 						}
 						else
@@ -68,18 +68,18 @@ namespace Proyecto1Compi2.com.AST
 					}
 					break;
 				default:
-					return izquierda.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), ts);
+					return izquierda.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), ts,sesion);
 			}
 
 			return null;
 		}
 
-		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia,int linea,int columna)
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia,int linea,int columna,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				if (db.ExisteUserType(tipoInstancia.ToString()))
 				{
 					UserType ut = db.BuscarUserType(tipoInstancia.ToString());

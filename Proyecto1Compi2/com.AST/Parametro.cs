@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class Parametro
+	class Parametro:IEquatable<Parametro>
 	{
 		string nombre;
 		TipoObjetoDB tipo;
@@ -21,7 +21,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 
-		public override bool Equals(object obj)
+		public bool Equals(Parametro obj)
 		{
 			var parametro = obj as Parametro;
 			return parametro != null &&

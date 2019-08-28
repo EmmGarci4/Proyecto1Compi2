@@ -22,7 +22,7 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Exp { get => exp; set => exp = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			TablaSimbolos local = new TablaSimbolos(ts);
 			List<ThrowError> errores = new List<ThrowError>();
@@ -30,7 +30,7 @@ namespace Proyecto1Compi2.com.AST
 			//EJECUTANDO SENTENCIAS ******************************************************************
 			foreach (Sentencia sentencia in sentencias)
 			{
-				respuesta = sentencia.Ejecutar(local);
+				respuesta = sentencia.Ejecutar(local,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

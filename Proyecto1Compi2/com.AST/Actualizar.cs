@@ -32,7 +32,7 @@ namespace Proyecto1Compi2.com.AST
 		internal List<AsignacionColumna> Asignaciones { get => asignaciones; set => asignaciones = value; }
 		internal Where Condicion { get => condicion; set => condicion = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			Console.WriteLine("Actualizando...");
 			return null;

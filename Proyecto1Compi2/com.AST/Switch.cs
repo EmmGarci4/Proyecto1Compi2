@@ -26,24 +26,24 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Case> ListaCase { get => listaCase; set => listaCase = value; }
 		internal List<Sentencia> Default_ { get => default_; set => default_ = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			List<ThrowError> errores = new List<ThrowError>();
-			object exVal = expresion.GetValor(ts);
+			object exVal = expresion.GetValor(ts,sesion);
 			if (exVal.GetType() == typeof(ThrowError))
 			{
 				return exVal;
 			}
-			TipoOperacion tipoexp = this.expresion.GetTipo(ts);
+			TipoOperacion tipoexp = this.expresion.GetTipo(ts,sesion);
 			if (Datos.IsPrimitivo(tipoexp))
 			{
 				//VALIDANDO TIPO DE CASES
 				foreach (Case cs in listaCase) {
-					object res = cs.Exp.GetValor(ts);
+					object res = cs.Exp.GetValor(ts,sesion);
 					if (res.GetType()==typeof(ThrowError)) {
 						return res;
 					}
-					if (tipoexp != cs.Exp.GetTipo(ts)) {
+					if (tipoexp != cs.Exp.GetTipo(ts,sesion)) {
 						return new ThrowError(Util.TipoThrow.Exception,
 								"La expresión debe ser del mismo tipo que la evaluada en el switch",
 								Linea, Columna);
@@ -56,10 +56,10 @@ namespace Proyecto1Compi2.com.AST
 				bool ejecutar = true;
 
 				foreach (Case cs in ListaCase) {
-					if (exVal.Equals(cs.Exp.GetValor(ts))||(evaluado&&ejecutar)) {
+					if (exVal.Equals(cs.Exp.GetValor(ts,sesion))||(evaluado&&ejecutar)) {
 						evaluado = true;
 						//EJECUTANDO SENTENCIAS ******************************************************************
-						object res = cs.Ejecutar(ts);
+						object res = cs.Ejecutar(ts,sesion);
 						if (res!=null) {
 							if (res.GetType() == typeof(ThrowError))
 							{
@@ -88,7 +88,7 @@ namespace Proyecto1Compi2.com.AST
 					foreach (Sentencia sentencia in default_)
 					{
 						//EJECUTANDO SENTENCIAS ******************************************************************
-						object res = sentencia.Ejecutar(local);
+						object res = sentencia.Ejecutar(local,sesion);
 						if (res != null)
 						{
 							if (res.GetType() == typeof(ThrowError))

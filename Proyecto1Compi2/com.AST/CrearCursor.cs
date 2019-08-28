@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -22,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal Seleccionar Select { get => select; set => select = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			if (!ts.ExisteSimbolo(nombre))
 			{

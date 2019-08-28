@@ -14,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal Expresion Limitante { get => limitante; set => limitante = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			throw new System.NotImplementedException();
 		}

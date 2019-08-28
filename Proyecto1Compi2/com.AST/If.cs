@@ -28,25 +28,25 @@ namespace Proyecto1Compi2.com.AST
 		internal List<Sentencia> CuerpoVerdadero { get => cuerpoVerdadero; set => cuerpoVerdadero = value; }
 		internal List<Sentencia> CuerpoFalso { get => cuerpoFalso; set => cuerpoFalso = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
 
-			object respuesta = condicion.GetValor(tsLocal);
+			object respuesta = condicion.GetValor(tsLocal,sesion);
 			if (respuesta.GetType()==typeof(ThrowError)) {
 				return respuesta;
 			}
 			if ((bool)respuesta)
 			{
 				//EJECUTANDO SENTENCIAS ******************************************************************
-				respuesta = EjecutarSentencias(CuerpoVerdadero, tsLocal);
+				respuesta = EjecutarSentencias(CuerpoVerdadero, tsLocal,sesion);
 				if (respuesta != null) return respuesta;
 			}
 			else {
 				bool evaluado = false;
 				if (elseIfs!=null) {
 					foreach (ElseIf elseif in elseIfs) {
-						respuesta = elseif.Condicion.GetValor(tsLocal);
+						respuesta = elseif.Condicion.GetValor(tsLocal,sesion);
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
@@ -56,7 +56,7 @@ namespace Proyecto1Compi2.com.AST
 							evaluado = true;
 							if (respuesta!=null) {
 								//EJECUTANDO SENTENCIAS ******************************************************************
-								respuesta = elseif.Ejecutar( tsLocal);
+								respuesta = elseif.Ejecutar(tsLocal,sesion);
 								if (respuesta != null) return respuesta;
 							}
 							break;
@@ -66,20 +66,20 @@ namespace Proyecto1Compi2.com.AST
 
 				if (CuerpoFalso!=null && !evaluado) {
 					//EJECUTANDO SENTENCIAS ******************************************************************
-					respuesta = EjecutarSentencias(CuerpoFalso, tsLocal);
+					respuesta = EjecutarSentencias(CuerpoFalso, tsLocal,sesion);
 					if (respuesta != null) return respuesta;
 				}
 			}
 			return null;
 		}
 
-		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal)
+		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal,Sesion sesion)
 		{
 			object respuesta;
 			List<ThrowError> errores = new List<ThrowError>();
 			foreach (Sentencia sentencia in MisSentencias)
 			{
-				respuesta = sentencia.Ejecutar( tsLocal);
+				respuesta = sentencia.Ejecutar(tsLocal,sesion);
 				if (respuesta != null) {
 					if (respuesta.GetType() == typeof(ThrowError))
 					{

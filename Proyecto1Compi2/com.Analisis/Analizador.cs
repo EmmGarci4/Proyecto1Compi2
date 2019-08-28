@@ -22,44 +22,39 @@ namespace com.Analisis
 		private static List<Funcion> funciones = new List<Funcion>();
 		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
-		static List<Error> errors = new List<Error>();
-
-		internal static bool IniciarSesion(string usuario, string passwd)
-		{
-			if (ExisteUsuario(usuario)) {
-				Usuario us = BuscarUsuario(usuario);
-				return us.Password.Equals(passwd);
-			}
-			return false;
-		}
-
+		static List<Error> erroresChison = new List<Error>();
 		static private ParseTreeNode raiz;
-		static Sesion sesion;
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
-		private static List<Sentencia> sentenciasMain= new List<Sentencia>();
 
-		private static UserType GetErrorCatch()
-		{
-			Dictionary<string, TipoObjetoDB> at = new Dictionary<string, TipoObjetoDB>();
-			at.Add("message", new TipoObjetoDB(TipoDatoDB.STRING,"string"));
-			return new UserType("error",at);
-		}
+		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
+		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
+		public static string PATH => path;
+		public static List<Error> ErroresChison { get => erroresChison; set => erroresChison = value; }
+		public static List<Funcion> Funciones { get => funciones; set => funciones = value; }
+		public static string CodigoAnalizado { get => codigoAnalizado; set => codigoAnalizado = value; }
+		public static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
+		public static NodoAST AST { get => ast; }
 
-		internal static bool ExisteFuncion(string nombre)
+
+		//******************************FUNCIONES***********************************************************
+		public static bool ExisteFuncion(string nombre)
 		{
-			if (nombre.ToLower().Equals("today")|| nombre.ToLower().Equals("now")) {
+			if (nombre.ToLower().Equals("today") || nombre.ToLower().Equals("now"))
+			{
 				return true;
 			}
-			foreach (Funcion fun in funciones) {
-				if (fun.GetLlave()==nombre) {
+			foreach (Funcion fun in funciones)
+			{
+				if (fun.GetLlave() == nombre)
+				{
 					return true;
 				}
 			}
 			return false;
 		}
 
-		internal static Funcion BuscarFuncion(string llave)
+		public static Funcion BuscarFuncion(string llave)
 		{
 			foreach (Funcion fun in funciones)
 			{
@@ -71,26 +66,63 @@ namespace com.Analisis
 			return null;
 		}
 
-		internal static void ElminarPermisoDeUsuario(string nombre)
+		public static void AddFuncion(Funcion n)
 		{
-			foreach (Usuario us in Usuariosdb) {
-				if (us.ExistePermiso(nombre)) {
+			funciones.Add(n);
+		}
+
+		//******************************USUARIOS************************************************************
+
+		public static void ElminarPermisoDeUsuario(string nombre)
+		{
+			foreach (Usuario us in Usuariosdb)
+			{
+				if (us.ExistePermiso(nombre))
+				{
 					us.Permisos.Remove(nombre);
 				}
 			}
 		}
 
-		internal static Usuario BuscarUsuario(string usuario)
+		public static Usuario BuscarUsuario(string usuario)
 		{
-			foreach (Usuario usu in Usuariosdb) {
-				if (usu.Nombre.Equals(usuario)) {
+			foreach (Usuario usu in Usuariosdb)
+			{
+				if (usu.Nombre.Equals(usuario))
+				{
 					return usu;
 				}
 			}
 			return null;
 		}
 
-		internal static void AddBaseDatos(BaseDatos db)
+		public static bool ExisteUsuario(string nombre)
+		{
+			foreach (Usuario db in Usuariosdb)
+			{
+				if (db.Nombre.Equals(nombre))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static void AddUsuario(Usuario usu)
+		{
+			if (!ExisteUsuario(usu.Nombre))
+			{
+				Usuariosdb.Add(usu);
+			}
+			else
+			{
+				Console.WriteLine("EL USUARIO YA EXISTE");
+			}
+		}
+
+		//******************************BASES DE DATOS******************************************************
+
+		public static void AddBaseDatos(BaseDatos db)
 		{
 			if (!ExisteDB(db.Nombre))
 			{
@@ -101,8 +133,46 @@ namespace com.Analisis
 				Console.WriteLine("ERROR YA EXISTE LA BASE DE DATOS");
 			}
 		}
-		
-		public static bool AnalizarCql(String texto){
+
+		public static bool ExisteDB(string nombre)
+		{
+			foreach (BaseDatos db in BasesDeDatos)
+			{
+				if (db.Nombre.Equals(nombre))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static BaseDatos BuscarDB(string nombre)
+		{
+			foreach (BaseDatos db in BasesDeDatos)
+			{
+				if (db.Nombre == nombre)
+				{
+					return db;
+				}
+			}
+			return null;
+		}
+
+		public static void EliminarDB(string nombre)
+		{
+			try
+			{
+				BasesDeDatos.Remove(BuscarDB(nombre));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error removiendo bases de datos");
+			}
+		}
+
+		//******************************ANALIZADORES********************************************************
+
+		public static bool AnalizarCql(String texto,Sesion sesion){
 			codigoAnalizado = texto;
 			GramaticaCql gramatica = new GramaticaCql();
 			LanguageData ldata = new LanguageData(gramatica);
@@ -118,7 +188,7 @@ namespace com.Analisis
 				//funciones.Add(new Funcion("llamada",new TipoObjetoDB(TipoDatoDB.STRING,"string"),1,1));
 				//TablaSimbolos ts = new TablaSimbolos("Global");
 
-				//object respuesta = ex.GetValor(ts);
+				//object respuesta = ex.GetValor(ts,sesion);
 				//if (respuesta.GetType() == typeof(ThrowError)) {
 				//	erroresCQL.Add(new Error((ThrowError)respuesta));
 				//}
@@ -127,15 +197,12 @@ namespace com.Analisis
 				//}
 
 				List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
-				sentenciasMain = sentencias;
 				if (Analizador.ErroresCQL.Count == 0)
 				{
-					Analizador.AddUsuario(new Usuario("admin", "admin"));
-					sesion = new Sesion("admin", null);
 					TablaSimbolos ts = new TablaSimbolos();
 					foreach (Sentencia sentencia in sentencias)
 					{
-						object respuesta = sentencia.Ejecutar(ts);
+						object respuesta = sentencia.Ejecutar(ts,sesion);
 						if (respuesta != null)
 						{
 							if (respuesta.GetType() == typeof(ThrowError))
@@ -178,11 +245,6 @@ namespace com.Analisis
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
 		}
 
-		internal static void AddFuncion(Funcion n)
-		{
-			funciones.Add(n);
-		}
-
 		public static bool AnalizarChison(String texto)
 		{
 			GramaticaChison gramatica = new GramaticaChison();
@@ -219,7 +281,30 @@ namespace com.Analisis
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count==0;
 		}
 
-		internal static void GenerarArchivos(string v)
+		public static bool AnalizarLup(String texto)
+		{
+			GramaticaLup gramatica = new GramaticaLup();
+			LanguageData ldata = new LanguageData(gramatica);
+			Parser parser = new Parser(ldata);
+			ParseTree arbol = parser.Parse(texto);
+			Analizador.ErroresCQL.Clear();
+			Analizador.raiz = arbol.Root;
+			if (raiz != null)
+			{
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\LUP.dot");
+				GeneradorLup.AnalizarEntrada(raiz);
+			}
+			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
+			{
+				ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
+			}
+
+			return Analizador.raiz != null;
+		}
+
+		//******************************OTROS***************************************************************
+		
+		public static void GenerarArchivos(string v)
 		{
 			StringBuilder cadena = new StringBuilder();
 			cadena.Append("$<\n\"DATABASES\"=[");
@@ -256,7 +341,7 @@ namespace com.Analisis
 			HandlerFiles.guardarArchivo(cadena.ToString(), v);
 		}
 
-		internal static void Clear()
+		public static void Clear()
 		{
 			ErroresCQL.Clear();
 			ErroresChison.Clear();
@@ -266,6 +351,16 @@ namespace com.Analisis
 			ast = null;
 			raiz = null;
 			Console.WriteLine("****************************************************************************");
+		}
+
+		public static bool IniciarSesion(string usuario, string passwd)
+		{
+			if (ExisteUsuario(usuario))
+			{
+				Usuario us = BuscarUsuario(usuario);
+				return us.Password.Equals(passwd);
+			}
+			return false;
 		}
 
 		private static string Importar(string texto)
@@ -297,51 +392,7 @@ namespace com.Analisis
 			return value;
 		}
 
-		public static bool AnalizarLup(String texto)
-		{
-			GramaticaLup gramatica = new GramaticaLup();
-			LanguageData ldata = new LanguageData(gramatica);
-			Parser parser = new Parser(ldata);
-			ParseTree arbol = parser.Parse(texto);
-			Analizador.ErroresCQL.Clear();
-			Analizador.raiz = arbol.Root;
-			if (raiz != null)
-			{
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\LUP.dot");
-				GeneradorLup.AnalizarEntrada(raiz);
-			}
-			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
-			{
-				ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
-			}
-
-			return Analizador.raiz != null;
-		}
-
-		public static bool ExisteUsuario(string nombre)
-		{
-			foreach (Usuario db in Usuariosdb)
-			{
-				if (db.Nombre.Equals(nombre))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public static bool ExisteDB(string nombre) {
-			foreach (BaseDatos db in BasesDeDatos) {
-				if (db.Nombre.Equals(nombre)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public static NodoAST AST { get => ast; }
-
-		internal static List<Sentencia> GetSentenciasCQL(String codigo)
+		public static List<Sentencia> GetSentenciasCQL(String codigo)
 		{
 			codigoAnalizado = codigo;
 			GramaticaCql gramatica = new GramaticaCql();
@@ -354,50 +405,14 @@ namespace com.Analisis
 			return GeneradorAstCql.GetAST(arbol.Root);
 		}
 
-		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
-		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
-		public static string PATH => path;
-		internal static List<Error> ErroresChison { get => errors; set => errors = value; }
-		internal static List<Funcion> Funciones { get => funciones; set => funciones = value; }
-		internal static Sesion Sesion { get => sesion; set => sesion = value; }
-		public static string CodigoAnalizado { get => codigoAnalizado; set => codigoAnalizado = value; }
-		internal static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
-
-		internal static void AddUsuario(Usuario usu)
+		private static UserType GetErrorCatch()
 		{
-			if (!ExisteUsuario(usu.Nombre))
-			{
-				Usuariosdb.Add(usu);
-			}
-			else
-			{
-				Console.WriteLine("EL USUARIO YA EXISTE");
-			}
+			Dictionary<string, TipoObjetoDB> at = new Dictionary<string, TipoObjetoDB>();
+			at.Add("message", new TipoObjetoDB(TipoDatoDB.STRING, "string"));
+			return new UserType("error", at);
 		}
 
-		internal static BaseDatos BuscarDB(string nombre)
-		{
-			foreach (BaseDatos db in BasesDeDatos)
-			{
-				if (db.Nombre == nombre)
-				{
-					return db;
-				}
-			}
-			return null;
-		}
-
-		internal static void EliminarDB(string nombre)
-		{
-			try
-			{
-				BasesDeDatos.Remove(BuscarDB(nombre));
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Error removiendo bases de datos");
-			}
-		}
+		//******************************REPORTES************************************************************
 
 		private static void MostrarReporteDeEstado(Sesion sesion) {
 			Console.WriteLine("********************************************************************************************");
@@ -416,42 +431,42 @@ namespace com.Analisis
 					Console.WriteLine(per);
 				}
 			}
-			if ( Analizador.Sesion.DBActual!= null)
-			{
-				BaseDatos dbActual = BuscarDB(Analizador.Sesion.DBActual);
-				if (dbActual!=null) {
-					Console.WriteLine("------------------------------------------------------");
-					Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
-					Console.WriteLine("-----------------");
-					foreach (Tabla tb in dbActual.Tablas)
-					{
-						Console.WriteLine("Tabla: " + tb.Nombre);
-						foreach (Columna cl in tb.Columnas)
-						{
-							Console.WriteLine(cl.Nombre + "=>" + cl.Tipo);
-						}
-						Console.WriteLine("*********");
-						tb.MostrarDatos();
-					}
-					Console.WriteLine("-----------------");
-					foreach (UserType ut in dbActual.UserTypes)
-					{
-						Console.WriteLine("UserType: " + ut.Nombre);
-						foreach (KeyValuePair<string, TipoObjetoDB> atributos in ut.Atributos)
-						{
-							Console.WriteLine(atributos.Key + "=>" + atributos.Value);
-						}
-					}
-					Console.WriteLine("-----------------");
-					foreach (Procedimiento pr in dbActual.Procedimientos)
-					{
-						Console.WriteLine("Procedimiento: " + pr.Nombre);
-					}
-				}
-			}
-			else {
-				Console.WriteLine("NO HAY BASE DE DATOS EN USO");
-			}
+			//if ( sesion.DBActual!= null)
+			//{
+			//	BaseDatos dbActual = BuscarDB(sesion.DBActual);
+			//	if (dbActual!=null) {
+			//		Console.WriteLine("------------------------------------------------------");
+			//		Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
+			//		Console.WriteLine("-----------------");
+			//		foreach (Tabla tb in dbActual.Tablas)
+			//		{
+			//			Console.WriteLine("Tabla: " + tb.Nombre);
+			//			foreach (Columna cl in tb.Columnas)
+			//			{
+			//				Console.WriteLine(cl.Nombre + "=>" + cl.Tipo);
+			//			}
+			//			Console.WriteLine("*********");
+			//			tb.MostrarDatos();
+			//		}
+			//		Console.WriteLine("-----------------");
+			//		foreach (UserType ut in dbActual.UserTypes)
+			//		{
+			//			Console.WriteLine("UserType: " + ut.Nombre);
+			//			foreach (KeyValuePair<string, TipoObjetoDB> atributos in ut.Atributos)
+			//			{
+			//				Console.WriteLine(atributos.Key + "=>" + atributos.Value);
+			//			}
+			//		}
+			//		Console.WriteLine("-----------------");
+			//		foreach (Procedimiento pr in dbActual.Procedimientos)
+			//		{
+			//			Console.WriteLine("Procedimiento: " + pr.Nombre);
+			//		}
+			//	}
+			//}
+			//else {
+			//	Console.WriteLine("NO HAY BASE DE DATOS EN USO");
+			//}
 		}
 
 		private static void MostrarReporteDeEstadoChison()

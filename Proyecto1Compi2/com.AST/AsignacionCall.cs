@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -22,9 +23,9 @@ namespace Proyecto1Compi2.com.AST
 		public List<Acceso> Variables { get => variables; set => variables = value; }
 		internal LlamadaProcedimiento Llamada { get => llamada; set => llamada = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
-			object respuesta = llamada.Ejecutar(ts);
+			object respuesta = llamada.Ejecutar(ts,sesion);
 			if (respuesta != null)
 				if (respuesta.GetType() == typeof(ThrowError))
 					return respuesta;
@@ -34,7 +35,7 @@ namespace Proyecto1Compi2.com.AST
 			int indice = 0;
 			foreach (Acceso valor in variables)
 			{
-				object res=valor.Asignar(valores.ElementAt(indice),Datos.GetTipoObjetoDB(valores.ElementAt(indice)),ts);
+				object res=valor.Asignar(valores.ElementAt(indice),Datos.GetTipoObjetoDB(valores.ElementAt(indice)),ts,sesion);
 				if (res != null) return res;
 					indice++;
 			}

@@ -37,12 +37,12 @@ namespace Proyecto1Compi2.com.AST
 		public List<string> QuitarCols { get => quitarCols; set => quitarCols = value; }
 		internal List<Columna> AgregarCols { get => agregarCols; set => agregarCols = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				//VALLIDANDO TABLA
 				if (db.ExisteTabla(nombreTabla))
 				{

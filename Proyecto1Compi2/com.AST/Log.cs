@@ -20,16 +20,16 @@ namespace Proyecto1Compi2.com.AST
 
 		internal Expresion Valor { get => valor; set => valor = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
-			object respuesta = valor.GetValor(tb);
+			object respuesta = valor.GetValor(tb,sesion);
 			if (respuesta != null)
 			{
 				if (respuesta.GetType() == typeof(ThrowError))
 				{
 					return respuesta;
 				}
-				Analizador.Sesion.Mensajes.Add(respuesta.ToString());
+				sesion.Mensajes.Add(respuesta.ToString());
 				Form1.MostrarMensajeAUsuario(respuesta.ToString());
 			}
 			else {

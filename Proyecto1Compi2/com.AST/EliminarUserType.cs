@@ -20,12 +20,12 @@ namespace Proyecto1Compi2.com.AST
 
 		public string Nombre { get => nombre; set => nombre = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				if (db.ExisteUserType(nombre))
 				{
 					db.EliminarUserType(nombre);

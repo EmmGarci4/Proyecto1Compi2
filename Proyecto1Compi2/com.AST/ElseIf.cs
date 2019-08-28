@@ -21,20 +21,20 @@ namespace Proyecto1Compi2.com.AST
 		internal Condicion Condicion { get => condicion; set => condicion = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			TablaSimbolos tlocal = new TablaSimbolos(tb);
-			object res =EjecutarSentencias(sentencias, tlocal);
+			object res =EjecutarSentencias(sentencias, tlocal,sesion);
 			if (res != null) return res;
 			return null;
 		}
 
-		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal)
+		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal,Sesion sesion)
 		{
 			object respuesta;
 			foreach (Sentencia sentencia in MisSentencias)
 			{
-				respuesta = sentencia.Ejecutar( tsLocal);
+				respuesta = sentencia.Ejecutar(tsLocal,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

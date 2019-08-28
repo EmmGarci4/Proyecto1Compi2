@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -13,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			return this;
 		}

@@ -15,7 +15,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<PropOrderBy> Propiedades { get => propiedades; set => propiedades = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			throw new System.NotImplementedException();
 		}

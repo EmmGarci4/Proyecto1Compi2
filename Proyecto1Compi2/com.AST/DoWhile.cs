@@ -23,7 +23,7 @@ namespace Proyecto1Compi2.com.AST
 		internal Condicion Condicion { get => condicion; set => condicion = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
 			List<ThrowError> errores = new List<ThrowError>();
@@ -36,7 +36,7 @@ namespace Proyecto1Compi2.com.AST
 				//EJECUTANDO SENTENCIAS ******************************************************************
 				foreach (Sentencia sentencia in sentencias)
 				{
-					respuesta = sentencia.Ejecutar(tsLocal);
+					respuesta = sentencia.Ejecutar(tsLocal,sesion);
 					if (respuesta != null)
 					{
 						if (respuesta.GetType() == typeof(ThrowError))
@@ -68,7 +68,7 @@ namespace Proyecto1Compi2.com.AST
 				//EVALUANDO CONDICION
 				if (ejecutar)
 				{
-					respuesta = condicion.GetValor(tsLocal);
+					respuesta = condicion.GetValor(tsLocal,sesion);
 					if (respuesta != null)
 					{
 						if (respuesta.GetType() == typeof(ThrowError))

@@ -14,6 +14,6 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public abstract Object Ejecutar(TablaSimbolos ts);
+		public abstract Object Ejecutar(TablaSimbolos ts,Sesion sesion);
 	}
 }

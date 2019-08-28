@@ -24,7 +24,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			if (Analizador.ExisteDB(nombre))
 			{
@@ -35,8 +35,8 @@ namespace Proyecto1Compi2.com.AST
 			}
 			else {
 				Analizador.AddBaseDatos(new BaseDatos(Nombre));
-				if (Analizador.ExisteUsuario(Analizador.Sesion.Usuario)) {
-					Analizador.BuscarUsuario(Analizador.Sesion.Usuario).Permisos.Add(Nombre);
+				if (Analizador.ExisteUsuario(sesion.Usuario)) {
+					Analizador.BuscarUsuario(sesion.Usuario).Permisos.Add(Nombre);
 				}
 			}
 			return null;

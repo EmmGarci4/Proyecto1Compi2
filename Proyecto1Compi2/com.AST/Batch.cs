@@ -19,7 +19,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			throw new NotImplementedException();
 		}

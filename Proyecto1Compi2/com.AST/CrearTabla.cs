@@ -27,12 +27,12 @@ namespace Proyecto1Compi2.com.AST
 		public List<object> Objetos { get => objetos; set => objetos = value; }
 		public bool IfExist { get => ifExist; set => ifExist = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALIDANDO TABLA
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				if (!db.ExisteTabla(Nombre))
 				{
 

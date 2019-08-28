@@ -1,4 +1,5 @@
 ﻿using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public abstract object GetValor(TablaSimbolos ts);
-		public abstract TipoOperacion GetTipo(TablaSimbolos ts);
+		public abstract object GetValor(TablaSimbolos ts, Sesion sesion);
+		public abstract TipoOperacion GetTipo(TablaSimbolos ts, Sesion sesion);
 	}
 }

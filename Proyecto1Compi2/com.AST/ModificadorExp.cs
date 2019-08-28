@@ -25,15 +25,15 @@ namespace Proyecto1Compi2.com.AST
 		public bool Sumar { get => sumar; set => sumar = value; }
 		internal Acceso Acceso { get => acceso; set => acceso = value; }
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
 			return this.tipo;
 		}
 
-		public override object GetValor(TablaSimbolos tb)
+		public override object GetValor(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALOR DE ACCESO
-			object respuesta1 = acceso.GetValor(tb);
+			object respuesta1 = acceso.GetValor(tb,sesion);
 			if (respuesta1 != null)
 			{
 				if (respuesta1.GetType() == typeof(ThrowError))
@@ -53,7 +53,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 			if (op != null)
 			{
-				object respuesta = op.GetValor(tb);
+				object respuesta = op.GetValor(tb,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
@@ -61,7 +61,7 @@ namespace Proyecto1Compi2.com.AST
 						return respuesta;
 					}
 				}
-				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb);
+				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb,sesion);
 			}
 			return respuesta1;
 		}

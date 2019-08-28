@@ -38,12 +38,12 @@ namespace Proyecto1Compi2.com.AST
 		public List<Acceso> Quitarattrib { get => quitarattrib; set => quitarattrib = value; }
 		internal Dictionary<string, TipoObjetoDB> Agregarattrib { get => agregarattrib; set => agregarattrib = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				//VALIDANDO USER TYPE
 				if (db.ExisteUserType(nombre))
 				{

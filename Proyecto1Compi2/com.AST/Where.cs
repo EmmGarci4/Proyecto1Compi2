@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -39,12 +40,12 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Expresiones { get => expresiones; set => expresiones = value; }
 		internal List<Expresion> ListaExpresiones { get => listaExpresiones; set => listaExpresiones = value; }
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
 			return TipoOperacion.Booleano;
 		}
 
-		public override object GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts,Sesion sesion)
 		{
 			throw new System.NotImplementedException();
 		}

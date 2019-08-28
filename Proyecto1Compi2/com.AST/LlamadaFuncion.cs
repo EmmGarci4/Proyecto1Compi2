@@ -24,9 +24,9 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal List<Expresion> Parametros { get => parametros; set => parametros = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
-			String llave = getLlave(ts);
+			String llave = getLlave(ts,sesion);
 			//FUNCIONES NATIVAS
 			//***************************************************************
 			if (llave.Equals("today()")) {
@@ -44,9 +44,9 @@ namespace Proyecto1Compi2.com.AST
 				{
 					int contador = 0;
 					foreach (Parametro vals in funcion.Parametros) {
-						if (Datos.IsTipoCompatibleParaAsignar(vals.Tipo, parametros.ElementAt(contador).GetValor(ts)))
+						if (Datos.IsTipoCompatibleParaAsignar(vals.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion)))
 						{
-							object nuevoDato = Datos.CasteoImplicito(vals.Tipo.Tipo, parametros.ElementAt(contador).GetValor(ts));
+							object nuevoDato = Datos.CasteoImplicito(vals.Tipo.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion));
 							valores.Add(nuevoDato);
 						}
 						else
@@ -64,7 +64,7 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				funcion.pasarParametros(valores);
-				object res = funcion.Ejecutar( ts);
+				object res = funcion.Ejecutar(ts,sesion);
 				if (res!=null) {
 					return res;
 				}
@@ -79,17 +79,17 @@ namespace Proyecto1Compi2.com.AST
 			}
 		}
 
-		internal string getLlave(TablaSimbolos ts)
+		internal string getLlave(TablaSimbolos ts,Sesion sesion)
 		{
 			StringBuilder llave = new StringBuilder();
 			llave.Append(nombre + "(");
 			int contador = 0;
 			foreach (Expresion ex in parametros)
 			{
-				TipoOperacion t= ex.GetTipo(ts);
+				TipoOperacion t= ex.GetTipo(ts,sesion);
 				if (t == TipoOperacion.Numero)
 				{
-					if (ex.GetValor(ts).ToString().Contains("."))
+					if (ex.GetValor(ts,sesion).ToString().Contains("."))
 					{
 						llave.Append("double");
 					}

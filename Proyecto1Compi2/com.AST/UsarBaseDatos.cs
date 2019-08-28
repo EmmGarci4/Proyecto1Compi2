@@ -21,12 +21,12 @@ namespace Proyecto1Compi2.com.AST
 
 		public string Nombre { get => nombre; set => nombre = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			if (Analizador.ExisteDB(nombre))
 			{
 				//indicar al usuario que db esta en uso
-				Analizador.Sesion.DBActual = nombre;
+				sesion.DBActual = nombre;
 			}
 			else {
 				return new ThrowError(TipoThrow.BDDontExists,"La base de datos '"+Nombre+"' no existe",Linea,Columna);

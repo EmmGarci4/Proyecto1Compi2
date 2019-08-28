@@ -34,12 +34,12 @@ namespace Proyecto1Compi2.com.AST
 		public List<Expresion> Valores { get => valores; set => valores = value; }
 		public List<string> Columnas { get => columnas; set => columnas = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				//VALLIDANDO TABLA
 				if (db.ExisteTabla(tabla))
 				{
@@ -56,7 +56,7 @@ namespace Proyecto1Compi2.com.AST
 							int indiceColumnas = 0;
 							Queue<object> valoresAInsertar = new Queue<object>();
 							foreach (Columna cl in tab.Columnas) {
-								object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb);
+								object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb,sesion);
 								if (respuesta.GetType()==typeof(ThrowError)) {
 									return respuesta;
 								}
@@ -139,7 +139,7 @@ namespace Proyecto1Compi2.com.AST
 								{
 									//comparar datos
 									indiceDatos = this.columnas.IndexOf(cl.Nombre);
-									object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb);
+									object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb,sesion);
 									if (respuesta.GetType() == typeof(ThrowError))
 									{
 										return respuesta;

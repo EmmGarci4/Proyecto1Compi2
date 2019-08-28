@@ -14,7 +14,7 @@ namespace Proyecto1Compi2.com.AST
 		{
 		}
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			return this;
 		}

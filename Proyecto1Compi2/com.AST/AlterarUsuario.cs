@@ -22,7 +22,7 @@ namespace Proyecto1Compi2.com.AST
 		public string Nombre { get => nombre; set => nombre = value; }
 		public string Passwd { get => passwd; set => passwd = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			Console.WriteLine("Alterando usuario..."+this.nombre+":"+this.passwd);
 			return null;

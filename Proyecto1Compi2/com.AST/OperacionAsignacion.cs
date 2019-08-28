@@ -26,10 +26,10 @@ namespace Proyecto1Compi2.com.AST
 		internal Acceso Acceso { get => acceso; set => acceso = value; }
 		internal Expresion Exp { get => exp; set => exp = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
 			//VALOR DE ACCESO
-			object respuesta=acceso.GetValor(tb);
+			object respuesta=acceso.GetValor(tb,sesion);
 			if (respuesta!=null) {
 				if (respuesta.GetType()==typeof(ThrowError)) {
 					return respuesta;
@@ -52,7 +52,7 @@ namespace Proyecto1Compi2.com.AST
 					break;
 			}
 			if (op!=null) {
-				respuesta = op.GetValor(tb);
+				respuesta = op.GetValor(tb,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
@@ -60,7 +60,7 @@ namespace Proyecto1Compi2.com.AST
 						return respuesta;
 					}
 				}
-				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb);
+				acceso.Asignar(respuesta, Datos.GetTipoObjetoDB(respuesta), tb,sesion);
 			}
 			return null;
 		}

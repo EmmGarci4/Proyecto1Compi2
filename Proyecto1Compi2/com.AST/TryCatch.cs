@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -24,14 +25,14 @@ namespace Proyecto1Compi2.com.AST
 			this.nombreVariable = nombreVariable;
 		}
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			object respuesta;
 			ThrowError ERROR=null;
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
 			foreach (Sentencia sentencia in sentenciasTry)
 			{
-				respuesta = sentencia.Ejecutar(tsLocal);
+				respuesta = sentencia.Ejecutar(tsLocal,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
@@ -87,7 +88,7 @@ namespace Proyecto1Compi2.com.AST
 				//EJECUTANDO SENTENCIAS
 				foreach (Sentencia sentencia in sentenciasCatch)
 				{
-					respuesta = sentencia.Ejecutar(local);
+					respuesta = sentencia.Ejecutar(local,sesion);
 					if (respuesta != null)
 					{
 						if (respuesta.GetType() == typeof(ThrowError))

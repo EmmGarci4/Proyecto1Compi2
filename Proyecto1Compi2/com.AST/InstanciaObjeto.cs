@@ -24,17 +24,17 @@ namespace Proyecto1Compi2.com.AST
 		public string NombreUserType { get => nombreUserType; set => nombreUserType = value; }
 		internal List<Expresion> Expresiones { get => expresiones; set => expresiones = value; }
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
 			return TipoOperacion.InstanciaObjeto;
 		}
 
-		public override object GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				if (db.ExisteUserType(this.nombreUserType))
 				{
 					UserType ut = db.BuscarUserType(this.nombreUserType);
@@ -45,7 +45,7 @@ namespace Proyecto1Compi2.com.AST
 					{
 						foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
 						{
-							resExp = Expresiones.ElementAt(indice).GetValor(ts);
+							resExp = Expresiones.ElementAt(indice).GetValor(ts,sesion);
 							if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, resExp))
 							{
 								resExp = Datos.CasteoImplicito(atributo.Value.Tipo, resExp);

@@ -48,7 +48,7 @@ namespace Proyecto1Compi2.com.db
 			valoresParametros = parametros;
 		}
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			TablaSimbolos local = new TablaSimbolos(ts);
 			int contador = 0;
@@ -73,7 +73,7 @@ namespace Proyecto1Compi2.com.db
 			object respuesta;
 			foreach (Sentencia sentencia in sentencias)
 			{
-				respuesta = sentencia.Ejecutar(local);
+				respuesta = sentencia.Ejecutar(local,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

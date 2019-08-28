@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -28,15 +29,15 @@ namespace Proyecto1Compi2.com.AST
 
 		internal Expresion Valor { get => valor; set => valor = value; }
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
 			if (ts.ExisteSimbolo(nombre))
 			{
 				Simbolo sim = ts.GetSimbolo(nombre);
 				if (Datos.IsLista(sim.TipoDato.Tipo))
 				{
-					object indice = valor.GetValor(ts);
-					TipoOperacion tipoIndice = valor.GetTipo(ts);
+					object indice = valor.GetValor(ts,sesion);
+					TipoOperacion tipoIndice = valor.GetTipo(ts,sesion);
 					//ES UNA LISTA O UN SET
 					if (sim.Valor.GetType() == typeof(CollectionListCql))
 					{
@@ -56,15 +57,15 @@ namespace Proyecto1Compi2.com.AST
 			return TipoOperacion.Nulo;
 		}
 
-		public override object GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts,Sesion sesion)
 		{
 			if (ts.ExisteSimbolo(nombre))
 			{
 				Simbolo sim = ts.GetSimbolo(nombre);
 				if (Datos.IsLista(sim.TipoDato.Tipo))
 				{
-					object indice = valor.GetValor(ts);
-					TipoOperacion tipoIndice = valor.GetTipo(ts);
+					object indice = valor.GetValor(ts,sesion);
+					TipoOperacion tipoIndice = valor.GetTipo(ts,sesion);
 					//ES UNA LISTA O UN SET
 					if (sim.Valor.GetType() == typeof(CollectionListCql))
 					{
@@ -146,15 +147,15 @@ namespace Proyecto1Compi2.com.AST
 			}
 		}
 
-		internal object SetValor(TablaSimbolos ts, object nuevoValor)
+		internal object SetValor(TablaSimbolos ts, object nuevoValor,Sesion sesion)
 		{
 			if (ts.ExisteSimbolo(nombre))
 			{
 				Simbolo sim = ts.GetSimbolo(nombre);
 				if (Datos.IsLista(sim.TipoDato.Tipo))
 				{
-					object indice = valor.GetValor(ts);
-					TipoOperacion tipoIndice = valor.GetTipo(ts);
+					object indice = valor.GetValor(ts,sesion);
+					TipoOperacion tipoIndice = valor.GetTipo(ts,sesion);
 					//ES UNA LISTA O UN SET
 					if (sim.Valor.GetType() == typeof(CollectionListCql))
 					{

@@ -27,7 +27,7 @@ namespace Proyecto1Compi2.com.AST
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 		internal Expresion Expresion { get => expresion; set => expresion = value; }
 
-		public override object Ejecutar(TablaSimbolos ts)
+		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			//VALIDANDO NOMBRE DE VARIABLE
 			foreach (string variable in variables) {
@@ -41,7 +41,7 @@ namespace Proyecto1Compi2.com.AST
 			//***********VALIDAR LISTAS TAMBIEN
 			if (this.Tipo.Tipo == TipoDatoDB.OBJETO)
 			{
-				object respuestaComprobacion = ExisteUserType(this.tipo);
+				object respuestaComprobacion = ExisteUserType(this.tipo,sesion);
 				if (respuestaComprobacion.GetType() == typeof(ThrowError))
 				{
 					return respuestaComprobacion;
@@ -59,8 +59,8 @@ namespace Proyecto1Compi2.com.AST
 			if (expresion != null)
 			{
 				//OBTENIENDO RESPUESTA DE EXPRESION
-				respuesta = expresion.GetValor(ts);
-				TipoOperacion tipoRespuesta = expresion.GetTipo(ts);
+				respuesta = expresion.GetValor(ts,sesion);
+				TipoOperacion tipoRespuesta = expresion.GetTipo(ts,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
@@ -86,7 +86,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 							{
-								object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna);
+								object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna,sesion);
 								if (instanciaObjeto != null)
 								{
 									respuesta = instanciaObjeto;
@@ -150,12 +150,12 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
-		private object ExisteUserType(TipoObjetoDB tipo)
+		private object ExisteUserType(TipoObjetoDB tipo,Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
-			if (Analizador.Sesion.DBActual != null)
+			if (sesion.DBActual != null)
 			{
-				BaseDatos db = Analizador.BuscarDB(Analizador.Sesion.DBActual);
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				return (db.ExisteUserType(tipo.ToString())) ;
 			}
 			else

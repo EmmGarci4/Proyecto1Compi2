@@ -20,18 +20,18 @@ namespace Proyecto1Compi2.com.AST
 
 		public object ValoresRetornados { get => valoresRetornados; set => valoresRetornados = value; }
 
-		public override object Ejecutar(TablaSimbolos tb)
+		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
-			this.valoresRetornados = getValores(tb);
+			this.valoresRetornados = getValores(tb,sesion);
 			return this;
 		}
 
-		private object getValores(TablaSimbolos ts) {
+		private object getValores(TablaSimbolos ts,Sesion sesion) {
 			List<object> valores = new List<object>();
 			object respuesta;
 			foreach (Expresion ex in valor)
 			{
-				respuesta = ex.GetValor(ts);
+				respuesta = ex.GetValor(ts,sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))

@@ -24,7 +24,9 @@ namespace Proyecto1Compi2
 		private void ToolStripButton1_Click(object sender, EventArgs e)
 		{
 			textBox2.Clear();
-			if (Analizador.AnalizarCql(this.textBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
+			Analizador.AddUsuario(new Usuario("admin", "admin"));
+			Sesion sesion = new Sesion("admin", null);
+			if (Analizador.AnalizarCql(this.textBox1.Text,sesion)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count==0) {
 					//si no hay ErroresCQL semánticos

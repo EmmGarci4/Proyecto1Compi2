@@ -24,7 +24,7 @@ namespace Proyecto1Compi2.com.AST
 
 		internal Sesion Sesion { get => sesion; set => sesion = value; }
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
 			if (ejecutado)
 			{
@@ -33,9 +33,9 @@ namespace Proyecto1Compi2.com.AST
 			return TipoOperacion.Nulo;
 		}
 
-		public override object GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts,Sesion sesion)
 		{
-			object res = llamada.Ejecutar( ts);
+			object res = llamada.Ejecutar(ts,sesion);
 			ejecutado = true;
 			if (res != null)
 			{
@@ -49,7 +49,7 @@ namespace Proyecto1Compi2.com.AST
 
 		private string GetLlave(TablaSimbolos ts)
 		{
-			return llamada.getLlave(ts);
+			return llamada.getLlave(ts,sesion);
 		}
 	}
 }

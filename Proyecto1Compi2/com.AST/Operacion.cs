@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
@@ -65,7 +66,7 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Derecha { get => derecha; set => derecha = value; }
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts)
+		public override TipoOperacion GetTipo(TablaSimbolos ts, Sesion sesion)
 		{
 			switch (tipoOp)
 			{
@@ -86,80 +87,80 @@ namespace Proyecto1Compi2.com.AST
 					break;
 				case TipoOperacion.Suma:
 					//BOOLEANO-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					//NUMERO-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-BOOLEANO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-FECHA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-HORA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//FECHA-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//HORA-CADENA
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					break;
 				case TipoOperacion.Resta:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					break;
 				case TipoOperacion.Division:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					break;
 				case TipoOperacion.Multiplicacion:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					break;
 				case TipoOperacion.Potencia:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
@@ -169,15 +170,15 @@ namespace Proyecto1Compi2.com.AST
 		}
 
 
-		public override object GetValor(TablaSimbolos ts)
+		public override object GetValor(TablaSimbolos ts, Sesion sesion)
 		{
-			Object izq = izquierda?.GetValor(ts);
+			Object izq = izquierda?.GetValor(ts,sesion);
 			if (izq != null)
 				if (izq.GetType() == typeof(ThrowError))
 				{
 					return izq;
 				}
-			Object der = derecha?.GetValor(ts);
+			Object der = derecha?.GetValor(ts,sesion);
 			if (der != null)
 				if (der.GetType() == typeof(ThrowError))
 				{
@@ -191,65 +192,65 @@ namespace Proyecto1Compi2.com.AST
 				{
 					case TipoOperacion.Suma:
 						//BOOLEANO-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) + double.Parse(der.ToString());
 							return valor;
 						}
 						//NUMERO-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-BOOLEANO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-FECHA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-HORA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.String) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//FECHA-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//HORA-CADENA
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-								"No se pueden sumar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+								"No se pueden sumar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
 								Linea, Columna);
 						}
 					case TipoOperacion.Resta:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) - double.Parse(der.ToString());
 							return valor;
@@ -257,12 +258,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-								"No se pueden restar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+								"No se pueden restar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
 								Linea, Columna);
 						}
 					case TipoOperacion.Division:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							if (double.Parse(der.ToString()) != 0)
 							{
@@ -280,12 +281,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
 								   Linea, Columna);
 						}
 					case TipoOperacion.Multiplicacion:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) * double.Parse(der.ToString());
 							return valor;
@@ -293,12 +294,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden multiplicar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+									"No se pueden multiplicar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
 								   Linea, Columna);
 						}
 					case TipoOperacion.Potencia:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = Math.Pow(double.Parse(izq.ToString()), double.Parse(der.ToString()));
 							return valor;
@@ -306,12 +307,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+									"No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
 								   Linea, Columna);
 						}
 					case TipoOperacion.Modulo:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
 							if (double.Parse(der.ToString()) != 0)
 							{
@@ -329,7 +330,7 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts) + " y " + derecha.GetTipo(ts),
+									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
 								   Linea, Columna);
 						}
 				}
@@ -339,7 +340,7 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (tipoOp == TipoOperacion.Menos)
 				{
-					if (izquierda.GetTipo(ts) == TipoOperacion.Numero)
+					if (izquierda.GetTipo(ts,sesion) == TipoOperacion.Numero)
 					{
 						double valor = double.Parse(izq.ToString()) * -1;
 						return valor;
