@@ -67,6 +67,7 @@
     <Compile Include="com.Analisis\GeneradorAstCql.cs" />
     <Compile Include="com.Analisis\GeneradorDB.cs" />
     <Compile Include="com.Analisis\generadorDOT.cs" />
+    <Compile Include="com.Analisis\GeneradorLup.cs" />
     <Compile Include="com.Analisis\GramaticaChison.cs" />
     <Compile Include="com.Analisis\GramaticaLup.cs" />
     <Compile Include="com.Analisis\GramaticaCql.cs" />

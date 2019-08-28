@@ -23,6 +23,16 @@ namespace com.Analisis
 		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
 		static List<Error> errors = new List<Error>();
+
+		internal static bool IniciarSesion(string usuario, string passwd)
+		{
+			if (ExisteUsuario(usuario)) {
+				Usuario us = BuscarUsuario(usuario);
+				return us.Password.Equals(passwd);
+			}
+			return false;
+		}
+
 		static private ParseTreeNode raiz;
 		static Sesion sesion;
 		static string codigoAnalizado;
@@ -73,7 +83,7 @@ namespace com.Analisis
 		internal static Usuario BuscarUsuario(string usuario)
 		{
 			foreach (Usuario usu in Usuariosdb) {
-				if (usu.Nombre==usuario) {
+				if (usu.Nombre.Equals(usuario)) {
 					return usu;
 				}
 			}
@@ -297,10 +307,8 @@ namespace com.Analisis
 			Analizador.raiz = arbol.Root;
 			if (raiz != null)
 			{
-
-				//if (ex.GetValor(new TablaSimbolos(0, "global"))!=null) {
-				//	Console.WriteLine("Valor:" + ex.GetValor(new TablaSimbolos(0, "global"))+" Tipo:"+ ex.GetTipo(new TablaSimbolos(0, "global")));
-				//}
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\LUP.dot");
+				GeneradorLup.AnalizarEntrada(raiz);
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{

@@ -80,7 +80,7 @@ namespace Proyecto1Compi2.com.Analisis
 			//PALABRAS RESERVADAS
 			MarkReservedWords(pr_data.ToString(), pr_login.ToString(), pr_logout.ToString(), pr_pass.ToString(), pr_query.ToString(), pr_struct.ToString(), pr_user.ToString());
 			//NODOS A OMITIR
-			//MarkTransient(SENTENCIA,ASCDESC);
+			MarkTransient(USUARIO,PASSWD,DATA);
 			//TERMINALES IGNORADO
 			MarkPunctuation(abrir1,abrir2, barra, cerrar,pr_user,pr_struct,pr_query,pr_pass,pr_logout,pr_login,pr_data);
 			//COMENTARIOS IGNORADOS
