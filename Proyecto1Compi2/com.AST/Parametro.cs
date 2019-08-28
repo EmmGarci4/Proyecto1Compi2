@@ -20,5 +20,12 @@ namespace Proyecto1Compi2.com.AST
 
 		public string Nombre { get => nombre; set => nombre = value; }
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
+
+		public override bool Equals(object obj)
+		{
+			var parametro = obj as Parametro;
+			return parametro != null &&
+				   nombre == parametro.nombre;
+		}
 	}
 }

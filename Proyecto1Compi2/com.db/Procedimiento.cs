@@ -28,6 +28,15 @@ namespace Proyecto1Compi2.com.db
 			this.instrucciones = instrucciones;
 		}
 
+		public Procedimiento(int linea, int columna) : base(linea, columna)
+		{
+			this.nombre = null;
+			this.parametros = new List<Parametro>();
+			this.retornos = new List<Parametro>();
+			this.sentencias = null;
+			this.instrucciones = null;
+		}
+
 		public string Nombre { get => nombre; set => nombre = value; }
 		public List<Parametro> Parametros { get => parametros; set => parametros = value; }
 		public List<Parametro>  Retornos { get => retornos; set => retornos = value; }
@@ -218,5 +227,13 @@ namespace Proyecto1Compi2.com.db
 			return cadena.ToString();
 		}
 
+		internal bool isValido()
+		{
+			return this.nombre != null&&
+			this.parametros != null&&
+			this.retornos != null&&
+			this.sentencias != null&&
+			this.instrucciones != null;
+		}
 	}
 }

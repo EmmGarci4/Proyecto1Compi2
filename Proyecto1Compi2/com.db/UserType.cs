@@ -19,6 +19,12 @@ namespace Proyecto1Compi2.com.db
 			this.Atributos = atributos;
 		}
 
+		public UserType()
+		{
+			this.Nombre = null;
+			this.Atributos = null;
+		}
+
 		public string Nombre { get => nombre; set => nombre = value; }
 		public Dictionary<string, TipoObjetoDB> Atributos { get => atributos; set => atributos = value; }
 
@@ -49,6 +55,9 @@ namespace Proyecto1Compi2.com.db
 			return cadena.ToString();
 		}
 
-
+		internal bool IsValido()
+		{
+			return this.atributos != null && this.nombre != null;
+		}
 	}
 }

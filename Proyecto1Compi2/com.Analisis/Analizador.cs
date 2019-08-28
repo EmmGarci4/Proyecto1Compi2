@@ -27,6 +27,7 @@ namespace com.Analisis
 		static Sesion sesion;
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
+		private static List<Sentencia> sentenciasMain= new List<Sentencia>();
 
 		private static UserType GetErrorCatch()
 		{
@@ -116,38 +117,12 @@ namespace com.Analisis
 				//}
 
 				List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
+				sentenciasMain = sentencias;
 				if (Analizador.ErroresCQL.Count == 0)
 				{
 					Analizador.AddUsuario(new Usuario("admin", "admin"));
 					sesion = new Sesion("admin", null);
 					TablaSimbolos ts = new TablaSimbolos();
-					Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
-					atributos.Add("Nombre",new TipoObjetoDB(TipoDatoDB.STRING,"string"));
-					atributos.Add("Edad", new TipoObjetoDB(TipoDatoDB.INT,"int"));
-					atributos.Add("EsMujer", new TipoObjetoDB(TipoDatoDB.BOOLEAN,"boolean"));
-					atributos.Add("FechaNacimiento",new TipoObjetoDB(TipoDatoDB.DATE,"date"));
-					UserType ut = new UserType("Estudiante", atributos);
-					ts.AgregarSimbolo(new Simbolo("@lista", new CollectionListCql(new TipoObjetoDB(TipoDatoDB.INT, "int"), true), new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<int>"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@set", new CollectionListCql(
-						new TipoObjetoDB(TipoDatoDB.TIME, "time"), false),
-						new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, "list<time>"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@map", new CollectionMapCql(
-						new TipoObjetoDB(TipoDatoDB.INT, "int"), new TipoObjetoDB(TipoDatoDB.STRING, "string")),
-						new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, "map<int,string>"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@decimal", 0, new TipoObjetoDB(TipoDatoDB.DOUBLE, "double"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@entero", 0, new TipoObjetoDB(TipoDatoDB.INT, "int"), 1, 1));
-
-					ts.AgregarSimbolo(new Simbolo("@fecha", new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("1997-08-6")), new TipoObjetoDB(TipoDatoDB.DATE, "date"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@hora", new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("12:00:00")), new TipoObjetoDB(TipoDatoDB.TIME, "time"), 1, 1));
-					ts.AgregarSimbolo(new Simbolo("@cadena", "Hola Mundo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), 1, 1));
-					Dictionary<string, object> valores = new Dictionary<string, object>();
-					valores.Add("Nombre", "Emely Garcia");
-					valores.Add("Edad", 22);
-					valores.Add("EsMujer", true);
-					valores.Add("FechaNacimiento", new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("1997-08-6")));
-					Objeto estudiante = new Objeto(valores,ut);
-					ts.AgregarSimbolo(new Simbolo("@emely", estudiante, new TipoObjetoDB(TipoDatoDB.OBJETO, "Estudiante"), 1, 1));
-
 					foreach (Sentencia sentencia in sentencias)
 					{
 						object respuesta = sentencia.Ejecutar(ts);
@@ -190,7 +165,7 @@ namespace com.Analisis
 				ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line,mensaje.Location.Column));
 			}
 
-			return Analizador.raiz != null;
+			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
 		}
 
 		internal static void AddFuncion(Funcion n)
@@ -211,8 +186,9 @@ namespace com.Analisis
 			
 			if (raiz != null && arbol.ParserMessages.Count==0)
 			{
-				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
+				MostrarReporteDeEstadoChison();
 
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
@@ -230,7 +206,7 @@ namespace com.Analisis
 
 				Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
 			}
-			return Analizador.raiz != null && arbol.ParserMessages.Count == 0;
+			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count==0;
 		}
 
 		internal static void GenerarArchivos(string v)
@@ -356,6 +332,20 @@ namespace com.Analisis
 		}
 
 		public static NodoAST AST { get => ast; }
+
+		internal static List<Sentencia> GetSentenciasCQL(String codigo)
+		{
+			codigoAnalizado = codigo;
+			GramaticaCql gramatica = new GramaticaCql();
+			LanguageData ldata = new LanguageData(gramatica);
+			Parser parser = new Parser(ldata);
+			ParseTree arbol = parser.Parse(codigo);
+			Analizador.ErroresCQL.Clear();
+			Analizador.funciones.Clear();
+			Analizador.raiz = arbol.Root;
+			return GeneradorAstCql.GetAST(arbol.Root);
+		}
+
 		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static string PATH => path;
@@ -455,5 +445,66 @@ namespace com.Analisis
 				Console.WriteLine("NO HAY BASE DE DATOS EN USO");
 			}
 		}
+
+		private static void MostrarReporteDeEstadoChison()
+		{
+			Console.WriteLine("********************************************************************************************");
+			Console.WriteLine(Datos.GetDate() + "=" + Datos.GetTime());
+			Console.WriteLine("********************************************************************************************");
+			Console.WriteLine("Bases de Datos: ");
+			foreach (BaseDatos dbActual in BasesDeDatos)
+			{
+				Console.WriteLine("------------------------------------------------------");
+				Console.WriteLine("" + dbActual.Nombre);
+				Console.WriteLine("-----------------");
+				foreach (Tabla tb in dbActual.Tablas)
+				{
+					Console.WriteLine("Tabla: " + tb.Nombre);
+					foreach (Columna cl in tb.Columnas)
+					{
+						Console.WriteLine("\t"+cl.Nombre + "=>" + cl.Tipo);
+					}
+					Console.WriteLine("*********");
+					tb.MostrarDatos();
+				}
+				Console.WriteLine("-----------------");
+				foreach (UserType ut in dbActual.UserTypes)
+				{
+					Console.WriteLine("UserType: " + ut.Nombre);
+					foreach (KeyValuePair<string, TipoObjetoDB> atributos in ut.Atributos)
+					{
+						Console.WriteLine(atributos.Key + "=>" + atributos.Value);
+					}
+				}
+				Console.WriteLine("-----------------");
+				foreach (Procedimiento pr in dbActual.Procedimientos)
+				{
+					Console.WriteLine("Procedimiento: " + pr.Nombre);
+					Console.WriteLine("Parametros:");
+					foreach (Parametro par in pr.Parametros) {
+						Console.WriteLine("\t"+par.Nombre+"=>"+par.Tipo);
+					}
+					Console.WriteLine("Retornos:");
+					foreach (Parametro par in pr.Retornos)
+					{
+						Console.WriteLine("\t" + par.Nombre + "=>" + par.Tipo);
+					}
+				}
+			}
+			Console.WriteLine("********************************************************************************************");
+			Console.WriteLine("Usuarios: ");
+			Console.WriteLine("-----------------");
+			foreach (Usuario usu in Usuariosdb)
+			{
+				Console.WriteLine(usu.Nombre + "=>" + usu.Password);
+				Console.WriteLine("Permisos:");
+				foreach (string per in usu.Permisos)
+				{
+					Console.WriteLine("\t"+per);
+				}
+				Console.WriteLine("-----------------");
+			}
+		}
+
 	}
 }

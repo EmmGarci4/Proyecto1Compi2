@@ -28,9 +28,9 @@ namespace com.Analisis.Util
 	public enum TipoObjeto
 	{
 		Tabla,
-		BaseDatos,
+		Procedimiento,
 		Objeto,
-		Usuario
+		Error
 	}
 
 }

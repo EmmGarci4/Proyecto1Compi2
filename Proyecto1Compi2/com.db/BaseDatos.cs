@@ -23,6 +23,14 @@ namespace Proyecto1Compi2.com.db
 			this.procedimientos = new List<Procedimiento>();
 		}
 
+		public BaseDatos()
+		{
+			this.nombre = null;
+			this.tablas = new List<Tabla>();
+			this.objetos = new List<UserType>();
+			this.procedimientos = new List<Procedimiento>();
+		}
+
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal List<Tabla> Tablas { get => tablas; set => tablas = value; }
 		internal List<UserType> UserTypes { get => objetos; set => objetos = value; }
@@ -237,6 +245,11 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("]\n");
 			cadena.Append(">");
 			return cadena.ToString();
+		}
+
+		internal bool IsValido()
+		{
+			return nombre != null;
 		}
 	}
 }

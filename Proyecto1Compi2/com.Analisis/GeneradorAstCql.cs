@@ -18,8 +18,11 @@ namespace Proyecto1Compi2.com.Analisis
 
 		public static List<Sentencia> GetAST(ParseTreeNode raiz)
 		{
-			GuardarFunciones(raiz.ChildNodes.ElementAt(0));
-			return GetSentencias(raiz.ChildNodes.ElementAt(0));
+			if (raiz!=null) {
+				GuardarFunciones(raiz.ChildNodes.ElementAt(0));
+				return GetSentencias(raiz.ChildNodes.ElementAt(0));
+			}
+			return new List<Sentencia>();
 		}
 
 		public static void GuardarFunciones(ParseTreeNode nodo)
@@ -1121,7 +1124,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//nombre -- tipo
 				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
-				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
+				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), false);
 			}
 			else if (nodo.ChildNodes.Count == 3)
@@ -1133,7 +1136,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//columna con llave primaria
 				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
-				string nombreTipo = GeneradorDB.GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
+				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
 				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), true);
 			}
 

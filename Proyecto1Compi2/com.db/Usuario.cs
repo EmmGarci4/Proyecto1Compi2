@@ -26,6 +26,14 @@ namespace Proyecto1Compi2.com.db
 			this.Permisos = new List<string>();
 		}
 
+		public Usuario()
+		{
+			this.Nombre = null;
+			this.Password = null;
+			this.Permisos = null;
+		}
+
+
 		public string Nombre { get => nombre; set => nombre = value; }
 		public string Password { get => password; set => password = value; }
 		public List<string> Permisos { get => permisos; set => permisos = value; }
@@ -64,6 +72,11 @@ namespace Proyecto1Compi2.com.db
 				}
 			}
 			return false;
+		}
+
+		internal bool IsValido()
+		{
+			return nombre != null && password != null && permisos != null;
 		}
 	}
 }

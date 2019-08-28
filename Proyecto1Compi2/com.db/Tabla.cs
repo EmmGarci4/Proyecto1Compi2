@@ -19,6 +19,12 @@ namespace Proyecto1Compi2.com.db
 		public int ContadorFilas { get => contadorFilas;}
 		public string Nombre { get => nombre; set => nombre = value; }
 
+		public Tabla()
+		{
+			this.Nombre = null;
+			this.columnas = new List<Columna>();
+		}
+
 		public Tabla(String nombre)
 		{
 			this.Nombre = nombre;

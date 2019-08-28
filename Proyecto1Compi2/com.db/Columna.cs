@@ -15,6 +15,14 @@ namespace Proyecto1Compi2.com.db
 		bool isPrimary;
 		List<object> datos;
 
+		public Columna()
+		{
+			this.tipo = null;
+			this.nombre = null;
+			this.isPrimary = false;
+			this.datos = new List<object>();
+		}
+
 		public Columna(String titulo, TipoObjetoDB tipo, bool isp)
 		{
 			this.tipo = tipo;
@@ -63,6 +71,11 @@ namespace Proyecto1Compi2.com.db
 		internal bool ExisteDato(object respuesta)
 		{
 			return this.datos.Contains(respuesta);
+		}
+
+		internal bool isValido()
+		{
+			return tipo != null && nombre != null;
 		}
 	}
 }
