@@ -76,6 +76,7 @@ namespace Proyecto1Compi2.com.AST
 				case TipoOperacion.Caracter:
 				case TipoOperacion.Fecha:
 				case TipoOperacion.Hora:
+				case TipoOperacion.ListaDatos:
 				case TipoOperacion.NuevaInstancia:
 					return this.tipoOp;
 				case TipoOperacion.Identificador:
@@ -356,40 +357,72 @@ namespace Proyecto1Compi2.com.AST
 			//valores
 			else
 			{
-				if (this.TipoOp == TipoOperacion.Identificador)
-				{
-					//buscar en tabla de simbolos
-					if (ts.ExisteSimbolo(this.Valor.ToString()))
-					{
-						Simbolo s = ts.GetSimbolo(this.Valor.ToString());
-						object val = s.Valor;
-						if (val != null)
+				switch (TipoOp) {
+					case TipoOperacion.Identificador:
+						//buscar en tabla de simbolos
+						if (ts.ExisteSimbolo(this.Valor.ToString()))
 						{
-							if (val.GetType()==typeof(string)) {
-								if (val.ToString().Equals("null") && (s.TipoDato.Tipo!=TipoDatoDB.NULO && s.TipoDato.Tipo!= TipoDatoDB.OBJETO)) {
-									return new ThrowError(Util.TipoThrow.NullPointerException,
-												"la variable '" + this.Valor + "' no se ha inicializado",
-												Linea, Columna);
+							Simbolo s = ts.GetSimbolo(this.Valor.ToString());
+							object val = s.Valor;
+							if (val != null)
+							{
+								if (val.GetType() == typeof(string))
+								{
+									if (val.ToString().Equals("null") && (s.TipoDato.Tipo != TipoDatoDB.NULO && s.TipoDato.Tipo != TipoDatoDB.OBJETO))
+									{
+										return new ThrowError(Util.TipoThrow.NullPointerException,
+													"la variable '" + this.Valor + "' no se ha inicializado",
+													Linea, Columna);
+									}
 								}
+								return val;
 							}
-							return val;
+							else
+							{
+								return new ThrowError(Util.TipoThrow.NullPointerException,
+													"la variable '" + this.Valor + "' no se ha inicializado",
+													Linea, Columna);
+							}
+
 						}
 						else
 						{
-							return new ThrowError(Util.TipoThrow.NullPointerException,
-												"la variable '" + this.Valor + "' no se ha inicializado",
+							return new ThrowError(Util.TipoThrow.ArithmeticException,
+												"la variable '" + this.Valor + "' no existe",
 												Linea, Columna);
 						}
-
-					}
-					else
-					{
-						return new ThrowError(Util.TipoThrow.ArithmeticException,
-											"la variable '" + this.Valor + "' no existe",
-											Linea, Columna);
-					}
+					case TipoOperacion.NuevaInstancia:
+						TipoObjetoDB tipoInstancia = (TipoObjetoDB)this.Valor;
+						if (Datos.IsLista(tipoInstancia.Tipo))
+						{
+							object instanciaLista = GetInstanciaLista(tipoInstancia, sesion);
+							if (instanciaLista != null)
+							{
+								return instanciaLista;
+							}
+						}
+						else
+						{
+							if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
+							{
+								object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion);
+								if (instanciaObjeto != null)
+								{
+									return instanciaObjeto;
+								}
+							}
+							else
+							{
+								//ERROR NO SE PUEDE INSTANCIAR UN TIPO PRIMITIVO
+								return new ThrowError(Util.TipoThrow.Exception,
+								"No se puede instanciar un tipo primitivo",
+								Linea, Columna);
+							}
+						}
+						break;
+					default:
+						return this.Valor;
 				}
-				return this.Valor;
 			}
 
 			return new ThrowError(TipoThrow.Exception,
@@ -397,7 +430,166 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 		}
 
-		
+		private object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion)
+		{
+			//VALIDANDO BASEDATOS
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				if (db.ExisteUserType(tipoInstancia.ToString()))
+				{
+					UserType ut = db.BuscarUserType(tipoInstancia.ToString());
+					Objeto nuevaInstancia = new Objeto(ut);
+					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
+					{
+						nuevaInstancia.Atributos.Add(atributo.Key, Declaracion.GetValorPredeterminado(atributo.Value.Tipo));
+					}
+					return nuevaInstancia;
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+					Linea, Columna);
+			}
+			return null;
+		}
+
+		private object GetInstanciaLista(TipoObjetoDB tipoInstancia, Sesion sesion)
+		{
+
+			switch (tipoInstancia.Tipo)
+			{
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					if (Datos.IsLista(tipoDatoLista.Tipo))
+					{
+						object valor = GetInstanciaLista(tipoDatoLista, sesion);
+						if (valor != null)
+						{
+							if (valor.GetType() == typeof(ThrowError))
+							{
+								return valor;
+							}
+
+							//VALIDAR TIPO
+							object re = ValidarInstanciaLista(tipoDatoLista, sesion);
+							if (re != null)
+							{
+								if (re.GetType() == typeof(ThrowError))
+								{
+									return re;
+								}
+							}
+							if ((bool)re) {
+								return new CollectionListCql(tipoInstancia, true);
+							}
+						}
+					}
+					else
+					{
+						TipoDatoDB tipoObjeto = Datos.GetTipoObjetoDBPorCadena();
+						if () {
+						}
+						else {
+							//comprobar que exista el objeto
+							object condicion = ExisteObjeto(tipoDatoLista, sesion);
+							if (condicion.GetType() == typeof(ThrowError))
+							{
+								return condicion;
+							}
+							return new CollectionListCql(tipoDatoLista, true);
+						}
+					}
+					break;
+				case TipoDatoDB.LISTA_PRIMITIVO:
+					tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					if (Datos.IsPrimitivo(tipoDatoLista.Tipo)) {
+						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO,tipoDatoLista.Nombre), true);
+					}
+					break;
+				case TipoDatoDB.SET_PRIMITIVO:
+					tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					if (Datos.IsPrimitivo(tipoDatoLista.Tipo))
+					{
+						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.SET_PRIMITIVO, tipoDatoLista.Nombre), false);
+					}
+					break;
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+					//UFFFF JODER
+					break;
+			}
+			return null;
+		}
+
+		private object ValidarInstanciaLista(TipoObjetoDB tipoInstancia, Sesion sesion)
+		{
+			switch (tipoInstancia.Tipo)
+			{
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					if (Datos.IsLista(tipoDatoLista.Tipo))
+					{
+							object re = ValidarInstanciaLista(tipoDatoLista, sesion);
+							if (re != null)
+							{
+								if (re.GetType() == typeof(ThrowError))
+								{
+									return re;
+								}
+							}
+					}
+					else
+					{
+						//comprobar que exista el objeto
+						object condicion = ExisteObjeto(tipoDatoLista, sesion);
+						if (condicion.GetType() == typeof(ThrowError))
+						{
+							return condicion;
+						}
+						return true;
+					}
+					break;
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					return true;
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+					//UFFFF JODER
+					break;
+			}
+			return false;
+		}
+
+		private object ExisteObjeto(TipoObjetoDB tipoDatoLista, Sesion sesion)
+		{
+			//VALIDANDO BASEDATOS
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				if (db.ExisteUserType(tipoDatoLista.Nombre))
+				{
+					return true;
+				}
+				else
+				{
+					return new ThrowError(Util.TipoThrow.TypeAlreadyExists,
+				"El user Type '" + tipoDatoLista.Nombre + "' no existe",
+				Linea, Columna);
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+					Linea, Columna);
+			}
+		}
+
 	}
 	public enum TipoOperacion
 	{
@@ -414,6 +606,7 @@ namespace Proyecto1Compi2.com.AST
 		Nombre,
 		NuevaInstancia,
 		InstanciaObjeto,
+		ListaDatos,
 		//operaciones
 		Suma,
 		Resta,

@@ -112,7 +112,8 @@ namespace Proyecto1Compi2.com.AST
 				TipoObjetoDB ti = Datos.GetTipoObjetoDB(RETORNO);
 				if (Datos.IsTipoCompatibleParaAsignar(this.tipoRetorno, RETORNO))
 				{
-					return Datos.CasteoImplicito(this.tipoRetorno.Tipo, RETORNO);
+					return Datos.CasteoImplicito(this.tipoRetorno, RETORNO,ts,sesion,Linea,Columna);
+
 				}
 				else
 				{

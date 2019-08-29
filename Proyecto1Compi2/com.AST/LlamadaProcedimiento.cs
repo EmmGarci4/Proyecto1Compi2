@@ -44,8 +44,16 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (Datos.IsTipoCompatibleParaAsignar(vals.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion)))
 							{
-								object nuevoDato = Datos.CasteoImplicito(vals.Tipo.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion));
-								valores.Add(nuevoDato);
+								object nuevoDato = Datos.CasteoImplicito(vals.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion),ts,sesion,Linea,Columna);
+								if (nuevoDato != null)
+								{
+									if (nuevoDato.GetType() == typeof(ThrowError))
+									{
+										return nuevoDato;
+									}
+									valores.Add(nuevoDato);
+								}
+								
 							}
 							else
 							{

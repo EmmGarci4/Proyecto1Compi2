@@ -132,7 +132,15 @@ namespace Proyecto1Compi2.com.db
 					TipoObjetoDB ti = Datos.GetTipoObjetoDB(ret);
 					if (Datos.IsTipoCompatibleParaAsignar(ti, ret))
 					{
-						valoresFinales.Add(Datos.CasteoImplicito(ti.Tipo, ret));
+						object nuevaRespuesta = Datos.CasteoImplicito(ti, ret,ts,sesion,Linea,Columna);
+						if (nuevaRespuesta != null)
+						{
+							if (nuevaRespuesta.GetType() == typeof(ThrowError))
+							{
+								return nuevaRespuesta;
+							}
+							valoresFinales.Add(nuevaRespuesta);
+						}
 					}
 					else
 					{

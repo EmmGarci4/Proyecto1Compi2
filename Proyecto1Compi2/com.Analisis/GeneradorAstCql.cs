@@ -234,9 +234,33 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetCloseCursor(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
+					case "ACCESOFUNCION":
+						n = GetAcccesoFuncion(sentencia);
+						if (n != null) sentencias.Add(n);
+						break;
 				}
 			}
 			return sentencias;
+		}
+
+		private static Sentencia GetAcccesoFuncion(ParseTreeNode sentencia)
+		{
+			string variable = sentencia.ChildNodes.ElementAt(0).Token.ValueString;
+			Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			acceso.Objetos.Add(new AccesoPar(variable, TipoAcceso.Variable));
+			Acceso acceso2 = GetAcceso(sentencia.ChildNodes.ElementAt(1));
+			foreach (AccesoPar par in acceso2.Objetos)
+			{
+				acceso.Objetos.Add(par);
+			}
+			if (acceso.Objetos.ElementAt(acceso.Objetos.Count-1).Tipo!=TipoAcceso.LlamadaFuncion) {
+				Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+					"No se está invocando a ninguna función",
+					sentencia.Span.Location.Line, 
+					sentencia.Span.Location.Column));
+				return null;
+			}
+			return new AccesoFuncion(acceso, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetOpenCursor(ParseTreeNode sentencia)
@@ -1310,8 +1334,14 @@ namespace Proyecto1Compi2.com.Analisis
 						case "INFOCOLLECTIONS": //{valor:{}:val:{}}
 
 						case "LISTAEXPRESIONES": //[1112,2,3,3,2]
-
-							break;
+							List<Expresion> lista = new List<Expresion>();
+							foreach (ParseTreeNode exp in raiz.ChildNodes.ElementAt(0).ChildNodes) {
+								lista.Add(GetExpresion(exp));
+							}
+							return new Operacion(lista,
+							TipoOperacion.ListaDatos,
+							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
+							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
 						case "MODIFICADORES":
 							return GetmodificadorExp(raiz.ChildNodes.ElementAt(0));
 						case "FUNCIONAGREGACION":

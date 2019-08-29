@@ -83,8 +83,16 @@ namespace Proyecto1Compi2.com.AST
 					{
 						if (Datos.IsTipoCompatibleParaAsignar(objeto.Plantilla.Atributos[nombreAtributo], nuevoValor))
 						{
-							object nuevoDato = Datos.CasteoImplicito(s.TipoDato.Tipo, nuevoValor);
-							objeto.Atributos[nombreAtributo] = nuevoDato;
+							object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor,ts,sesion,Linea,Columna);
+							if (nuevoDato != null)
+							{
+								if (nuevoDato.GetType() == typeof(ThrowError))
+								{
+									return nuevoDato;
+								}
+								objeto.Atributos[nombreAtributo] = nuevoDato;
+							}
+							
 						}
 						else
 						{
@@ -103,8 +111,16 @@ namespace Proyecto1Compi2.com.AST
 			else {
 				Simbolo s = simbolos.Pop();
 				if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, nuevoValor)) {
-					object nuevoDato = Datos.CasteoImplicito(s.TipoDato.Tipo, nuevoValor);
-					s.Valor = nuevoDato;
+					object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor,ts,sesion,Linea,Columna);
+					if (nuevoDato != null)
+					{
+						if (nuevoDato.GetType() == typeof(ThrowError))
+						{
+							return nuevoDato;
+						}
+						s.Valor = nuevoDato;
+					}
+					
 				}
 				else {
 					return new ThrowError(Util.TipoThrow.Exception,
@@ -352,144 +368,30 @@ namespace Proyecto1Compi2.com.AST
 										{
 											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
 											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
-											switch (t)
-											{
-												case TipoOperacion.Numero:
-													if (collection.TipoDato.Tipo == TipoDatoDB.INT)
+											if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo)) {
+												object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo,ts,sesion,Linea,Columna);
+												if (nuevoDato != null)
+												{
+													if (nuevoDato.GetType() == typeof(ThrowError))
 													{
-														if (!nuevo.ToString().Contains("."))
-														{
-															object posibleError = collection.AddItem(nuevo, Linea, Columna);
-															if (posibleError != null)
-															{
-																if (posibleError.GetType() == typeof(ThrowError))
-																{
-																	return posibleError;
-																}
-															}
-														}
-														else
-														{
-															return new ThrowError(Util.TipoThrow.Exception,
-																"No se puede almacenar un valor double en un Collection tipo int",
-																Linea, Columna);
-														}
+														return nuevoDato;
 													}
-													else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
-													{
-														object posibleError = collection.AddItem(nuevo, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
-															{
-																return posibleError;
-															}
-														}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-																"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Booleano:
-													if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
-													{
-														object posibleError = collection.AddItem(nuevo, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
-															{
-																return posibleError;
-															}
-														}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Fecha:
-													if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
-													{
-														object posibleError = collection.AddItem(nuevo, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
-															{
-																return posibleError;
-															}
-														}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor de fecha en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Hora:
-													if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
-													{
-														object posibleError = collection.AddItem(nuevo, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
-															{
-																return posibleError;
-															}
-														}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor de hora en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Objeto:
-													if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
-													{
-														object posibleError = collection.AddItem(nuevo, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
-															{
-																return posibleError;
-															}
-														}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor de objeto en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.String:
-													if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
-													{
-														object posibleError = collection.AddItem(nuevo, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
-															{
-																return posibleError;
-															}
-														}
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"No se puede almacenar un valor string en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-															Linea, Columna);
-													}
-													break;
-											}
 
+													object posibleError = collection.AddItem(nuevoDato, Linea, Columna);
+													if (posibleError != null)
+													{
+														if (posibleError.GetType() == typeof(ThrowError))
+														{
+															return posibleError;
+														}
+													}
+												}
+											}
+											else {
+												return new ThrowError(Util.TipoThrow.Exception,
+													"No se puede almacenar un valor "+Datos.GetTipoObjetoDB(nuevo)+" en un Collection tipo "+collection.TipoDato.ToString(),
+													Linea, Columna);
+											}
 										}
 										else
 										{
@@ -497,7 +399,7 @@ namespace Proyecto1Compi2.com.AST
 												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
-										return null;
+										break;
 									case "get":
 										if (llamada.Parametros.Count == 1)
 										{
@@ -561,144 +463,33 @@ namespace Proyecto1Compi2.com.AST
 														//SEGUNDO PARAMETRO= VALOR
 														object nuevoValor = llamada.Parametros.ElementAt(1).GetValor(ts,sesion);
 														TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts,sesion);
-														switch (t2)
+
+														if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor))
 														{
-															case TipoOperacion.Numero:
-																if (collection.TipoDato.Tipo == TipoDatoDB.INT)
+															object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevoValor,ts,sesion,Linea,Columna);
+															if (nuevoDato != null)
+															{
+																if (nuevoDato.GetType() == typeof(ThrowError))
 																{
-																	if (!nuevoValor.ToString().Contains("."))
+																	return nuevoDato;
+																}
+
+																object posibleError = collection.SetItem(posicion, nuevoDato, Linea, Columna);
+																if (posibleError != null)
+																{
+																	if (posibleError.GetType() == typeof(ThrowError))
 																	{
-																		object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																		if (posibleError != null)
-																		{
-																			if (posibleError.GetType() == typeof(ThrowError))
-																			{
-																				return posibleError;
-																			}
-																		}
-																	}
-																	else
-																	{
-																		return new ThrowError(Util.TipoThrow.Exception,
-																			"No se puede almacenar un valor double en un Collection tipo int",
-																			Linea, Columna);
+																		return posibleError;
 																	}
 																}
-																else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
-																{
-																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																	if (posibleError != null)
-																	{
-																		if (posibleError.GetType() == typeof(ThrowError))
-																		{
-																			return posibleError;
-																		}
-																	}
-																}
-																else
-																{
-																	return new ThrowError(Util.TipoThrow.Exception,
-																			"No se puede almacenar un valor numerico en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																			Linea, Columna);
-																}
-																break;
-															case TipoOperacion.Booleano:
-																if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
-																{
-																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																	if (posibleError != null)
-																	{
-																		if (posibleError.GetType() == typeof(ThrowError))
-																		{
-																			return posibleError;
-																		}
-																	}
-																}
-																else
-																{
-																	return new ThrowError(Util.TipoThrow.Exception,
-																		"No se puede almacenar un valor booleano en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																		Linea, Columna);
-																}
-																break;
-															case TipoOperacion.Fecha:
-																if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
-																{
-																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																	if (posibleError != null)
-																	{
-																		if (posibleError.GetType() == typeof(ThrowError))
-																		{
-																			return posibleError;
-																		}
-																	}
-																}
-																else
-																{
-																	return new ThrowError(Util.TipoThrow.Exception,
-																		"No se puede almacenar un valor de fecha en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																		Linea, Columna);
-																}
-																break;
-															case TipoOperacion.Hora:
-																if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
-																{
-																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																	if (posibleError != null)
-																	{
-																		if (posibleError.GetType() == typeof(ThrowError))
-																		{
-																			return posibleError;
-																		}
-																	}
-																}
-																else
-																{
-																	return new ThrowError(Util.TipoThrow.Exception,
-																		"No se puede almacenar un valor de hora en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																		Linea, Columna);
-																}
-																break;
-															case TipoOperacion.Objeto:
-																if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
-																{
-																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																	if (posibleError != null)
-																	{
-																		if (posibleError.GetType() == typeof(ThrowError))
-																		{
-																			return posibleError;
-																		}
-																	}
-																}
-																else
-																{
-																	return new ThrowError(Util.TipoThrow.Exception,
-																		"No se puede almacenar un valor de objeto en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																		Linea, Columna);
-																}
-																break;
-															case TipoOperacion.String:
-																if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
-																{
-																	object posibleError = collection.SetItem(posicion, nuevoValor, Linea, Columna);
-																	if (posibleError != null)
-																	{
-																		if (posibleError.GetType() == typeof(ThrowError))
-																		{
-																			return posibleError;
-																		}
-																	}
-																}
-																else
-																{
-																	return new ThrowError(Util.TipoThrow.Exception,
-																		"No se puede almacenar un valor string en un Collection tipo '" + collection.TipoDato.ToString() + "'",
-																		Linea, Columna);
-																}
-																break;
+															}
 														}
-														//******
+														else
+														{
+															return new ThrowError(Util.TipoThrow.Exception,
+																"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevoValor) + " en un Collection tipo " + collection.TipoDato.ToString(),
+																Linea, Columna);
+														}
 													}
 													else
 													{
@@ -727,7 +518,7 @@ namespace Proyecto1Compi2.com.AST
 												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
-										return null;
+										break;
 									case "remove":
 										if (llamada.Parametros.Count == 1)
 										{
@@ -771,7 +562,7 @@ namespace Proyecto1Compi2.com.AST
 												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
-										return null;
+										break;
 									case "size":
 										if (llamada.Parametros.Count == 0)
 										{
@@ -797,13 +588,14 @@ namespace Proyecto1Compi2.com.AST
 												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
-										return null;
+										break;
 									case "contains":
 										if (llamada.Parametros.Count == 1)
 										{
 											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
 											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
 											bool respuesta = false;
+
 											switch (t)
 											{
 												case TipoOperacion.Numero:
@@ -1066,7 +858,7 @@ namespace Proyecto1Compi2.com.AST
 												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
-										return null;
+										break;
 									case "contains":
 										if (llamada.Parametros.Count == 1)
 										{
@@ -1107,6 +899,7 @@ namespace Proyecto1Compi2.com.AST
 									"No se puede aplicar la función '" + valor.Value.ToString() + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 									Linea, Columna);
 							}
+							break;
 					}
 				}
 				else {
@@ -1114,6 +907,7 @@ namespace Proyecto1Compi2.com.AST
 												"la variable '" + sim.Nombre + "' no se ha inicializado",
 												Linea, Columna);
 				}
+				
 			}
 			return simbolosApilados;
 		}

@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class Declaracion:Sentencia
+	class Declaracion : Sentencia
 	{
 		List<string> variables;
 		TipoObjetoDB tipo;
 		Expresion expresion;
 
-		public Declaracion(List<string> variables, TipoObjetoDB tipo, Expresion expresion,int linea,int columna):base(linea,columna)
+		public Declaracion(List<string> variables, TipoObjetoDB tipo, Expresion expresion, int linea, int columna) : base(linea, columna)
 		{
 			this.variables = variables;
 			this.tipo = tipo;
@@ -27,21 +27,23 @@ namespace Proyecto1Compi2.com.AST
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 		internal Expresion Expresion { get => expresion; set => expresion = value; }
 
-		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
+		public override object Ejecutar(TablaSimbolos ts, Sesion sesion)
 		{
 			//VALIDANDO NOMBRE DE VARIABLE
-			foreach (string variable in variables) {
-				if (ts.ExisteSimboloEnAmbito(variable)) {
+			foreach (string variable in variables)
+			{
+				if (ts.ExisteSimboloEnAmbito(variable))
+				{
 					return new ThrowError(TipoThrow.Exception,
-						"La variable '"+variable+"' ya existe",
-						Linea,Columna);
+						"La variable '" + variable + "' ya existe",
+						Linea, Columna);
 				}
 			}
 			//VALIDAR TIPO DE DATO DE OBJETO
 			//***********VALIDAR LISTAS TAMBIEN
 			if (this.Tipo.Tipo == TipoDatoDB.OBJETO)
 			{
-				object respuestaComprobacion = ExisteUserType(this.tipo,sesion);
+				object respuestaComprobacion = ExisteUserType(this.tipo, sesion);
 				if (respuestaComprobacion.GetType() == typeof(ThrowError))
 				{
 					return respuestaComprobacion;
@@ -55,12 +57,12 @@ namespace Proyecto1Compi2.com.AST
 				}
 			}
 
-			object respuesta=null;
+			object respuesta = null;
 			if (expresion != null)
 			{
 				//OBTENIENDO RESPUESTA DE EXPRESION
-				respuesta = expresion.GetValor(ts,sesion);
-				TipoOperacion tipoRespuesta = expresion.GetTipo(ts,sesion);
+				respuesta = expresion.GetValor(ts, sesion);
+				TipoOperacion tipoRespuesta = expresion.GetTipo(ts, sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
@@ -68,81 +70,27 @@ namespace Proyecto1Compi2.com.AST
 						return respuesta;
 					}
 				}
-				//si es una instancia
-				//se genera aquí pues no tengo acceso a la sesion desde la operacion
-				switch (tipoRespuesta) {
-					case TipoOperacion.NuevaInstancia:
-						#region New Instancia
-						TipoObjetoDB tipoInstancia = (TipoObjetoDB)respuesta;
-						if (Datos.IsLista(tipoInstancia.Tipo))
-						{
-							object instanciaLista = Asignacion.GetInstanciaLista(tipoInstancia);
-							if (instanciaLista != null)
-							{
-								respuesta = instanciaLista;
-							}
-						}
-						else
-						{
-							if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
-							{
-								object instanciaObjeto = Asignacion.GetInstanciaObjeto(tipoInstancia, Linea, Columna,sesion);
-								if (instanciaObjeto != null)
-								{
-									respuesta = instanciaObjeto;
-								}
-							}
-							else
-							{
-								//ERROR NO SE PUEDE INSTANCIAR UN TIPO PRIMITIVO
-								return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede instanciar un tipo primitivo",
-								Linea, Columna);
-							}
-						}
-						#endregion
-						break;
-					case TipoOperacion.InstanciaObjeto:
-						#region {valores}
-						if (this.tipo.Tipo == TipoDatoDB.OBJETO)
-						{
-							TipoObjetoDB tipoExp = Datos.GetTipoObjetoDB(respuesta);
-							if (!this.tipo.Equals(tipoExp))
-							{
-								return new ThrowError(Util.TipoThrow.Exception,
-									"No se puede asignar un objeto '" + tipoExp.ToString() + "' a un tipo '" + this.tipo.ToString() + "'",
-									Linea, Columna);
-							}
-						}
-						else {
-							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede asignar un objeto a un tipo primitivo '"+this.tipo.ToString()+"'",
-								Linea, Columna);
-						}
-						#endregion
-						break;
-					default:
-						if (!Datos.IsTipoCompatibleParaAsignar(this.tipo, respuesta))
-						{
-							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede asignar el valor '"+respuesta.ToString()+"' a un tipo '" + this.tipo.ToString() + "'",
-								Linea, Columna);
-						}
-						break;
-				}
 			}
 
 			//AGREGANDO A TABLA DDE SIMBOLOS
 			int contador = 0;
 			foreach (string variable in variables)
 			{
-				if (contador == variables.Count - 1 && expresion!=null && respuesta!=null)
+				if (contador == variables.Count - 1 && expresion != null && respuesta != null)
 				{
-					object nuevaRespuesta = Datos.CasteoImplicito(tipo.Tipo, respuesta);
-
-					ts.AgregarSimbolo(new Simbolo(variable, nuevaRespuesta, tipo, Linea, Columna));
+					object nuevaRespuesta = Datos.CasteoImplicito(tipo, respuesta,ts,sesion,Linea,Columna);
+					if (nuevaRespuesta != null)
+					{
+						if (nuevaRespuesta.GetType() == typeof(ThrowError))
+						{
+							return nuevaRespuesta;
+						}
+						ts.AgregarSimbolo(new Simbolo(variable, nuevaRespuesta, tipo, Linea, Columna));
+					}
+					
 				}
-				else {
+				else
+				{
 					ts.AgregarSimbolo(new Simbolo(variable, GetValorPredeterminado(this.tipo.Tipo), tipo, Linea, Columna));
 				}
 				contador++;
@@ -150,13 +98,13 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
-		private object ExisteUserType(TipoObjetoDB tipo,Sesion sesion)
+		private object ExisteUserType(TipoObjetoDB tipo, Sesion sesion)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
 			{
 				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
-				return (db.ExisteUserType(tipo.ToString())) ;
+				return (db.ExisteUserType(tipo.ToString()));
 			}
 			else
 			{
@@ -168,7 +116,8 @@ namespace Proyecto1Compi2.com.AST
 
 		public static object GetValorPredeterminado(TipoDatoDB tipo)
 		{
-			switch (tipo) {
+			switch (tipo)
+			{
 				case TipoDatoDB.BOOLEAN:
 					return false;
 				case TipoDatoDB.DOUBLE:

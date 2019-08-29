@@ -218,7 +218,8 @@ namespace com.Analisis
 				NOMBREFUNCION = new NonTerminal("NOMBREFUNCION"),
 				ASIGNACIONAC=new NonTerminal("ASIGNACIONAC"),
 				ASIGNACIONCALL = new NonTerminal("ASIGNACIONCALL"),
-				LISTAACCESO1 = new NonTerminal("LISTAACCESO1")
+				LISTAACCESO1 = new NonTerminal("LISTAACCESO1"),
+				ACCESOFUNCION = new NonTerminal("ACCESOFUNCION")
 				;
 
 			NonTerminal OTORGAR = new NonTerminal("OTORGAR"),
@@ -347,8 +348,7 @@ namespace com.Analisis
 				| pr_true
 				| pr_false;
 
-			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2
-				| id+punto+ACCESO + par1 + LISTAEXPRESIONES + par2;
+			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2;
 
 			LISTA_ACCESOS.Rule = MakePlusRule(LISTA_ACCESOS, coma, ACCESO);
 
@@ -515,28 +515,31 @@ namespace com.Analisis
 				;
 
 			SENTENCIAFCL.Rule = ASIGNACION
-				|DECLARACION
-				|CASTEO
-				|MODIFICADORES+puntoycoma
-				|IF
-				|SWITCH
-				|WHILE
-				|DOWHILE
-				|FOR
-				|LLAMADAFUNCION+puntoycoma
-				|RETORNO
-				|CALLPROC
-				|BREAK
-				|CONTINUE
-				|CREAR_CURSOR
-				|FOREACH 
-				|OPENCURSOR
-				|CLOSECURSOR
-				|LOG
-				|TRYCATCH
-				|OPERACIONASIGNACION
-				|ASIGNACIONCALL
+				| DECLARACION
+				| CASTEO
+				| MODIFICADORES + puntoycoma
+				| IF
+				| SWITCH
+				| WHILE
+				| DOWHILE
+				| FOR
+				| LLAMADAFUNCION + puntoycoma
+				| RETORNO
+				| CALLPROC
+				| BREAK
+				| CONTINUE
+				| CREAR_CURSOR
+				| FOREACH
+				| OPENCURSOR
+				| CLOSECURSOR
+				| LOG
+				| TRYCATCH
+				| OPERACIONASIGNACION
+				| ASIGNACIONCALL
+				| ACCESOFUNCION
 				;
+
+			ACCESOFUNCION.Rule = id + punto + ACCESO+puntoycoma;
 
 			ASIGNACIONCALL.Rule = LISTAACCESO1 + igual + CALLPROC;
 

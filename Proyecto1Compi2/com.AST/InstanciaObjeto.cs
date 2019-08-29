@@ -48,8 +48,16 @@ namespace Proyecto1Compi2.com.AST
 							resExp = Expresiones.ElementAt(indice).GetValor(ts,sesion);
 							if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, resExp))
 							{
-								resExp = Datos.CasteoImplicito(atributo.Value.Tipo, resExp);
-								nuevaInstancia.Atributos.Add(atributo.Key, resExp);
+								resExp = Datos.CasteoImplicito(atributo.Value, resExp,ts,sesion,Linea,Columna);
+								if (resExp != null)
+								{
+									if (resExp.GetType() == typeof(ThrowError))
+									{
+										return resExp;
+									}
+									nuevaInstancia.Atributos.Add(atributo.Key, resExp);
+								}
+								
 							}
 							else
 							{

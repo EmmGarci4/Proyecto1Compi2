@@ -72,6 +72,7 @@
     <Compile Include="com.Analisis\GramaticaLup.cs" />
     <Compile Include="com.Analisis\GramaticaCql.cs" />
     <Compile Include="com.AST\AbrirCursor.cs" />
+    <Compile Include="com.AST\AccesoFuncion.cs" />
     <Compile Include="com.AST\AsignacionCall.cs" />
     <Compile Include="com.AST\CerrarCursor.cs" />
     <Compile Include="com.AST\CrearCursor.cs" />
