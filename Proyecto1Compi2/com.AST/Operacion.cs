@@ -458,24 +458,12 @@ namespace Proyecto1Compi2.com.AST
 
 		private object GetInstanciaLista(TipoObjetoDB tipoInstancia, Sesion sesion)
 		{
-
 			switch (tipoInstancia.Tipo)
 			{
 				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.SET_OBJETO:
-					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
-					if (Datos.IsLista(tipoDatoLista.Tipo))
-					{
-						object valor = GetInstanciaLista(tipoDatoLista, sesion);
-						if (valor != null)
-						{
-							if (valor.GetType() == typeof(ThrowError))
-							{
-								return valor;
-							}
-
-							//VALIDAR TIPO
-							object re = ValidarInstanciaLista(tipoDatoLista, sesion);
+						//VALIDAR TIPO
+							object re = ValidarInstanciaLista(tipoInstancia, sesion);
 							if (re != null)
 							{
 								if (re.GetType() == typeof(ThrowError))
@@ -483,29 +471,10 @@ namespace Proyecto1Compi2.com.AST
 									return re;
 								}
 							}
-							if ((bool)re) {
-								return new CollectionListCql(tipoInstancia, true);
-							}
-						}
-					}
-					else
-					{
-						TipoDatoDB tipoObjeto = Datos.GetTipoObjetoDBPorCadena();
-						if () {
-						}
-						else {
-							//comprobar que exista el objeto
-							object condicion = ExisteObjeto(tipoDatoLista, sesion);
-							if (condicion.GetType() == typeof(ThrowError))
-							{
-								return condicion;
-							}
-							return new CollectionListCql(tipoDatoLista, true);
-						}
-					}
-					break;
+				return new CollectionListCql(tipoInstancia, true);
+							
 				case TipoDatoDB.LISTA_PRIMITIVO:
-					tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
 					if (Datos.IsPrimitivo(tipoDatoLista.Tipo)) {
 						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO,tipoDatoLista.Nombre), true);
 					}
@@ -531,29 +500,28 @@ namespace Proyecto1Compi2.com.AST
 			{
 				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.SET_OBJETO:
-					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
-					if (Datos.IsLista(tipoDatoLista.Tipo))
+					TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					if (Datos.IsLista(tipoAdentro.Tipo))
 					{
-							object re = ValidarInstanciaLista(tipoDatoLista, sesion);
-							if (re != null)
+						object re = ValidarInstanciaLista(tipoAdentro, sesion);
+						if (re != null)
+						{
+							if (re.GetType() == typeof(ThrowError))
 							{
-								if (re.GetType() == typeof(ThrowError))
-								{
-									return re;
-								}
+								return re;
 							}
+						}
+						return ((bool)re);
 					}
-					else
-					{
+					else {
 						//comprobar que exista el objeto
-						object condicion = ExisteObjeto(tipoDatoLista, sesion);
+						object condicion = ExisteObjeto(tipoAdentro, sesion);
 						if (condicion.GetType() == typeof(ThrowError))
 						{
 							return condicion;
 						}
 						return true;
 					}
-					break;
 				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.SET_PRIMITIVO:
 					return true;

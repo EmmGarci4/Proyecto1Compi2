@@ -267,7 +267,7 @@ namespace Proyecto1Compi2.com.Util
 
 		internal static TipoObjetoDB GetTipoObjetoDBPorCadena(string nombre)
 		{
-			switch (nombre)
+			switch (nombre.ToLower())
 			{
 				case "string":
 					return new TipoObjetoDB(TipoDatoDB.STRING, "string");
@@ -319,7 +319,7 @@ namespace Proyecto1Compi2.com.Util
 						n = Regex.Replace(nombre, @"^[^<]*", string.Empty);
 						n = n.TrimStart('<');
 						n = n.TrimEnd('>');
-						if (n.Contains('>')) {
+						if (n.Contains('<')) {
 							n = n + ">";
 						}
 						return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, n);
@@ -329,7 +329,7 @@ namespace Proyecto1Compi2.com.Util
 						n = Regex.Replace(nombre, @"^[^<]*", string.Empty);
 						n = n.TrimStart('<');
 						n = n.TrimEnd('>');
-						if (n.Contains('>'))
+						if (n.Contains('<'))
 						{
 							n = n + ">";
 						}
