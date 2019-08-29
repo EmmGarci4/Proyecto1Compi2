@@ -1545,7 +1545,7 @@ namespace Proyecto1Compi2.com.Analisis
 				case "map":
 					if (parseTreeNode.ChildNodes.Count != 1)
 					{
-						ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
+						ti = GetTipo(parseTreeNode.ChildNodes.ElementAt(3));
 					}
 					else {
 						ti = TipoDatoDB.NULO;

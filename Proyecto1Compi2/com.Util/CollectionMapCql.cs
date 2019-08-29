@@ -29,13 +29,12 @@ namespace Proyecto1Compi2.com.Util
 				return null;
 			} catch (ArgumentException) {
 				return new ThrowError(Util.TipoThrow.Exception,
-										"La clave '" + clave + "' ya existe",
+										"La clave '" + clave.ToString() + "' ya existe",
 										linea, columna);
 			}
 			
 			//ordenar
 		}
-
 
 		internal object GetItem(object nuevo,int linea,int columna)
 		{
@@ -45,7 +44,9 @@ namespace Proyecto1Compi2.com.Util
 			}
 			catch (KeyNotFoundException)
 			{
-				return null;
+				return new ThrowError(Util.TipoThrow.Exception,
+					"La clave '" + nuevo + "' no existe",
+					linea, columna);
 			}
 		}
 
@@ -72,6 +73,24 @@ namespace Proyecto1Compi2.com.Util
 								"La clave '" + nuevo.ToString() + "' no existe", linea, columna);
 			}
 			return null;
+		}
+
+		public override string ToString()
+		{
+			StringBuilder cad = new StringBuilder();
+			cad.Append("{");
+			int i = 0;
+			foreach (KeyValuePair<object,object> ib in this)
+			{
+				cad.Append(ib.Key.ToString()+":"+ib.Value.ToString());
+				if (i < this.Count - 1)
+				{
+					cad.Append(",");
+				}
+				i++;
+			}
+			cad.Append("}");
+			return cad.ToString();
 		}
 	}
 }

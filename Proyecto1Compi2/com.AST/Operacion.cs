@@ -487,9 +487,42 @@ namespace Proyecto1Compi2.com.AST
 					}
 					break;
 				case TipoDatoDB.MAP_OBJETO:
+					string[] tipos = tipoInstancia.Nombre.Split(',');
+					TipoObjetoDB t1 = Datos.GetTipoObjetoDBPorCadena(tipos.ElementAt(0));
+					TipoObjetoDB t2 = Datos.GetTipoObjetoDBPorCadena(tipos.ElementAt(1));
+					if (Datos.IsPrimitivo(t1.Tipo))
+					{
+						//COMPROBAR TIPO COMO LISTA 
+						re = ValidarInstanciaLista(new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO,t2.Nombre), sesion);
+						if (re != null)
+						{
+							if (re.GetType() == typeof(ThrowError))
+							{
+								return re;
+							}
+						}
+						return new CollectionMapCql(t1, t2);
+					}
+					else {
+						return new ThrowError(Util.TipoThrow.Exception,
+										"El Map solo puede tener llaves de tipo primitivo",
+										Linea, Columna);
+					}
 				case TipoDatoDB.MAP_PRIMITIVO:
-					//UFFFF JODER
-					break;
+					tipos = tipoInstancia.Nombre.Split(',');
+					t1 = Datos.GetTipoObjetoDBPorCadena(tipos.ElementAt(0));
+					t2 = Datos.GetTipoObjetoDBPorCadena(tipos.ElementAt(1));
+					if (Datos.IsPrimitivo(t1.Tipo))
+					{
+						return new CollectionMapCql(t1, t2);
+					}
+					else
+					{
+						return new ThrowError(Util.TipoThrow.Exception,
+										"El Map solo puede tener llaves de tipo primitivo",
+										Linea, Columna);
+					}
+
 			}
 			return null;
 		}
@@ -512,6 +545,8 @@ namespace Proyecto1Compi2.com.AST
 							}
 						}
 						return ((bool)re);
+					} else if (Datos.IsPrimitivo(tipoAdentro.Tipo)) {
+						return true;
 					}
 					else {
 						//comprobar que exista el objeto
