@@ -197,7 +197,7 @@ namespace com.Analisis
 				//}
 
 				List<Sentencia> sentencias = GeneradorAstCql.GetAST(arbol.Root);
-				if (Analizador.ErroresCQL.Count == 0)
+				if (contarErroresCQL() == 0)
 				{
 					TablaSimbolos ts = new TablaSimbolos();
 					foreach (Sentencia sentencia in sentencias)
@@ -243,6 +243,17 @@ namespace com.Analisis
 			}
 
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
+		}
+
+		private static int contarErroresCQL()
+		{
+			int contador = 0;
+			foreach (Error error in ErroresCQL) {
+				if (error.Tipo!=TipoError.Advertencia) {
+					contador++;
+				}
+			}
+			return contador;
 		}
 
 		public static bool AnalizarChison(String texto)

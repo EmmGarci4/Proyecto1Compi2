@@ -243,6 +243,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return sentencias;
 		}
 
+		#region Lenguaje_FCL
 		private static Sentencia GetAcccesoFuncion(ParseTreeNode sentencia)
 		{
 			string variable = sentencia.ChildNodes.ElementAt(0).Token.ValueString;
@@ -292,7 +293,6 @@ namespace Proyecto1Compi2.com.Analisis
 				sentencia.Span.Location.Line,sentencia.Span.Location.Column);
 		}
 
-		#region Lenguaje_FCL
 		private static Sentencia GetAsignacionCall(ParseTreeNode sentencia)
 		{
 			List<Acceso> variables = GetListaAcceso2(sentencia.ChildNodes.ElementAt(0));
@@ -1305,11 +1305,11 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
-												"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
-											   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
-								return null;
-								}
+								di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
+								Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
+											"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
+										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+							}
 							return new Operacion(di, TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "time":
 							if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("'", string.Empty), out DateTime dt1)&&
@@ -1319,10 +1319,10 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+								di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
+								Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
 											"La hora es incorrecta, el formato debe ser HH:MM:SS",
 										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
-								return null;
 							}
 							return new Operacion(di, TipoOperacion.Hora, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "EXPRESION":
