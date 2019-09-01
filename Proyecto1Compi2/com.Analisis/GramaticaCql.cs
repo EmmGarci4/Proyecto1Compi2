@@ -180,7 +180,8 @@ namespace com.Analisis
 				LISTANOMBRESPURA = new NonTerminal("LISTANOMBRESPURA"),
 				OPERACIONASIGNACION = new NonTerminal("OPERACIONASIGNACION"),
 				CASTEO = new NonTerminal("CASTEO"),
-				OBJETO = new NonTerminal("OBJETO")
+				OBJETO = new NonTerminal("OBJETO"),
+				SETDATOS = new NonTerminal("SETDATOS")
 				;
 
 			NonTerminal SENTENCIATCL = new NonTerminal("SENTENCIATCL"),
@@ -304,13 +305,15 @@ namespace com.Analisis
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2 //map
 				| cor1 + LISTAEXPRESIONES + cor2 //listas
-				| llave1 + LISTAEXPRESIONES + llave2 // set 
+				| SETDATOS  // set 
 				| OBJETO
 				| MODIFICADORES
 				| FUNCIONAGREGACION
 				| pr_new + TIPODATO
 				| id + punto + ACCESO
 				;
+
+			SETDATOS.Rule=llave1 + LISTAEXPRESIONES + llave2;
 
 			OBJETO.Rule = llave1 + LISTAEXPRESIONES + llave2 + pr_as +nombre;
 

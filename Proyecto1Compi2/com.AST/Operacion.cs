@@ -420,6 +420,131 @@ namespace Proyecto1Compi2.com.AST
 							}
 						}
 						break;
+					case TipoOperacion.ListaDatos:
+						List<Expresion> expresiones = (List<Expresion>)this.Valor;
+						if (expresiones.Count > 0)
+						{
+							Expresion primer_elemento;
+							
+								primer_elemento = expresiones.ElementAt(0);
+								object respuesta = primer_elemento.GetValor(ts, sesion);
+								if (respuesta!=null) {
+									if (respuesta.GetType()==typeof(ThrowError)) {
+										return respuesta;
+									}
+								}
+							TipoObjetoDB tipodato = Datos.GetTipoObjetoDB(respuesta);
+							TipoObjetoDB tipoCol = null;
+							if (Datos.IsPrimitivo(tipodato.Tipo))
+							{
+								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipodato.ToString());
+							}
+							else {
+								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
+							}
+							CollectionListCql collection = new CollectionListCql(tipoCol, true);
+							foreach (Expresion exp in expresiones) {
+							object nuevo = exp.GetValor(ts,sesion);
+								if (nuevo != null)
+								{
+									if (nuevo.GetType() == typeof(ThrowError))
+									{
+										return nuevo;
+									}
+								}
+								if (Datos.IsTipoCompatible(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+								{
+
+										object posibleError = collection.AddItem(nuevo, Linea, Columna);
+										if (posibleError != null)
+										{
+											if (posibleError.GetType() == typeof(ThrowError))
+											{
+												return posibleError;
+											}
+										}
+								}
+								else
+								{
+									return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
+										Linea, Columna);
+								}
+
+							}
+							return collection;
+						}
+						else {
+							return new ThrowError(TipoThrow.Exception,
+									"No se puede asignar una lista vacía",
+								   Linea, Columna);
+
+						}
+					case TipoOperacion.SetDatos:
+						expresiones = (List<Expresion>)this.Valor;
+						if (expresiones.Count > 0)
+						{
+							Expresion primer_elemento;
+
+							primer_elemento = expresiones.ElementAt(0);
+							object respuesta = primer_elemento.GetValor(ts, sesion);
+							if (respuesta != null)
+							{
+								if (respuesta.GetType() == typeof(ThrowError))
+								{
+									return respuesta;
+								}
+							}
+							TipoObjetoDB tipodato = Datos.GetTipoObjetoDB(respuesta);
+							TipoObjetoDB tipoCol = null;
+							if (Datos.IsPrimitivo(tipodato.Tipo))
+							{
+								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipodato.ToString());
+							}
+							else
+							{
+								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
+							}
+							CollectionListCql collection = new CollectionListCql(tipoCol, false);
+							foreach (Expresion exp in expresiones)
+							{
+								object nuevo = exp.GetValor(ts, sesion);
+								if (nuevo != null)
+								{
+									if (nuevo.GetType() == typeof(ThrowError))
+									{
+										return nuevo;
+									}
+								}
+								if (Datos.IsTipoCompatible(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+								{
+
+									object posibleError = collection.AddItem(nuevo, Linea, Columna);
+									if (posibleError != null)
+									{
+										if (posibleError.GetType() == typeof(ThrowError))
+										{
+											return posibleError;
+										}
+									}
+								}
+								else
+								{
+									return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
+										Linea, Columna);
+								}
+
+							}
+							return collection;
+						}
+						else
+						{
+							return new ThrowError(TipoThrow.Exception,
+									"No se puede asignar una lista vacía",
+								   Linea, Columna);
+
+						}
 					default:
 						return this.Valor;
 				}
@@ -610,6 +735,7 @@ namespace Proyecto1Compi2.com.AST
 		NuevaInstancia,
 		InstanciaObjeto,
 		ListaDatos,
+		SetDatos,
 		//operaciones
 		Suma,
 		Resta,

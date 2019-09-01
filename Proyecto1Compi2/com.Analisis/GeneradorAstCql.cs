@@ -1334,12 +1334,15 @@ namespace Proyecto1Compi2.com.Analisis
 						case "INFOCOLLECTIONS": //{valor:{}:val:{}}
 
 						case "LISTAEXPRESIONES": //[1112,2,3,3,2]
-							List<Expresion> lista = new List<Expresion>();
-							foreach (ParseTreeNode exp in raiz.ChildNodes.ElementAt(0).ChildNodes) {
-								lista.Add(GetExpresion(exp));
-							}
+							List<Expresion> lista = GetListaExpresiones(raiz.ChildNodes.ElementAt(0));
 							return new Operacion(lista,
 							TipoOperacion.ListaDatos,
+							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
+							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
+						case "SETDATOS":
+							lista = GetListaExpresiones(raiz.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0));
+							return new Operacion(lista,
+							TipoOperacion.SetDatos,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
 						case "MODIFICADORES":

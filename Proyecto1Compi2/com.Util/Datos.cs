@@ -13,23 +13,18 @@ namespace Proyecto1Compi2.com.Util
 {
 	static class Datos
 	{
-		public static bool IsTipoCompatible(TipoObjetoDB tipo, object v)
+		public static bool IsTipoCompatible(TipoObjetoDB tipoDato, object v)
 		{
-			switch (tipo.Tipo)
+			switch (tipoDato.Tipo)
 			{
 				case TipoDatoDB.BOOLEAN:
 					return v.GetType() == typeof(bool);
-				case TipoDatoDB.COUNTER:
-					return v.GetType() == typeof(double) || v.GetType() == typeof(int);
 				case TipoDatoDB.DOUBLE:
 					return v.GetType() == typeof(double);
+				case TipoDatoDB.COUNTER:
 				case TipoDatoDB.INT:
 					return v.GetType() == typeof(int);
 				case TipoDatoDB.DATE:
-					if (v.GetType() == typeof(string))
-					{
-						return Regex.IsMatch(v.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
-					}
 					if (v.GetType() == typeof(MyDateTime))
 					{
 						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.DATE);
@@ -42,31 +37,37 @@ namespace Proyecto1Compi2.com.Util
 					}
 					return false;
 				case TipoDatoDB.STRING:
-					return true;
+					return (v.GetType() == typeof(string));
 				case TipoDatoDB.TIME:
-					if (v.GetType() == typeof(string))
-					{
-						return Regex.IsMatch(v.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'");
-					}
-					else if (v.GetType() == typeof(MyDateTime))
+					if (v.GetType() == typeof(MyDateTime))
 					{
 						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.TIME);
 					}
 					return false;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.SET_OBJETO:
 				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.SET_PRIMITIVO:
 					if (v.GetType() == typeof(CollectionListCql))
 					{
-						CollectionListCql list = (CollectionListCql)v;
-						if (list.IsLista)
+						if (tipoDato.Equals(((CollectionListCql)v).TipoDato))
 						{
-							return list.IsAllBool() ||
-								list.IsAllDate() ||
-								list.IsAllDouble() ||
-								list.IsAllInteger() ||
-								list.IsAllObjeto() ||
-								list.IsAllString() ||
-								list.IsAllTime();
+							return true;
+						}
+						else if (tipoDato.Nombre.Equals("null"))
+						{
+							return true;
+						}
+					}
+					else if ((v.GetType() == typeof(string) && v.ToString().Equals("null")))
+					{
+						return true;
+					}
+					else if (tipoDato.Nombre.Equals("null"))
+					{
+						if (v.GetType() == typeof(List<Expresion>))
+						{
+							return true;
 						}
 					}
 					break;
@@ -74,14 +75,16 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.MAP_OBJETO:
 					if (v.GetType() == typeof(CollectionMapCql))
 					{
-						//comparar tipos
 						return true;
 					}
 					break;
 				case TipoDatoDB.OBJETO:
-					return true;
+					if (v.GetType() == typeof(Objeto))
+					{
+						return ((Objeto)v).IsObjetoTipo(tipoDato.Nombre);
+					}
+					return false;
 			}
-
 			return false;
 		}
 

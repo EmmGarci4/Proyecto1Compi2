@@ -40,7 +40,7 @@ namespace Proyecto1Compi2.com.Util
 							linea, columna);
 					}
 				}
-				switch (tipoDato.Tipo)
+				switch (Datos.GetTipoObjetoDBPorCadena(tipoDato.Nombre).Tipo)
 				{
 					case TipoDatoDB.BOOLEAN:
 					case TipoDatoDB.STRING:
