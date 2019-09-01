@@ -545,6 +545,92 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 
 						}
+					case TipoOperacion.MapDatos:
+						InfoCollection info = (InfoCollection)this.Valor;
+						if (info.Count > 0)
+						{
+							object expClave = info.ElementAt(0).Expresion1.GetValor(ts, sesion);
+							if (expClave!=null) {
+								if (expClave.GetType() == typeof(ThrowError)) {
+									return expClave;
+								}
+							}
+							object expValor = info.ElementAt(0).Expresion2.GetValor(ts, sesion);
+							if (expValor != null)
+							{
+								if (expValor.GetType() == typeof(ThrowError))
+								{
+									return expValor;
+								}
+							}
+
+							TipoObjetoDB tipoClave=Datos.GetTipoObjetoDB(expClave);
+							TipoObjetoDB tipoValor = Datos.GetTipoObjetoDB(expValor);
+							if (Datos.IsPrimitivo(tipoClave.Tipo))
+							{
+								CollectionMapCql collection = new CollectionMapCql(tipoClave, tipoValor);
+								foreach (Info valor in info) {
+									//OBTENIENDO VALORES Y TIPOS
+									 expClave = valor.Expresion1.GetValor(ts, sesion);
+									if (expClave != null)
+									{
+										if (expClave.GetType() == typeof(ThrowError))
+										{
+											return expClave;
+										}
+									}
+									expValor = valor.Expresion2.GetValor(ts, sesion);
+									if (expValor != null)
+									{
+										if (expValor.GetType() == typeof(ThrowError))
+										{
+											return expValor;
+										}
+									}
+
+									tipoClave = Datos.GetTipoObjetoDB(expClave);
+									tipoValor = Datos.GetTipoObjetoDB(expValor);
+									if (Datos.IsTipoCompatible(collection.TipoLlave, expClave))
+									{
+										if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, expValor))
+										{
+												object posibleError = collection.AddItem(expClave, expValor, Linea, Columna);
+												if (posibleError != null)
+												{
+													if (posibleError.GetType() == typeof(ThrowError))
+													{
+														return posibleError;
+													}
+												}	
+										}
+										else
+										{
+											return new ThrowError(Util.TipoThrow.Exception,
+												"No se puede almacenar un valor " +tipoClave.ToString() + " en un valor tipo " + collection.TipoValor.ToString(),
+												Linea, Columna);
+										}
+									}
+									else
+									{
+										return new ThrowError(Util.TipoThrow.Exception,
+										"El valor '" + expClave.ToString() + "' no corresponde con el tipo '" + collection.TipoLlave.ToString() + "' de clave del collection map",
+										Linea, Columna);
+									}
+									//****
+								}
+								return collection;
+							}
+							else {
+								return new ThrowError(TipoThrow.Exception,
+										"No se puede asignar un valor tipo '"+tipoClave.ToString()+"' como llave",
+									   Linea, Columna);
+							}
+						}
+						else {
+							return new ThrowError(TipoThrow.Exception,
+										"No se puede asignar una lista vacía",
+									   Linea, Columna);
+						}
 					default:
 						return this.Valor;
 				}
@@ -736,6 +822,7 @@ namespace Proyecto1Compi2.com.AST
 		InstanciaObjeto,
 		ListaDatos,
 		SetDatos,
+		MapDatos,
 		//operaciones
 		Suma,
 		Resta,

@@ -1332,7 +1332,7 @@ namespace Proyecto1Compi2.com.Analisis
 						case "LLAMADAFUNCION":
 							return GetLlamadaFuncion(raiz.ChildNodes.ElementAt(0));
 						case "INFOCOLLECTIONS": //{valor:{}:val:{}}
-
+							return GetInfoCollection(raiz.ChildNodes.ElementAt(0));
 						case "LISTAEXPRESIONES": //[1112,2,3,3,2]
 							List<Expresion> lista = GetListaExpresiones(raiz.ChildNodes.ElementAt(0));
 							return new Operacion(lista,
@@ -1400,6 +1400,19 @@ namespace Proyecto1Compi2.com.Analisis
 					return aces;
 			}
 			return null;
+		}
+
+		private static Expresion GetInfoCollection(ParseTreeNode raiz)
+		{
+			InfoCollection info = new InfoCollection();
+			foreach (ParseTreeNode nodo in raiz.ChildNodes)
+			{
+				info.Add(new Info(GetExpresion(nodo.ChildNodes.ElementAt(0)), GetExpresion(nodo.ChildNodes.ElementAt(1))));
+			}
+			return new Operacion(info,
+							TipoOperacion.MapDatos,
+							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
+							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
 		}
 
 		private static Expresion GetObjeto(ParseTreeNode raiz)

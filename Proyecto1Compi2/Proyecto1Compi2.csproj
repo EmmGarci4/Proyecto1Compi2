@@ -150,6 +150,8 @@
     <Compile Include="com.Util\Datos.cs" />
     <Compile Include="com.Util\Error.cs" />
     <Compile Include="com.Util\HandlerFiles.cs" />
+    <Compile Include="com.Util\Info.cs" />
+    <Compile Include="com.Util\InfoCollection.cs" />
     <Compile Include="com.Util\MyDateTime.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
     <Compile Include="com.Util\TablaSimbolos.cs" />
