@@ -421,7 +421,7 @@ namespace Proyecto1Compi2.com.AST
 															}
 														}
 														Simbolo s = new Simbolo(llaveFuncion, nuevoValor,
-															new Util.TipoObjetoDB(collection.TipoDato.Tipo, collection.TipoDato.Nombre), 0, 0);
+															Datos.GetTipoObjetoDB(nuevoValor), 0, 0);
 														simbolosApilados.Push(s);
 														return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
 													}
@@ -479,7 +479,6 @@ namespace Proyecto1Compi2.com.AST
 																{
 																	return nuevoDato;
 																}
-
 																object posibleError = collection.SetItem(posicion, nuevoDato, Linea, Columna);
 																if (posibleError != null)
 																{

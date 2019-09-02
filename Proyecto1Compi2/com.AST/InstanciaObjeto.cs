@@ -46,6 +46,13 @@ namespace Proyecto1Compi2.com.AST
 						foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
 						{
 							resExp = Expresiones.ElementAt(indice).GetValor(ts,sesion);
+							if (resExp != null)
+							{
+								if (resExp.GetType() == typeof(ThrowError))
+								{
+									return resExp;
+								}
+							}
 							if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, resExp))
 							{
 								resExp = Datos.CasteoImplicito(atributo.Value, resExp,ts,sesion,Linea,Columna);

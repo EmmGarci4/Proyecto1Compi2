@@ -170,25 +170,48 @@ namespace Proyecto1Compi2.com.Util
 						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.TIME);
 					}
 					return false;
-				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.SET_OBJETO:
-				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.SET_PRIMITIVO:
-					if (v.GetType() == typeof(CollectionListCql))
+					if (v.GetType() == typeof(CollectionListCql) && !((CollectionListCql)v).IsLista)
 					{
-						if (tipoDato.Equals(((CollectionListCql)v).TipoDato)) {
+						if (tipoDato.Equals(((CollectionListCql)v).TipoDato) && !((CollectionListCql)v).IsLista)
+						{
 							return true;
-						} else if (tipoDato.Nombre.Equals("null")) {
+						}
+						else if (tipoDato.Nombre.Equals("null") && !((CollectionListCql)v).IsLista)
+						{
 							return true;
 						}
 					}
-					else if ((v.GetType() == typeof(string) && v.ToString().Equals("null")))
+					else if ((v.GetType() == typeof(string) && v.ToString().Equals("null")) && !((CollectionListCql)v).IsLista)
 					{
 						return true;
 					}
-					else if (tipoDato.Nombre.Equals("null"))
+					else if (tipoDato.Nombre.Equals("null") && !((CollectionListCql)v).IsLista)
 					{
-						if (v.GetType() == typeof(List<Expresion>))
+						if (v.GetType() == typeof(List<Expresion>) && !((CollectionListCql)v).IsLista)
+						{
+							return true;
+						}
+					}
+					return false;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+					if (v.GetType() == typeof(CollectionListCql)&& ((CollectionListCql)v).IsLista)
+					{
+						if (tipoDato.Equals(((CollectionListCql)v).TipoDato)&& ((CollectionListCql)v).IsLista) {
+							return true;
+						} else if (tipoDato.Nombre.Equals("null") && ((CollectionListCql)v).IsLista) {
+							return true;
+						}
+					}
+					else if ((v.GetType() == typeof(string) && v.ToString().Equals("null")) && ((CollectionListCql)v).IsLista)
+					{
+						return true;
+					}
+					else if (tipoDato.Nombre.Equals("null") && ((CollectionListCql)v).IsLista)
+					{
+						if (v.GetType() == typeof(List<Expresion>) && ((CollectionListCql)v).IsLista)
 						{
 							return true;
 						}
