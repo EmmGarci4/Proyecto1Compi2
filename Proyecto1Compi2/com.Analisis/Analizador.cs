@@ -234,7 +234,7 @@ namespace com.Analisis
 							}
 						}
 					}
-					//MostrarReporteDeEstado(sesion);
+					MostrarReporteDeEstado(sesion);
 				}
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
@@ -442,42 +442,44 @@ namespace com.Analisis
 					Console.WriteLine(per);
 				}
 			}
-			//if ( sesion.DBActual!= null)
-			//{
-			//	BaseDatos dbActual = BuscarDB(sesion.DBActual);
-			//	if (dbActual!=null) {
-			//		Console.WriteLine("------------------------------------------------------");
-			//		Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
-			//		Console.WriteLine("-----------------");
-			//		foreach (Tabla tb in dbActual.Tablas)
-			//		{
-			//			Console.WriteLine("Tabla: " + tb.Nombre);
-			//			foreach (Columna cl in tb.Columnas)
-			//			{
-			//				Console.WriteLine(cl.Nombre + "=>" + cl.Tipo);
-			//			}
-			//			Console.WriteLine("*********");
-			//			tb.MostrarDatos();
-			//		}
-			//		Console.WriteLine("-----------------");
-			//		foreach (UserType ut in dbActual.UserTypes)
-			//		{
-			//			Console.WriteLine("UserType: " + ut.Nombre);
-			//			foreach (KeyValuePair<string, TipoObjetoDB> atributos in ut.Atributos)
-			//			{
-			//				Console.WriteLine(atributos.Key + "=>" + atributos.Value);
-			//			}
-			//		}
-			//		Console.WriteLine("-----------------");
-			//		foreach (Procedimiento pr in dbActual.Procedimientos)
-			//		{
-			//			Console.WriteLine("Procedimiento: " + pr.Nombre);
-			//		}
-			//	}
-			//}
-			//else {
-			//	Console.WriteLine("NO HAY BASE DE DATOS EN USO");
-			//}
+			if (sesion.DBActual != null)
+			{
+				BaseDatos dbActual = BuscarDB(sesion.DBActual);
+				if (dbActual != null)
+				{
+					Console.WriteLine("------------------------------------------------------");
+					Console.WriteLine("Base de datos en uso: " + dbActual.Nombre);
+					Console.WriteLine("-----------------");
+					foreach (Tabla tb in dbActual.Tablas)
+					{
+						Console.WriteLine("Tabla: " + tb.Nombre);
+						foreach (Columna cl in tb.Columnas)
+						{
+							Console.WriteLine(cl.Nombre + "=>" + cl.Tipo);
+						}
+						Console.WriteLine("*********");
+						tb.MostrarDatos();
+					}
+					Console.WriteLine("-----------------");
+					foreach (UserType ut in dbActual.UserTypes)
+					{
+						Console.WriteLine("UserType: " + ut.Nombre);
+						foreach (KeyValuePair<string, TipoObjetoDB> atributos in ut.Atributos)
+						{
+							Console.WriteLine(atributos.Key + "=>" + atributos.Value);
+						}
+					}
+					Console.WriteLine("-----------------");
+					foreach (Procedimiento pr in dbActual.Procedimientos)
+					{
+						Console.WriteLine("Procedimiento: " + pr.Nombre);
+					}
+				}
+			}
+			else
+			{
+				Console.WriteLine("NO HAY BASE DE DATOS EN USO");
+			}
 		}
 
 		private static void MostrarReporteDeEstadoChison()

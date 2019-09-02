@@ -82,7 +82,7 @@ namespace Proyecto1Compi2.com.AST
 				}
 				else
 				{
-					return new ThrowError(Util.TipoThrow.TypeAlreadyExists,
+					return new ThrowError(Util.TipoThrow.Exception,
 				"El procedimiento '" + llave + "' no existe",
 				Linea, Columna);
 				}

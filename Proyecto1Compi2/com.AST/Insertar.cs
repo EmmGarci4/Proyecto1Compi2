@@ -49,15 +49,15 @@ namespace Proyecto1Compi2.com.AST
 					{
 						//INSERSION NORMAL
 						int counters = tab.ContarCounters();
-						if (this.valores.Count == (tab.Columnas.Count-counters))
+						if (this.valores.Count == (tab.Columnas.Count - counters))
 						{
 							//VALIDANDO
-							int indiceDatos= 0;
+							int indiceDatos = 0;
 							int indiceColumnas = 0;
 							Queue<object> valoresAInsertar = new Queue<object>();
 							foreach (Columna cl in tab.Columnas) {
-								object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb,sesion);
-								if (respuesta.GetType()==typeof(ThrowError)) {
+								object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb, sesion);
+								if (respuesta.GetType() == typeof(ThrowError)) {
 									return respuesta;
 								}
 								//no es un error
@@ -65,24 +65,8 @@ namespace Proyecto1Compi2.com.AST
 								{
 									if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
 									{
-										if (cl.IsPrimary)
-										{
-											if (!cl.ExisteDato(respuesta))
-											{
-												valoresAInsertar.Enqueue(respuesta);
-												indiceDatos++;
-											}
-											else
-											{
-												return new ThrowError(TipoThrow.ValuesException,
-													"El valor '" + respuesta.ToString() + "' no puede repetirse en la columna '" + cl.Nombre + "'",
-													Linea, Columna);
-											}
-										}
-										else {
-											valoresAInsertar.Enqueue(respuesta);
+										valoresAInsertar.Enqueue(respuesta);
 											indiceDatos++;
-										}
 									}
 									else
 									{
@@ -99,11 +83,21 @@ namespace Proyecto1Compi2.com.AST
 								indiceColumnas++;
 							}
 							//INSERTANDO
-							if (tab.Columnas.Count==valoresAInsertar.Count) {
+							if (tab.Columnas.Count == valoresAInsertar.Count) {
+								object correcto = tab.ValidarPk(valoresAInsertar,Linea,Columna);
+								if (correcto.GetType()==typeof(ThrowError)) {
+									return correcto;
+								}
+								//LLENANDO TABLA
 								tab.AgregarValores(valoresAInsertar);
 							}
 						}
 						else {
+							if (this.valores.Count == tab.Columnas.Count) {
+								return new ThrowError(TipoThrow.CounterTypeException,
+								"No se pueden insertar valores en las columnas Counter",
+								Linea, Columna);
+							}
 							return new ThrowError(TipoThrow.ValuesException,
 								"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
 								Linea, Columna);

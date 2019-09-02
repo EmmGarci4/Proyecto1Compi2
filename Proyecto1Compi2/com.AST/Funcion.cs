@@ -88,7 +88,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else if (this.tipoRetorno != null)
 						{
-							return new ThrowError(TipoThrow.Exception,
+							return new ThrowError(TipoThrow.NumerReturnsException,
 								"La cantidad de valores retornados es incorrecta, solo se puede retornar un valor",
 								Linea, Columna);
 						}

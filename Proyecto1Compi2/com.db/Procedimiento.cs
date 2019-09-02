@@ -101,7 +101,7 @@ namespace Proyecto1Compi2.com.db
 						}
 						else
 						{
-							return new ThrowError(TipoThrow.Exception,
+							return new ThrowError(TipoThrow.NumerReturnsException,
 								"La cantidad de valores retornados es incorrecta, se deben retornar "+retornos.Count+" valores",
 								Linea, Columna);
 						}

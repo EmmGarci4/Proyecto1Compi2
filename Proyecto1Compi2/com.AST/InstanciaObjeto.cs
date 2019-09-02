@@ -85,7 +85,7 @@ namespace Proyecto1Compi2.com.AST
 				}
 				else
 				{
-					return new ThrowError(Util.TipoThrow.TypeAlreadyExists,
+					return new ThrowError(Util.TipoThrow.Exception,
 					"El user Type '" + this.nombreUserType + "' no existe",
 					Linea, Columna);
 				}

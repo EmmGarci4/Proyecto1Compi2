@@ -15,8 +15,8 @@ namespace Proyecto1Compi2.com.db
 		List<Columna> columnas;
 		private int contadorFilas;
 
-		public List<Columna> Columnas { get => columnas;}
-		public int ContadorFilas { get => contadorFilas;}
+		public List<Columna> Columnas { get => columnas; }
+		public int ContadorFilas { get => contadorFilas; }
 		public string Nombre { get => nombre; set => nombre = value; }
 
 		public Tabla()
@@ -28,10 +28,10 @@ namespace Proyecto1Compi2.com.db
 		public Tabla(String nombre)
 		{
 			this.Nombre = nombre;
-			this.columnas = new List<Columna> ();
+			this.columnas = new List<Columna>();
 		}
 
-		public Tabla(String nombre,List<Columna> tab)
+		public Tabla(String nombre, List<Columna> tab)
 		{
 			this.Nombre = nombre;
 			this.columnas = tab;
@@ -39,7 +39,8 @@ namespace Proyecto1Compi2.com.db
 
 		//*****************************COLUMNAS**************************************************
 
-		public void AgregarColumna(Columna columna) {
+		public void AgregarColumna(Columna columna)
+		{
 			columnas.Add(columna);
 		}
 
@@ -80,8 +81,10 @@ namespace Proyecto1Compi2.com.db
 		internal int ContarCounters()
 		{
 			int contador = 0;
-			foreach (Columna cl in columnas) {
-				if (cl.Tipo.Tipo==TipoDatoDB.COUNTER) {
+			foreach (Columna cl in columnas)
+			{
+				if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+				{
 					contador++;
 				}
 			}
@@ -94,7 +97,8 @@ namespace Proyecto1Compi2.com.db
 		internal void Truncar()
 		{
 			contadorFilas = 0;
-			foreach (Columna cl in columnas) {
+			foreach (Columna cl in columnas)
+			{
 				cl.Datos.Clear();
 			}
 		}
@@ -115,7 +119,8 @@ namespace Proyecto1Compi2.com.db
 
 		internal void AgregarValores(Queue<object> valores)
 		{
-			foreach (Columna cl in columnas) {
+			foreach (Columna cl in columnas)
+			{
 				cl.Datos.Add(valores.Dequeue());
 			}
 			contadorFilas++;
@@ -124,9 +129,11 @@ namespace Proyecto1Compi2.com.db
 		internal void MostrarDatos()
 		{
 			int contador = 0;
-			for (contador=0;contador<contadorFilas;contador++) {
-				foreach (Columna cl in columnas) {
-					Console.Write("|"+cl.Datos.ElementAt(contador)+"|");
+			for (contador = 0; contador < contadorFilas; contador++)
+			{
+				foreach (Columna cl in columnas)
+				{
+					Console.Write("|" + cl.Datos.ElementAt(contador) + "|");
 				}
 				Console.WriteLine();
 			}
@@ -158,7 +165,7 @@ namespace Proyecto1Compi2.com.db
 			cadena.Append("\"DATA\" =[");
 			int indice = 0;
 			int cont;
-			while (indice <ContadorFilas)
+			while (indice < ContadorFilas)
 			{
 				cadena.Append("\n<\n");
 				cont = 0;
@@ -186,10 +193,83 @@ namespace Proyecto1Compi2.com.db
 				}
 				indice++;
 			}
-		//*******
+			//*******
 			cadena.Append("]\n>");
 			return cadena.ToString();
 		}
 
+		internal object ValidarPk(Queue<object> valoresAInsertar, int linea, int columna)
+		{
+			List<Columna> llaves = GetPks();
+			if (llaves.Count > 1)
+			{
+				StringBuilder llavePrimaria = new StringBuilder();
+				int indiceFila;
+				for (indiceFila=0;indiceFila<contadorFilas;indiceFila++) {
+					bool existe = existeLlaveEnFila(indiceFila, llaves, valoresAInsertar, llavePrimaria);
+					if (existe)
+					{
+						return new ThrowError(TipoThrow.ValuesException,
+						"La llave primaria compuesta '" + llavePrimaria.ToString().TrimEnd('+') + "' ya existe",
+						linea, columna);
+					}
+				}
+				return true;
+			}
+			else
+			{
+				//una sola llave
+				if (llaves.ElementAt(0).Tipo.Tipo == TipoDatoDB.COUNTER)
+				{
+					return true;
+				}
+				else
+				{
+					int valor = this.columnas.IndexOf(llaves.ElementAt(0));
+					if (llaves.ElementAt(0).Datos.Contains(valoresAInsertar.ElementAt(valor)))
+					{
+						return new ThrowError(TipoThrow.ValuesException,
+						"El valor '" + valoresAInsertar.ElementAt(valor) + "' no puede repetirse en la columna '"
+						+ llaves.ElementAt(0).Nombre + "'",
+						linea, columna);
+					}
+				}
+			}
+			return true;
+		}
+
+		private bool existeLlaveEnFila(int indiceFila, List<Columna> llaves, Queue<object> valoresAInsertar,
+			StringBuilder llavePrimaria)
+		{
+			//al menos uno coincide
+			//comparar todas las filas con los valores
+			int sonIguales = 0;
+			int indiceValores = 0;
+			llavePrimaria.Clear();
+			foreach (Columna pk in llaves)
+			{
+				indiceValores = this.columnas.IndexOf(pk);
+				if (pk.Datos.ElementAt(indiceFila).Equals(valoresAInsertar.ElementAt(indiceValores)))
+				{
+					llavePrimaria.Append("[" + pk.Nombre + "=" + valoresAInsertar.ElementAt(indiceValores) + "]" + "+");
+					sonIguales++;
+				}
+			}
+			return sonIguales == llaves.Count;
+		}
+
+
+		private List<Columna> GetPks()
+		{
+			List<Columna> pks = new List<Columna>();
+			foreach (Columna cl in this.columnas)
+			{
+				if (cl.IsPrimary)
+				{
+					pks.Add(cl);
+				}
+			}
+			return pks;
+		}
 	}
 }
