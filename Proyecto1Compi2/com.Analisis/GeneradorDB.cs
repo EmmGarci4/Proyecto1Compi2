@@ -282,11 +282,11 @@ namespace Proyecto1Compi2.com.Analisis
 					switch (t)
 					{
 						case TipoObjeto.Objeto:
-							UserType ustype = GetUserType(nodo);
+							UserType ustype = GetUserType(nodo,lista);
 							if (ustype != null) lista.Add(ustype);
 							break;
 						case TipoObjeto.Procedimiento:
-							Procedimiento proc = GetProcedimiento(nodo);
+							Procedimiento proc = GetProcedimiento(nodo,lista);
 							if (proc != null) lista.Add(proc);
 							break;
 						case TipoObjeto.Tabla:
@@ -389,7 +389,7 @@ namespace Proyecto1Compi2.com.Analisis
 											}
 											else
 											{
-												Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 											"El objeto '" + col.Tipo.ToString() + "' no existe",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -398,6 +398,11 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
+											if (Datos.IsLista(col.Tipo.Tipo)) {
+												if (!ValidarInstanciaLista(col.Tipo, db)) {
+													continue;
+												}
+											}
 											//validar si es lista, set o map
 											tabla.AgregarColumna(col);
 										}
@@ -482,6 +487,45 @@ namespace Proyecto1Compi2.com.Analisis
 				Datos.GetDate(),
 				Datos.GetTime()));
 			return null;
+		}
+
+		private static bool ValidarInstanciaLista(TipoObjetoDB tipoInstancia, List<object> objetos)
+		{
+			switch (tipoInstancia.Tipo)
+			{
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+					TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
+					if (Datos.IsLista(tipoAdentro.Tipo))
+					{
+						if (!ValidarInstanciaLista(tipoAdentro, objetos))
+						{
+								return false;
+						}
+						return true;
+					}
+					else if (Datos.IsPrimitivo(tipoAdentro.Tipo))
+					{
+						return true;
+					}
+					else
+					{
+						//comprobar que exista el objeto
+						if (!ExisteUt(tipoAdentro.Nombre,objetos))
+						{
+							return false;
+						}
+						return true;
+					}
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					return true;
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+					//UFFFF JODER
+					break;
+			}
+			return false;
 		}
 
 		private static void InsertarEnTabla(Tabla tab, List<ParDatos> valores,int linea,int columna)
@@ -895,7 +939,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return columnas;
 		}
 
-		private static Procedimiento GetProcedimiento(ParseTreeNode raiz)
+		private static Procedimiento GetProcedimiento(ParseTreeNode raiz,List<object> db)
 		{
 			Procedimiento proc = new Procedimiento(raiz.Span.Location.Line, raiz.Span.Location.Column);
 			string t = null;
@@ -970,7 +1014,36 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (!proc.Parametros.Contains(par))
 										{
-											proc.Parametros.Add(par);
+											if (par.Tipo.Tipo == TipoDatoDB.OBJETO)
+											{
+												if (ExisteUt(par.Tipo.Nombre, db))
+												{
+													proc.Parametros.Add(par);
+												}
+												else
+												{
+													Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+													"El objeto '" + par.Tipo.ToString() + "' no existe",
+													raiz.Span.Location.Line, raiz.Span.Location.Column,
+													Datos.GetDate(),
+													Datos.GetTime()));
+												}
+											}
+											else
+											{
+												if (Datos.IsLista(par.Tipo.Tipo))
+												{
+													if (ValidarInstanciaLista(par.Tipo, db))
+													{
+														proc.Parametros.Add(par);
+													}
+												}
+												else {
+													proc.Parametros.Add(par);
+												}
+												
+											}
+											
 										}
 										else
 										{
@@ -991,7 +1064,35 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (!proc.Retornos.Contains(par))
 										{
-											proc.Retornos.Add(par);
+											if (par.Tipo.Tipo == TipoDatoDB.OBJETO)
+											{
+												if (ExisteUt(par.Tipo.Nombre, db))
+												{
+													proc.Retornos.Add(par);
+												}
+												else
+												{
+													Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+													"El objeto '" + par.Tipo.ToString() + "' no existe",
+													raiz.Span.Location.Line, raiz.Span.Location.Column,
+													Datos.GetDate(),
+													Datos.GetTime()));
+												}
+											}
+											else
+											{
+												if (Datos.IsLista(par.Tipo.Tipo))
+												{
+													if (ValidarInstanciaLista(par.Tipo, db))
+													{
+														proc.Retornos.Add(par);
+													}
+												}
+												else
+												{
+													proc.Retornos.Add(par);
+												}
+											}
 										}
 										else
 										{
@@ -1350,7 +1451,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return false;
 		}
 
-		private static UserType GetUserType(ParseTreeNode raiz)
+		private static UserType GetUserType(ParseTreeNode raiz,List<object> db)
 		{
 			UserType user = new UserType();
 			string t = null;
@@ -1415,7 +1516,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (user.Atributos == null)
 							{
-								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1));
+								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1),db);
 								if (resultado != null)
 									user.Atributos = resultado;
 							}
@@ -1462,7 +1563,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(ParseTreeNode parseTreeNode)
+		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(ParseTreeNode parseTreeNode,List<object> db)
 		{
 			Dictionary<string, TipoObjetoDB> dic = new Dictionary<string, TipoObjetoDB>();
 
@@ -1508,7 +1609,36 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (tipo == null)
 									{
-										tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
+										TipoObjetoDB tipodato = Datos.GetTipoObjetoDBPorCadena(raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower());
+										if (tipodato.Tipo == TipoDatoDB.OBJETO)
+										{
+											if (ExisteUt(tipodato.Nombre, db))
+											{
+												tipo = tipodato.ToString() ;
+											}
+											else
+											{
+												Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+												"El objeto '" + tipodato.ToString() + "' no existe",
+												raiz.Span.Location.Line, raiz.Span.Location.Column,
+												Datos.GetDate(),
+												Datos.GetTime()));
+											}
+										}
+										else
+										{
+											if (Datos.IsLista(tipodato.Tipo))
+											{
+												if (ValidarInstanciaLista(tipodato, db))
+												{
+													tipo = tipodato.ToString();
+												}
+											}
+											else {
+												tipo = tipodato.ToString();
+											}
+											
+										}
 									}
 									else
 									{
