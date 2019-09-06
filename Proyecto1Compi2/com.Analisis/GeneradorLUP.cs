@@ -40,7 +40,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static void Struct(ParseTreeNode nodo)
 		{
-			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.Replace(" ",string.Empty);
+			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ",string.Empty);
 			//RECORRER BASE DE DATOS
 			respuesta.AppendLine("[+DATABASES]");
 			Usuario usu = Analizador.BuscarUsuario(usuario);
@@ -114,8 +114,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static void Consulta(ParseTreeNode nodo)
 		{
-			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.Replace(" ", string.Empty);
-			string codigocql = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ", string.Empty);
+			string codigocql = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 			//analizar 
 			respuesta.Append("[+DATA]");
 			//INSERTAR RESULTADOS
@@ -128,7 +128,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static void Logout(ParseTreeNode nodo)
 		{
-			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.Replace(" ", string.Empty);
+			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ", string.Empty);
 			bool r = true;
 			respuesta.Append("[+LOGOUT]\n");
 			if (r)
@@ -146,8 +146,8 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			//0 = usuario
 			//1 = password
-			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.Replace(" ",string.Empty);
-			string passwd = nodo.ChildNodes.ElementAt(1).Token.ValueString.Replace(" ", string.Empty);
+			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ",string.Empty);
+			string passwd = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower().Replace(" ", string.Empty);
 			bool r=Analizador.IniciarSesion(usuario,passwd);
 			respuesta.Append("[+LOGIN]\n");
 			if (r)

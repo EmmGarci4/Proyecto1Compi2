@@ -246,7 +246,7 @@ namespace Proyecto1Compi2.com.Analisis
 		#region Lenguaje_FCL
 		private static Sentencia GetAcccesoFuncion(ParseTreeNode sentencia)
 		{
-			string variable = sentencia.ChildNodes.ElementAt(0).Token.ValueString;
+			string variable = sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower();
 			Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 			acceso.Objetos.Add(new AccesoPar(variable, TipoAcceso.Variable));
 			Acceso acceso2 = GetAcceso(sentencia.ChildNodes.ElementAt(1));
@@ -266,12 +266,12 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetOpenCursor(ParseTreeNode sentencia)
 		{
-			return new AbrirCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			return new AbrirCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetCloseCursor(ParseTreeNode sentencia)
 		{
-			return new CerrarCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			return new CerrarCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetForeach(ParseTreeNode sentencia)
@@ -283,13 +283,13 @@ namespace Proyecto1Compi2.com.Analisis
 				return null;
 			}
 			
-			return new Foreach(parametros, sentencia.ChildNodes.ElementAt(1).Token.ValueString,
+			return new Foreach(parametros, sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(),
 				GetSentencias(sentencia.ChildNodes.ElementAt(2)), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetCrearCursor(ParseTreeNode sentencia)
 		{
-			return new CrearCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString,(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(1)),
+			return new CrearCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(1)),
 				sentencia.Span.Location.Line,sentencia.Span.Location.Column);
 		}
 
@@ -313,7 +313,7 @@ namespace Proyecto1Compi2.com.Analisis
 		private static Acceso GetAccesoID(ParseTreeNode nodo)
 		{
 			Acceso accesss = new Acceso(nodo.Span.Location.Line, nodo.Span.Location.Column);
-			accesss.Objetos.Add(new AccesoPar(nodo.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+			accesss.Objetos.Add(new AccesoPar(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
 			if (nodo.ChildNodes.Count > 1)
 			{
 				Acceso derecha = GetAcceso(nodo.ChildNodes.ElementAt(1));
@@ -325,7 +325,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetLlamadaProc(ParseTreeNode sentencia)
 		{
-			return new LlamadaProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+			return new LlamadaProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 				GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)),
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
@@ -334,20 +334,20 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			String codigo = Analizador.CodigoAnalizado.Substring(sentencia.ChildNodes.ElementAt(3).Span.Location.Position,
 				sentencia.ChildNodes.ElementAt(3).Span.Length);
-			return new CrearProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString, GetParametros(sentencia.ChildNodes.ElementAt(1)),
+			return new CrearProcedimiento(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetParametros(sentencia.ChildNodes.ElementAt(1)),
 				GetParametros(sentencia.ChildNodes.ElementAt(2)), GetSentencias(sentencia.ChildNodes.ElementAt(3)), codigo,
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetThrow(ParseTreeNode sentencia)
 		{
-			return new Throw(sentencia.ChildNodes.ElementAt(2).Token.ValueString, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			return new Throw(sentencia.ChildNodes.ElementAt(2).Token.ValueString.ToLower(), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetTryCatch(ParseTreeNode sentencia)
 		{
 			return new TryCatch(GetSentencias(sentencia.ChildNodes.ElementAt(0)), GetSentencias(sentencia.ChildNodes.ElementAt(3)),
-				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(2).Token.ValueString,
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(2).Token.ValueString.ToLower(),
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
@@ -363,7 +363,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetLlamadaFuncionSent(ParseTreeNode parseTreeNode)
 		{
-			return new LlamadaFuncion(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
+			return new LlamadaFuncion(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
 				parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column);
 		}
 
@@ -374,7 +374,7 @@ namespace Proyecto1Compi2.com.Analisis
 				//funcion con tipo
 				TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(0));
 				string nombreTipo = GetNombreTipo(tipo,sentencia.ChildNodes.ElementAt(0),true);
-				string nombreFuncion = sentencia.ChildNodes.ElementAt(1).Token.ValueString;
+				string nombreFuncion = sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 				List<Parametro> parametros = GetParametros(sentencia.ChildNodes.ElementAt(2));
 				List<Sentencia> sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(3));
 					return new Funcion(nombreFuncion, parametros, new TipoObjetoDB(tipo, nombreTipo), sentencias,
@@ -383,7 +383,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			else {
 				//funcion void
-				string nombreFuncion = sentencia.ChildNodes.ElementAt(0).Token.ValueString;
+				string nombreFuncion = sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower();
 					List < Parametro > parametros = GetParametros(sentencia.ChildNodes.ElementAt(1));
 				List<Sentencia> sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(2));
 					return new Funcion(nombreFuncion, parametros, null, sentencias,
@@ -397,7 +397,7 @@ namespace Proyecto1Compi2.com.Analisis
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
 				TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(0));
 				string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(0), true);
-					param.Add(new Parametro(nodo.ChildNodes.ElementAt(1).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo)));
+					param.Add(new Parametro(nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), new TipoObjetoDB(tipo, nombreTipo)));
 			}
 			return param;
 		}
@@ -458,7 +458,7 @@ namespace Proyecto1Compi2.com.Analisis
 			if (sentencia.ChildNodes.Count == 3)
 			{
 				Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				acceso.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
+				acceso.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoAcceso.Variable));
 				TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(1));
 				string nombreTipo = GetNombreTipo(tipo,sentencia.ChildNodes.ElementAt(1),true);
 				Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(2));
@@ -469,7 +469,7 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 					acceso.Objetos.Add(new AccesoPar(
-						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 						sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column), 
 						TipoAcceso.AccesoArreglo));
 					TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(2));
@@ -479,7 +479,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else {
 					Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-					acceso.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+					acceso.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
 					Acceso acceso2 = GetAcceso(sentencia.ChildNodes.ElementAt(1));
 					foreach (AccesoPar par in acceso2.Objetos) {
 						acceso.Objetos.Add(par);
@@ -498,7 +498,7 @@ namespace Proyecto1Compi2.com.Analisis
 			Expresion exp = null;
 			if (sentencia.ChildNodes.Count == 2)
 			{
-				ac2.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+				ac2.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
 				 exp = GetExpresion(sentencia.ChildNodes.ElementAt(1));
 				
 			}
@@ -506,14 +506,14 @@ namespace Proyecto1Compi2.com.Analisis
 				if (sentencia.ChildNodes.ElementAt(1).Term.Name == "ACCESO")
 				{
 					Acceso ac = GetAcceso(sentencia.ChildNodes.ElementAt(1));
-					ac2.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
+					ac2.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoAcceso.Variable));
 					ac2.Objetos.AddRange(ac.Objetos);
 					exp = GetExpresion(sentencia.ChildNodes.ElementAt(2));
 				}
 				else {
 					//acceso a algo []
 					ac2.Objetos.Add(new AccesoPar(
-						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 						sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 						sentencia.ChildNodes.ElementAt(0).Token.Location.Column),
 						TipoAcceso.AccesoArreglo));
@@ -542,7 +542,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			else {
 				variables = new List<string>();
-				variables.Add(sentencia.ChildNodes.ElementAt(1).Token.ValueString);
+				variables.Add(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower());
 			}
 				Expresion exp = null;
 				if (sentencia.ChildNodes.Count == 3)
@@ -575,8 +575,8 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//variable
 				Acceso ac = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				ac.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
-				switch (sentencia.ChildNodes.ElementAt(1).Token.ValueString)
+				ac.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoAcceso.Variable));
+				switch (sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower())
 				{
 					case "+":
 						return new OperacionAsignacion(ac, TipoOperacion.Suma, GetExpresion(sentencia.ChildNodes.ElementAt(2)), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
@@ -594,9 +594,9 @@ namespace Proyecto1Compi2.com.Analisis
 				Acceso ac = GetAcceso(sentencia.ChildNodes.ElementAt(1));
 
 				Acceso ac2 = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				ac2.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Variable));
+				ac2.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoAcceso.Variable));
 				ac2.Objetos.AddRange(ac.Objetos);
-				switch (sentencia.ChildNodes.ElementAt(2).Token.ValueString)
+				switch (sentencia.ChildNodes.ElementAt(2).Token.ValueString.ToLower())
 				{
 					case "+":
 						return new OperacionAsignacion(ac2, TipoOperacion.Suma, GetExpresion(sentencia.ChildNodes.ElementAt(3)), sentencia.Span.Location.Line, sentencia.Span.Location.Column);
@@ -680,7 +680,7 @@ namespace Proyecto1Compi2.com.Analisis
 					string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
 					try
 					{
-						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(tipo, nombreTipo));
 					}
 					catch (ArgumentException ex)
 					{
@@ -689,7 +689,7 @@ namespace Proyecto1Compi2.com.Analisis
 							nodo.ChildNodes.ElementAt(0).Token.Location.Column));
 					}
 				}
-				return new CrearUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString, atributos, false,
+				return new CrearUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), atributos, false,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
@@ -701,7 +701,7 @@ namespace Proyecto1Compi2.com.Analisis
 					string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
 					try
 					{
-						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(tipo, nombreTipo));
 					}
 					catch (ArgumentException ex)
 					{
@@ -710,14 +710,14 @@ namespace Proyecto1Compi2.com.Analisis
 							nodo.ChildNodes.ElementAt(0).Token.Location.Column));
 					}
 				}
-				return new CrearUserType(sentencia.ChildNodes.ElementAt(1).Token.ValueString, atributos, true,
+				return new CrearUserType(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), atributos, true,
 					sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 		}
 
 		private static Sentencia GetFuncionAgregacion(ParseTreeNode sentencia)
 		{
-			return new FuncionAgregacion(sentencia.ChildNodes.ElementAt(0).Token.ValueString, (Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
+			return new FuncionAgregacion(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), (Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
@@ -757,7 +757,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				listaAccesos = null;
 			}
-			Seleccionar seleccionar = new Seleccionar(listaAccesos, sentencia.ChildNodes.ElementAt(1).Token.ValueString,
+			Seleccionar seleccionar = new Seleccionar(listaAccesos, sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(),
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 
 			GetPropiedadesSeleccionar(seleccionar, sentencia.ChildNodes.ElementAt(2));
@@ -821,7 +821,7 @@ namespace Proyecto1Compi2.com.Analisis
 			OrderBy order = new OrderBy(nodo.Span.Location.Line, nodo.Span.Location.Column);
 			foreach (ParseTreeNode nodito in nodo.ChildNodes)
 			{
-				bool isAsc = nodito.ChildNodes.ElementAt(1).Token.ValueString.Equals("asc");
+				bool isAsc = nodito.ChildNodes.ElementAt(1).Token.ValueString.ToLower().Equals("asc");
 				order.Propiedades.Add(new PropOrderBy(GetAcceso(nodito.ChildNodes.ElementAt(0)), isAsc));
 			}
 			return order;
@@ -832,20 +832,20 @@ namespace Proyecto1Compi2.com.Analisis
 			if (sentencia.ChildNodes.Count == 1)
 			{
 				//eliminar todo de tabla
-				return new Borrar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+				return new Borrar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else if (sentencia.ChildNodes.Count == 2)
 			{
 				if (sentencia.ChildNodes.ElementAt(0).Term.Name == "AC_CAMPO")
 				{// eliminar acCampo de tabla
-					return new Borrar(sentencia.ChildNodes.ElementAt(1).Token.ValueString, GetAcCampo(sentencia.ChildNodes.ElementAt(0)),
+					return new Borrar(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), GetAcCampo(sentencia.ChildNodes.ElementAt(0)),
 						sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 				}
 				else
 				{
 					//eliminar todo de tabla con where
-					return new Borrar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, GetWhere(sentencia.ChildNodes.ElementAt(1)),
+					return new Borrar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetWhere(sentencia.ChildNodes.ElementAt(1)),
 						sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 
 				}
@@ -853,7 +853,7 @@ namespace Proyecto1Compi2.com.Analisis
 			else
 			{
 				//eliminar algo de tabla con where
-				return new Borrar(sentencia.ChildNodes.ElementAt(1).Token.ValueString, GetAcCampo(sentencia.ChildNodes.ElementAt(0)),
+				return new Borrar(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), GetAcCampo(sentencia.ChildNodes.ElementAt(0)),
 					GetWhere(sentencia.ChildNodes.ElementAt(2)), sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 		}
@@ -864,14 +864,14 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//sin where
 				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(2)),
-					sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+					sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
 			{
 				//con where
 				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(2)),
-					sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+					sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 					GetWhere(sentencia.ChildNodes.ElementAt(2)),
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
@@ -917,14 +917,14 @@ namespace Proyecto1Compi2.com.Analisis
 			if (sentencia.ChildNodes.Count == 2)
 			{
 				//insercion normal
-				return new Insertar(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				return new Insertar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 					GetListaExpresiones(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
 			{
 				//insercion especial
-				return new Insertar(sentencia.ChildNodes.ElementAt(0).Token.ValueString, GetListaStrings(sentencia.ChildNodes.ElementAt(1)),
+				return new Insertar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetListaStrings(sentencia.ChildNodes.ElementAt(1)),
 					GetListaExpresiones(sentencia.ChildNodes.ElementAt(2)), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
@@ -932,28 +932,28 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetDenegarPermiso(ParseTreeNode sentencia)
 		{
-			return new DenegarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
-				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+			return new DenegarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 		}
 
 		private static Sentencia GetOtorgarpermiso(ParseTreeNode sentencia)
 		{
-			return new OtorgarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
-				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+			return new OtorgarPermiso(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 		}
 
 		private static Sentencia GetCrearUsuario(ParseTreeNode sentencia)
 		{
-			return new CrearUsuario(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
-				sentencia.ChildNodes.ElementAt(1).Token.ValueString, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+			return new CrearUsuario(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
+				sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 		}
 
 		private static Sentencia GetEliminarUserType(ParseTreeNode sentencia)
 		{
-			return new EliminarUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+			return new EliminarUserType(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
@@ -969,7 +969,7 @@ namespace Proyecto1Compi2.com.Analisis
 					string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1), true);
 					try
 					{
-						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(tipo, nombreTipo));
+						atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(tipo, nombreTipo));
 					}
 					catch (ArgumentException ex)
 					{
@@ -978,14 +978,14 @@ namespace Proyecto1Compi2.com.Analisis
 							nodo.ChildNodes.ElementAt(0).Token.Location.Column));
 					}
 				}
-				return new AlterarUserType(TipoAccion.Agregar, sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+				return new AlterarUserType(TipoAccion.Agregar, sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 					atributos, sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
 			{
 				//borrar
 				List<Acceso> accesos = GetListaAcceso(sentencia.ChildNodes.ElementAt(1));
-				return new AlterarUserType(TipoAccion.Quitar, sentencia.ChildNodes.ElementAt(0).Token.ValueString, accesos,
+				return new AlterarUserType(TipoAccion.Quitar, sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), accesos,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 		}
@@ -1016,14 +1016,14 @@ namespace Proyecto1Compi2.com.Analisis
 			if (ac_campo.ChildNodes.Count == 1)
 			{
 				//nombre
-				return new AccesoPar(ac_campo.ChildNodes.ElementAt(0).Token.ValueString,TipoAcceso.Campo);
+				return new AccesoPar(ac_campo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoAcceso.Campo);
 			}
 			else if (ac_campo.ChildNodes.Count == 2)
 			{
 				if (ac_campo.ChildNodes.ElementAt(1).Term.Name == "LISTAEXPRESIONES")
 				{
 					//llamada a funcion
-					return new AccesoPar(new LlamadaFuncion(ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
+					return new AccesoPar(new LlamadaFuncion(ac_campo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 						GetListaExpresiones(ac_campo.ChildNodes.ElementAt(1)), ac_campo.ChildNodes.ElementAt(0).Token.Location.Line,
 						ac_campo.ChildNodes.ElementAt(0).Token.Location.Column),
 						TipoAcceso.LlamadaFuncion);
@@ -1032,7 +1032,7 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					//acceso a arreglo
 					return new AccesoPar(new AccesoArreglo(GetExpresion(ac_campo.ChildNodes.ElementAt(1)),
-						ac_campo.ChildNodes.ElementAt(0).Token.ValueString,
+						ac_campo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 						ac_campo.ChildNodes.ElementAt(0).Token.Location.Line, ac_campo.ChildNodes.ElementAt(0).Token.Location.Column),
 						TipoAcceso.AccesoArreglo);
 				}
@@ -1053,7 +1053,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetTruncarTabla(ParseTreeNode sentencia)
 		{
-			return new TruncarTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString,
+			return new TruncarTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
@@ -1062,13 +1062,13 @@ namespace Proyecto1Compi2.com.Analisis
 			if (sentencia.ChildNodes.Count == 1)
 			{
 				//sin ifExists
-				return new EliminarTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString, false,
+				return new EliminarTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), false,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
 			{
 				//con ifExists
-				return new EliminarTabla(sentencia.ChildNodes.ElementAt(1).Token.ValueString, true,
+				return new EliminarTabla(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), true,
 					sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 		}
@@ -1093,7 +1093,7 @@ namespace Proyecto1Compi2.com.Analisis
 						sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column));
 					//RETORNAR NULL SI SE DEBE ALTERAR TODA LA INSTRUCCION
 				}
-				return new AlterarTabla(TipoAccion.Agregar, sentencia.ChildNodes.ElementAt(0).Token.ValueString, columnas,
+				return new AlterarTabla(TipoAccion.Agregar, sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), columnas,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
@@ -1101,7 +1101,7 @@ namespace Proyecto1Compi2.com.Analisis
 				//drop
 				List<string> columnas = GetListaStrings(sentencia.ChildNodes.ElementAt(1));
 
-				return new AlterarTabla(TipoAccion.Quitar, sentencia.ChildNodes.ElementAt(0).Token.ValueString, columnas,
+				return new AlterarTabla(TipoAccion.Quitar, sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), columnas,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 		}
@@ -1112,7 +1112,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//sin if-exist
 				List<object> cls = GetColumnasTabla(sentencia.ChildNodes.ElementAt(1));
-				return new CrearTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString, cls, false,
+				return new CrearTabla(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), cls, false,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 				   sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
@@ -1120,7 +1120,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				//con if-exist
 				List<object> cls = GetColumnasTabla(sentencia.ChildNodes.ElementAt(2));
-				return new CrearTabla(sentencia.ChildNodes.ElementAt(1).Token.ValueString, cls, true, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
+				return new CrearTabla(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), cls, true, sentencia.ChildNodes.ElementAt(1).Token.Location.Line,
 				   sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 
@@ -1149,7 +1149,7 @@ namespace Proyecto1Compi2.com.Analisis
 				//nombre -- tipo
 				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
-				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), false);
+				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(t, nombreTipo), false);
 			}
 			else if (nodo.ChildNodes.Count == 3)
 			{
@@ -1161,7 +1161,7 @@ namespace Proyecto1Compi2.com.Analisis
 				//columna con llave primaria
 				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1), true);
-				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo), true);
+				return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(t, nombreTipo), true);
 			}
 
 			return null;
@@ -1172,20 +1172,20 @@ namespace Proyecto1Compi2.com.Analisis
 			List<string> nombres = new List<string>();
 			foreach (ParseTreeNode nodito in lista.ChildNodes)
 			{
-				nombres.Add(nodito.Token.ValueString);
+				nombres.Add(nodito.Token.ValueString.ToLower());
 			}
 			return nombres;
 		}
 
 		private static Sentencia GetEliminarDB(ParseTreeNode sentencia)
 		{
-			return new EliminarBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+			return new EliminarBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
 		private static Sentencia GetUsarDB(ParseTreeNode sentencia)
 		{
-			return new UsarBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString, sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
+			return new UsarBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), sentencia.ChildNodes.ElementAt(0).Token.Location.Line,
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
@@ -1193,12 +1193,12 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			if (sentencia.ChildNodes.Count == 1)
 			{
-				return new CrearBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString, false,
+				return new CrearBaseDatos(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), false,
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
 			{
-				return new CrearBaseDatos(sentencia.ChildNodes.ElementAt(1).Token.ValueString, true,
+				return new CrearBaseDatos(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), true,
 					sentencia.ChildNodes.ElementAt(1).Token.Location.Line, sentencia.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 		}
@@ -1289,17 +1289,17 @@ namespace Proyecto1Compi2.com.Analisis
 						case "NULL":
 							return new Operacion("null", TipoOperacion.Nulo, raiz.Span.Location.Line, raiz.Span.Location.Column);
 						case "numero":
-							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.Numero, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower()), TipoOperacion.Numero, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "cadena":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "id":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "nombre":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "date":
 							MyDateTime di;
-								if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("'", string.Empty), out DateTime dt)&&
-								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
+								if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt)&&
+								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
 								{
 									di= new MyDateTime(TipoDatoDB.DATE, dt);
 								}
@@ -1312,8 +1312,8 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							return new Operacion(di, TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "time":
-							if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("'", string.Empty), out DateTime dt1)&&
-								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToString(),"'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+							if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt1)&&
+								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().ToString(),"'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 							{
 								di = new MyDateTime(TipoDatoDB.TIME, dt1);
 							}
@@ -1372,14 +1372,14 @@ namespace Proyecto1Compi2.com.Analisis
 
 					} else if (raiz.ChildNodes.ElementAt(1).Term.Name.Equals("EXPRESION")) {
 						//arreglo[]
-						return new AccesoArreglo(GetExpresion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(0).Token.ValueString,
+						return new AccesoArreglo(GetExpresion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 							raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					}
 					else
 					{
 						//id punto acceso
 						Acceso acc = new Acceso(raiz.Span.Location.Line, raiz.Span.Location.Column);
-						acc.Objetos.Add(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+						acc.Objetos.Add(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
 						foreach (ParseTreeNode ac_campo in raiz.ChildNodes.ElementAt(1).ChildNodes)
 						{
 							AccesoPar ac = GetAcCampo(ac_campo);
@@ -1390,7 +1390,7 @@ namespace Proyecto1Compi2.com.Analisis
 				case 3:
 					//arreglo[val].algo
 					Acceso aces = new Acceso(raiz.Span.Location.Line, raiz.Span.Location.Column);
-					aces.Objetos.Add(new AccesoPar(new AccesoArreglo(GetExpresion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(0).Token.ValueString,
+					aces.Objetos.Add(new AccesoPar(new AccesoArreglo(GetExpresion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 						raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column),
 						TipoAcceso.AccesoArreglo));
 					Acceso acceso2 = GetAcceso(raiz.ChildNodes.ElementAt(2));
@@ -1417,7 +1417,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Expresion GetObjeto(ParseTreeNode raiz)
 		{
-			return new InstanciaObjeto(raiz.ChildNodes.ElementAt(2).Token.ValueString, GetListaExpresiones(raiz.ChildNodes.ElementAt(0)),
+			return new InstanciaObjeto(raiz.ChildNodes.ElementAt(2).Token.ValueString.ToLower(), GetListaExpresiones(raiz.ChildNodes.ElementAt(0)),
 				raiz.ChildNodes.ElementAt(2).Token.Location.Line, raiz.ChildNodes.ElementAt(2).Token.Location.Column);
 		}
 
@@ -1485,7 +1485,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					else
 					{
-						return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
+						return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower();
 					}
 				case TipoDatoDB.BOOLEAN:
 					return "boolean";
@@ -1581,18 +1581,18 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			if (raiz.ChildNodes.Count == 2)
 			{
-				bool op = raiz.ChildNodes.ElementAt(1).Token.ValueString == "++";
+				bool op = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower() == "++";
 				Acceso acc = new Acceso(raiz.Span.Location.Line, raiz.Span.Location.Column);
-				acc.Objetos.Add(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+				acc.Objetos.Add(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
 				return new ModificadorExp(acc, op, raiz.ChildNodes.ElementAt(0).Token.Location.Line,
 												raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 			else
 			{
-				bool op = raiz.ChildNodes.ElementAt(2).Token.ValueString == "++";
+				bool op = raiz.ChildNodes.ElementAt(2).Token.ValueString.ToLower() == "++";
 				Acceso acces = GetAcceso(raiz.ChildNodes.ElementAt(1));
 				Acceso nuevocceso = new Acceso(raiz.Span.Location.Line, raiz.Span.Location.Column);
-				nuevocceso.Objetos.Add(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString, TipoAcceso.Variable));
+				nuevocceso.Objetos.Add(new AccesoPar(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
 				nuevocceso.Objetos.AddRange(acces.Objetos);
 				return new ModificadorExp(nuevocceso, op, raiz.ChildNodes.ElementAt(0).Token.Location.Line,
 								raiz.ChildNodes.ElementAt(0).Token.Location.Column);
@@ -1601,7 +1601,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Expresion GetLlamadaFuncion(ParseTreeNode parseTreeNode)
 		{
-			return new LlamadaFuncionExp(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
+			return new LlamadaFuncionExp(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetListaExpresiones(parseTreeNode.ChildNodes.ElementAt(1)),
 				parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column);
 		}
 		#endregion

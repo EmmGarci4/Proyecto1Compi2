@@ -151,7 +151,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (based.Nombre == null)
 							{
-								based.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								based.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -315,7 +315,7 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								if (tabla.Nombre == null)
 								{
-									tabla.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+									tabla.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 								}
 								else
 								{
@@ -341,7 +341,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (t == null)
 							{
-								t = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								t = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -468,7 +468,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (cl.Nombre == null)
 									{
-										cl.Nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+										cl.Nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 									}
 									else
 									{
@@ -494,7 +494,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (tipo == null)
 									{
-										tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+										tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 									}
 									else
 									{
@@ -520,7 +520,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (isPk == null)
 									{
-										isPk = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+										isPk = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 									}
 									else
 									{
@@ -582,7 +582,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (proc.Nombre == null)
 							{
-								proc.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								proc.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -608,7 +608,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (t == null)
 							{
-								t = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								t = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -698,7 +698,7 @@ namespace Proyecto1Compi2.com.Analisis
 							if (proc.Instrucciones == null && proc.Sentencias==null)
 							{
 								//EVALUAR Y ASIGNAR
-								String codigo = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								String codigo = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 								codigo = codigo.TrimStart('$');
 								codigo = codigo.TrimEnd('$');
 								proc.Sentencias = Analizador.GetSentenciasCQL(codigo);
@@ -771,7 +771,7 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (nombre == null)
 										{
-											nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+											nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 										}
 										else
 										{
@@ -797,7 +797,7 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (tipo == null)
 										{
-											tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+											tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 										}
 										else
 										{
@@ -823,7 +823,7 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (pras == null)
 										{
-											pras = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+											pras = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 										}
 										else
 										{
@@ -892,7 +892,7 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (nombre == null)
 										{
-											nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+											nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 										}
 										else
 										{
@@ -918,7 +918,7 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (tipo == null)
 										{
-											tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+											tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 										}
 										else
 										{
@@ -944,7 +944,7 @@ namespace Proyecto1Compi2.com.Analisis
 									{
 										if (pras == null)
 										{
-											pras = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+											pras = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 										}
 										else
 										{
@@ -1031,7 +1031,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (user.Nombre == null)
 							{
-								user.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								user.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -1057,7 +1057,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (t == null)
 							{
-								t=nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								t=nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -1149,7 +1149,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (nombre == null)
 									{
-										nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+										nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 									}
 									else
 									{
@@ -1175,7 +1175,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (tipo == null)
 									{
-										tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString;
+										tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 									}
 									else
 									{
@@ -1322,7 +1322,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (usuario.Nombre == null)
 							{
-								usuario.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								usuario.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else {
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
@@ -1346,7 +1346,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (usuario.Password == null)
 							{
-								usuario.Password = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+								usuario.Password = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else {
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
@@ -1423,9 +1423,9 @@ namespace Proyecto1Compi2.com.Analisis
 
 							if (raiz.ChildNodes.ElementAt(1).Term.Name == "cadena")
 							{
-								if (!permisos.Contains(raiz.ChildNodes.ElementAt(1).Token.ValueString))
+								if (!permisos.Contains(raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower()))
 								{
-									permisos.Add(raiz.ChildNodes.ElementAt(1).Token.ValueString);
+									permisos.Add(raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower());
 								}
 								else {
 									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
@@ -1581,7 +1581,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//{
 		//	List<Parametro> par = GetParametros(nodo.ChildNodes.ElementAt(1));
 		//	List<Parametro> ret = GeRetornos(nodo.ChildNodes.ElementAt(1));
-		//	String codigo = nodo.ChildNodes.ElementAt(2).Token.ValueString;
+		//	String codigo = nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower();
 		//	codigo = codigo.TrimStart('$');
 		//	codigo = codigo.TrimEnd('$');
 		//	Analizador.AnalizarCql(codigo);
@@ -1591,7 +1591,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//		//Analizador.ErroresChison.AddRange(erroresInst);
 		//		codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
 		//	}
-		//	return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString, par, ret, null,codigo,nodo.Span.Location.Line,nodo.Span.Location.Column);
+		//	return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), par, ret, null,codigo,nodo.Span.Location.Line,nodo.Span.Location.Column);
 		//}
 
 		//private static List<Parametro> GeRetornos(ParseTreeNode parseTreeNode)
@@ -1606,7 +1606,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 		//				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
 
-		//					ret.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo)));
+		//					ret.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(t, nombreTipo)));
 		//			}
 		//			catch (ArgumentException ex)
 		//			{
@@ -1637,7 +1637,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//			{
 		//				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
 		//				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
-		//				param.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(t, nombreTipo)));
+		//				param.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(t, nombreTipo)));
 		//			}
 		//			catch (ArgumentException ex)
 		//			{
@@ -1659,7 +1659,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		//private static UserType GetObjeto(ParseTreeNode nodo)
 		//{
-		//	return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString,
+		//	return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 		//		GetAtributos(nodo.ChildNodes.ElementAt(1)));
 		//}
 
@@ -1673,7 +1673,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//			TipoDatoDB td = GetTipo(nodo.ChildNodes.ElementAt(1));
 		//			string nombreTipo = GetNombreTipo(td,nodo.ChildNodes.ElementAt(1),true);
 					
-		//			atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString, new TipoObjetoDB(td, nombreTipo));
+		//			atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(td, nombreTipo));
 		//		}
 		//		catch (ArgumentException ex)
 		//		{
@@ -1681,7 +1681,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//			Analizador.ErroresChison.Add(new Error(
 
 		//					TipoError.Semantico,
-		//					"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString+"' en el User Type",
+		//					"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower()+"' en el User Type",
 		//					nodo.Span.Location.Line+1,
 		//					nodo.Span.Location.Column+1,
 		//					Datos.GetDate(), //fecha
@@ -1726,7 +1726,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		//			}
 		//			else {
-		//				return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString;
+		//				return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower();
 		//			}
 		//		case TipoDatoDB.BOOLEAN:
 		//			return "boolean";
@@ -1751,7 +1751,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		//private static Tabla GetTabla(List<object> objetosdb,ParseTreeNode nodo)
 		//{
-		//	Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString, GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)));
+		//	Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)));
 		//	  //agregando datos a la tabla
 		//	AddDataTabla(tb, nodo.ChildNodes.ElementAt(2));
 		//	return tb;
@@ -1781,14 +1781,14 @@ namespace Proyecto1Compi2.com.Analisis
 		//			{
 		//				//ES UNA LISTA
 		//				//CollectionLista valores = GetListaDatos(nod.ChildNodes.ElementAt(1));
-		//				//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, valores);
+		//				//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), valores);
 		//			}
 		//			else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
 		//				//ES UN OBJETO
 		//				Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
-		//				//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString,new Objeto(atributos));
+		//				//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),new Objeto(atributos));
 		//			}else {
-		//				datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString, Datos.GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString));
+		//				datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), Datos.GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString.ToLower()));
 
 		//			}
 
@@ -1818,7 +1818,7 @@ namespace Proyecto1Compi2.com.Analisis
 		////		if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
 		////		{
 		////			//DATO primitivo
-		////			valores.SetItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString));
+		////			valores.SetItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower()));
 		////		}
 		////		else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
 		////			//lista
@@ -1868,7 +1868,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//			return null;
 		//		}
 		//	}
-		//		return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString,
+		//		return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 		//			new TipoObjetoDB(tipo, nombreTipo),
 		//			IsPk(nodo.ChildNodes.ElementAt(2)));
 		//	}
@@ -1890,7 +1890,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		//private static bool IsPk(ParseTreeNode parseTreeNode)
 		//{
-		//	if (bool.TryParse(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString, out bool res))
+		//	if (bool.TryParse(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), out bool res))
 		//	{
 		//		return res;
 		//	}
@@ -1965,7 +1965,7 @@ namespace Proyecto1Compi2.com.Analisis
 		//	List<string> nombres = new List<string>();
 		//	foreach (ParseTreeNode nodo in lista_nombres.ChildNodes)
 		//	{
-		//		nombres.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString);
+		//		nombres.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower());
 		//	}
 		//	return nombres;
 		//}
