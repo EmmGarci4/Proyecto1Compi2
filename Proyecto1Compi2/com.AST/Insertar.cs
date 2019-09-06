@@ -45,9 +45,10 @@ namespace Proyecto1Compi2.com.AST
 				{
 					Tabla tab = db.BuscarTabla(tabla);
 					//**************************************************************************
+					//INSERSION NORMAL
 					if (this.columnas == null)
 					{
-						//INSERSION NORMAL
+
 						int counters = tab.ContarCounters();
 						if (this.valores.Count == (tab.Columnas.Count - counters))
 						{
@@ -103,9 +104,10 @@ namespace Proyecto1Compi2.com.AST
 								Linea, Columna);
 						}
 					}
+					//INSERSION ESPECIAL
 					else {
-						//INSERSION ESPECIAL
-						if (this.columnas.Count == this.valores.Count)
+
+					 if (this.columnas.Count == this.valores.Count)
 						{
 							//VALIDANDO DATOS
 							foreach (string nombreColumna in this.columnas) {
@@ -138,22 +140,26 @@ namespace Proyecto1Compi2.com.AST
 									{
 										return respuesta;
 									}
-									if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
+									//no es un error
+									if (cl.Tipo.Tipo != TipoDatoDB.COUNTER)
 									{
-										if (!cl.ExisteDato(respuesta))
+										if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
 										{
 											valoresAInsertar.Enqueue(respuesta);
+											indiceDatos++;
 										}
-										else {
+										else
+										{
 											return new ThrowError(TipoThrow.ValuesException,
-													"El valor '" + respuesta.ToString() + "' no puede repetirse en la columna '" + cl.Nombre + "'",
-													Linea, Columna);
+											"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+											Linea, Columna);
 										}
 									}
-									else {
-										return new ThrowError(TipoThrow.ValuesException,
-										"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
-										Linea, Columna);
+									else
+									{
+										int UltimoValor = cl.GetUltimoValorCounter();
+										UltimoValor++;
+										valoresAInsertar.Enqueue(UltimoValor);
 									}
 								}
 								else {
@@ -169,8 +175,14 @@ namespace Proyecto1Compi2.com.AST
 								}
 							}
 							//INSERTANDO
-							if (tab.Columnas.Count ==valoresAInsertar.Count)
+							if (tab.Columnas.Count == valoresAInsertar.Count)
 							{
+								object correcto = tab.ValidarPk(valoresAInsertar, Linea, Columna);
+								if (correcto.GetType() == typeof(ThrowError))
+								{
+									return correcto;
+								}
+								//LLENANDO TABLA
 								tab.AgregarValores(valoresAInsertar);
 							}
 						}

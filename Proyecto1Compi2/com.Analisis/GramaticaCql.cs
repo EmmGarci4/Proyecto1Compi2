@@ -304,6 +304,7 @@ namespace com.Analisis
 		//		| nombre
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2 //map
+				| cor1 + INFOCOLLECTIONS + cor2 //map
 				| cor1 + LISTAEXPRESIONES + cor2 //listas
 				| SETDATOS  // set 
 				| OBJETO
@@ -475,7 +476,7 @@ namespace com.Analisis
 				| pr_borrar + AC_CAMPO + pr_from + nombre + puntoycoma
 				| pr_borrar + AC_CAMPO + pr_from + nombre + PROPIEDADDONDE + puntoycoma;
 
-			SELECCIONAR.Rule =pr_seleccionar+LISTA_ACCESOS+pr_from+nombre+PROPIEDADSELECCIONAR
+			SELECCIONAR.Rule =pr_seleccionar+LISTAEXPRESIONES+pr_from+nombre+PROPIEDADSELECCIONAR
 				| pr_seleccionar + por + pr_from + nombre + PROPIEDADSELECCIONAR;
 
 			PROPIEDADSELECCIONAR.Rule = MakeStarRule(PROPIEDADSELECCIONAR,PROPSELECT);

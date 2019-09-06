@@ -238,8 +238,7 @@ namespace Proyecto1Compi2.com.db
 			return true;
 		}
 
-		private bool existeLlaveEnFila(int indiceFila, List<Columna> llaves, Queue<object> valoresAInsertar,
-			StringBuilder llavePrimaria)
+		private bool existeLlaveEnFila(int indiceFila, List<Columna> llaves, Queue<object> valoresAInsertar,StringBuilder llavePrimaria)
 		{
 			//al menos uno coincide
 			//comparar todas las filas con los valores

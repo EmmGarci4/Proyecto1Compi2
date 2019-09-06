@@ -1,4 +1,6 @@
-﻿namespace Proyecto1Compi2.com.AST
+﻿using com.Analisis.Util;
+
+namespace Proyecto1Compi2.com.AST
 {
 	internal class AsignacionColumna
 	{
@@ -13,5 +15,7 @@
 
 		internal Acceso Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Exp { get => exp; set => exp = value; }
+
+		
 	}
 }

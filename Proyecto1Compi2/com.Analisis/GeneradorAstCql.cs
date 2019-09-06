@@ -748,10 +748,10 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetSeleccionar(ParseTreeNode sentencia)
 		{
-			List<Acceso> listaAccesos;
-			if (sentencia.ChildNodes.ElementAt(0).Term.Name == "LISTA_ACCESOS")
+			List<Expresion> listaAccesos;
+			if (sentencia.ChildNodes.ElementAt(0).Term.Name == "LISTAEXPRESIONES")
 			{
-				listaAccesos = GetListaAcceso(sentencia.ChildNodes.ElementAt(0));
+				listaAccesos = GetListaExpresiones(sentencia.ChildNodes.ElementAt(0));
 			}
 			else
 			{

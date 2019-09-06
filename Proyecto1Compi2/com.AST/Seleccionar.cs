@@ -10,13 +10,13 @@ namespace Proyecto1Compi2.com.AST
 {
 	class Seleccionar:Sentencia
 	{
-		List<Acceso> listaAccesos;
+		List<Expresion> listaAccesos;
 		string tabla;
 		Where condicion;
 		OrderBy order;
 		Limit limit;
 
-		public Seleccionar(List<Acceso> listaAccesos, string tabla, int linea,int columna):base(linea,columna)
+		public Seleccionar(List<Expresion> listaAccesos, string tabla, int linea,int columna):base(linea,columna)
 		{
 			this.listaAccesos = listaAccesos;
 			this.tabla = tabla;
@@ -26,7 +26,7 @@ namespace Proyecto1Compi2.com.AST
 		}
 
 		public string Tabla { get => tabla; set => tabla = value; }
-		internal List<Acceso> ListaAccesos { get => listaAccesos; set => listaAccesos = value; }
+		internal List<Expresion> ListaAccesos { get => listaAccesos; set => listaAccesos = value; }
 		internal Where PropiedadWhere { get => condicion; set => condicion = value; }
 		internal OrderBy PropiedadOrderBy { get => order; set => order = value; }
 		internal Limit PropiedadLimit { get => limit; set => limit = value; }
