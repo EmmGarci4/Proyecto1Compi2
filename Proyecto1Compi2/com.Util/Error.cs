@@ -36,6 +36,16 @@ namespace com.Analisis.Util
 			tipo = TipoError.Semantico;
 		}
 
+		public Error(ThrowError error, bool val)
+		{
+			this.mensaje = error.Mensaje;
+			this.linea = error.Linea + 1;
+			this.columna = error.Columna + 1;
+			this.fecha = Datos.GetDate();
+			this.hora = Datos.GetTime();
+			tipo = TipoError.Semantico;
+		}
+
 		public Error(TipoError tipo, string mensaje, int linea, int columna,  string fecha, string hora)
 		{
 			this.mensaje = mensaje;

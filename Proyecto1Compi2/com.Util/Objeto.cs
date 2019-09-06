@@ -32,7 +32,7 @@ namespace Proyecto1Compi2.com.Util
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
-			cadena.Append("<\n");
+			cadena.Append("<");
 			int i = 0;
 			foreach (KeyValuePair<string, object> val in atributos)
 			{
@@ -49,12 +49,12 @@ namespace Proyecto1Compi2.com.Util
 
 				if (i < atributos.Count - 1)
 				{
-					cadena.Append(",\n");
+					cadena.Append(",");
 				}
 				i++;
 			}
 
-			cadena.Append("\n>");
+			cadena.Append(">");
 			return cadena.ToString();
 		}
 

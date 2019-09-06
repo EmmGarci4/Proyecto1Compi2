@@ -18,7 +18,6 @@ namespace Proyecto1Compi2.com.Util
 			this.tipoDato = tipo;
 			this.isList = isList;
 		}
-
 		public bool IsLista { get => isList; set => isList = value; }
 		public bool IsSet { get => !isList; }
 		public TipoObjetoDB TipoDato { get => tipoDato; set => tipoDato = value; }

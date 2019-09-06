@@ -173,11 +173,11 @@ namespace Proyecto1Compi2.com.db
 				{
 					if (cl.Tipo.Tipo.Equals(TipoDatoDB.STRING))
 					{
-						//cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
+						cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
 					}
 					else
 					{
-						//cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
+						cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
 					}
 
 					if (cont < this.columnas.Count - 1)
@@ -216,7 +216,7 @@ namespace Proyecto1Compi2.com.db
 				}
 				return true;
 			}
-			else
+			else if(llaves.Count==1)
 			{
 				//una sola llave
 				if (llaves.ElementAt(0).Tipo.Tipo == TipoDatoDB.COUNTER)

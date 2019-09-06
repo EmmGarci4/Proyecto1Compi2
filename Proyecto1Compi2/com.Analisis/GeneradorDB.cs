@@ -19,7 +19,8 @@ namespace Proyecto1Compi2.com.Analisis
 			//validando y obteniendo nodos 
 			int indexDb = -1;
 			int indexUs = -1;
-			foreach (ParseTreeNode nodo in raiz.ChildNodes.ElementAt(0).ChildNodes) {
+			foreach (ParseTreeNode nodo in raiz.ChildNodes.ElementAt(0).ChildNodes)
+			{
 				//VALIDANDO
 				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
 				{
@@ -38,47 +39,50 @@ namespace Proyecto1Compi2.com.Analisis
 					default:
 						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura principal incorrecta. Solamente se deben incluir los atributos 'DATABASES' y 'USERS'",
-							nodo.Span.Location.Line, 
+							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
-							Datos.GetDate(), 
+							Datos.GetDate(),
 							Datos.GetTime()));
 						break;
 				}
 			}
-				//VALIDACION DE EXISTENCIA
-				bool todoBien = true;
-				if (indexDb < 0)
-				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-						   "Estructura principal incorrecta. Se debe incluir el atributo 'DATABASES'",
-						   raiz.Span.Location.Line, 
-						   raiz.Span.Location.Column, 
-						   Datos.GetDate(), 
-						   Datos.GetTime()));
-					todoBien = false;
-				}
-				if (indexUs<0) {
+			//VALIDACION DE EXISTENCIA
+			bool todoBien = true;
+			if (indexDb < 0)
+			{
+				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					   "Estructura principal incorrecta. Se debe incluir el atributo 'DATABASES'",
+					   raiz.Span.Location.Line,
+					   raiz.Span.Location.Column,
+					   Datos.GetDate(),
+					   Datos.GetTime()));
+				todoBien = false;
+			}
+			if (indexUs < 0)
+			{
 				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 						   "Estructura principal incorrecta. Se debe incluir el atributo 'USERS'",
-						   raiz.Span.Location.Line, 
-						   raiz.Span.Location.Column, 
-						   Datos.GetDate(), 
+						   raiz.Span.Location.Line,
+						   raiz.Span.Location.Column,
+						   Datos.GetDate(),
 						   Datos.GetTime()));
 				todoBien = false;
-				}
-			if (todoBien) {
+			}
+			if (todoBien)
+			{
 				raiz = raiz.ChildNodes.ElementAt(0);
 				//recorrer e insertar bases de datos
 				if (raiz.ChildNodes.ElementAt(indexDb).ChildNodes.ElementAt(1).Term.Name == "LISTA")
 				{
 					RecorrerBasesDeDatos(raiz.ChildNodes.ElementAt(indexDb).ChildNodes.ElementAt(1));
 				}
-				else {
+				else
+				{
 					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 						"El atributo 'DATABASES' debe contener una lista de bases de datos",
-						raiz.Span.Location.Line, 
+						raiz.Span.Location.Line,
 						raiz.Span.Location.Column,
-						Datos.GetDate(), 
+						Datos.GetDate(),
 						Datos.GetTime()));
 				}
 				//recorrer e insertar usuarios
@@ -90,9 +94,9 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 						"El atributo 'USERS' debe contener una lista de usuarios",
-						raiz.Span.Location.Line, 
-						raiz.Span.Location.Column, 
-						Datos.GetDate(), 
+						raiz.Span.Location.Line,
+						raiz.Span.Location.Column,
+						Datos.GetDate(),
 						Datos.GetTime()));
 				}
 			}
@@ -187,13 +191,15 @@ namespace Proyecto1Compi2.com.Analisis
 										{
 											based.AgregarUserType(ut);
 										}
-										else {
+										else
+										{
 											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 												"El user Type '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
 												nodo.ChildNodes.ElementAt(1).Span.Location.Column));
 										}
-									}else if (objetodb.GetType() == typeof(Procedimiento))
+									}
+									else if (objetodb.GetType() == typeof(Procedimiento))
 									{
 										Procedimiento ut = (Procedimiento)objetodb;
 										if (!based.ExisteProcedimiento(ut.Nombre))
@@ -268,26 +274,29 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			List<object> lista = new List<object>();
 			//raiz -> LISTA
-			foreach (ParseTreeNode nodo in raiz.ChildNodes) {
+			foreach (ParseTreeNode nodo in raiz.ChildNodes)
+			{
 				if (nodo.Term.Name == "OBJETO")
 				{
 					TipoObjeto t = GetTipoObjetoCql(nodo);
-					switch (t) {
+					switch (t)
+					{
 						case TipoObjeto.Objeto:
 							UserType ustype = GetUserType(nodo);
-							if(ustype!=null)lista.Add(ustype);
+							if (ustype != null) lista.Add(ustype);
 							break;
 						case TipoObjeto.Procedimiento:
 							Procedimiento proc = GetProcedimiento(nodo);
 							if (proc != null) lista.Add(proc);
 							break;
 						case TipoObjeto.Tabla:
-							Tabla tab = GetTabla(nodo);
+							Tabla tab = GetTabla(nodo, lista);
 							if (tab != null) lista.Add(tab);
 							break;
 					}
 				}
-				else {
+				else
+				{
 					Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 							"La lista de 'DATA' solo debe contener objetos CQL",
 							nodo.Span.Location.Line,
@@ -300,42 +309,42 @@ namespace Proyecto1Compi2.com.Analisis
 			return lista;
 		}
 
-		private static Tabla GetTabla(ParseTreeNode raiz)
+		private static Tabla GetTabla(ParseTreeNode raiz, List<object> db)
 		{
 			Tabla tabla = new Tabla();
 			string t = null;
 			List<object> filas = null;
 			List<Columna> columnas = null;
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
-			{ 
-					switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
-					{
-						case "name":
-							if (nodo.ChildNodes.ElementAt(1).Term.Name == "cadena")
+			{
+				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
+				{
+					case "name":
+						if (nodo.ChildNodes.ElementAt(1).Term.Name == "cadena")
+						{
+							if (tabla.Nombre == null)
 							{
-								if (tabla.Nombre == null)
-								{
-									tabla.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
-								}
-								else
-								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-									"El atributo 'NAME' solo debe aparecer una vez",
-									raiz.Span.Location.Line, raiz.Span.Location.Column,
-									Datos.GetDate(),
-									Datos.GetTime()));
-								}
+								tabla.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-									"El atributo 'NAME' debe ser un dato tipo string",
-									raiz.Span.Location.Line, raiz.Span.Location.Column,
-									Datos.GetDate(),
-									Datos.GetTime()));
-
+								"El atributo 'NAME' solo debe aparecer una vez",
+								raiz.Span.Location.Line, raiz.Span.Location.Column,
+								Datos.GetDate(),
+								Datos.GetTime()));
 							}
-							break;
+						}
+						else
+						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El atributo 'NAME' debe ser un dato tipo string",
+								raiz.Span.Location.Line, raiz.Span.Location.Column,
+								Datos.GetDate(),
+								Datos.GetTime()));
+
+						}
+						break;
 					case "cql-type":
 						if (nodo.ChildNodes.ElementAt(1).Term.Name == "cadena")
 						{
@@ -363,84 +372,109 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					case "columns":
-							if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
+						if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
+						{
+							if (columnas == null)
 							{
-								if (columnas == null)
+								columnas = GetColumnasTabla(nodo.ChildNodes.ElementAt(1));
+								foreach (Columna col in columnas)
 								{
-									 columnas = GetColumnasTabla(nodo.ChildNodes.ElementAt(1));
-									foreach (Columna col in columnas)
+									if (!tabla.ExisteColumna(col.Nombre))
 									{
-										if (!tabla.ExisteColumna(col.Nombre))
+										if (col.Tipo.Tipo == TipoDatoDB.OBJETO)
 										{
-											tabla.AgregarColumna(col);
-										}
-										else
-										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-											"La columna '" + col.Nombre + "' no existe",
+											if (ExisteUt(col.Tipo.Nombre, db))
+											{
+												tabla.AgregarColumna(col);
+											}
+											else
+											{
+												Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											"El objeto '" + col.Tipo.ToString() + "' no existe",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
 											Datos.GetTime()));
+											}
 										}
+										else
+										{
+											//validar si es lista, set o map
+											tabla.AgregarColumna(col);
+										}
+
+									}
+									else
+									{
+										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										"La columna '" + col.Nombre + "' no existe",
+										raiz.Span.Location.Line, raiz.Span.Location.Column,
+										Datos.GetDate(),
+										Datos.GetTime()));
 									}
 								}
-								else
-								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-									"El atributo 'COLUMNS' solo debe aparecer una vez",
-									raiz.Span.Location.Line, raiz.Span.Location.Column,
-									Datos.GetDate(),
-									Datos.GetTime()));
-								}
 							}
 							else
 							{
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-									"El atributo 'COLUMNS' debe ser una lista",
-									raiz.Span.Location.Line, raiz.Span.Location.Column,
-									Datos.GetDate(),
-									Datos.GetTime()));
-
-							}
-							break;
-						case "data":
-							if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
-							{
-								if (filas == null)
-								{
-									//recuperar e insertar
-								}
-								else
-								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-									"El atributo 'DATA' solo debe aparecer una vez",
-									raiz.Span.Location.Line, raiz.Span.Location.Column,
-									Datos.GetDate(),
-									Datos.GetTime()));
-								}
-							}
-							else
-							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-									"El atributo 'DATA' debe ser una lista",
-									raiz.Span.Location.Line, raiz.Span.Location.Column,
-									Datos.GetDate(),
-									Datos.GetTime()));
-
-							}
-							break;
-						default:
-							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
-								"Estructura de 'tabla' es incorrecta. Solamente se deben incluir los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' y 'DATA'",
-								nodo.Span.Location.Line,
-								nodo.Span.Location.Column,
+								"El atributo 'COLUMNS' solo debe aparecer una vez",
+								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
 								Datos.GetTime()));
-							break;
-					}
+							}
+						}
+						else
+						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El atributo 'COLUMNS' debe ser una lista",
+								raiz.Span.Location.Line, raiz.Span.Location.Column,
+								Datos.GetDate(),
+								Datos.GetTime()));
+
+						}
+						break;
+					case "data":
+						if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
+						{
+							if (filas == null)
+							{
+								//recuperar e insertar
+								List<FilaDatos> datos = GetDatosTabla(nodo.ChildNodes.ElementAt(1), db);
+								foreach (FilaDatos fila in datos)
+								{
+									InsertarEnTabla(tabla, fila.Datos,nodo.Span.Location.Line,nodo.Span.Location.Column);
+								}
+							}
+							else
+							{
+								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El atributo 'DATA' solo debe aparecer una vez",
+								raiz.Span.Location.Line, raiz.Span.Location.Column,
+								Datos.GetDate(),
+								Datos.GetTime()));
+							}
+						}
+						else
+						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El atributo 'DATA' debe ser una lista",
+								raiz.Span.Location.Line, raiz.Span.Location.Column,
+								Datos.GetDate(),
+								Datos.GetTime()));
+
+						}
+						break;
+					default:
+						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+							"Estructura de 'tabla' es incorrecta. Solamente se deben incluir los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' y 'DATA'",
+							nodo.Span.Location.Line,
+							nodo.Span.Location.Column,
+							Datos.GetDate(),
+							Datos.GetTime()));
+						break;
+				}
 
 			}
-			if (tabla.Nombre!=null&&t!=null) return tabla;
+			if (tabla.Nombre != null && t != null) return tabla;
 			Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' o 'DATA'",
 				raiz.Span.Location.Line,
@@ -450,10 +484,302 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
+		private static void InsertarEnTabla(Tabla tab, List<ParDatos> valores,int linea,int columna)
+		{
+			if (valores.Count == tab.Columnas.Count)
+			{
+				//VALIDANDO
+				int indiceDatos = 0;
+				int indiceColumnas = 0;
+				Queue<object> valoresAInsertar = new Queue<object>();
+				foreach (Columna cl in tab.Columnas)
+				{
+					ParDatos respuesta = valores.ElementAt(indiceDatos);
+
+						if (Datos.IsTipoCompatible(cl.Tipo, respuesta.Valor))
+						{
+							valoresAInsertar.Enqueue(respuesta.Valor);
+						}
+						else
+						{
+						TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(respuesta.Valor);
+						if (Datos.IsLista(tipoRes.Tipo))
+						{
+							CollectionListCql colection = (CollectionListCql)respuesta.Valor;
+							if (tipoRes.Nombre == "null")
+							{
+								colection.TipoDato = cl.Tipo;
+								valoresAInsertar.Enqueue(colection);
+							}
+						}
+						else
+						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+								  linea, columna));
+						}
+						}
+					indiceColumnas++;
+					indiceDatos++;
+				}
+
+				//INSERTANDO
+				if (tab.Columnas.Count == valoresAInsertar.Count)
+				{
+					object correcto = tab.ValidarPk(valoresAInsertar, linea, columna);
+					if (correcto.GetType() == typeof(ThrowError))
+					{
+						Analizador.ErroresChison.Add(new Error((ThrowError)correcto,true));
+					}
+					else {
+						//LLENANDO TABLA
+						tab.AgregarValores(valoresAInsertar);
+					}
+					
+				}
+			}
+			else
+			{
+				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+						"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
+						linea, columna));
+			}
+		}
+
+		private static bool ExisteUt(string nombre, List<object> db)
+		{
+			List<UserType> usertpypes = GetUserTypesLista(db);
+			foreach (UserType ut in usertpypes)
+			{
+				if (ut.Nombre.Equals(nombre))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private static List<FilaDatos> GetDatosTabla(ParseTreeNode parseTreeNode, List<object> db)
+		{
+			List<FilaDatos> datos = new List<FilaDatos>();
+			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
+			{
+				if (nodo.Term.Name == "OBJETO")
+				{
+					FilaDatos fil = GetFilaDatos(nodo, db);
+					if (fil!=null){
+						datos.Add(fil);
+					}
+				}
+				else
+				{
+					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									"La data de una tabla solo debe contener columnas",
+								   parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column));
+				}
+			}
+			return datos;
+		}
+
+		private static FilaDatos GetFilaDatos(ParseTreeNode nodo, List<object> db)
+		{
+			FilaDatos fila = new FilaDatos();
+			foreach (ParseTreeNode nodis in nodo.ChildNodes)
+			{
+				Object val = GetObjetoDB(nodis.ChildNodes.ElementAt(1), db);
+				if (val != null)
+				{
+					fila.Datos.Add(new ParDatos(nodis.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
+					val));
+				}
+				else {
+					return null;
+				}
+			}
+			return fila;
+		}
+
+		private static object GetObjetoDB(ParseTreeNode parseTreeNode, List<object> db)
+		{
+			int linea = parseTreeNode.Span.Location.Line;
+			int column = parseTreeNode.Span.Location.Column;
+			switch (parseTreeNode.Term.Name)
+			{
+				case "numero":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "cadena":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "pr_true":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "pr_false":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "NULL":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "date":
+					MyDateTime di;
+					if (DateTime.TryParse(parseTreeNode.Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt) &&
+					Regex.IsMatch(parseTreeNode.Token.ValueString.ToLower().ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
+					{
+						di = new MyDateTime(TipoDatoDB.DATE, dt);
+					}
+					else
+					{
+						di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
+						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+									"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
+								   linea, column));
+					}
+					return di;
+				case "time":
+					if (DateTime.TryParse(parseTreeNode.Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt1) &&
+								Regex.IsMatch(parseTreeNode.Token.ValueString.ToLower().ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+					{
+						di = new MyDateTime(TipoDatoDB.TIME, dt1);
+					}
+					else
+					{
+						di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
+						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+									"La hora es incorrecta, el formato debe ser HH:MM:SS",
+								   linea, column));
+					}
+					return di;
+				case "LISTA":
+					List<object> lista = new List<object>();
+					foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
+					{
+						object respuesta = GetObjetoDB(nodo, db);
+						if (respuesta != null)
+						{
+							lista.Add(respuesta);
+						}
+					}
+					if (lista.Count > 0)
+					{
+						object primer_elemento = lista.ElementAt(0);
+						TipoObjetoDB tipodato = Datos.GetTipoObjetoDB(primer_elemento);
+						TipoObjetoDB tipoCol = null;
+						if (Datos.IsPrimitivo(tipodato.Tipo))
+						{
+							tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipodato.ToString());
+						}
+						else
+						{
+							tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
+						}
+						CollectionListCql collection = new CollectionListCql(tipoCol, true);
+						foreach (object exp in lista)
+						{
+							if (Datos.IsTipoCompatible(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), exp))
+							{
+
+								object posibleError = collection.AddItem(exp, linea, column);
+								if (posibleError != null)
+								{
+									if (posibleError.GetType() == typeof(ThrowError))
+									{
+										Analizador.ErroresChison.Add(new Error((ThrowError)posibleError, true));
+									}
+								}
+							}
+							else
+							{
+								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(exp) + " en un Collection tipo " + collection.TipoDato.ToString(),
+									linea, column));
+							}
+
+						}
+						return collection;
+					}
+					else
+					{
+						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO,"null"),true);
+					}
+				case "OBJETO":
+					FilaDatos atributos = GetFilaDatos(parseTreeNode, db);
+					List<object> expresiones = new List<object>();
+					List<String> attrs = new List<string>();
+					foreach (ParDatos par in atributos.Datos)
+					{
+						attrs.Add(par.Nombre);
+						expresiones.Add(par.Valor);
+					}
+					UserType usert = GetUt(attrs, db);
+					if (usert != null)
+					{
+						//CREANDO INSTANCIAS***************************
+						Objeto nuevaInstancia = new Objeto(usert);
+						int indice = 0;
+						if (usert.Atributos.Count == expresiones.Count)
+						{
+							foreach (KeyValuePair<string, TipoObjetoDB> atributo in usert.Atributos)
+							{
+								if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, expresiones.ElementAt(indice)))
+								{
+									nuevaInstancia.Atributos.Add(atributo.Key, expresiones.ElementAt(indice));
+								}
+								else
+								{
+									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
+								linea, column));
+								}
+								indice++;
+							}
+						}
+						else
+						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"Los atributos no corresponden en numero al tipo '" + usert.Nombre + "'",
+								linea, column));
+						}
+						return nuevaInstancia;
+						//*************************************************
+					}
+					else
+					{
+						//error
+						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									"No existe un objeto con esos atributos en la base de datos",
+								   linea, column));
+					}
+					break;
+			}
+			return null;
+		}
+
+		private static UserType GetUt(List<string> attrs, List<object> tab)
+		{
+			List<UserType> usertpypes = GetUserTypesLista(tab);
+			foreach (UserType ut in usertpypes)
+			{
+				if (ut.Contiene(attrs))
+				{
+					return ut;
+				}
+			}
+			return null;
+		}
+
+		private static List<UserType> GetUserTypesLista(List<object> tab)
+		{
+			List<UserType> usertpypes = new List<UserType>();
+			foreach (object ut in tab)
+			{
+				if (ut.GetType() == typeof(UserType))
+				{
+					usertpypes.Add((UserType)ut);
+				}
+			}
+			return usertpypes;
+		}
+
 		private static List<Columna> GetColumnasTabla(ParseTreeNode parseTreeNode)
 		{
 			List<Columna> columnas = new List<Columna>();
-			foreach (ParseTreeNode col in parseTreeNode.ChildNodes) {
+			foreach (ParseTreeNode col in parseTreeNode.ChildNodes)
+			{
 				if (col.Term.Name == "OBJETO")
 				{
 					Columna cl = new Columna();
@@ -542,13 +868,14 @@ namespace Proyecto1Compi2.com.Analisis
 								break;
 						}
 					}
-					if (cl.Nombre!=null && tipo != null && isPk != null)
+					if (cl.Nombre != null && tipo != null && isPk != null)
 					{
 						cl.Tipo = Datos.GetTipoObjetoDBPorCadena(tipo);
 						cl.IsPrimary = isPk.ToLower().Equals("true");
 						columnas.Add(cl);
 					}
-					else {
+					else
+					{
 						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"No se incluyó alguno de los atributos 'NAME','PK' o 'TYPE'",
 								col.Span.Location.Line, col.Span.Location.Column,
@@ -570,7 +897,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Procedimiento GetProcedimiento(ParseTreeNode raiz)
 		{
-			Procedimiento proc = new Procedimiento(raiz.Span.Location.Line,raiz.Span.Location.Column);
+			Procedimiento proc = new Procedimiento(raiz.Span.Location.Line, raiz.Span.Location.Column);
 			string t = null;
 			string bren = null;
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
@@ -632,27 +959,30 @@ namespace Proyecto1Compi2.com.Analisis
 					case "parameters":
 						if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
 						{
-							if (bren==null)
+							if (bren == null)
 							{
 								//PARAMETROS
 								bren = ":D";
 								List<Parametro> resultado = GetListaParametros(nodo.ChildNodes.ElementAt(1));
-								if (resultado != null) {
-									foreach (Parametro par in resultado) {
+								if (resultado != null)
+								{
+									foreach (Parametro par in resultado)
+									{
 										if (!proc.Parametros.Contains(par))
 										{
 											proc.Parametros.Add(par);
 										}
-										else {
+										else
+										{
 											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-												"El parámetro '"+par.Nombre+"' ya existe",
+												"El parámetro '" + par.Nombre + "' ya existe",
 												raiz.Span.Location.Line, raiz.Span.Location.Column,
 												Datos.GetDate(),
 												Datos.GetTime()));
 										}
 									}
 								}
-									
+
 								//RETORNOS 
 								resultado = GetListaRetornos(nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
@@ -695,7 +1025,7 @@ namespace Proyecto1Compi2.com.Analisis
 					case "instr":
 						if (nodo.ChildNodes.ElementAt(1).Term.Name == "instrucciones")
 						{
-							if (proc.Instrucciones == null && proc.Sentencias==null)
+							if (proc.Instrucciones == null && proc.Sentencias == null)
 							{
 								//EVALUAR Y ASIGNAR
 								String codigo = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
@@ -876,13 +1206,15 @@ namespace Proyecto1Compi2.com.Analisis
 		private static List<Parametro> GetListaParametros(ParseTreeNode rai)
 		{
 			List<Parametro> dic = new List<Parametro>();
-			foreach (ParseTreeNode nodo in rai.ChildNodes) {
+			foreach (ParseTreeNode nodo in rai.ChildNodes)
+			{
 				if (nodo.Term.Name == "OBJETO")
 				{
 					String nombre = null;
 					String tipo = null;
-					string pras= null;
-					if (IsParametro(nodo)) {
+					string pras = null;
+					if (IsParametro(nodo))
+					{
 						foreach (ParseTreeNode raiz in nodo.ChildNodes)
 						{
 							switch (raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
@@ -966,7 +1298,7 @@ namespace Proyecto1Compi2.com.Analisis
 									break;
 							}
 						}
-						if (nombre != null && tipo != null && pras!=null)
+						if (nombre != null && tipo != null && pras != null)
 						{
 							dic.Add(new Parametro(nombre, Datos.GetTipoObjetoDBPorCadena(tipo)));
 						}
@@ -1000,7 +1332,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				if (no.ChildNodes.ElementAt(0).Token.ValueString.ToLower() == "as")
 				{
-					if (no.ChildNodes.ElementAt(1).Term.Name == "in"|| no.ChildNodes.ElementAt(1).Term.Name == "out")
+					if (no.ChildNodes.ElementAt(1).Term.Name == "in" || no.ChildNodes.ElementAt(1).Term.Name == "out")
 					{
 						return no.ChildNodes.ElementAt(1).Term.Name == "in";
 					}
@@ -1057,7 +1389,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (t == null)
 							{
-								t=nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
+								t = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
 							else
 							{
@@ -1083,7 +1415,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (user.Atributos == null)
 							{
-								Dictionary<string,TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1));
+								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 									user.Atributos = resultado;
 							}
@@ -1133,15 +1465,16 @@ namespace Proyecto1Compi2.com.Analisis
 		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(ParseTreeNode parseTreeNode)
 		{
 			Dictionary<string, TipoObjetoDB> dic = new Dictionary<string, TipoObjetoDB>();
-			
+
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
-			{	
+			{
 				if (nodo.Term.Name == "OBJETO")
 				{
-					string nombre=null;
-					string tipo=null;
+					string nombre = null;
+					string tipo = null;
 					//recorriendo los atributos del 'ATRIB'
-					foreach (ParseTreeNode raiz in nodo.ChildNodes) {
+					foreach (ParseTreeNode raiz in nodo.ChildNodes)
+					{
 						switch (raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
 						{
 							case "name":
@@ -1208,19 +1541,22 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					if (nombre != null && tipo != null)
 					{
-						try {
+						try
+						{
 							dic.Add(nombre, Datos.GetTipoObjetoDBPorCadena(tipo));
 						}
-						catch (ArgumentException) {
+						catch (ArgumentException)
+						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
-							"El atributo '"+nombre+"' ya existe",
+							"El atributo '" + nombre + "' ya existe",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
 							Datos.GetDate(),
 							Datos.GetTime()));
 						}
 					}
-					else {
+					else
+					{
 						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 							"No se incluyó alguno de los atributos 'NAME' o 'TYPE'",
 							nodo.Span.Location.Line,
@@ -1245,8 +1581,10 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static TipoObjeto GetTipoObjetoCql(ParseTreeNode nodo)
 		{
-			foreach (ParseTreeNode no in nodo.ChildNodes) {
-				if (no.ChildNodes.ElementAt(0).Token.ValueString.ToLower()=="cql-type") {
+			foreach (ParseTreeNode no in nodo.ChildNodes)
+			{
+				if (no.ChildNodes.ElementAt(0).Token.ValueString.ToLower() == "cql-type")
+				{
 					if (no.ChildNodes.ElementAt(1).Term.Name == "cadena")
 					{
 						switch (no.ChildNodes.ElementAt(1).Token.ValueString.ToLower())
@@ -1261,10 +1599,11 @@ namespace Proyecto1Compi2.com.Analisis
 								return TipoObjeto.Error;
 						}
 					}
-					else {
+					else
+					{
 						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 							"El atributo 'CQL-TYPE' debe ser una cadena",
-							no.Span.Location.Line, 
+							no.Span.Location.Line,
 							no.Span.Location.Column,
 							Datos.GetDate(),
 							Datos.GetTime()));
@@ -1284,8 +1623,8 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 						"La lista debe estar compuesta solamente por usuarios",
-						raiz.Span.Location.Line, raiz.Span.Location.Column, 
-						Datos.GetDate(), 
+						raiz.Span.Location.Line, raiz.Span.Location.Column,
+						Datos.GetDate(),
 						Datos.GetTime()));
 				}
 				else
@@ -1296,14 +1635,16 @@ namespace Proyecto1Compi2.com.Analisis
 
 			}
 			//GUARDAR LOS USUARIOS
-			foreach (Usuario nuevo in usuarios) {
+			foreach (Usuario nuevo in usuarios)
+			{
 				if (!Analizador.ExisteUsuario(nuevo.Nombre))
 				{
 					Analizador.AddUsuario(nuevo);
 				}
-				else {
+				else
+				{
 					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-								"El usuario '"+nuevo.Nombre+"' ya existe en el sistema",
+								"El usuario '" + nuevo.Nombre + "' ya existe en el sistema",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
 								Datos.GetTime()));
@@ -1315,8 +1656,10 @@ namespace Proyecto1Compi2.com.Analisis
 		private static Usuario GetUsuario(ParseTreeNode raiz)
 		{
 			Usuario usuario = new Usuario();
-			foreach (ParseTreeNode nodo in raiz.ChildNodes) {
-				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower()) {
+			foreach (ParseTreeNode nodo in raiz.ChildNodes)
+			{
+				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
+				{
 					case "name":
 						if (nodo.ChildNodes.ElementAt(1).Term.Name == "cadena")
 						{
@@ -1324,7 +1667,8 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								usuario.Nombre = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
-							else {
+							else
+							{
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
@@ -1332,7 +1676,8 @@ namespace Proyecto1Compi2.com.Analisis
 								Datos.GetTime()));
 							}
 						}
-						else {
+						else
+						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
@@ -1348,7 +1693,8 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								usuario.Password = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 							}
-							else {
+							else
+							{
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PASSWORD' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
@@ -1372,8 +1718,8 @@ namespace Proyecto1Compi2.com.Analisis
 							if (usuario.Permisos == null)
 							{
 								List<string> resultado = GetListaPermisosUsuario(nodo.ChildNodes.ElementAt(1));
-								if(resultado!=null)
-								usuario.Permisos =resultado;
+								if (resultado != null)
+									usuario.Permisos = resultado;
 							}
 							else
 							{
@@ -1405,7 +1751,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 			if (usuario.IsValido()) return usuario;
-			return null; 
+			return null;
 		}
 
 		private static List<string> GetListaPermisosUsuario(ParseTreeNode parseTreeNode)
@@ -1414,7 +1760,8 @@ namespace Proyecto1Compi2.com.Analisis
 			if (parseTreeNode.ChildNodes.Count > 0)
 			{
 				ParseTreeNode raiz;
-				foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes) {
+				foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
+				{
 					if (nodo.Term.Name == "OBJETO")
 					{
 						raiz = nodo.ChildNodes.ElementAt(0);
@@ -1427,7 +1774,8 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									permisos.Add(raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower());
 								}
-								else {
+								else
+								{
 									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 										"El permiso ya existe para el usuario",
 										raiz.Span.Location.Line,
@@ -1436,16 +1784,18 @@ namespace Proyecto1Compi2.com.Analisis
 										Datos.GetTime()));
 								}
 							}
-							else {
+							else
+							{
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
-								raiz.Span.Location.Line, 
+								raiz.Span.Location.Line,
 								raiz.Span.Location.Column,
 								Datos.GetDate(),
 								Datos.GetTime()));
 							}
 						}
-						else {
+						else
+						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'permiso' es incorrecta. Solamente se deben incluir el atributo 'NAME'",
 							raiz.Span.Location.Line,
@@ -1454,7 +1804,8 @@ namespace Proyecto1Compi2.com.Analisis
 							Datos.GetTime()));
 						}
 					}
-					else {
+					else
+					{
 						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 						"La lista debe estar compuesta solamente por permisos",
 						nodo.Span.Location.Line, nodo.Span.Location.Column,
@@ -1463,512 +1814,10 @@ namespace Proyecto1Compi2.com.Analisis
 
 					}
 				}
-				
+
 			}
 			//LISTA VACIA
-			return permisos;	
+			return permisos;
 		}
-
-
-		#region chisonQuemado
-		//private static void GuardarBasesDeDatos(ParseTreeNode raiz)
-		//{
-		//	foreach (ParseTreeNode nodo in raiz.ChildNodes)
-		//	{
-
-		//		BaseDatos db = GetBaseDatos(nodo);
-		//		Analizador.AddBaseDatos(db);
-		//	}
-		//}
-
-		//private static void AddDbObj(object obj, BaseDatos db,int linea,int columna)
-		//{
-		//		if (obj is Tabla)
-		//		{
-		//			if (!db.ExisteTabla(((Tabla)obj).Nombre))
-		//			{
-		//				db.AgregarTabla((Tabla)obj);
-		//			}
-		//			else
-		//			{
-		//				//INSERTANDO ERROR EN TABLA ERRORS
-						
-		//				Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"La tabla '"+((Tabla)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
-		//					linea+1,
-		//					columna+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-
-		//			}
-		//		}
-		//		else if (obj is UserType)
-		//		{
-		//			if (!db.ExisteUserType(((UserType)obj).Nombre))
-		//			{
-		//				db.AgregarUserType((UserType)obj);
-		//			}
-		//			else
-		//			{
-		//				//INSERTANDO ERROR EN TABLA ERRORS
-		//				Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"El user type '"+((UserType)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
-		//					linea+1,
-		//					columna+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-		//			}
-		//		}
-		//		else if (obj is Procedimiento)
-		//		{
-		//			if (!db.ExisteProcedimiento(((Procedimiento)obj).Nombre))
-		//			{
-		//				db.AgregarProcedimiento((Procedimiento)obj);
-		//			}
-		//			else
-		//			{
-		//				//INSERTANDO ERROR EN TABLA ERRORS
-		//				Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"El procedimiento '"+((Procedimiento)obj).Nombre+"' ya existe en la base de datos '"+db.Nombre+"'",
-		//					linea+1,
-		//					columna+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-		//			}
-
-		//		}
-		//}
-
-		//private static List<object> GetObjetosDb(ParseTreeNode raiz)
-		//{
-		//	List<object> objetosdb = new List<object>();
-		//	foreach (ParseTreeNode nodo in raiz.ChildNodes)
-		//	{
-		//		switch (nodo.Term.Name)
-		//		{
-		//			case "TABLA":
-		//				Tabla tb = GetTabla(objetosdb,nodo);
-		//				//tb.MostrarCabecera();
-		//				//tb.MostrarDatos();
-		//				objetosdb.Add(tb);
-		//				break;
-		//			case "OBJETO":
-		//				UserType obj = GetObjeto(nodo);
-		//				//obj.Mostrar();
-		//				objetosdb.Add(obj);
-		//				break;
-		//			case "PROCEDIMIENTO":
-		//				Procedimiento proc = GetProcedimiento(nodo);
-		//				//proc.Mostrar();
-		//				objetosdb.Add(proc);
-		//				break;
-		//		}
-
-		//	}
-		//	return objetosdb;
-		//}
-
-		//private static Procedimiento GetProcedimiento(ParseTreeNode nodo)
-		//{
-		//	List<Parametro> par = GetParametros(nodo.ChildNodes.ElementAt(1));
-		//	List<Parametro> ret = GeRetornos(nodo.ChildNodes.ElementAt(1));
-		//	String codigo = nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower();
-		//	codigo = codigo.TrimStart('$');
-		//	codigo = codigo.TrimEnd('$');
-		//	Analizador.AnalizarCql(codigo);
-		//	List<Error> erroresInst = (Analizador.ErroresChison);
-		//	//cambiar el numero de linea 
-		//	if (erroresInst.Count>0) {
-		//		//Analizador.ErroresChison.AddRange(erroresInst);
-		//		codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
-		//	}
-		//	return new Procedimiento(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), par, ret, null,codigo,nodo.Span.Location.Line,nodo.Span.Location.Column);
-		//}
-
-		//private static List<Parametro> GeRetornos(ParseTreeNode parseTreeNode)
-		//{
-		//	List<Parametro> ret = new List<Parametro>();
-		//	foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
-		//	{
-		//		if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("out"))
-		//		{
-		//			try
-		//			{
-		//				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
-		//				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
-
-		//					ret.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(t, nombreTipo)));
-		//			}
-		//			catch (ArgumentException ex)
-		//			{
-		//				//INSERTANDO ERROR EN TABLA ERRORS
-		//				Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"Error grave leyendo datos en retornos del procedimiento",
-		//					nodo.Span.Location.Line+1,
-		//					nodo.Span.Location.Column+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-		//			}
-		//		}
-		//	}
-		//	return ret;
-		//}
-
-		//private static List<Parametro> GetParametros(ParseTreeNode parseTreeNode)
-		//{
-		//	List<Parametro> param = new List<Parametro>();
-		//	foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
-		//	{
-		//		if (nodo.ChildNodes.ElementAt(2).Token.ValueString.ToLower().Equals("in"))
-		//		{
-		//			try
-		//			{
-		//				TipoDatoDB t = GetTipo(nodo.ChildNodes.ElementAt(1));
-		//				string nombreTipo = GetNombreTipo(t, nodo.ChildNodes.ElementAt(1),true);
-		//				param.Add(new Parametro(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(t, nombreTipo)));
-		//			}
-		//			catch (ArgumentException ex)
-		//			{
-		//				//INSERTANDO ERROR EN TABLA ERRORS
-		//				Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"Error grave leyendo datos en parametros del procedimiento",
-		//					nodo.Span.Location.Line+1,
-		//					nodo.Span.Location.Column+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-		//			}
-		//		}
-		//	}
-		//	return param;
-		//}
-
-		//private static UserType GetObjeto(ParseTreeNode nodo)
-		//{
-		//	return new UserType(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
-		//		GetAtributos(nodo.ChildNodes.ElementAt(1)));
-		//}
-
-		//private static Dictionary<string, TipoObjetoDB> GetAtributos(ParseTreeNode parseTreeNode)
-		//{
-		//	Dictionary<string, TipoObjetoDB> atributos = new Dictionary<string, TipoObjetoDB>();
-		//	foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
-		//	{
-		//		try
-		//		{
-		//			TipoDatoDB td = GetTipo(nodo.ChildNodes.ElementAt(1));
-		//			string nombreTipo = GetNombreTipo(td,nodo.ChildNodes.ElementAt(1),true);
-					
-		//			atributos.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), new TipoObjetoDB(td, nombreTipo));
-		//		}
-		//		catch (ArgumentException ex)
-		//		{
-		//			//INSERTANDO ERROR EN TABLA ERRORS
-		//			Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"Ya existe el atributo '"+nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower()+"' en el User Type",
-		//					nodo.Span.Location.Line+1,
-		//					nodo.Span.Location.Column+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-
-		//		}
-		//	}
-		//	return atributos;
-		//}
-
-		//public static string GetNombreTipo(TipoDatoDB td, ParseTreeNode parseTreeNode,bool b)
-		//{
-		//	switch (td) {
-		//		case TipoDatoDB.LISTA_PRIMITIVO:
-		//		case TipoDatoDB.LISTA_OBJETO:
-		//			TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-		//			string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
-		//			if (!b) return "list<" + nombreTipo + ">";
-		//			return nombreTipo;
-		//		case TipoDatoDB.SET_PRIMITIVO:
-		//		case TipoDatoDB.SET_OBJETO:
-		//			t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-		//			nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
-		//			if (!b) return "set<" + nombreTipo + ">";
-		//			return nombreTipo;
-		//		case TipoDatoDB.MAP_PRIMITIVO:
-		//		case TipoDatoDB.MAP_OBJETO:
-		//			t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-		//			nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
-					
-		//			TipoDatoDB t1 = GetTipo(parseTreeNode.ChildNodes.ElementAt(3));
-		//			string nombreTipo1 = GetNombreTipo(t1, parseTreeNode.ChildNodes.ElementAt(3), false);
-		//			if (!b) return "map<" + nombreTipo + "," + nombreTipo1 + ">";
-		//			return nombreTipo + "," + nombreTipo1;
-		//		case TipoDatoDB.OBJETO:
-		//			if (parseTreeNode.ChildNodes.Count == 4)
-		//			{
-		//				t = GetTipo(parseTreeNode.ChildNodes.ElementAt(2));
-		//				nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(2), false);
-		//				return nombreTipo;
-
-		//			}
-		//			else {
-		//				return parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower();
-		//			}
-		//		case TipoDatoDB.BOOLEAN:
-		//			return "boolean";
-		//		case TipoDatoDB.DATE:
-		//			return "date";
-		//		case TipoDatoDB.DOUBLE:
-		//			return "double";
-		//		case TipoDatoDB.INT:
-		//			return "int";
-		//		case TipoDatoDB.STRING:
-		//			return "string";
-		//		case TipoDatoDB.TIME:
-		//			return "time";
-		//		case TipoDatoDB.COUNTER:
-		//			return "counter";
-		//		case TipoDatoDB.NULO:
-		//			return "nulo";
-		//		default:
-		//			return "";
-		//	}
-		//}
-
-		//private static Tabla GetTabla(List<object> objetosdb,ParseTreeNode nodo)
-		//{
-		//	Tabla tb = new Tabla(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), GetColumnas(objetosdb, nodo.ChildNodes.ElementAt(1)));
-		//	  //agregando datos a la tabla
-		//	AddDataTabla(tb, nodo.ChildNodes.ElementAt(2));
-		//	return tb;
-		//}
-
-		//private static void AddDataTabla(Tabla tb, ParseTreeNode raiz)
-		//{
-		//	foreach (ParseTreeNode nodo in raiz.ChildNodes)
-		//	{
-		//		Dictionary<string, object> fila = GetFila(nodo);
-		//		if (fila != null)
-		//		{
-		//			//List<Error> er =tb.Insertar(fila,nodo.Span.Location.Line,nodo.Span.Location.Column);
-		//			//Analizador.ErroresChison.AddRange(er);
-		//		}
-		//	}
-		//}
-
-		//private static Dictionary<string, object> GetFila(ParseTreeNode fila)
-		//{
-		//	Dictionary<string, object> datos = new Dictionary<string, object>();
-		//	try
-		//	{
-		//		foreach (ParseTreeNode nod in fila.ChildNodes)
-		//		{
-		//			if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATOS"))
-		//			{
-		//				//ES UNA LISTA
-		//				//CollectionLista valores = GetListaDatos(nod.ChildNodes.ElementAt(1));
-		//				//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), valores);
-		//			}
-		//			else if (nod.ChildNodes.ElementAt(1).Term.Name.Equals("LISTA_DATATABLE")) {
-		//				//ES UN OBJETO
-		//				Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(1));
-		//				//datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),new Objeto(atributos));
-		//			}else {
-		//				datos.Add(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), Datos.GetValor(nod.ChildNodes.ElementAt(1).Token.ValueString.ToLower()));
-
-		//			}
-
-		//		}
-		//	}
-		//	catch (ArgumentException ex)
-		//	{
-		//		//INSERTANDO ERROR EN TABLA ERRORS
-		//		Analizador.ErroresChison.Add(new Error(
-		//					TipoError.Semantico,
-		//					"Error grave al leer los datos de la tabla ",
-		//					fila.Span.Location.Line+1,
-		//					fila.Span.Location.Column+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-		//		return null;
-		//	}
-		//	return datos;
-		//}
-
-		////private static CollectionLista GetListaDatos(ParseTreeNode parseTreeNode)
-		////{
-		////	CollectionLista valores = new CollectionLista();
-		////	foreach (ParseTreeNode nod in parseTreeNode.ChildNodes)
-		////	{
-		////		if (nod.ChildNodes.ElementAt(0).Term.Name != "OBJETO" && nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATOS"&& nod.ChildNodes.ElementAt(0).Term.Name != "LISTA_DATATABLE")
-		////		{
-		////			//DATO primitivo
-		////			valores.SetItem(Datos.GetValor(nod.ChildNodes.ElementAt(0).Token.ValueString.ToLower()));
-		////		}
-		////		else if (nod.ChildNodes.ElementAt(0).Term.Name == "LISTA_DATOS") {
-		////			//lista
-		////			valores.SetItem(GetListaDatos(nod.ChildNodes.ElementAt(0)));
-		////		}else
-		////		{
-		////			//objeto
-		////			Dictionary<string, object> atributos = GetFila(nod.ChildNodes.ElementAt(0));
-		////			valores.SetItem(new Objeto(atributos));
-		////		}
-		////	}
-
-		////	return valores;
-		////}
-
-		//private static List<Columna> GetColumnas(List<object> objetosdb,ParseTreeNode raiz)
-		//{
-		//	List<Columna> columnas = new List<Columna>();
-		//	foreach (ParseTreeNode nodo in raiz.ChildNodes)
-		//	{
-		//		Columna cl = GetColumna(objetosdb,nodo);
-		//		if (cl!=null) {
-		//			columnas.Add(cl);
-		//		}
-		//	}
-		//	return columnas;
-		//}
-
-		//private static Columna GetColumna(List<object> objetos,ParseTreeNode nodo)
-		//{
-		//	TipoDatoDB tipo = GetTipo(nodo.ChildNodes.ElementAt(1));
-		//	string nombreTipo = GetNombreTipo(tipo, nodo.ChildNodes.ElementAt(1),true);
-		//	if (tipo==TipoDatoDB.OBJETO) {
-		//		if (!ExisteUserTypeEnDb(objetos, nombreTipo))
-		//		{
-		//			//INSERTANDO ERROR EN TABLA ERRORS
-		//			Analizador.ErroresChison.Add(new Error(
-
-		//					TipoError.Semantico,
-		//					"No existe el User Type '"+nombreTipo+"' para crear el objeto",
-		//					nodo.Span.Location.Line+1,
-		//					nodo.Span.Location.Column+1,
-		//					Datos.GetDate(), //fecha
-		//					Datos.GetTime()//hora
-		//				));
-
-		//			return null;
-		//		}
-		//	}
-		//		return new Columna(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
-		//			new TipoObjetoDB(tipo, nombreTipo),
-		//			IsPk(nodo.ChildNodes.ElementAt(2)));
-		//	}
-
-		//private static bool ExisteUserTypeEnDb(List<object> objetos, string v)
-		//{
-		//	foreach (object ob in objetos)
-		//	{
-		//		if (ob.GetType() == typeof(UserType))
-		//		{
-		//			if (((UserType)ob).Nombre.Equals(v))
-		//			{
-		//				return true;
-		//			}
-		//		}
-		//	}
-		//	return false;
-		//}
-
-		//private static bool IsPk(ParseTreeNode parseTreeNode)
-		//{
-		//	if (bool.TryParse(parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), out bool res))
-		//	{
-		//		return res;
-		//	}
-		//	return false;
-		//}
-
-		//public static TipoDatoDB GetTipo(ParseTreeNode parseTreeNode)
-		//{
-		//	switch (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
-		//	{
-		//		case "string":
-		//			return TipoDatoDB.STRING;
-		//		case "int":
-		//			return TipoDatoDB.INT;
-		//		case "double":
-		//			return TipoDatoDB.DOUBLE;
-		//		case "boolean":
-		//			return TipoDatoDB.BOOLEAN;
-		//		case "date":
-		//			return TipoDatoDB.DATE;
-		//		case "time":
-		//			return TipoDatoDB.TIME;
-		//		case "counter":
-		//			return TipoDatoDB.COUNTER;
-		//		//listas
-		//		case "list<string>":
-		//		case "list<int>":
-		//		case "list<double>":
-		//		case "list<boolean>":
-		//		case "list<date>":
-		//		case "list<time>":
-		//			return TipoDatoDB.LISTA_PRIMITIVO;
-		//		//sets
-		//		case "set<string>":
-		//		case "set<int>":
-		//		case "set<double>":
-		//		case "set<boolean>":
-		//		case "set<date>":
-		//		case "set<time>":
-		//			return TipoDatoDB.SET_PRIMITIVO;
-		//		//maps
-		//		case "map<string>":
-		//		case "map<int>":
-		//		case "map<double>":
-		//		case "map<boolean>":
-		//		case "map<date>":
-		//		case "map<time>":
-		//			return TipoDatoDB.MAP_PRIMITIVO;
-		//		default:
-		//			if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("list")||
-		//				parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("list"))
-		//			{
-		//				return TipoDatoDB.LISTA_OBJETO;
-		//			}
-		//			else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("set")||
-		//				parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("set"))
-		//			{
-		//				return TipoDatoDB.SET_OBJETO;
-		//			}
-		//			else if (parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Equals("map")||
-		//				parseTreeNode.ChildNodes.ElementAt(0).Token.ValueString.ToLower().StartsWith("map"))
-		//			{
-		//				return TipoDatoDB.MAP_OBJETO;
-		//			}
-
-		//			return TipoDatoDB.OBJETO;
-		//	}
-		//}
-
-		//private static List<string> GetListaOtroNombre(ParseTreeNode lista_nombres)
-		//{
-		//	List<string> nombres = new List<string>();
-		//	foreach (ParseTreeNode nodo in lista_nombres.ChildNodes)
-		//	{
-		//		nombres.Add(nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower());
-		//	}
-		//	return nombres;
-		//}
 	}
-	#endregion
 }

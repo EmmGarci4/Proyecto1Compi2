@@ -48,7 +48,6 @@ namespace Proyecto1Compi2.com.AST
 					//INSERSION NORMAL
 					if (this.columnas == null)
 					{
-
 						int counters = tab.ContarCounters();
 						if (this.valores.Count == (tab.Columnas.Count - counters))
 						{

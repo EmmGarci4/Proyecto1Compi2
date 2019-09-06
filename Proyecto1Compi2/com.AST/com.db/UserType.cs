@@ -59,5 +59,20 @@ namespace Proyecto1Compi2.com.db
 		{
 			return this.atributos != null && this.nombre != null;
 		}
+
+		internal bool Contiene(List<string> attrs)
+		{
+			int contador = 0;
+			if (this.atributos.Count==attrs.Count) {
+				foreach (KeyValuePair<string,TipoObjetoDB> keys in this.atributos) {
+					if (!keys.Key.Equals(attrs.ElementAt(contador))) {
+						return false;
+					}
+					
+					contador++;
+				}
+			}
+			return true;
+		}
 	}
 }
