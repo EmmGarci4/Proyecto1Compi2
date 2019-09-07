@@ -57,7 +57,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 			LISTA_ATRIBUTOS.Rule =MakeStarRule(LISTA_ATRIBUTOS,coma,ATRIBUTO);
 
-			ATRIBUTO.Rule = cadena + igual +VALOR;
+			ATRIBUTO.Rule = cadena + igual +VALOR
+				|SyntaxError;
 
 			VALOR.Rule =cadena
 				|numero
@@ -71,6 +72,7 @@ namespace Proyecto1Compi2.com.Analisis
 				|instrucciones
 				|cor1+ LISTA+cor2
 				|OBJETO
+				|SyntaxError
 				;
 
 			LISTA.Rule = MakeStarRule(LISTA,coma,VALOR);

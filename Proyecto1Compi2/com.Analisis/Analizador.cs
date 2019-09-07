@@ -26,6 +26,7 @@ namespace com.Analisis
 		static private ParseTreeNode raiz;
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
+		private static Tabla errors = GetTablaErrors();
 
 		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
@@ -35,7 +36,7 @@ namespace com.Analisis
 		public static string CodigoAnalizado { get => codigoAnalizado; set => codigoAnalizado = value; }
 		public static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
 		public static NodoAST AST { get => ast; }
-
+		public static Tabla Errors { get => errors; set => errors = value; }
 
 		//******************************FUNCIONES***********************************************************
 		public static bool ExisteFuncion(string nombre)
@@ -276,8 +277,7 @@ namespace com.Analisis
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
-
-				//INSERTANDO ERROR EN TABLA ERRORS
+				//INSERTANDO ERROR EN ErroresChison
 				ErroresChison.Add(new Error(
 					TipoError.Semantico,
 					mensaje.Message,
@@ -286,9 +286,10 @@ namespace com.Analisis
 					Datos.GetDate(), 
 					Datos.GetTime()
 					));
-
-				Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
+				//Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
 			}
+			LlenarTablaErrors();
+			//Console.WriteLine(errors.ToString());
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count==0;
 		}
 
@@ -314,7 +315,25 @@ namespace com.Analisis
 		}
 
 		//******************************OTROS***************************************************************
-		
+
+		private static void LlenarTablaErrors() {
+			errors.Truncar();
+			Queue<object> valores = new Queue<object>();
+			foreach (Error error in erroresChison) {
+				valores.Clear();
+				int contador = errors.BuscarColumna("Numero").GetUltimoValorCounter();
+				valores.Enqueue(contador+1);
+				valores.Enqueue(error.Tipo.ToString());
+				valores.Enqueue(error.Mensaje);
+				valores.Enqueue(error.Linea);
+				valores.Enqueue(error.Columna);
+				valores.Enqueue(error.Fecha);
+				valores.Enqueue(error.Hora);
+				//agregando valores
+				errors.AgregarValores(valores);
+			}
+		}
+
 		public static void GenerarArchivos(string v)
 		{
 			StringBuilder cadena = new StringBuilder();
@@ -421,6 +440,18 @@ namespace com.Analisis
 			Dictionary<string, TipoObjetoDB> at = new Dictionary<string, TipoObjetoDB>();
 			at.Add("message", new TipoObjetoDB(TipoDatoDB.STRING, "string"));
 			return new UserType("error", at);
+		}
+
+		private static Tabla GetTablaErrors() {
+			Tabla tb = new Tabla("errors");
+			tb.AgregarColumna(new Columna("Numero", new TipoObjetoDB(TipoDatoDB.COUNTER, "int"), true));
+			tb.AgregarColumna(new Columna("Tipo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
+			tb.AgregarColumna(new Columna("Descripcion", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
+			tb.AgregarColumna(new Columna("Fila", new TipoObjetoDB(TipoDatoDB.INT, "int"), false));
+			tb.AgregarColumna(new Columna("Columna", new TipoObjetoDB(TipoDatoDB.INT, "int"), false));
+			tb.AgregarColumna(new Columna("Fecha", new TipoObjetoDB(TipoDatoDB.DATE, "date"), false));
+			tb.AgregarColumna(new Columna("Hora", new TipoObjetoDB(TipoDatoDB.TIME, "time"), false));
+			return tb;
 		}
 
 		//******************************REPORTES************************************************************
