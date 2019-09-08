@@ -196,7 +196,8 @@ namespace Proyecto1Compi2.com.Analisis
 											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 												"El user Type '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
-												nodo.ChildNodes.ElementAt(1).Span.Location.Column));
+												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
+												Datos.GetDate(), Datos.GetTime()));
 										}
 									}
 									else if (objetodb.GetType() == typeof(Procedimiento))
@@ -211,7 +212,8 @@ namespace Proyecto1Compi2.com.Analisis
 											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 												"El procedimiento '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
-												nodo.ChildNodes.ElementAt(1).Span.Location.Column));
+												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
+												Datos.GetDate(), Datos.GetTime()));
 										}
 									}
 									else if (objetodb.GetType() == typeof(Tabla))
@@ -226,7 +228,8 @@ namespace Proyecto1Compi2.com.Analisis
 											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 												"La tabla '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
-												nodo.ChildNodes.ElementAt(1).Span.Location.Column));
+												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
+												Datos.GetDate(), Datos.GetTime()));
 										}
 									}
 								}
@@ -515,7 +518,8 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El objeto '"+tipoAdentro.Nombre+"' no existe",
-								  linea, columna));
+								  linea, columna,
+								  Datos.GetDate(), Datos.GetTime()));
 							return false;
 						}
 						return true;
@@ -546,7 +550,8 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El objeto '" + tipoAdentro.Nombre + "' no existe",
-								  linea, columna));
+								  linea, columna,
+								  Datos.GetDate(), Datos.GetTime()));
 							return false;
 						}
 						return true;
@@ -587,7 +592,8 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
-								  linea, columna));
+								  linea, columna,
+								  Datos.GetDate(), Datos.GetTime()));
 						}
 						}
 					indiceColumnas++;
@@ -613,7 +619,8 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 						"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
-						linea, columna));
+						linea, columna,
+						Datos.GetDate(), Datos.GetTime()));
 			}
 		}
 
@@ -646,7 +653,8 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 									"La data de una tabla solo debe contener columnas",
-								   parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column));
+								   parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column,
+								   Datos.GetDate(), Datos.GetTime()));
 				}
 			}
 			return datos;
@@ -698,7 +706,8 @@ namespace Proyecto1Compi2.com.Analisis
 						di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
 						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 									"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
-								   linea, column));
+								   linea, column,
+								   Datos.GetDate(), Datos.GetTime()));
 					}
 					return di;
 				case "time":
@@ -712,7 +721,8 @@ namespace Proyecto1Compi2.com.Analisis
 						di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
 						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
 									"La hora es incorrecta, el formato debe ser HH:MM:SS",
-								   linea, column));
+								   linea, column,
+								   Datos.GetDate(), Datos.GetTime()));
 					}
 					return di;
 				case "LISTA":
@@ -757,7 +767,7 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 									"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(exp) + " en un Collection tipo " + collection.TipoDato.ToString(),
-									linea, column));
+									linea, column, Datos.GetDate(), Datos.GetTime()));
 							}
 
 						}
@@ -794,7 +804,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
-								linea, column));
+								linea, column, Datos.GetDate(), Datos.GetTime()));
 								}
 								indice++;
 							}
@@ -803,7 +813,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 								"Los atributos no corresponden en numero al tipo '" + usert.Nombre + "'",
-								linea, column));
+								linea, column, Datos.GetDate(), Datos.GetTime()));
 						}
 						return nuevaInstancia;
 						//*************************************************
@@ -813,7 +823,7 @@ namespace Proyecto1Compi2.com.Analisis
 						//error
 						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
 									"No existe un objeto con esos atributos en la base de datos",
-								   linea, column));
+								   linea, column, Datos.GetDate(), Datos.GetTime()));
 					}
 					break;
 			}
@@ -1875,8 +1885,22 @@ namespace Proyecto1Compi2.com.Analisis
 							if (usuario.Permisos == null)
 							{
 								List<string> resultado = GetListaPermisosUsuario(nodo.ChildNodes.ElementAt(1));
-								if (resultado != null)
+								if (resultado != null) {
+									List<string> permisos = new List<string>();
+									foreach (string permiso in resultado) {
+										if (Analizador.ExisteDB(permiso))
+										{
+											permisos.Add(permiso);
+										}
+										else {
+											Analizador.ErroresChison.Add(new Error(TipoError.Semantico, "No se puede asignar el permiso sobre la base de datos '" + permiso + "' si no existe",
+														nodo.Span.Location.Line,nodo.Span.Location.Column, 
+														Datos.GetDate(), Datos.GetTime()));
+										}
+									}
 									usuario.Permisos = resultado;
+								}
+									
 							}
 							else
 							{
