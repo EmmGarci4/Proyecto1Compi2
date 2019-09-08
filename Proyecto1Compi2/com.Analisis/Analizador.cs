@@ -47,7 +47,7 @@ namespace com.Analisis
 			}
 			foreach (Funcion fun in funciones)
 			{
-				if (fun.GetLlave() == nombre)
+				if (fun.GetLlave().Equals(nombre))
 				{
 					return true;
 				}

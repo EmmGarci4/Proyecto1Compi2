@@ -170,7 +170,14 @@ namespace Proyecto1Compi2.com.db
 			int contador = 0;
 			foreach (Parametro par in this.parametros)
 			{
-				llave.Append(par.Tipo.ToString());
+				if (par.Tipo.Tipo == TipoDatoDB.INT || par.Tipo.Tipo == TipoDatoDB.DOUBLE)
+				{
+					llave.Append("numero");
+				}
+				else
+				{
+					llave.Append(par.Tipo.ToString());
+				}
 				if (contador < parametros.Count - 1)
 				{
 					llave.Append(",");

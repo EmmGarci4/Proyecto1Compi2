@@ -83,7 +83,7 @@ namespace Proyecto1Compi2.com.AST
 				else
 				{
 					return new ThrowError(Util.TipoThrow.Exception,
-				"El procedimiento '" + llave + "' no existe",
+				"El procedimiento '" + GetLlaveExterna(ts,sesion) + "' no existe",
 				Linea, Columna);
 				}
 			}
@@ -95,17 +95,17 @@ namespace Proyecto1Compi2.com.AST
 			}	
 		}
 
-		internal string getLlave(TablaSimbolos ts,Sesion sesion)
+		internal string GetLlaveExterna(TablaSimbolos ts, Sesion sesion)
 		{
 			StringBuilder llave = new StringBuilder();
 			llave.Append(nombre + "(");
 			int contador = 0;
 			foreach (Expresion ex in parametros)
 			{
-				TipoOperacion t = ex.GetTipo(ts,sesion);
+				TipoOperacion t = ex.GetTipo(ts, sesion);
 				if (t == TipoOperacion.Numero)
 				{
-					if (ex.GetValor(ts,sesion).ToString().Contains("."))
+					if (ex.GetValor(ts, sesion).ToString().Contains("."))
 					{
 						llave.Append("double");
 					}
@@ -118,6 +118,26 @@ namespace Proyecto1Compi2.com.AST
 				{
 					llave.Append(t.ToString().ToLower());
 				}
+				if (contador < this.parametros.Count - 1)
+				{
+					llave.Append(",");
+				}
+				contador++;
+			}
+			llave.Append(")");
+			return llave.ToString();
+		}
+
+		internal string getLlave(TablaSimbolos ts, Sesion sesion)
+		{
+			StringBuilder llave = new StringBuilder();
+			llave.Append(nombre + "(");
+			int contador = 0;
+			foreach (Expresion ex in parametros)
+			{
+				ex.GetValor(ts, sesion);
+				TipoOperacion t = ex.GetTipo(ts, sesion);
+				llave.Append(t.ToString().ToLower());
 				if (contador < this.parametros.Count - 1)
 				{
 					llave.Append(",");
