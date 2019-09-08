@@ -10,16 +10,14 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class AsignacionCasteo:Sentencia
+	class Casteo:Expresion
 	{
 		TipoObjetoDB tipo;
 		Expresion derecha;
-		private Acceso acceso;
 		private TipoObjetoDB tipoObjetoDB;
 
-		public AsignacionCasteo(Acceso izquierda, TipoObjetoDB tipo, Expresion derecha,int linea,int columna):base(linea,columna)
+		public Casteo(TipoObjetoDB tipo, Expresion derecha,int linea,int columna):base(linea,columna)
 		{
-			this.acceso = izquierda;
 			this.tipo = tipo;
 			this.derecha = derecha;
 		}
@@ -27,12 +25,17 @@ namespace Proyecto1Compi2.com.AST
 		public TipoObjetoDB Tipo { get => tipo; set => tipo = value; }
 		public TipoObjetoDB TipoObjetoDB { get => tipoObjetoDB; set => tipoObjetoDB = value; }
 		internal Expresion Derecha { get => derecha; set => derecha = value; }
-		internal Acceso Acceso { get => acceso; set => acceso = value; }
 
-		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
+		public override TipoOperacion GetTipo(TablaSimbolos ts, Sesion sesion)
 		{
-			object respuesta = derecha.GetValor(ts,sesion);
-			if (respuesta.GetType()==typeof(ThrowError)) {
+			return Datos.GetTipoDatoDB(this.tipo.Tipo);
+		}
+
+		public override object GetValor(TablaSimbolos ts, Sesion sesion)
+		{
+			object respuesta = derecha.GetValor(ts, sesion);
+			if (respuesta.GetType() == typeof(ThrowError))
+			{
 				return respuesta;
 			}
 			TipoObjetoDB tipo = Datos.GetTipoObjetoDB(respuesta);
@@ -42,19 +45,21 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (tipo.Tipo == TipoDatoDB.STRING)
 				{
-					if (DateTime.TryParse(respuesta.ToString().Replace("'",string.Empty),out DateTime tim))
+					if (DateTime.TryParse(respuesta.ToString().Replace("'", string.Empty), out DateTime tim))
 					{
 						NuevoValor = new MyDateTime(TipoDatoDB.TIME, tim);
 					}
-					else {
+					else
+					{
 						return new ThrowError(Util.TipoThrow.Exception,
 						"No se puede convertir la cadena a hora",
 						Linea, Columna);
 					}
 				}
-				else {
+				else
+				{
 					return new ThrowError(Util.TipoThrow.Exception,
-						"No se puede hacer una conversión entre un dato tipo '"+this.tipo.ToString()+"' y uno tipo '"+tipo.ToString()+"'",
+						"No se puede hacer una conversión entre un dato tipo '" + this.tipo.ToString() + "' y uno tipo '" + tipo.ToString() + "'",
 						Linea, Columna);
 				}
 			}
@@ -63,7 +68,7 @@ namespace Proyecto1Compi2.com.AST
 				//DATE-STRING 
 				if (tipo.Tipo == TipoDatoDB.STRING)
 				{
-					if (DateTime.TryParse(respuesta.ToString().Replace("'",string.Empty), out DateTime tim))
+					if (DateTime.TryParse(respuesta.ToString().Replace("'", string.Empty), out DateTime tim))
 					{
 						NuevoValor = new MyDateTime(TipoDatoDB.DATE, tim);
 					}
@@ -93,13 +98,14 @@ namespace Proyecto1Compi2.com.AST
 				{
 					//STRING - TIME
 					NuevoValor = respuesta.ToString();
-				}else
+				}
+				else
 				if (tipo.Tipo == TipoDatoDB.INT)
 				{
 					//STRING - INT
 					NuevoValor = respuesta.ToString();
 				}
-				else 
+				else
 				if (tipo.Tipo == TipoDatoDB.DOUBLE)
 				{
 					//STRING -DOUBLE
@@ -121,7 +127,8 @@ namespace Proyecto1Compi2.com.AST
 					{
 						NuevoValor = val;
 					}
-					else {
+					else
+					{
 						return new ThrowError(Util.TipoThrow.Exception,
 							"No se puede convertir la cadena decimal",
 							Linea, Columna);
@@ -136,7 +143,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 			else if (this.tipo.Tipo == TipoDatoDB.INT)
 			{
-				
+
 				if (tipo.Tipo == TipoDatoDB.STRING)
 				{
 					//INT - STRING
@@ -158,13 +165,14 @@ namespace Proyecto1Compi2.com.AST
 						Linea, Columna);
 				}
 			}
-			else {
+			else
+			{
 				return new ThrowError(Util.TipoThrow.Exception,
 						"No se puede hacer una conversión entre un dato tipo '" + this.tipo.ToString() + "' y uno tipo '" + tipo.ToString() + "'",
 						Linea, Columna);
 			}
 			//si llega hasta acá, no hay errores y el valor está preparado para asignarse
-			return null;
+			return NuevoValor;
 		}
 	}
 }

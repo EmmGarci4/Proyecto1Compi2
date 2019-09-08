@@ -85,7 +85,7 @@
     <Compile Include="com.AST\AccesoPar.cs" />
     <Compile Include="com.AST\Actualizar.cs" />
     <Compile Include="com.AST\Asignacion.cs" />
-    <Compile Include="com.AST\AsignacionCasteo.cs" />
+    <Compile Include="com.AST\Casteo.cs" />
     <Compile Include="com.AST\Break.cs" />
     <Compile Include="com.AST\Case.cs" />
     <Compile Include="com.AST\Continue.cs" />

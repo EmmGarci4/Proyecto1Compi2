@@ -61,6 +61,7 @@ namespace Proyecto1Compi2.com.AST
 									"No se puede asignar el valor a la variable '" + vals.Nombre + "'",
 									Linea, Columna);
 							}
+							contador++;
 						}
 					}
 					else

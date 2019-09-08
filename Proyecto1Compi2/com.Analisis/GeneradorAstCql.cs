@@ -170,10 +170,6 @@ namespace Proyecto1Compi2.com.Analisis
 						n = GetAsignacion(sentencia);
 						if (n != null) sentencias.Add(n);
 						break;
-					case "CASTEO":
-						n = GetCasteo(sentencia);
-						if (n != null) sentencias.Add(n);
-						break;
 					case "SWITCH":
 						n = GetSwitch(sentencia);
 						if (n != null) sentencias.Add(n);
@@ -451,45 +447,6 @@ namespace Proyecto1Compi2.com.Analisis
 				lista.Add(new Case(ex,sentencias,nodo.Span.Location.Line,nodo.Span.Location.Column));
 			}
 			return lista;
-		}
-
-		private static Sentencia GetCasteo(ParseTreeNode sentencia)
-		{
-			if (sentencia.ChildNodes.Count == 3)
-			{
-				Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				acceso.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),TipoAcceso.Variable));
-				TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(1));
-				string nombreTipo = GetNombreTipo(tipo,sentencia.ChildNodes.ElementAt(1),true);
-				Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(2));
-				return new AsignacionCasteo(acceso, new TipoObjetoDB(tipo, nombreTipo),expresion,sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-			}
-			else {
-				if (sentencia.ChildNodes.ElementAt(1).Term.Name.Equals("EXPRESION"))
-				{
-					Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-					acceso.Objetos.Add(new AccesoPar(
-						new AccesoArreglo(GetExpresion(sentencia.ChildNodes.ElementAt(1)), sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
-						sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column), 
-						TipoAcceso.AccesoArreglo));
-					TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(2));
-					string nombreTipo = GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(2), true);
-					Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(3));
-					return new AsignacionCasteo(acceso, new TipoObjetoDB(tipo, nombreTipo), expresion, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				}
-				else {
-					Acceso acceso = new Acceso(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-					acceso.Objetos.Add(new AccesoPar(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoAcceso.Variable));
-					Acceso acceso2 = GetAcceso(sentencia.ChildNodes.ElementAt(1));
-					foreach (AccesoPar par in acceso2.Objetos) {
-						acceso.Objetos.Add(par);
-					}
-					TipoDatoDB tipo = GetTipo(sentencia.ChildNodes.ElementAt(2));
-					string nombreTipo = GetNombreTipo(tipo, sentencia.ChildNodes.ElementAt(2), true);
-					Expresion expresion = GetExpresion(sentencia.ChildNodes.ElementAt(3));
-					return new AsignacionCasteo(acceso, new TipoObjetoDB(tipo, nombreTipo), expresion, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
-				}
-			}
 		}
 
 		private static Sentencia GetAsignacion(ParseTreeNode sentencia)
@@ -1351,7 +1308,8 @@ namespace Proyecto1Compi2.com.Analisis
 							break;
 						case "OBJETO":
 							return GetObjeto(raiz.ChildNodes.ElementAt(0));
-
+						case "CASTEO":
+							return GetCasteo(raiz.ChildNodes.ElementAt(0));
 					}
 					break;
 				case 2://menos
@@ -1400,6 +1358,14 @@ namespace Proyecto1Compi2.com.Analisis
 					return aces;
 			}
 			return null;
+		}
+
+		private static Expresion GetCasteo(ParseTreeNode parseTreeNode)
+		{
+			TipoDatoDB t = GetTipo(parseTreeNode.ChildNodes.ElementAt(0));
+			string nombreTipo = GetNombreTipo(t, parseTreeNode.ChildNodes.ElementAt(0), false);
+			return new Casteo(new TipoObjetoDB(t, nombreTipo), GetExpresion(parseTreeNode.ChildNodes.ElementAt(1)),
+				parseTreeNode.Span.Location.Line,parseTreeNode.Span.Location.Column);
 		}
 
 		private static Expresion GetInfoCollection(ParseTreeNode raiz)

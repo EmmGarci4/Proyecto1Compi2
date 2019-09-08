@@ -312,7 +312,10 @@ namespace com.Analisis
 				| FUNCIONAGREGACION
 				| pr_new + TIPODATO
 				| id + punto + ACCESO
+				|CASTEO
 				;
+
+			CASTEO.Rule = par1 + TIPODATO + par2 + EXPRESION;
 
 			SETDATOS.Rule=llave1 + LISTAEXPRESIONES + llave2;
 
@@ -520,7 +523,6 @@ namespace com.Analisis
 
 			SENTENCIAFCL.Rule = ASIGNACION
 				| DECLARACION
-				| CASTEO
 				| MODIFICADORES + puntoycoma
 				| IF
 				| SWITCH
@@ -559,10 +561,6 @@ namespace com.Analisis
 
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
 				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
-
-			CASTEO.Rule= id + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma
-				| id + punto + ACCESO + igual + par1 + TIPODATO + par2 + EXPRESION + puntoycoma;
-
 
 			IF.Rule = pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
 				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else+ llave1 + BLOQUESENTENCIAS + llave2
@@ -679,7 +677,8 @@ namespace com.Analisis
 			RegisterOperators(8, Associativity.Left,por, div,mod);
 			RegisterOperators(9, Associativity.Right, pot);
 			RegisterOperators(10, Associativity.Right, not);
-			RegisterOperators(11, Associativity.Right, masmas,menosmenos);
+			RegisterOperators(11, Associativity.Neutral, masmas,menosmenos);
+			RegisterOperators(12, Associativity.Left, par1, par2);
 			#endregion
 		}
 	}
