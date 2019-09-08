@@ -155,6 +155,7 @@
     <Compile Include="com.Util\InfoCollection.cs" />
     <Compile Include="com.Util\MyDateTime.cs" />
     <Compile Include="com.Util\ParDatos.cs" />
+    <Compile Include="com.Util\ResultadoConsulta.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
     <Compile Include="com.Util\TablaSimbolos.cs" />
     <Compile Include="com.Util\TipoObjetoDB.cs" />

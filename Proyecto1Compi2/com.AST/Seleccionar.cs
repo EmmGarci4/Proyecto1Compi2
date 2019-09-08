@@ -1,5 +1,7 @@
-﻿using com.Analisis.Util;
+﻿using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,79 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
+			
+			//VALIDANDO TABLA
+			if (sesion.DBActual != null)
+			{
+				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+				if (db.ExisteTabla(tabla))
+				{
+					Tabla miTabla = db.BuscarTabla(tabla);
+					ResultadoConsulta resultado = new ResultadoConsulta();
+					//AGREGANDO FILA A LA TABLA DE SIMBOLOS
+					int i = 0;
+					for (i=0;i<miTabla.ContadorFilas;i++) {
+						TablaSimbolos local = new TablaSimbolos(tb);
+						foreach (Columna cl in miTabla.Columnas)
+						{
+							object dato = cl.Datos.ElementAt(i);
+							Simbolo s;
+							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+							{
+								s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+
+							}
+							else
+							{
+								s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+							}
+
+							local.AgregarSimbolo(s);
+
+						}
+						//SELECCIONANDO LOS DATOS
+						if (listaAccesos != null)
+						{
+							//HAY COLUMNAS
+						}
+						else
+						{
+							//COMODIN
+							Simbolo val;
+								FilaDatos fila = new FilaDatos();
+								if (resultado.Titulos == null)
+								{
+								resultado.Titulos = new List<string>();
+									foreach (Columna cl in miTabla.Columnas)
+									{
+										resultado.Titulos.Add(cl.Nombre);
+									}
+								}
+								//llenando nombre de columnas
+								foreach (Columna cl in miTabla.Columnas)
+								{
+									val = local.GetSimbolo(cl.Nombre);
+									fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
+								}
+								resultado.Add(fila);
+						}
+
+					}
+					Console.WriteLine(resultado.ToString());
+				}
+				else
+				{
+						return new ThrowError(Util.TipoThrow.TableAlreadyExists,
+							"La tabla '" + tabla + "' no existe",
+							Linea, Columna);
+				}
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+					Linea, Columna);
+			}
 
 			return null;
 		}
