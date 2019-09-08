@@ -1,5 +1,6 @@
 ﻿using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +22,33 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
-			//HACER CONSULTA Y GUARDAR EL RESULTADO
-			throw new NotImplementedException();
+			if (ts.ExisteSimbolo(nombre))
+			{
+				Simbolo s = ts.GetSimbolo(nombre);
+				if (s.TipoDato.Tipo == TipoDatoDB.CURSOR)
+				{
+					Cursor cursor = (Cursor)s.Valor;
+					object resultado = cursor.Select.Ejecutar(ts, sesion);
+					if (resultado!=null) {
+						if (resultado.GetType()==typeof(ThrowError)) {
+							return resultado;
+						}
+						cursor.Resultado = (ResultadoConsulta)resultado;
+					}
+				}
+				else
+				{
+					return new ThrowError(TipoThrow.Exception,
+						"La variable '" + nombre + "' no es un cursor",
+						Linea, Columna);
+				}
+			}
+			else {
+				return new ThrowError(TipoThrow.Exception,
+						"La variable '" + nombre + "' no existe",
+						Linea, Columna);
+			}
+			return null;
 		}
 	}
 }

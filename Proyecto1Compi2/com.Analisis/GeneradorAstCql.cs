@@ -285,7 +285,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetCrearCursor(ParseTreeNode sentencia)
 		{
-			return new CrearCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(1)),
+			return new CrearCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
 				sentencia.Span.Location.Line,sentencia.Span.Location.Column);
 		}
 

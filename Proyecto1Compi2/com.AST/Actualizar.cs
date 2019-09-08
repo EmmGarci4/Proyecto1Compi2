@@ -48,7 +48,6 @@ namespace Proyecto1Compi2.com.AST
 					foreach (AsignacionColumna asignacion in this.asignaciones) {
 
 					}
-
 					//**************************************************************************
 				}
 				else

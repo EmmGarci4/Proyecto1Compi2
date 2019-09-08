@@ -149,11 +149,10 @@ namespace Proyecto1Compi2.com.AST
 								resultado.Add(fila);
 							}
 							//*********************************************************************************
-
 						}
-
 					}
-					Form1.MostrarMensajeAUsuario(resultado.ToString());
+					//Form1.MostrarMensajeAUsuario(resultado.ToString());
+					return resultado;
 				}
 				else
 				{
@@ -169,7 +168,6 @@ namespace Proyecto1Compi2.com.AST
 					Linea, Columna);
 			}
 
-			return null;
 		}
 	}
 }
