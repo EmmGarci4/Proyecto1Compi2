@@ -331,14 +331,6 @@ namespace Proyecto1Compi2.com.Util
 					n = n.TrimStart('<');
 					n = n.TrimEnd('>');
 					return new TipoObjetoDB(TipoDatoDB.SET_PRIMITIVO, n);
-				//maps
-				case "map<string>":
-				case "map<int>":
-				case "map<double>":
-				case "map<boolean>":
-				case "map<date>":
-				case "map<time>":
-					return new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, nombre.Replace("map|<|>", string.Empty));
 				default:
 					if (nombre.StartsWith("list"))
 					{
@@ -363,7 +355,20 @@ namespace Proyecto1Compi2.com.Util
 					}
 					else if (nombre.StartsWith("map"))
 					{
-						return new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, nombre.Replace("map|<|>", string.Empty));
+						n = Regex.Replace(nombre, @"^[^<]*", string.Empty);
+						n = n.TrimStart('<');
+						n = n.TrimEnd('>');
+						if (n.Contains('<'))
+						{
+							n = n + ">";
+						}
+						string[] tipos = n.Split(',');
+						TipoObjetoDB tipoMap = GetTipoObjetoDBPorCadena(tipos[1]);
+						if (IsPrimitivo(tipoMap.Tipo))
+						{
+							return new TipoObjetoDB(TipoDatoDB.MAP_PRIMITIVO, n);
+						}
+						return new TipoObjetoDB(TipoDatoDB.MAP_OBJETO, n);
 					}
 					else
 					{

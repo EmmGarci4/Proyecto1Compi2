@@ -773,8 +773,34 @@ namespace Proyecto1Compi2.com.AST
 					return true;
 				case TipoDatoDB.MAP_OBJETO:
 				case TipoDatoDB.MAP_PRIMITIVO:
-					//UFFFF JODER
-					break;
+					string[] tipos = tipoInstancia.Nombre.Split(',');
+					tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipos[1]);
+					if (Datos.IsLista(tipoAdentro.Tipo))
+					{
+						object re = ValidarInstanciaLista(tipoAdentro, sesion);
+						if (re != null)
+						{
+							if (re.GetType() == typeof(ThrowError))
+							{
+								return re;
+							}
+						}
+						return ((bool)re);
+					}
+					else if (Datos.IsPrimitivo(tipoAdentro.Tipo))
+					{
+						return true;
+					}
+					else
+					{
+						//comprobar que exista el objeto
+						object condicion = ExisteObjeto(tipoAdentro, sesion);
+						if (condicion.GetType() == typeof(ThrowError))
+						{
+							return condicion;
+						}
+						return true;
+					}
 			}
 			return false;
 		}

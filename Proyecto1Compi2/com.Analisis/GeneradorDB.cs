@@ -399,7 +399,7 @@ namespace Proyecto1Compi2.com.Analisis
 										else
 										{
 											if (Datos.IsLista(col.Tipo.Tipo)) {
-												if (!ValidarInstanciaLista(col.Tipo, db)) {
+												if (!ValidarInstanciaLista(col.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column)) {
 													continue;
 												}
 											}
@@ -489,7 +489,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static bool ValidarInstanciaLista(TipoObjetoDB tipoInstancia, List<object> objetos)
+		private static bool ValidarInstanciaLista(TipoObjetoDB tipoInstancia, List<object> objetos,int linea,int columna)
 		{
 			switch (tipoInstancia.Tipo)
 			{
@@ -498,7 +498,7 @@ namespace Proyecto1Compi2.com.Analisis
 					TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
 					if (Datos.IsLista(tipoAdentro.Tipo))
 					{
-						if (!ValidarInstanciaLista(tipoAdentro, objetos))
+						if (!ValidarInstanciaLista(tipoAdentro, objetos,linea,columna))
 						{
 								return false;
 						}
@@ -513,17 +513,44 @@ namespace Proyecto1Compi2.com.Analisis
 						//comprobar que exista el objeto
 						if (!ExisteUt(tipoAdentro.Nombre,objetos))
 						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El objeto '"+tipoAdentro.Nombre+"' no existe",
+								  linea, columna));
 							return false;
 						}
 						return true;
 					}
 				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.SET_PRIMITIVO:
+				case TipoDatoDB.MAP_PRIMITIVO:
 					return true;
 				case TipoDatoDB.MAP_OBJETO:
-				case TipoDatoDB.MAP_PRIMITIVO:
-					//UFFFF JODER
-					break;
+					string[] tipos = tipoInstancia.Nombre.Split(',');
+					tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipos[1]);
+					if (Datos.IsLista(tipoAdentro.Tipo))
+					{
+						if (!ValidarInstanciaLista(tipoAdentro, objetos,linea,columna))
+						{
+							return false;
+						}
+						return true;
+					}
+					else if (Datos.IsPrimitivo(tipoAdentro.Tipo))
+					{
+						return true;
+					}
+					else
+					{
+						//comprobar que exista el objeto
+						if (!ExisteUt(tipoAdentro.Nombre, objetos))
+						{
+							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								"El objeto '" + tipoAdentro.Nombre + "' no existe",
+								  linea, columna));
+							return false;
+						}
+						return true;
+					}
 			}
 			return false;
 		}
@@ -1033,7 +1060,7 @@ namespace Proyecto1Compi2.com.Analisis
 											{
 												if (Datos.IsLista(par.Tipo.Tipo))
 												{
-													if (ValidarInstanciaLista(par.Tipo, db))
+													if (ValidarInstanciaLista(par.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
 													{
 														proc.Parametros.Add(par);
 													}
@@ -1083,7 +1110,7 @@ namespace Proyecto1Compi2.com.Analisis
 											{
 												if (Datos.IsLista(par.Tipo.Tipo))
 												{
-													if (ValidarInstanciaLista(par.Tipo, db))
+													if (ValidarInstanciaLista(par.Tipo, db,raiz.Span.Location.Line, raiz.Span.Location.Column))
 													{
 														proc.Retornos.Add(par);
 													}
@@ -1629,7 +1656,7 @@ namespace Proyecto1Compi2.com.Analisis
 										{
 											if (Datos.IsLista(tipodato.Tipo))
 											{
-												if (ValidarInstanciaLista(tipodato, db))
+												if (ValidarInstanciaLista(tipodato, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
 												{
 													tipo = tipodato.ToString();
 												}
