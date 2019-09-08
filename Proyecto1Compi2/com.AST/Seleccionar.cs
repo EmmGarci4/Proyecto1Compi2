@@ -86,7 +86,27 @@ namespace Proyecto1Compi2.com.AST
 								object val = listaAccesos.ElementAt(indiceColumna).GetValor(local, sesion);
 								fila.Datos.Add(new ParDatos("", val));
 							}
-							resultado.Add(fila);
+							//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
+							if (PropiedadWhere != null)
+							{
+								object condicionWhere = PropiedadWhere.GetValor(local, sesion);
+								if (condicionWhere != null)
+								{
+									if (condicionWhere.GetType() == typeof(ThrowError))
+									{
+										return condicionWhere;
+									}
+									if ((bool)condicionWhere)
+									{
+										resultado.Add(fila);
+									}
+								}
+							}
+							else
+							{
+								resultado.Add(fila);
+							}
+							//*********************************************************************************
 						}
 						else
 						{
@@ -108,11 +128,32 @@ namespace Proyecto1Compi2.com.AST
 									val = local.GetSimbolo(cl.Nombre);
 									fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
 								}
+							//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
+							if (PropiedadWhere != null)
+							{
+								object condicionWhere = PropiedadWhere.GetValor(local, sesion);
+								if (condicionWhere != null)
+								{
+									if (condicionWhere.GetType() == typeof(ThrowError))
+									{
+										return condicionWhere;
+									}
+									if ((bool)condicionWhere)
+									{
+										resultado.Add(fila);
+									}
+								}
+							}
+							else
+							{
 								resultado.Add(fila);
+							}
+							//*********************************************************************************
+
 						}
 
 					}
-					Console.WriteLine(resultado.ToString());
+					Form1.MostrarMensajeAUsuario(resultado.ToString());
 				}
 				else
 				{
