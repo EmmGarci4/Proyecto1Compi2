@@ -117,6 +117,28 @@ namespace Proyecto1Compi2.com.AST
 							if (!EsListaDeLista(cl))
 							{
 								//más validaciones?
+								if (cl.Tipo.Tipo==TipoDatoDB.OBJETO) {
+									object res = Operacion.ExisteObjeto(cl.Tipo, sesion, Linea, Columna);
+									if (res!=null) {
+										if (res.GetType()==typeof(ThrowError)) {
+											return res;
+										}
+									}
+								}
+								if (cl.Tipo.Tipo==TipoDatoDB.LISTA_OBJETO|| cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO|| cl.Tipo.Tipo == TipoDatoDB.MAP_OBJETO) {
+									TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(cl.Tipo.Nombre);
+									if (tipoAdentro.Tipo == TipoDatoDB.OBJETO)
+									{
+										object res = Operacion.ExisteObjeto(tipoAdentro, sesion, Linea, Columna);
+										if (res != null)
+										{
+											if (res.GetType() == typeof(ThrowError))
+											{
+												return res;
+											}
+										}
+									}
+								}
 								//AGREGANDO COLUMNA A TABLA
 								tabla.AgregarColumna(cl);
 							}

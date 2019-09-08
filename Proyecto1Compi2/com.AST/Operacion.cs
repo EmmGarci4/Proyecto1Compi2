@@ -761,7 +761,7 @@ namespace Proyecto1Compi2.com.AST
 					}
 					else {
 						//comprobar que exista el objeto
-						object condicion = ExisteObjeto(tipoAdentro, sesion);
+						object condicion = ExisteObjeto(tipoAdentro, sesion,Linea,Columna);
 						if (condicion.GetType() == typeof(ThrowError))
 						{
 							return condicion;
@@ -794,7 +794,7 @@ namespace Proyecto1Compi2.com.AST
 					else
 					{
 						//comprobar que exista el objeto
-						object condicion = ExisteObjeto(tipoAdentro, sesion);
+						object condicion = ExisteObjeto(tipoAdentro, sesion,Linea,Columna);
 						if (condicion.GetType() == typeof(ThrowError))
 						{
 							return condicion;
@@ -805,7 +805,7 @@ namespace Proyecto1Compi2.com.AST
 			return false;
 		}
 
-		private object ExisteObjeto(TipoObjetoDB tipoDatoLista, Sesion sesion)
+		public static object ExisteObjeto(TipoObjetoDB tipoDatoLista, Sesion sesion,int Linea,int Columna)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)

@@ -44,6 +44,16 @@ namespace Proyecto1Compi2.com.db
 			columnas.Add(columna);
 		}
 
+		public void AgregarColumnaNueva(Columna columna)
+		{
+			int i;
+			for (i = 0; i < contadorFilas; i++)
+			{
+				columna.Datos.Add(Declaracion.GetValorPredeterminado(columna.Tipo.Tipo));
+			}
+			columnas.Add(columna);
+		}
+
 		public bool ExisteColumna(string colum)
 		{
 			foreach (Columna cl in this.columnas)

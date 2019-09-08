@@ -33,7 +33,8 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
-			throw new NotImplementedException();
+
+			return null;
 		}
 	}
 }

@@ -93,7 +93,7 @@ namespace Proyecto1Compi2.com.AST
 						//TODAS LAS VALIDACIONES FUERON PASADAS
 						foreach (Columna cl in agregarCols)
 						{
-							tabla.AgregarColumna(cl);
+							tabla.AgregarColumnaNueva(cl);
 						}
 					}
 					else
