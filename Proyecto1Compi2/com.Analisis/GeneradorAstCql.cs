@@ -1087,12 +1087,55 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 
 			List<object> cols = new List<object>();
+			bool existeLlave = false;
+			bool es_compuesta = false;
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
 			{
+				
 				object cl = GetColumna(nodo);
 				if (cl != null)
 				{
-					cols.Add(cl);
+					if (cl.GetType() == typeof(List<string>)) {
+						if (!existeLlave)
+						{
+							cols.Add(cl);
+							existeLlave = true;
+							es_compuesta = true;
+						}
+						else {
+							//error ya existe una llave primaria
+							Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,"Ya existe una llave primaria",
+								nodo.Span.Location.Line,nodo.Span.Location.Column));
+						}
+					} else if (cl.GetType()==typeof(Columna)) {
+						if (((Columna)cl).IsPrimary)
+						{
+							if (!existeLlave)
+							{
+								cols.Add(cl);
+								existeLlave = true;
+							}
+							else {
+								//error 
+								if (es_compuesta)
+								{
+									Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+									"No se puede agregar una llave primaria compuesta y una llave primaria unitaria al mismo tiempo",
+								nodo.Span.Location.Line, nodo.Span.Location.Column));
+								}
+								else {
+									Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
+									"Ya existe una llave primaria",
+								nodo.Span.Location.Line, nodo.Span.Location.Column));
+								}
+								
+							}
+						}
+						else {
+							cols.Add(cl);
+						}
+					}
+					
 				}
 			}
 			return cols;

@@ -82,7 +82,7 @@ namespace Proyecto1Compi2.com.Util
 			int i = 0;
 			foreach (KeyValuePair<object,object> ib in this)
 			{
-				cad.Append(ib.Key.ToString()+":"+ib.Value.ToString());
+				cad.Append(ib.Key.ToString()+"="+ib.Value.ToString());
 				if (i < this.Count - 1)
 				{
 					cad.Append(",");

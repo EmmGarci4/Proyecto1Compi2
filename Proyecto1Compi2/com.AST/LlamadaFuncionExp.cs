@@ -26,11 +26,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
-			if (ejecutado)
-			{
 				return tipoRetorno;
-			}
-			return TipoOperacion.Nulo;
 		}
 
 		public override object GetValor(TablaSimbolos ts,Sesion sesion)
@@ -39,10 +35,10 @@ namespace Proyecto1Compi2.com.AST
 			ejecutado = true;
 			if (res != null)
 			{
+				if (res.GetType()==typeof(ThrowError)) {
+					return res;
+				}
 				this.tipoRetorno = Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(res).Tipo);
-			}
-			else {
-				this.tipoRetorno = TipoOperacion.Nulo;
 			}
 				return res;
 		}
