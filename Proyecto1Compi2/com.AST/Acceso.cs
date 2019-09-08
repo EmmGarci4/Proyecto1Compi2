@@ -148,9 +148,19 @@ namespace Proyecto1Compi2.com.AST
 												Linea, Columna);
 					case TipoAcceso.Campo:
 						//tablas Y COLUMNAS
-						return new ThrowError(Util.TipoThrow.NullPointerException,
-												"NULL",
-												Linea, Columna);
+						if (ts.ExisteSimbolo(valor.Value.ToString()))
+						{
+							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
+							simbolosApilados.Push(sim);
+							object respuesta = GetSimbolosApilados(simbolosApilados, sim, ts, sesion);
+							return respuesta;
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"El campo '" + valor.Value.ToString() + "' no existe",
+								Linea, Columna);
+						}
 					//enviar sobre campo
 					case TipoAcceso.LlamadaFuncion:
 						//ejecutar llamada de funcion y retornar el valor 

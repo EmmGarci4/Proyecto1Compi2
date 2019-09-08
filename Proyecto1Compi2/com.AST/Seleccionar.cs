@@ -69,12 +69,31 @@ namespace Proyecto1Compi2.com.AST
 						if (listaAccesos != null)
 						{
 							//HAY COLUMNAS
+							FilaDatos fila = new FilaDatos();
+							//TITULOS
+							if (resultado.Titulos == null)
+							{
+								int cc;
+								resultado.Titulos = new List<string>();
+								for (cc=0;cc<listaAccesos.Count;cc++) {
+									resultado.Titulos.Add("Resultado "+(cc+1));
+								}
+							}
+							//VALORES
+							int indiceColumna;
+							for (indiceColumna = 0; indiceColumna < listaAccesos.Count; indiceColumna++)
+							{
+								object val = listaAccesos.ElementAt(indiceColumna).GetValor(local, sesion);
+								fila.Datos.Add(new ParDatos("", val));
+							}
+							resultado.Add(fila);
 						}
 						else
 						{
 							//COMODIN
 							Simbolo val;
 								FilaDatos fila = new FilaDatos();
+							//TITULOS
 								if (resultado.Titulos == null)
 								{
 								resultado.Titulos = new List<string>();
