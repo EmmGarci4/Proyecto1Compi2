@@ -136,6 +136,15 @@ namespace Proyecto1Compi2.com.db
 			contadorFilas++;
 		}
 
+		internal void EliminarDatos(int i)
+		{
+			foreach (Columna cl in columnas)
+			{
+				cl.Datos.RemoveAt(i);
+			}
+			contadorFilas--;
+		}
+
 		internal void MostrarDatos()
 		{
 			int contador = 0;
