@@ -100,23 +100,60 @@ namespace Proyecto1Compi2.com.AST
 					 if (sim.Estructura.GetType() == typeof(Objeto))
 					{
 						Objeto obj = (Objeto)sim.Estructura;
-						if (obj.Atributos.ContainsKey(sim.Nombre))
+						if (obj.Atributos.ContainsKey(sim.Nombre.ToString()))
 						{
-							TipoObjetoDB tipo1 = obj.Plantilla.Atributos[sim.Nombre];
+							TipoObjetoDB tipo1 = obj.Plantilla.Atributos[sim.Nombre.ToString()];
 							if (Datos.IsTipoCompatibleParaAsignar(tipo1, nuevoValor))
 							{
-								obj.Atributos[sim.Nombre] = nuevoValor;
+								obj.Atributos[sim.Nombre.ToString()] = nuevoValor;
 							}
 							else {
 								return new ThrowError(Util.TipoThrow.Exception,
-									"No se puede asignar el valor al atributo '"+sim.Nombre+"'",
+									"No se puede asignar el valor al atributo '" + sim.Nombre + "'",
 									Linea, Columna);
 							}
 						}
 						else
 						{
 							return new ThrowError(Util.TipoThrow.Exception,
-											"El objeto tipo '"+obj.Plantilla.Nombre+"' no contiene al atributo '"+sim.Nombre+"'",
+											"El objeto tipo '" + obj.Plantilla.Nombre + "' no contiene al atributo '" + sim.Nombre + "'",
+											Linea, Columna);
+						}
+					} else if (sim.Estructura.GetType()==typeof(CollectionListCql)) {
+						CollectionListCql list = (CollectionListCql)sim.Estructura;
+						if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(list.TipoDato.Nombre), nuevoValor))
+						{
+							object ob = list.SetItem((int)sim.Nombre, nuevoValor, Linea, Columna);
+							if (ob!=null) {
+								if (ob.GetType()==typeof(ThrowError)) {
+									return ob;
+								}
+							}
+						}
+						else {
+							return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede asignar el valor '" + nuevoValor.ToString() + "' al tipo '" + list.TipoDato.ToString() + "'",
+											Linea, Columna);
+						}
+					}
+					else if (sim.Estructura.GetType() == typeof(CollectionMapCql))
+					{
+						CollectionMapCql list = (CollectionMapCql)sim.Estructura;
+						if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(list.TipoValor.Nombre), nuevoValor))
+						{
+							object ob = list.SetItem(sim.Nombre, nuevoValor, Linea, Columna);
+							if (ob != null)
+							{
+								if (ob.GetType() == typeof(ThrowError))
+								{
+									return ob;
+								}
+							}
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede asignar el valor '"+nuevoValor.ToString()+"' al tipo '"+list.TipoValor.ToString()+"'",
 											Linea, Columna);
 						}
 					}
@@ -155,22 +192,79 @@ namespace Proyecto1Compi2.com.AST
 									if (indice.GetType()==typeof(ThrowError)) {
 										return indice;
 									}
-									if (cl.Datos[posicionDato].GetType() == typeof(CollectionListCql))
+									if (cl.Datos[posicionDato] != null)
 									{
-										if (indice.GetType() != typeof(int))
+										if (cl.Datos[posicionDato].GetType() == typeof(CollectionListCql))
 										{
-											CollectionListCql cllection = (CollectionListCql)cl.Datos[posicionDato];
-											simbolosApilados.Push(new ParAsignacion(cllection[(int)indice], cllection.TipoDato.ToString()));
-											return GetSimbolosApilados(simbolosApilados, ts, sesion);
+											if (indice.GetType() == typeof(int))
+											{
+												int indiceColection = (int)indice;
+
+												CollectionListCql cllection = (CollectionListCql)cl.Datos[posicionDato];
+												if (indiceColection < cllection.Count)
+												{
+													if (this.objetos.Count == 0)
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoDato.ToString()));
+													}
+													else
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoDato.ToString()));
+														simbolosApilados.Push(new ParAsignacion(cllection[indiceColection], cllection.TipoDato.Nombre.ToString()));
+													}
+													return GetSimbolosApilados(simbolosApilados, ts, sesion);
+												}
+												else
+												{
+													return new ThrowError(TipoThrow.IndexOutException,
+														"El indice es mayor a la cantidad de datos en el collection",
+														Linea, Columna);
+												}
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.Exception,
+												"Solo se puede acceder a un Collection con un inidce tipo entero",
+												Linea, Columna);
+											}
 										}
-										else {
-											return new ThrowError(TipoThrow.Exception,
-											"Solo se puede acceder a un Collection con un inidce tipo entero",
+										else if (cl.Datos[posicionDato].GetType() == typeof(CollectionMapCql))
+										{
+											//es un map
+											CollectionMapCql cllection = (CollectionMapCql)cl.Datos[posicionDato];
+											if (Datos.IsTipoCompatible(cllection.TipoLlave, indice))
+											{
+												if (cllection.ContainsKey(indice))
+												{
+													if (this.objetos.Count == 0)
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoValor.ToString()));
+													}
+													else
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoValor.ToString()));
+														simbolosApilados.Push(new ParAsignacion(cllection[indice], cllection.TipoValor.Nombre.ToString()));
+													}
+													return GetSimbolosApilados(simbolosApilados, ts, sesion);
+												}
+												else
+												{
+													return new ThrowError(TipoThrow.IndexOutException,
+														"El indice no existe en el collection",
+														Linea, Columna);
+												}
+											}
+											else {
+												return new ThrowError(TipoThrow.Exception,
+											"El valor no coincide con el tipo de valor de la llave del colection Map",
 											Linea, Columna);
+											}
 										}
 									}
 									else {
-										//es un map
+										return new ThrowError(TipoThrow.Exception,
+											"El valor en la columna '" + valor.Value.ToString() + "' es nulo",
+											Linea, Columna);
 									}
 									
 								}
@@ -226,9 +320,118 @@ namespace Proyecto1Compi2.com.AST
 				AccesoPar valor = objetos.Dequeue();
 				switch (valor.Tipo) {
 					case TipoAcceso.AccesoArreglo:
-						if (simbolosApilados.Peek().Estructura.GetType()==typeof(CollectionListCql)) {
+						AccesoArreglo arreglo = (AccesoArreglo)valor.Value;
+						if (simbolosApilados.Peek().Estructura.GetType() == typeof(Objeto))
+						{
+							Objeto obj = (Objeto)simbolosApilados.Peek().Estructura;
+							if (obj.Atributos.ContainsKey(arreglo.Nombre))
+							{
+								object indice = arreglo.Valor.GetValor(ts, sesion);
+								if (indice != null)
+								{
+									if (indice.GetType() == typeof(ThrowError))
+									{
+										return indice;
+									}
+									object valorInterno = obj.Atributos[arreglo.Nombre];
+								TipoObjetoDB tipoValorInterno = Datos.GetTipoObjetoDB(valorInterno);
 
-						
+									if (Datos.IsLista(tipoValorInterno.Tipo))
+									{
+										if (valorInterno.GetType() == typeof(CollectionListCql))
+										{
+											if (indice.GetType() == typeof(int))
+											{
+												int indiceColection = (int)indice;
+
+												CollectionListCql cllection = (CollectionListCql)valorInterno;
+												if (indiceColection < cllection.Count)
+												{
+													if (this.objetos.Count == 0)
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, indiceColection));
+													}
+													else
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, indiceColection));
+														simbolosApilados.Push(new ParAsignacion(cllection[indiceColection], cllection.TipoDato.Nombre.ToString()));
+													}
+													return GetSimbolosApilados(simbolosApilados, ts, sesion);
+												}
+												else
+												{
+													return new ThrowError(TipoThrow.IndexOutException,
+														"El indice es mayor a la cantidad de datos en el collection",
+														Linea, Columna);
+												}
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.Exception,
+												"Solo se puede acceder a un Collection con un inidce tipo entero",
+												Linea, Columna);
+											}
+										}
+										else if (valorInterno.GetType() == typeof(CollectionMapCql))
+										{
+											//es un map
+											CollectionMapCql cllection = (CollectionMapCql)valorInterno;
+											if (Datos.IsTipoCompatible(cllection.TipoLlave, indice))
+											{
+												if (cllection.ContainsKey(indice))
+												{
+													if (this.objetos.Count == 0)
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoValor.ToString()));
+													}
+													else
+													{
+														simbolosApilados.Push(new ParAsignacion(cllection, indice));
+														simbolosApilados.Push(new ParAsignacion(cllection[indice], indice));
+													}
+													return GetSimbolosApilados(simbolosApilados, ts, sesion);
+												}
+												else
+												{
+													return new ThrowError(TipoThrow.IndexOutException,
+														"El indice no existe en el collection",
+														Linea, Columna);
+												}
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.Exception,
+											"El valor no coincide con el tipo de valor de la llave del colection Map",
+											Linea, Columna);
+											}
+										}
+
+										simbolosApilados.Push(new ParAsignacion(valorInterno, arreglo.Nombre));
+										return GetSimbolosApilados(simbolosApilados, ts, sesion);
+									}
+									else {
+										simbolosApilados.Push(new ParAsignacion(obj.Atributos[arreglo.Nombre], indice));
+										return GetSimbolosApilados(simbolosApilados, ts, sesion);
+									}
+								}
+								else {
+									return new ThrowError(Util.TipoThrow.Exception,
+									"El atributo '" + valor.Value.ToString() + "' no es una lista, set o Map",
+									Linea, Columna);
+								}
+							}
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+							"El atributo '" + valor.Value.ToString() + "' no existe en el objeto '" + obj.Plantilla.Nombre + "'",
+							Linea, Columna);
+							}
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+							"La columna '" + simbolosApilados.Peek().Nombre + "' no contiene objetos",
+							Linea, Columna);
 						}
 						break;
 					case TipoAcceso.Campo:
@@ -240,17 +443,16 @@ namespace Proyecto1Compi2.com.AST
 								return GetSimbolosApilados(simbolosApilados,ts,sesion);
 							}
 							else {
-								//error
 								return new ThrowError(Util.TipoThrow.Exception,
 							"El atributo '"+valor.Value.ToString()+"' no existe en el objeto '"+obj.Plantilla.Nombre+"'",
 							Linea, Columna);
 							}
 						}
 						else {
-							//error
-							
+							return new ThrowError(Util.TipoThrow.Exception,
+							"La columna '"+ simbolosApilados.Peek().Nombre+ "' no contiene objetos",
+							Linea, Columna);
 						}
-						break;
 					case TipoAcceso.LlamadaFuncion:
 					case TipoAcceso.Variable:
 						return new ThrowError(Util.TipoThrow.Exception,
@@ -260,6 +462,7 @@ namespace Proyecto1Compi2.com.AST
 			}
 			return simbolosApilados;
 		}
+
 		internal void PasarTabla(Tabla miTabla)
 		{
 			this.tabla = miTabla;

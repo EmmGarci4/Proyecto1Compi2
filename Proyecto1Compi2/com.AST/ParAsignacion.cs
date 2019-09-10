@@ -4,15 +4,15 @@
 	{
 
 		object estructura;
-		string nombre;
+		object nombre;
 
-		public ParAsignacion(object estructura, string nombre)
+		public ParAsignacion(object estructura, object nombre)
 		{
 			this.estructura = estructura;
 			this.nombre = nombre;
 		}
 
 		public object Estructura { get => estructura; set => estructura = value; }
-		public string Nombre { get => nombre; set => nombre = value; }
+		public object Nombre { get => nombre; set => nombre = value; }
 	}
 }

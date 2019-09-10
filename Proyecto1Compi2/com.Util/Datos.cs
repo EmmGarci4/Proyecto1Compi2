@@ -270,7 +270,7 @@ namespace Proyecto1Compi2.com.Util
 				}
 				else
 				{
-					return new TipoObjetoDB(TipoDatoDB.DATE, "hour");
+					return new TipoObjetoDB(TipoDatoDB.DATE, "date");
 				}
 			}
 			//lista o set

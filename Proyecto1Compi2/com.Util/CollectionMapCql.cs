@@ -59,7 +59,7 @@ namespace Proyecto1Compi2.com.Util
 				}
 			}
 			return new ThrowError(TipoThrow.Exception,
-				"La clave '"+valorr+"' no existe", linea, columna);
+				"La clave '"+clave+"' no existe", linea, columna);
 		}
 
 		internal object EliminarItem(object nuevo, int linea, int columna)

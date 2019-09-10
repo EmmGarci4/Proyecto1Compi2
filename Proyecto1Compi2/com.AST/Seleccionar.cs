@@ -44,6 +44,25 @@ namespace Proyecto1Compi2.com.AST
 				{
 					Tabla miTabla = db.BuscarTabla(tabla);
 					ResultadoConsulta resultado = new ResultadoConsulta();
+					//TITULOS
+					if (listaAccesos == null)
+					{
+						resultado.Titulos = new List<string>();
+						foreach (Columna cl in miTabla.Columnas)
+						{
+							resultado.Titulos.Add(cl.Nombre);
+						}
+					}
+					else
+					{
+						int cc;
+						resultado.Titulos = new List<string>();
+						for (cc = 0; cc < listaAccesos.Count; cc++)
+						{
+							resultado.Titulos.Add("Resultado " + (cc + 1));
+						}
+					}
+					//DATOS
 					int i = 0;
 					for (i = 0; i < miTabla.ContadorFilas; i++)
 					{
@@ -71,21 +90,18 @@ namespace Proyecto1Compi2.com.AST
 						{
 							//HAY COLUMNAS
 							FilaDatos fila = new FilaDatos();
-							//TITULOS
-							if (resultado.Titulos == null)
-							{
-								int cc;
-								resultado.Titulos = new List<string>();
-								for (cc = 0; cc < listaAccesos.Count; cc++)
-								{
-									resultado.Titulos.Add("Resultado " + (cc + 1));
-								}
-							}
 							//VALORES
 							int indiceColumna;
 							for (indiceColumna = 0; indiceColumna < listaAccesos.Count; indiceColumna++)
 							{
 								object val = listaAccesos.ElementAt(indiceColumna).GetValor(local, sesion);
+								if (val != null)
+								{
+									if (val.GetType() == typeof(ThrowError))
+									{
+										return val;
+									}
+								}
 								fila.Datos.Add(new ParDatos("", val));
 							}
 							//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
@@ -115,15 +131,6 @@ namespace Proyecto1Compi2.com.AST
 							//COMODIN
 							Simbolo val;
 							FilaDatos fila = new FilaDatos();
-							//TITULOS
-							if (resultado.Titulos == null)
-							{
-								resultado.Titulos = new List<string>();
-								foreach (Columna cl in miTabla.Columnas)
-								{
-									resultado.Titulos.Add(cl.Nombre);
-								}
-							}
 							//llenando nombre de columnas
 							foreach (Columna cl in miTabla.Columnas)
 							{
