@@ -69,75 +69,63 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				//****
-				if (simbolos.Count > 1)
+				if (simbolos.Count > 0)
 				{
-					object sim = simbolos.Pop();
 					
-					//if (s.TipoDato.Tipo == TipoDatoDB.OBJETO)
-					//{
-					//	Objeto objeto = (Objeto)s.Valor;
-					//	if (objeto.Atributos.ContainsKey(nombreAtributo))
-					//	{
-					//		if (Datos.IsTipoCompatibleParaAsignar(objeto.Plantilla.Atributos[nombreAtributo], nuevoValor))
-					//		{
-					//			object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
-					//			if (nuevoDato != null)
-					//			{
-					//				if (nuevoDato.GetType() == typeof(ThrowError))
-					//				{
-					//					return nuevoDato;
-					//				}
-					//				objeto.Atributos[nombreAtributo] = nuevoDato;
-					//			}
-
-					//		}
-					//		else
-					//		{
-					//			return new ThrowError(Util.TipoThrow.Exception,
-					//				"No se puede asignar el valor",
-					//				Linea, Columna);
-					//		}
-					//	}
-					//	else
-					//	{
-					//		return new ThrowError(Util.TipoThrow.Exception,
-					//		"No existe el atributo '" + nombreAtributo + "' en '" + s.Nombre + "'",
-					//		Linea, Columna);
-					//	}
-					//}
-				}
-				else
-				{
 					ParAsignacion sim = simbolos.Pop();
 					//MODIFICAR VALOR EN COLUMNA
-					//if (sim.Estructura.GetType() == typeof(Columna))
-					//{
-					//	Columna s = (Columna)sim.Estructura;
-					//	if (Datos.IsTipoCompatibleParaAsignar(s.Tipo, nuevoValor))
-					//	{
-					//		object nuevoDato = Datos.CasteoImplicito(s.Tipo, nuevoValor, ts, sesion, Linea, Columna);
-					//		if (nuevoDato != null)
-					//		{
-					//			if (nuevoDato.GetType() == typeof(ThrowError))
-					//			{
-					//				return nuevoDato;
-					//			}
-					//			s.Datos[posicionDato] = nuevoDato;
-					//		}
-					//	}
-					//	else
-					//	{
-					//		return new ThrowError(Util.TipoThrow.Exception,
-					//			"No se puede asignar el valor",
-					//			Linea, Columna);
-					//	}
-					//}
-					//else
-					//{
-					//	return new ThrowError(Util.TipoThrow.Exception,
-					//						"No se puede asignar el valor",
-					//						Linea, Columna);
-					//}
+					if (sim.Estructura.GetType() == typeof(Columna))
+					{
+						Columna s = (Columna)sim.Estructura;
+						if (Datos.IsTipoCompatibleParaAsignar(s.Tipo, nuevoValor))
+						{
+							object nuevoDato = Datos.CasteoImplicito(s.Tipo, nuevoValor, ts, sesion, Linea, Columna);
+							if (nuevoDato != null)
+							{
+								if (nuevoDato.GetType() == typeof(ThrowError))
+								{
+									return nuevoDato;
+								}
+								s.Datos[posicionDato] = nuevoDato;
+							}
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"No se puede asignar el valor",
+								Linea, Columna);
+						}
+					} else
+					 //MODIFICAR VALOR EN OBJETO
+					 if (sim.Estructura.GetType() == typeof(Objeto))
+					{
+						Objeto obj = (Objeto)sim.Estructura;
+						if (obj.Atributos.ContainsKey(sim.Nombre))
+						{
+							TipoObjetoDB tipo1 = obj.Plantilla.Atributos[sim.Nombre];
+							if (Datos.IsTipoCompatibleParaAsignar(tipo1, nuevoValor))
+							{
+								obj.Atributos[sim.Nombre] = nuevoValor;
+							}
+							else {
+								return new ThrowError(Util.TipoThrow.Exception,
+									"No se puede asignar el valor al atributo '"+sim.Nombre+"'",
+									Linea, Columna);
+							}
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+											"El objeto tipo '"+obj.Plantilla.Nombre+"' no contiene al atributo '"+sim.Nombre+"'",
+											Linea, Columna);
+						}
+					}
+					else
+					{
+						return new ThrowError(Util.TipoThrow.Exception,
+											"No se puede asignar el valor",
+											Linea, Columna);
+					}
 				}
 			}
 			return null;
@@ -154,45 +142,75 @@ namespace Proyecto1Compi2.com.AST
 			if (objetos.Count > 0)
 			{
 				AccesoPar valor = objetos.Dequeue();
-				if (valor.Tipo == TipoAcceso.Campo)
-				{
-					if (this.tabla.ExisteColumna(valor.Value.ToString()))
-					{
-						Columna cl = this.tabla.BuscarColumna(valor.Value.ToString());
-						simbolosApilados.Push(new ParAsignacion(cl, valor.Value.ToString()));
-						return GetSimbolosApilados(simbolosApilados, ts, sesion);
-					}
-					else {
-						return new ThrowError(TipoThrow.Exception,
-						"La Columna '" + valor.Value.ToString() + "' no existe",
-						Linea, Columna);
-					}
-
-				} else if (valor.Tipo==TipoAcceso.AccesoArreglo) {
-					AccesoArreglo acceso = (AccesoArreglo)valor.Value;
-					if (this.tabla.ExisteColumna(acceso.Nombre))
-					{
-						Columna cl = this.tabla.BuscarColumna(acceso.Nombre);
-						if (Datos.IsLista(cl.Tipo.Tipo))
+				switch (valor.Tipo) {
+					case TipoAcceso.AccesoArreglo:
+						AccesoArreglo acceso = (AccesoArreglo)valor.Value;
+						if (this.tabla.ExisteColumna(acceso.Nombre))
 						{
-							simbolosApilados.Push(new ParAsignacion(cl, acceso.Nombre));
+							Columna cl = this.tabla.BuscarColumna(acceso.Nombre);
+							if (Datos.IsLista(cl.Tipo.Tipo))
+							{
+								object indice = acceso.Valor.GetValor(ts, sesion);
+								if (indice!=null) {
+									if (indice.GetType()==typeof(ThrowError)) {
+										return indice;
+									}
+									if (cl.Datos[posicionDato].GetType() == typeof(CollectionListCql))
+									{
+										if (indice.GetType() != typeof(int))
+										{
+											CollectionListCql cllection = (CollectionListCql)cl.Datos[posicionDato];
+											simbolosApilados.Push(new ParAsignacion(cllection[(int)indice], cllection.TipoDato.ToString()));
+											return GetSimbolosApilados(simbolosApilados, ts, sesion);
+										}
+										else {
+											return new ThrowError(TipoThrow.Exception,
+											"Solo se puede acceder a un Collection con un inidce tipo entero",
+											Linea, Columna);
+										}
+									}
+									else {
+										//es un map
+									}
+									
+								}
+							}
+							else
+							{
+								return new ThrowError(TipoThrow.Exception,
+							"La Columna '" + valor.Value.ToString() + "' no es una lista o map",
+							Linea, Columna);
+							}
+						}
+						else
+						{
+							return new ThrowError(TipoThrow.Exception,
+							"La Columna '" + valor.Value.ToString() + "' no existe",
+							Linea, Columna);
+						}
+						break;
+					case TipoAcceso.Campo:
+						if (this.tabla.ExisteColumna(valor.Value.ToString()))
+						{
+							Columna cl = this.tabla.BuscarColumna(valor.Value.ToString());
+							if (Datos.IsPrimitivo(cl.Tipo.Tipo)||this.objetos.Count==0)
+							{
+								simbolosApilados.Push(new ParAsignacion(cl, valor.Value.ToString()));
+							}
+							else {
+								simbolosApilados.Push(new ParAsignacion(cl.Datos[posicionDato], valor.Value.ToString()));
+							}
 							return GetSimbolosApilados(simbolosApilados, ts, sesion);
 						}
-						else {
+						else
+						{
 							return new ThrowError(TipoThrow.Exception,
-						"La Columna '" + valor.Value.ToString() + "' no es una lista o map",
-						Linea, Columna);
+							"La Columna '" + valor.Value.ToString() + "' no existe",
+							Linea, Columna);
 						}
-					}
-					else
-					{
+					case TipoAcceso.LlamadaFuncion:
+					case TipoAcceso.Variable:
 						return new ThrowError(TipoThrow.Exception,
-						"La Columna '" + valor.Value.ToString() + "' no existe",
-						Linea, Columna);
-					}
-				}
-				else {
-					return new ThrowError(TipoThrow.Exception,
 						"Se debe especificar la columna a actualizar",
 						Linea, Columna);
 				}
@@ -210,15 +228,7 @@ namespace Proyecto1Compi2.com.AST
 					case TipoAcceso.AccesoArreglo:
 						if (simbolosApilados.Peek().Estructura.GetType()==typeof(CollectionListCql)) {
 
-							CollectionListCql collection = (CollectionListCql)simbolosApilados.Peek().Estructura;
-							//if ()
-							//{
-							//	return new ParAsignacion(obj, valor.Value.ToString());
-							//}
-							//else
-							//{
-							//	//error
-							//}
+						
 						}
 						break;
 					case TipoAcceso.Campo:
@@ -226,7 +236,8 @@ namespace Proyecto1Compi2.com.AST
 						{
 							Objeto obj = (Objeto)simbolosApilados.Peek().Estructura;
 							if (obj.Atributos.ContainsKey(valor.Value.ToString())) {
-								return new ParAsignacion(obj, valor.Value.ToString());
+								simbolosApilados.Push(new ParAsignacion(obj, valor.Value.ToString()));
+								return GetSimbolosApilados(simbolosApilados,ts,sesion);
 							}
 							else {
 								//error
