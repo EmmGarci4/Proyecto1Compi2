@@ -499,11 +499,11 @@ namespace Proyecto1Compi2.com.AST
 							TipoObjetoDB tipoCol = null;
 							if (Datos.IsPrimitivo(tipodato.Tipo))
 							{
-								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipodato.ToString());
+								tipoCol = new TipoObjetoDB(TipoDatoDB.SET_PRIMITIVO, tipodato.ToString());
 							}
 							else
 							{
-								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
+								tipoCol = new TipoObjetoDB(TipoDatoDB.SET_OBJETO, tipodato.ToString());
 							}
 							CollectionListCql collection = new CollectionListCql(tipoCol, false);
 							foreach (Expresion exp in expresiones)

@@ -28,7 +28,7 @@ namespace Proyecto1Compi2
 			textBox2.Clear();
 			Analizador.AddUsuario(new Usuario("admin", "admin"));
 			Sesion sesion = new Sesion("admin", null);
-			if (Analizador.AnalizarCql(this.textBox1.Text,sesion)) //si no hay ErroresCQL sintácticos/léxicos
+			if (Analizador.AnalizarCql(this.richTextBox1.Text,sesion)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count==0) {
 					//si no hay ErroresCQL semánticos
@@ -93,7 +93,7 @@ namespace Proyecto1Compi2
 		{
 
 			textBox2.Clear();
-				if (Analizador.AnalizarChison(this.textBox1.Text))
+				if (Analizador.AnalizarChison(this.richTextBox1.Text))
 				{
 					textBox2.Text = "Finalizado con éxito\n";
 				}
@@ -109,7 +109,7 @@ namespace Proyecto1Compi2
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
 			textBox2.Clear();
-			if (Analizador.AnalizarLup(this.textBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
+			if (Analizador.AnalizarLup(this.richTextBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count == 0)
 				{

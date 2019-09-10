@@ -829,7 +829,7 @@ namespace Proyecto1Compi2.com.Analisis
 				//con where
 				return new Actualizar(GetListaAsignacionesColumna(sentencia.ChildNodes.ElementAt(2)),
 					sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
-					GetWhere(sentencia.ChildNodes.ElementAt(2)),
+					GetWhere(sentencia.ChildNodes.ElementAt(3)),
 					sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 			}
 		}
@@ -864,7 +864,8 @@ namespace Proyecto1Compi2.com.Analisis
 			List<AsignacionColumna> lista = new List<AsignacionColumna>();
 			foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
 			{
-				lista.Add(new AsignacionColumna(GetAcceso(nodo.ChildNodes.ElementAt(0)), GetExpresion(nodo.ChildNodes.ElementAt(1))));
+				lista.Add(new AsignacionColumna(GetAcceso(nodo.ChildNodes.ElementAt(0)), GetExpresion(nodo.ChildNodes.ElementAt(1)),
+					nodo.Span.Location.Line,nodo.Span.Location.Column));
 			}
 			return lista;
 		}

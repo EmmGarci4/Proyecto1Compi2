@@ -79,6 +79,7 @@
     <Compile Include="com.AST\Cursor.cs" />
     <Compile Include="com.AST\Foreach.cs" />
     <Compile Include="com.AST\LlamadaProcedimiento.cs" />
+    <Compile Include="com.AST\ParAsignacion.cs" />
     <Compile Include="com.AST\Throw.cs" />
     <Compile Include="com.AST\Acceso.cs" />
     <Compile Include="com.AST\AccesoArreglo.cs" />

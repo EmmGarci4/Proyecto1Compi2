@@ -92,5 +92,56 @@ namespace Proyecto1Compi2.com.Util
 			cad.Append("}");
 			return cad.ToString();
 		}
+
+		internal string GetLinealizado()
+		{
+			StringBuilder cad = new StringBuilder();
+			cad.Append("{");
+			int i = 0;
+			foreach (KeyValuePair<object, object> ib in this)
+			{
+				cad.Append(ib.Key.ToString() + ":");
+				//***
+				if (ib.Value.GetType() == typeof(CollectionListCql))
+				{
+					cad.Append(((CollectionListCql)ib.Value).GetLinealizado());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+				else if (ib.Value.GetType() == typeof(CollectionMapCql))
+				{
+					cad.Append(((CollectionMapCql)ib.Value).GetLinealizado());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+				else if (ib.Value.GetType() == typeof(Objeto))
+				{
+					cad.Append(((Objeto)ib.Value).GetLinealizado());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+				else
+				{
+					cad.Append(ib.ToString());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+			}
+			cad.Append("}");
+
+			return cad.ToString();
+		}
 	}
 }

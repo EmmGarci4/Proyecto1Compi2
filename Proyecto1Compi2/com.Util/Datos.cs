@@ -50,8 +50,10 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.SET_PRIMITIVO:
 					if (v.GetType() == typeof(CollectionListCql))
 					{
-						if (tipoDato.Equals(((CollectionListCql)v).TipoDato))
+						CollectionListCql collection = (CollectionListCql)v;
+						if (tipoDato.Equals(collection.TipoDato))
 						{
+							
 							return true;
 						}
 						else if (tipoDato.Nombre.Equals("null"))

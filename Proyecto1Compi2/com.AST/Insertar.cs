@@ -164,9 +164,17 @@ namespace Proyecto1Compi2.com.AST
 								else {
 									if (cl.IsPrimary)
 									{
-										return new ThrowError(TipoThrow.ValuesException,
+										if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+										{
+											int UltimoValor = cl.GetUltimoValorCounter();
+											UltimoValor++;
+											valoresAInsertar.Enqueue(UltimoValor);
+										}
+										else {
+											return new ThrowError(TipoThrow.ValuesException,
 											"No se puede insertar un dato nulo en una llave primaria",
 											Linea, Columna);
+										}
 									}
 									else {
 										valoresAInsertar.Enqueue("null");

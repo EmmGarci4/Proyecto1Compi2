@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto1Compi2.com.AST
 {
-	class Seleccionar:Sentencia
+	class Seleccionar : Sentencia
 	{
 		List<Expresion> listaAccesos;
 		string tabla;
@@ -18,7 +18,7 @@ namespace Proyecto1Compi2.com.AST
 		OrderBy order;
 		Limit limit;
 
-		public Seleccionar(List<Expresion> listaAccesos, string tabla, int linea,int columna):base(linea,columna)
+		public Seleccionar(List<Expresion> listaAccesos, string tabla, int linea, int columna) : base(linea, columna)
 		{
 			this.listaAccesos = listaAccesos;
 			this.tabla = tabla;
@@ -33,9 +33,9 @@ namespace Proyecto1Compi2.com.AST
 		internal OrderBy PropiedadOrderBy { get => order; set => order = value; }
 		internal Limit PropiedadLimit { get => limit; set => limit = value; }
 
-		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
+		public override object Ejecutar(TablaSimbolos tb, Sesion sesion)
 		{
-			
+
 			//VALIDANDO TABLA
 			if (sesion.DBActual != null)
 			{
@@ -44,9 +44,10 @@ namespace Proyecto1Compi2.com.AST
 				{
 					Tabla miTabla = db.BuscarTabla(tabla);
 					ResultadoConsulta resultado = new ResultadoConsulta();
-					//AGREGANDO FILA A LA TABLA DE SIMBOLOS
 					int i = 0;
-					for (i=0;i<miTabla.ContadorFilas;i++) {
+					for (i = 0; i < miTabla.ContadorFilas; i++)
+					{
+						//AGREGANDO FILA A LA TABLA DE SIMBOLOS
 						TablaSimbolos local = new TablaSimbolos(tb);
 						foreach (Columna cl in miTabla.Columnas)
 						{
@@ -54,7 +55,7 @@ namespace Proyecto1Compi2.com.AST
 							Simbolo s;
 							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
 							{
-								s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+								s = new Simbolo(cl.Nombre, dato, new TipoObjetoDB(TipoDatoDB.INT, "int"), Linea, Columna);
 
 							}
 							else
@@ -75,8 +76,9 @@ namespace Proyecto1Compi2.com.AST
 							{
 								int cc;
 								resultado.Titulos = new List<string>();
-								for (cc=0;cc<listaAccesos.Count;cc++) {
-									resultado.Titulos.Add("Resultado "+(cc+1));
+								for (cc = 0; cc < listaAccesos.Count; cc++)
+								{
+									resultado.Titulos.Add("Resultado " + (cc + 1));
 								}
 							}
 							//VALORES
@@ -112,22 +114,22 @@ namespace Proyecto1Compi2.com.AST
 						{
 							//COMODIN
 							Simbolo val;
-								FilaDatos fila = new FilaDatos();
+							FilaDatos fila = new FilaDatos();
 							//TITULOS
-								if (resultado.Titulos == null)
-								{
+							if (resultado.Titulos == null)
+							{
 								resultado.Titulos = new List<string>();
-									foreach (Columna cl in miTabla.Columnas)
-									{
-										resultado.Titulos.Add(cl.Nombre);
-									}
-								}
-								//llenando nombre de columnas
 								foreach (Columna cl in miTabla.Columnas)
 								{
-									val = local.GetSimbolo(cl.Nombre);
-									fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
+									resultado.Titulos.Add(cl.Nombre);
 								}
+							}
+							//llenando nombre de columnas
+							foreach (Columna cl in miTabla.Columnas)
+							{
+								val = local.GetSimbolo(cl.Nombre);
+								fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
+							}
 							//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
 							if (PropiedadWhere != null)
 							{
@@ -151,14 +153,14 @@ namespace Proyecto1Compi2.com.AST
 							//*********************************************************************************
 						}
 					}
-					//Form1.MostrarMensajeAUsuario(resultado.ToString());
+					Form1.MostrarMensajeAUsuario(resultado.ToString());
 					return resultado;
 				}
 				else
 				{
-						return new ThrowError(Util.TipoThrow.TableAlreadyExists,
-							"La tabla '" + tabla + "' no existe",
-							Linea, Columna);
+					return new ThrowError(Util.TipoThrow.TableAlreadyExists,
+						"La tabla '" + tabla + "' no existe",
+						Linea, Columna);
 				}
 			}
 			else

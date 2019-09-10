@@ -238,5 +238,49 @@ namespace Proyecto1Compi2.com.Util
 		{
 			this.RemoveAt(posicion);
 		}
+
+		public string GetLinealizado() {
+			StringBuilder cad = new StringBuilder();
+			cad.Append("[");
+			int i = 0;
+			foreach (object ib in this)
+			{
+				if (ib.GetType() == typeof(CollectionListCql))
+				{
+					cad.Append(((CollectionListCql)ib).GetLinealizado());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				} else if (ib.GetType() == typeof(CollectionMapCql))
+				{
+					cad.Append(((CollectionMapCql)ib).GetLinealizado());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				} else if (ib.GetType()==typeof(Objeto)) {
+					cad.Append(((Objeto)ib).GetLinealizado());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+				else
+				{
+					cad.Append(ib.ToString());
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+			}
+			cad.Append("]");
+			return cad.ToString();
+		}
 	}
 }

@@ -39,7 +39,19 @@ namespace Proyecto1Compi2.com.Util
 				resultado.Append("\t<tr>\n");
 				foreach (ParDatos par in fila.Datos) {
 					resultado.Append("\t\t<td>");
-					resultado.Append(par.Valor);
+					if (par.Valor.GetType() == typeof(CollectionListCql))
+					{
+						resultado.Append(((CollectionListCql)par.Valor).GetLinealizado());
+					}else if (par.Valor.GetType() == typeof(CollectionMapCql))
+					{
+						resultado.Append(((CollectionMapCql)par.Valor).GetLinealizado());
+					}else if (par.Valor.GetType() == typeof(Objeto))
+					{
+						resultado.Append(((Objeto)par.Valor).GetLinealizado());
+					}
+					else {
+						resultado.Append(par.Valor);
+					}
 					resultado.Append("</td>\n");
 				}
 				resultado.Append("\t</tr>\n");

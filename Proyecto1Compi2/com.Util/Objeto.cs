@@ -77,5 +77,34 @@ namespace Proyecto1Compi2.com.Util
 				return hash;
 			}
 		}
+
+		internal string GetLinealizado()
+		{
+			StringBuilder cadena = new StringBuilder();
+			cadena.Append("{\n");
+			int i = 0;
+			foreach (KeyValuePair<string, object> val in atributos)
+			{
+				cadena.Append("\"" + val.Key + "\":");
+				if (val.Value.GetType() == typeof(string) & !Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'") &&
+					!Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+				{
+					cadena.Append("\"" + val.Value + "\"");
+				}
+				else
+				{
+					cadena.Append(val.Value);
+				}
+
+				if (i < atributos.Count - 1)
+				{
+					cadena.Append(",\n");
+				}
+				i++;
+			}
+
+			cadena.Append("\n}");
+			return cadena.ToString();
+		}
 	}
 }
