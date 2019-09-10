@@ -110,34 +110,34 @@ namespace Proyecto1Compi2.com.AST
 				{
 					ParAsignacion sim = simbolos.Pop();
 					//MODIFICAR VALOR EN COLUMNA
-					if (sim.Estructura.GetType() == typeof(Columna))
-					{
-						Columna s = (Columna)sim.Estructura;
-						if (Datos.IsTipoCompatibleParaAsignar(s.Tipo, nuevoValor))
-						{
-							object nuevoDato = Datos.CasteoImplicito(s.Tipo, nuevoValor, ts, sesion, Linea, Columna);
-							if (nuevoDato != null)
-							{
-								if (nuevoDato.GetType() == typeof(ThrowError))
-								{
-									return nuevoDato;
-								}
-								s.Datos[posicionDato] = nuevoDato;
-							}
-						}
-						else
-						{
-							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede asignar el valor",
-								Linea, Columna);
-						}
-					}
-					else
-					{
-						return new ThrowError(Util.TipoThrow.Exception,
-											"No se puede asignar el valor",
-											Linea, Columna);
-					}
+					//if (sim.Estructura.GetType() == typeof(Columna))
+					//{
+					//	Columna s = (Columna)sim.Estructura;
+					//	if (Datos.IsTipoCompatibleParaAsignar(s.Tipo, nuevoValor))
+					//	{
+					//		object nuevoDato = Datos.CasteoImplicito(s.Tipo, nuevoValor, ts, sesion, Linea, Columna);
+					//		if (nuevoDato != null)
+					//		{
+					//			if (nuevoDato.GetType() == typeof(ThrowError))
+					//			{
+					//				return nuevoDato;
+					//			}
+					//			s.Datos[posicionDato] = nuevoDato;
+					//		}
+					//	}
+					//	else
+					//	{
+					//		return new ThrowError(Util.TipoThrow.Exception,
+					//			"No se puede asignar el valor",
+					//			Linea, Columna);
+					//	}
+					//}
+					//else
+					//{
+					//	return new ThrowError(Util.TipoThrow.Exception,
+					//						"No se puede asignar el valor",
+					//						Linea, Columna);
+					//}
 				}
 			}
 			return null;
@@ -159,7 +159,7 @@ namespace Proyecto1Compi2.com.AST
 					if (this.tabla.ExisteColumna(valor.Value.ToString()))
 					{
 						Columna cl = this.tabla.BuscarColumna(valor.Value.ToString());
-						simbolosApilados.Push(new ParAsignacion(cl,valor.Value.ToString()));
+						simbolosApilados.Push(new ParAsignacion(cl, valor.Value.ToString()));
 						return GetSimbolosApilados(simbolosApilados, ts, sesion);
 					}
 					else {
@@ -168,6 +168,28 @@ namespace Proyecto1Compi2.com.AST
 						Linea, Columna);
 					}
 
+				} else if (valor.Tipo==TipoAcceso.AccesoArreglo) {
+					AccesoArreglo acceso = (AccesoArreglo)valor.Value;
+					if (this.tabla.ExisteColumna(acceso.Nombre))
+					{
+						Columna cl = this.tabla.BuscarColumna(acceso.Nombre);
+						if (Datos.IsLista(cl.Tipo.Tipo))
+						{
+							simbolosApilados.Push(new ParAsignacion(cl, acceso.Nombre));
+							return GetSimbolosApilados(simbolosApilados, ts, sesion);
+						}
+						else {
+							return new ThrowError(TipoThrow.Exception,
+						"La Columna '" + valor.Value.ToString() + "' no es una lista o map",
+						Linea, Columna);
+						}
+					}
+					else
+					{
+						return new ThrowError(TipoThrow.Exception,
+						"La Columna '" + valor.Value.ToString() + "' no existe",
+						Linea, Columna);
+					}
 				}
 				else {
 					return new ThrowError(TipoThrow.Exception,
@@ -215,6 +237,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else {
 							//error
+							
 						}
 						break;
 					case TipoAcceso.LlamadaFuncion:
