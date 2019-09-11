@@ -56,6 +56,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							break;
 						}
+						else if (respuesta.GetType() == typeof(ResultadoConsulta))
+						{
+
+						}
 						else
 						{
 							//return 

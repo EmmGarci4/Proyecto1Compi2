@@ -74,6 +74,10 @@ namespace Proyecto1Compi2.com.AST
 								ejecutar = false;
 								break;
 							}
+							else if (res.GetType() == typeof(ResultadoConsulta))
+							{
+
+							}
 							else {
 								//continue - return
 								if (errores.Count > 0) return errores;
@@ -103,6 +107,10 @@ namespace Proyecto1Compi2.com.AST
 							{
 								ejecutar = false;
 								break;
+							}
+							else if (res.GetType() == typeof(ResultadoConsulta))
+							{
+
 							}
 							else
 							{

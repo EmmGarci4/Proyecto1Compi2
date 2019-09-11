@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -89,7 +90,9 @@ namespace Proyecto1Compi2.com.AST
 					{
 						errores.AddRange((List<ThrowError>)respuesta);
 					}
-					else {
+					else if (respuesta.GetType() == typeof(ResultadoConsulta)) {
+
+					} else {
 						//return-break-continue
 						if (errores.Count > 0) return errores;
 						return respuesta;

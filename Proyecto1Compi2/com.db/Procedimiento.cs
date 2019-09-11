@@ -111,6 +111,10 @@ namespace Proyecto1Compi2.com.db
 					{
 						return respuesta;
 					}
+					else if (respuesta.GetType() == typeof(ResultadoConsulta))
+					{
+
+					}
 					else
 					{
 						//break - continue

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
@@ -40,6 +41,10 @@ namespace Proyecto1Compi2.com.AST
 					if (respuesta.GetType() == typeof(ThrowError))
 					{
 						return respuesta;
+					}
+					else if (respuesta.GetType() == typeof(ResultadoConsulta))
+					{
+
 					}
 					else
 					{

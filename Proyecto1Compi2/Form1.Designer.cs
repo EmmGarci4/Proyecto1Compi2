@@ -118,15 +118,16 @@
 			Form1.textBox2.Location = new System.Drawing.Point(3, 215);
 			Form1.textBox2.Multiline = true;
 			Form1.textBox2.Name = "textBox2";
+			Form1.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			Form1.textBox2.Size = new System.Drawing.Size(794, 207);
 			Form1.textBox2.TabIndex = 1;
 			// 
 			// richTextBox1
 			// 
 			this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.richTextBox1.Font = new System.Drawing.Font("Consolas", 14F);
 			this.richTextBox1.Location = new System.Drawing.Point(3, 3);
 			this.richTextBox1.Name = "richTextBox1";
-			this.richTextBox1.Font = new System.Drawing.Font("consolas", 14);
 			this.richTextBox1.Size = new System.Drawing.Size(794, 206);
 			this.richTextBox1.TabIndex = 2;
 			this.richTextBox1.Text = "";
