@@ -674,7 +674,8 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetFuncionAgregacion(ParseTreeNode sentencia)
 		{
-			return new FuncionAgregacion(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), (Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
+			return new FuncionAgregacion(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), 
+				(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(1)),
 				sentencia.ChildNodes.ElementAt(0).Token.Location.Line, sentencia.ChildNodes.ElementAt(0).Token.Location.Column);
 		}
 
@@ -1349,7 +1350,7 @@ namespace Proyecto1Compi2.com.Analisis
 						case "MODIFICADORES":
 							return GetmodificadorExp(raiz.ChildNodes.ElementAt(0));
 						case "FUNCIONAGREGACION":
-							break;
+							return GetFuncionAgregacionExp(raiz.ChildNodes.ElementAt(0));
 						case "OBJETO":
 							return GetObjeto(raiz.ChildNodes.ElementAt(0));
 						case "CASTEO":
@@ -1402,6 +1403,12 @@ namespace Proyecto1Compi2.com.Analisis
 					return aces;
 			}
 			return null;
+		}
+
+		private static Expresion GetFuncionAgregacionExp(ParseTreeNode raiz)
+		{
+			return new FuncionAgregacionExp((FuncionAgregacion)GetFuncionAgregacion(raiz), 
+				raiz.Span.Location.Line, raiz.Span.Location.Column);
 		}
 
 		private static Expresion GetCasteo(ParseTreeNode parseTreeNode)

@@ -34,7 +34,6 @@
 			this.Btn_leerXml = new System.Windows.Forms.ToolStripButton();
 			this.Bt_EjecutarLup = new System.Windows.Forms.ToolStripButton();
 			this.Btn_LimpiarDB = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			Form1.txt_consola = new System.Windows.Forms.TextBox();
@@ -49,8 +48,7 @@
             this.Btn_EjecutarSql,
             this.Btn_leerXml,
             this.Bt_EjecutarLup,
-            this.Btn_LimpiarDB,
-            this.toolStripButton1});
+            this.Btn_LimpiarDB});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -98,16 +96,6 @@
 			this.Btn_LimpiarDB.Text = "Limpiar DB";
 			this.Btn_LimpiarDB.Click += new System.EventHandler(this.Btn_LimpiarDB_Click);
 			// 
-			// toolStripButton1
-			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(70, 22);
-			this.toolStripButton1.Text = "ackermann";
-			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_1);
-			// 
 			// tableLayoutPanel1
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
@@ -126,19 +114,20 @@
 			// richTextBox1
 			// 
 			this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.richTextBox1.Font = new System.Drawing.Font("Consolas", 14F);
+			this.richTextBox1.Font = new System.Drawing.Font("Consolas", 11F);
 			this.richTextBox1.Location = new System.Drawing.Point(3, 3);
 			this.richTextBox1.Name = "richTextBox1";
 			this.richTextBox1.Size = new System.Drawing.Size(794, 206);
 			this.richTextBox1.TabIndex = 2;
 			this.richTextBox1.Text = "";
 			// 
-			// txt_consola
+			// textBox1
 			// 
 			Form1.txt_consola.Dock = System.Windows.Forms.DockStyle.Fill;
 			Form1.txt_consola.Location = new System.Drawing.Point(3, 215);
 			Form1.txt_consola.Multiline = true;
-			Form1.txt_consola.Name = "txt_consola";
+			Form1.txt_consola.Name = "textBox1";
+			Form1.txt_consola.Font = new System.Drawing.Font("Consolas", 11F);
 			Form1.txt_consola.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			Form1.txt_consola.Size = new System.Drawing.Size(794, 207);
 			Form1.txt_consola.TabIndex = 3;
@@ -170,7 +159,6 @@
 		private System.Windows.Forms.ToolStripButton Bt_EjecutarLup;
 		private System.Windows.Forms.ToolStripButton Btn_LimpiarDB;
 		private System.Windows.Forms.RichTextBox richTextBox1;
-		private System.Windows.Forms.ToolStripButton toolStripButton1;
 		private static System.Windows.Forms.TextBox txt_consola;
 	}
 }

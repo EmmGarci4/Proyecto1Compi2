@@ -502,7 +502,7 @@ namespace com.Analisis
 
 			BATCH.Rule = pr_begin + pr_batch + SENTENCIASDML + pr_apply + pr_batch + puntoycoma;
 
-			FUNCIONAGREGACION.Rule = NOMBREFUNCION + par1+menor + SELECCIONAR +mayor+par2;
+			FUNCIONAGREGACION.Rule = NOMBREFUNCION + par1+ToTerm("<<") + SELECCIONAR +ToTerm(">>")+par2;
 
 			NOMBREFUNCION.Rule = pr_count 
 				| pr_min 
@@ -658,7 +658,7 @@ namespace com.Analisis
 			MarkTransient(SENTENCIADDL,SENTENCIATCL, SENTENCIADCL,SENTENCIADML, ASCDESC,NOMBREFUNCION, PROPSELECT,SENTENCIA,
 				SENTENCIABLOQUE,SENTENCIAFCL,SENTENCIATRY);
 			//TERMINALES IGNORADO
-			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,
+			MarkPunctuation(par1,par2,coma,puntoycoma,igual,llave1,llave2,punto,dospuntos,cor1,cor2,khe,ToTerm("<<"),ToTerm(">>"),
 				pr_crear,pr_db,pr_eliminar,pr_usuario,pr_con,pr_password,pr_tabla,pr_alterar, pr_usar,pr_proc,pr_insertar,pr_on,
 				pr_valores,pr_actualizar,pr_donde,pr_seleccionar,pr_de,pr_ordenar,pr_ordPor,pr_otorgar,pr_denegar,pr_if,pr_switch,pr_for,pr_while,
 				pr_backup,pr_restaurar,pr_else,pr_case,pr_default,pr_do,pr_not,pr_truncar,pr_type,pr_borrar,pr_into,pr_in,pr_null,

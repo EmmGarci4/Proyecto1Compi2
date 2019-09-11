@@ -160,7 +160,7 @@ namespace Proyecto1Compi2.com.AST
 							//*********************************************************************************
 						}
 					}
-					Form1.MostrarMensajeAUsuario(resultado.ToString());
+					//Form1.MostrarMensajeAUsuario(resultado.ToString());
 					return resultado;
 				}
 				else

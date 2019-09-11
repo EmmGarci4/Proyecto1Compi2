@@ -1034,6 +1034,5 @@ namespace Proyecto1Compi2.com.AST
 		And,
 		Or,
 		Xor
-
 	}
 }

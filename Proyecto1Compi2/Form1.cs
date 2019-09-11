@@ -174,7 +174,7 @@ namespace Proyecto1Compi2
 			//Console.WriteLine("Ackermann con 0,1: " + Ackermann(0, 1));
 			//Console.WriteLine("Ackermann con 1,0: " + Ackermann(1, 0));
 			//Console.WriteLine("Ackermann con 1,3: " + Ackermann(1, 3));
-			Console.WriteLine("Ackermann con 2,4: " + Ackermann(2, 4));
+			//Console.WriteLine("Ackermann con 2,4: " + Ackermann(2, 4));
 			//Console.WriteLine("Ackermann con 5,5: " + Ackermann(5, 5));
 		}
 	}
