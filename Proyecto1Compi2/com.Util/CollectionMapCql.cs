@@ -131,7 +131,7 @@ namespace Proyecto1Compi2.com.Util
 				}
 				else
 				{
-					cad.Append(ib.ToString());
+					cad.Append(ib.Value.ToString());
 					if (i < this.Count - 1)
 					{
 						cad.Append(",");

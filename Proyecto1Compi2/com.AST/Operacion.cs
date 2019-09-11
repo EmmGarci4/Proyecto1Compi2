@@ -88,80 +88,80 @@ namespace Proyecto1Compi2.com.AST
 					break;
 				case TipoOperacion.Suma:
 					//BOOLEANO-CADENA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					//NUMERO-CADENA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-BOOLEANO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Booleano))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-NUMERO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-FECHA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-HORA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
 					{
 						return TipoOperacion.String;
 					}
 					//CADENA-CADENA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//FECHA-CADENA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					//HORA-CADENA
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 					{
 						return TipoOperacion.String;
 					}
 					break;
 				case TipoOperacion.Resta:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					break;
 				case TipoOperacion.Division:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					break;
 				case TipoOperacion.Multiplicacion:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
 					break;
 				case TipoOperacion.Potencia:
 					//NUMERO-NUMERO
-					if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 					{
 						return TipoOperacion.Numero;
 					}
@@ -173,13 +173,13 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object GetValor(TablaSimbolos ts, Sesion sesion)
 		{
-			Object izq = izquierda?.GetValor(ts,sesion);
+			Object izq = izquierda?.GetValor(ts, sesion);
 			if (izq != null)
 				if (izq.GetType() == typeof(ThrowError))
 				{
 					return izq;
 				}
-			Object der = derecha?.GetValor(ts,sesion);
+			Object der = derecha?.GetValor(ts, sesion);
 			if (der != null)
 				if (der.GetType() == typeof(ThrowError))
 				{
@@ -193,78 +193,228 @@ namespace Proyecto1Compi2.com.AST
 				{
 					case TipoOperacion.Suma:
 						//BOOLEANO-CADENA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) + double.Parse(der.ToString());
 							return valor;
 						}
 						//NUMERO-CADENA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-BOOLEANO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Booleano))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-CADENA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//FECHA-CADENA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
 						}
 						//HORA-CADENA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
 							return izq.ToString() + der.ToString();
+						}
+						//LISTA-LISTA == SET-SET
+						if (izq.GetType() == typeof(CollectionListCql) && der.GetType() == typeof(CollectionListCql))
+						{
+							CollectionListCql c1 = (CollectionListCql)izq;
+							CollectionListCql c2 = (CollectionListCql)der;
+							if (c1.IsLista && c2.IsLista || (!c1.IsLista && !c2.IsLista))
+							{
+								if (c1.TipoDato.Tipo == c2.TipoDato.Tipo && c1.TipoDato.Nombre == c2.TipoDato.Nombre)
+								{
+									foreach (object val in c2)
+									{
+										object posibleError = c1.AddItem(val, Linea, Columna);
+										if (posibleError != null)
+										{
+											if (posibleError.GetType() == typeof(ThrowError))
+											{
+												return posibleError;
+											}
+										}
+									}
+									return c1;
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + c1.TipoDato.ToString() + " y " + c2.TipoDato.ToString(),
+									Linea, Columna);
+								}
+							}
+							else
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + c1.TipoDato.ToString() + " y " + c2.TipoDato.ToString(),
+									Linea, Columna);
+							}
+						}
+						//MAP - MAP
+						if (izq.GetType() == typeof(CollectionMapCql) && der.GetType() == typeof(CollectionMapCql))
+						{
+							CollectionMapCql c1 = (CollectionMapCql)izq;
+							CollectionMapCql c2 = (CollectionMapCql)der;
+							if (c1.TipoLlave.Equals(c2.TipoLlave) && c1.TipoValor.Equals(c2.TipoValor))
+							{
+								if (c1.TipoLlave.Tipo.Equals(c2.TipoLlave.Tipo) && c1.TipoLlave.Nombre.Equals(c2.TipoLlave.Nombre) &&
+									c1.TipoValor.Tipo.Equals(c2.TipoValor.Tipo) && c1.TipoValor.Nombre.Equals(c2.TipoValor.Nombre))
+								{
+									foreach (KeyValuePair<object,object> val in c2)
+									{
+										object posibleError = c1.AddItem(val.Key,val.Value, Linea, Columna);
+										if (posibleError != null)
+										{
+											if (posibleError.GetType() == typeof(ThrowError))
+											{
+												Analizador.ErroresCQL.Add(new Error((ThrowError)posibleError));
+											}
+										}
+									}
+									return c1;
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + c1.TipoLlave.ToString()+","+c1.TipoValor.ToString() + " y " +
+									c2.TipoLlave.ToString() + "," + c2.TipoValor.ToString(),
+									Linea, Columna);
+								}
+							}
+							else
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + c1.TipoLlave.ToString() + "," + c1.TipoValor.ToString() + " y " +
+									c2.TipoLlave.ToString() + "," + c2.TipoValor.ToString(),
+									Linea, Columna);
+							}
 						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-								"No se pueden sumar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
+								"No se pueden sumar los operandos de tipo " + izquierda.GetTipo(ts, sesion) + " y " + derecha.GetTipo(ts, sesion),
 								Linea, Columna);
 						}
 					case TipoOperacion.Resta:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) - double.Parse(der.ToString());
 							return valor;
+						}//LISTA-LISTA == SET-SET
+						if (izq.GetType() == typeof(CollectionListCql) && der.GetType() == typeof(CollectionListCql))
+						{
+							CollectionListCql c1 = (CollectionListCql)izq;
+							CollectionListCql c2 = (CollectionListCql)der;
+							if (c1.IsLista && c2.IsLista || (!c1.IsLista && !c2.IsLista))
+							{
+								if (c1.TipoDato.Tipo == c2.TipoDato.Tipo && c1.TipoDato.Nombre == c2.TipoDato.Nombre)
+								{
+									foreach (object val in c2)
+									{
+										try {
+											if (c1.Contains(val))
+											{
+												c1.RemoveAt(c1.IndexOf(val));
+											}
+											else {
+												//Analizador.ErroresCQL.Add( new Error(TipoError.Advertencia,
+												//"No se pudo eliminar el valor del Collection por que no existe",
+												//Linea, Columna));
+											}
+										}
+										catch (Exception) {
+											return new ThrowError(TipoThrow.Exception,
+												"No se pudo eliminar el valor del Collection por que no existe",
+												Linea, Columna);
+										}
+									}
+									return c1;
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + c1.TipoDato.ToString() + " y " + c2.TipoDato.ToString(),
+									Linea, Columna);
+								}
+							}
+							else
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + c1.TipoDato.ToString() + " y " + c2.TipoDato.ToString(),
+									Linea, Columna);
+							}
+						}
+						if (izq.GetType() == typeof(CollectionMapCql)&& der.GetType() == typeof(CollectionListCql))
+						{
+							CollectionMapCql collection = (CollectionMapCql)izq;
+							CollectionListCql datos = (CollectionListCql)der;
+							if (!datos.IsLista)
+							{
+								if (collection.TipoValor.Equals(Datos.GetTipoObjetoDB(datos.TipoDato.Nombre)))
+								{
+									foreach (object dato in datos)
+									{
+										object aa=collection.EliminarItem(dato, Linea, Columna);
+											if (aa!=null) {
+												if (aa.GetType()==typeof(ThrowError)) {
+													Analizador.ErroresCQL.Add(new Error((ThrowError)aa));
+												}
+											}
+									}
+								}
+								else
+								{
+									Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
+												"No se puede eliminar datos con clave tipo '" + collection.TipoLlave.ToString() + "' y clave tipo'" + Datos.GetTipoObjetoDB(datos.TipoDato.Nombre) + "'",
+												Linea, Columna));
+								}
+							}
+							else {
+								return new ThrowError(TipoThrow.Exception,
+									"Estructura equivocada, las claves deben ir entre llaves",
+									Linea, Columna);
+							}
+							return collection;
 						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-								"No se pueden restar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
+								"No se pueden restar los operandos de tipo " + izquierda.GetTipo(ts, sesion) + " y " + derecha.GetTipo(ts, sesion),
 								Linea, Columna);
 						}
 					case TipoOperacion.Division:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							if (double.Parse(der.ToString()) != 0)
 							{
@@ -282,12 +432,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
+									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts, sesion) + " y " + derecha.GetTipo(ts, sesion),
 								   Linea, Columna);
 						}
 					case TipoOperacion.Multiplicacion:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) * double.Parse(der.ToString());
 							return valor;
@@ -295,12 +445,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden multiplicar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
+									"No se pueden multiplicar los operandos de tipo " + izquierda.GetTipo(ts, sesion) + " y " + derecha.GetTipo(ts, sesion),
 								   Linea, Columna);
 						}
 					case TipoOperacion.Potencia:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = Math.Pow(double.Parse(izq.ToString()), double.Parse(der.ToString()));
 							return valor;
@@ -308,12 +458,12 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
+									"No se pueden elevar los operandos de tipo " + izquierda.GetTipo(ts, sesion) + " y " + derecha.GetTipo(ts, sesion),
 								   Linea, Columna);
 						}
 					case TipoOperacion.Modulo:
 						//NUMERO-NUMERO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							if (double.Parse(der.ToString()) != 0)
 							{
@@ -331,7 +481,7 @@ namespace Proyecto1Compi2.com.AST
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
-									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
+									"No se pueden dividir los operandos de tipo " + izquierda.GetTipo(ts, sesion) + " y " + derecha.GetTipo(ts, sesion),
 								   Linea, Columna);
 						}
 				}
@@ -341,7 +491,7 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (tipoOp == TipoOperacion.Menos)
 				{
-					if (izquierda.GetTipo(ts,sesion) == TipoOperacion.Numero)
+					if (izquierda.GetTipo(ts, sesion) == TipoOperacion.Numero)
 					{
 						double valor = double.Parse(izq.ToString()) * -1;
 						return valor;
@@ -357,7 +507,8 @@ namespace Proyecto1Compi2.com.AST
 			//valores
 			else
 			{
-				switch (TipoOp) {
+				switch (TipoOp)
+				{
 					case TipoOperacion.Identificador:
 						//buscar en tabla de simbolos
 						if (ts.ExisteSimbolo(this.Valor.ToString()))
@@ -425,26 +576,30 @@ namespace Proyecto1Compi2.com.AST
 						if (expresiones.Count > 0)
 						{
 							Expresion primer_elemento;
-							
-								primer_elemento = expresiones.ElementAt(0);
-								object respuesta = primer_elemento.GetValor(ts, sesion);
-								if (respuesta!=null) {
-									if (respuesta.GetType()==typeof(ThrowError)) {
-										return respuesta;
-									}
+
+							primer_elemento = expresiones.ElementAt(0);
+							object respuesta = primer_elemento.GetValor(ts, sesion);
+							if (respuesta != null)
+							{
+								if (respuesta.GetType() == typeof(ThrowError))
+								{
+									return respuesta;
 								}
+							}
 							TipoObjetoDB tipodato = Datos.GetTipoObjetoDB(respuesta);
 							TipoObjetoDB tipoCol = null;
 							if (Datos.IsPrimitivo(tipodato.Tipo))
 							{
 								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipodato.ToString());
 							}
-							else {
+							else
+							{
 								tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
 							}
 							CollectionListCql collection = new CollectionListCql(tipoCol, true);
-							foreach (Expresion exp in expresiones) {
-							object nuevo = exp.GetValor(ts,sesion);
+							foreach (Expresion exp in expresiones)
+							{
+								object nuevo = exp.GetValor(ts, sesion);
 								if (nuevo != null)
 								{
 									if (nuevo.GetType() == typeof(ThrowError))
@@ -455,14 +610,14 @@ namespace Proyecto1Compi2.com.AST
 								if (Datos.IsTipoCompatible(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
 								{
 
-										object posibleError = collection.AddItem(nuevo, Linea, Columna);
-										if (posibleError != null)
+									object posibleError = collection.AddItem(nuevo, Linea, Columna);
+									if (posibleError != null)
+									{
+										if (posibleError.GetType() == typeof(ThrowError))
 										{
-											if (posibleError.GetType() == typeof(ThrowError))
-											{
-												return posibleError;
-											}
+											return posibleError;
 										}
+									}
 								}
 								else
 								{
@@ -474,7 +629,8 @@ namespace Proyecto1Compi2.com.AST
 							}
 							return collection;
 						}
-						else {
+						else
+						{
 							return new ThrowError(TipoThrow.Exception,
 									"No se puede asignar una lista vacía",
 								   Linea, Columna);
@@ -550,8 +706,10 @@ namespace Proyecto1Compi2.com.AST
 						if (info.Count > 0)
 						{
 							object expClave = info.ElementAt(0).Expresion1.GetValor(ts, sesion);
-							if (expClave!=null) {
-								if (expClave.GetType() == typeof(ThrowError)) {
+							if (expClave != null)
+							{
+								if (expClave.GetType() == typeof(ThrowError))
+								{
 									return expClave;
 								}
 							}
@@ -564,14 +722,15 @@ namespace Proyecto1Compi2.com.AST
 								}
 							}
 
-							TipoObjetoDB tipoClave=Datos.GetTipoObjetoDB(expClave);
+							TipoObjetoDB tipoClave = Datos.GetTipoObjetoDB(expClave);
 							TipoObjetoDB tipoValor = Datos.GetTipoObjetoDB(expValor);
 							if (Datos.IsPrimitivo(tipoClave.Tipo))
 							{
 								CollectionMapCql collection = new CollectionMapCql(tipoClave, tipoValor);
-								foreach (Info valor in info) {
+								foreach (Info valor in info)
+								{
 									//OBTENIENDO VALORES Y TIPOS
-									 expClave = valor.Expresion1.GetValor(ts, sesion);
+									expClave = valor.Expresion1.GetValor(ts, sesion);
 									if (expClave != null)
 									{
 										if (expClave.GetType() == typeof(ThrowError))
@@ -594,19 +753,19 @@ namespace Proyecto1Compi2.com.AST
 									{
 										if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, expValor))
 										{
-												object posibleError = collection.AddItem(expClave, expValor, Linea, Columna);
-												if (posibleError != null)
+											object posibleError = collection.AddItem(expClave, expValor, Linea, Columna);
+											if (posibleError != null)
+											{
+												if (posibleError.GetType() == typeof(ThrowError))
 												{
-													if (posibleError.GetType() == typeof(ThrowError))
-													{
-														return posibleError;
-													}
-												}	
+													return posibleError;
+												}
+											}
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede almacenar un valor " +tipoClave.ToString() + " en un valor tipo " + collection.TipoValor.ToString(),
+												"No se puede almacenar un valor " + tipoClave.ToString() + " en un valor tipo " + collection.TipoValor.ToString(),
 												Linea, Columna);
 										}
 									}
@@ -620,13 +779,15 @@ namespace Proyecto1Compi2.com.AST
 								}
 								return collection;
 							}
-							else {
+							else
+							{
 								return new ThrowError(TipoThrow.Exception,
-										"No se puede asignar un valor tipo '"+tipoClave.ToString()+"' como llave",
+										"No se puede asignar un valor tipo '" + tipoClave.ToString() + "' como llave",
 									   Linea, Columna);
 							}
 						}
-						else {
+						else
+						{
 							return new ThrowError(TipoThrow.Exception,
 										"No se puede asignar una lista vacía",
 									   Linea, Columna);
@@ -673,21 +834,22 @@ namespace Proyecto1Compi2.com.AST
 			{
 				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.SET_OBJETO:
-						//VALIDAR TIPO
-							object re = ValidarInstanciaLista(tipoInstancia, sesion);
-							if (re != null)
-							{
-								if (re.GetType() == typeof(ThrowError))
-								{
-									return re;
-								}
-							}
-				return new CollectionListCql(tipoInstancia, true);
-							
+					//VALIDAR TIPO
+					object re = ValidarInstanciaLista(tipoInstancia, sesion);
+					if (re != null)
+					{
+						if (re.GetType() == typeof(ThrowError))
+						{
+							return re;
+						}
+					}
+					return new CollectionListCql(tipoInstancia, true);
+
 				case TipoDatoDB.LISTA_PRIMITIVO:
 					TipoObjetoDB tipoDatoLista = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
-					if (Datos.IsPrimitivo(tipoDatoLista.Tipo)) {
-						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO,tipoDatoLista.Nombre), true);
+					if (Datos.IsPrimitivo(tipoDatoLista.Tipo))
+					{
+						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipoDatoLista.Nombre), true);
 					}
 					break;
 				case TipoDatoDB.SET_PRIMITIVO:
@@ -704,7 +866,7 @@ namespace Proyecto1Compi2.com.AST
 					if (Datos.IsPrimitivo(t1.Tipo))
 					{
 						//COMPROBAR TIPO COMO LISTA 
-						re = ValidarInstanciaLista(new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO,t2.Nombre), sesion);
+						re = ValidarInstanciaLista(new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, t2.Nombre), sesion);
 						if (re != null)
 						{
 							if (re.GetType() == typeof(ThrowError))
@@ -714,7 +876,8 @@ namespace Proyecto1Compi2.com.AST
 						}
 						return new CollectionMapCql(t1, t2);
 					}
-					else {
+					else
+					{
 						return new ThrowError(Util.TipoThrow.Exception,
 										"El Map solo puede tener llaves de tipo primitivo",
 										Linea, Columna);
@@ -756,12 +919,15 @@ namespace Proyecto1Compi2.com.AST
 							}
 						}
 						return ((bool)re);
-					} else if (Datos.IsPrimitivo(tipoAdentro.Tipo)) {
+					}
+					else if (Datos.IsPrimitivo(tipoAdentro.Tipo))
+					{
 						return true;
 					}
-					else {
+					else
+					{
 						//comprobar que exista el objeto
-						object condicion = ExisteObjeto(tipoAdentro, sesion,Linea,Columna);
+						object condicion = ExisteObjeto(tipoAdentro, sesion, Linea, Columna);
 						if (condicion.GetType() == typeof(ThrowError))
 						{
 							return condicion;
@@ -794,7 +960,7 @@ namespace Proyecto1Compi2.com.AST
 					else
 					{
 						//comprobar que exista el objeto
-						object condicion = ExisteObjeto(tipoAdentro, sesion,Linea,Columna);
+						object condicion = ExisteObjeto(tipoAdentro, sesion, Linea, Columna);
 						if (condicion.GetType() == typeof(ThrowError))
 						{
 							return condicion;
@@ -805,7 +971,7 @@ namespace Proyecto1Compi2.com.AST
 			return false;
 		}
 
-		public static object ExisteObjeto(TipoObjetoDB tipoDatoLista, Sesion sesion,int Linea,int Columna)
+		public static object ExisteObjeto(TipoObjetoDB tipoDatoLista, Sesion sesion, int Linea, int Columna)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)

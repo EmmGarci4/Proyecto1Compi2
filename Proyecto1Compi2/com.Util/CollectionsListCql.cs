@@ -282,5 +282,10 @@ namespace Proyecto1Compi2.com.Util
 			cad.Append("]");
 			return cad.ToString();
 		}
+
+		internal void Ordenar()
+		{
+			this.Ordenar();
+		}
 	}
 }

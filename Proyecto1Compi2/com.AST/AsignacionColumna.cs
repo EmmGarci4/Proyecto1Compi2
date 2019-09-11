@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using com.Analisis;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
@@ -56,6 +57,7 @@ namespace Proyecto1Compi2.com.AST
 		private object Asignar(object nuevoValor, TipoObjetoDB tipo, TablaSimbolos ts, Sesion sesion)
 		{
 			if (this.tabla!=null) {
+
 				LlenarCola();
 				object respuesta = GetSimbolosApilados(ts, sesion);
 				Stack<ParAsignacion> simbolos;
@@ -77,6 +79,12 @@ namespace Proyecto1Compi2.com.AST
 					if (sim.Estructura.GetType() == typeof(Columna))
 					{
 						Columna s = (Columna)sim.Estructura;
+						if (s.IsPrimary)
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"No se puede actualizar una columna Counter",
+								Linea, Columna);
+						}
 						if (Datos.IsTipoCompatibleParaAsignar(s.Tipo, nuevoValor))
 						{
 							object nuevoDato = Datos.CasteoImplicito(s.Tipo, nuevoValor, ts, sesion, Linea, Columna);
@@ -121,19 +129,31 @@ namespace Proyecto1Compi2.com.AST
 						}
 					} else if (sim.Estructura.GetType()==typeof(CollectionListCql)) {
 						CollectionListCql list = (CollectionListCql)sim.Estructura;
-						if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(list.TipoDato.Nombre), nuevoValor))
+						if (list.IsLista)
 						{
-							object ob = list.SetItem((int)sim.Nombre, nuevoValor, Linea, Columna);
-							if (ob!=null) {
-								if (ob.GetType()==typeof(ThrowError)) {
-									return ob;
+							if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(list.TipoDato.Nombre), nuevoValor))
+							{
+								object ob = list.SetItem((int)sim.Nombre, nuevoValor, Linea, Columna);
+								if (ob != null)
+								{
+									if (ob.GetType() == typeof(ThrowError))
+									{
+										return ob;
+									}
 								}
+							}
+
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+												"No se puede asignar el valor '" + nuevoValor.ToString() + "' al tipo '" + list.TipoDato.ToString() + "'",
+												Linea, Columna);
 							}
 						}
 						else {
 							return new ThrowError(Util.TipoThrow.Exception,
-											"No se puede asignar el valor '" + nuevoValor.ToString() + "' al tipo '" + list.TipoDato.ToString() + "'",
-											Linea, Columna);
+								"No se puede actualizar datos en un Set",
+								Linea, Columna);
 						}
 					}
 					else if (sim.Estructura.GetType() == typeof(CollectionMapCql))
@@ -205,11 +225,11 @@ namespace Proyecto1Compi2.com.AST
 												{
 													if (this.objetos.Count == 0)
 													{
-														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoDato.ToString()));
+														simbolosApilados.Push(new ParAsignacion(cllection, indiceColection));
 													}
 													else
 													{
-														simbolosApilados.Push(new ParAsignacion(cllection, cllection.TipoDato.ToString()));
+														simbolosApilados.Push(new ParAsignacion(cllection, indiceColection));
 														simbolosApilados.Push(new ParAsignacion(cllection[indiceColection], cllection.TipoDato.Nombre.ToString()));
 													}
 													return GetSimbolosApilados(simbolosApilados, ts, sesion);
@@ -249,9 +269,9 @@ namespace Proyecto1Compi2.com.AST
 												}
 												else
 												{
-													return new ThrowError(TipoThrow.IndexOutException,
+													Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
 														"El indice no existe en el collection",
-														Linea, Columna);
+														Linea, Columna));
 												}
 											}
 											else {
