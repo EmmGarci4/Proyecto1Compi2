@@ -25,20 +25,20 @@ namespace Proyecto1Compi2
 		{
 			//EjecutarAckermann();
 			//EjecutarHanoi();
-			textBox2.Clear();
+			txt_consola.Clear();
 			Analizador.AddUsuario(new Usuario("admin", "admin"));
 			Sesion sesion = new Sesion("admin", null);
 			if (Analizador.AnalizarCql(this.richTextBox1.Text,sesion)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count==0) {
 					//si no hay ErroresCQL semánticos
-					textBox2.AppendText("Finalizado con éxito\n");
+					txt_consola.AppendText("Finalizado con éxito\n");
 				}
 				else
 				{
 					foreach (Error er in Analizador.ErroresCQL)
 					{
-						textBox2.AppendText(er.ToString());
+						txt_consola.AppendText(er.ToString());
 					}
 				}
 			}
@@ -46,7 +46,7 @@ namespace Proyecto1Compi2
 			{
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					textBox2.AppendText(er.ToString());
+					txt_consola.AppendText(er.ToString());
 				}
 			}
 		}
@@ -81,6 +81,7 @@ namespace Proyecto1Compi2
 
 		private int Ackermann(int m, int n)
 		{
+			Console.WriteLine("m= "+m+" n="+n);
 			if (m == 0)
 				return (n + 1);
 			else if (n == 0)
@@ -92,35 +93,35 @@ namespace Proyecto1Compi2
 		private void Btn_leerXml_Click(object sender, EventArgs e)
 		{
 
-			textBox2.Clear();
+			txt_consola.Clear();
 				if (Analizador.AnalizarChison(this.richTextBox1.Text))
 				{
-					textBox2.Text = "Finalizado con éxito\n";
+					txt_consola.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
 				foreach (Error er in Analizador.ErroresChison)
 				{
-					textBox2.AppendText(er + "\n");
+					txt_consola.AppendText(er + "\n");
 				}
 			}
 		}
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
-			textBox2.Clear();
+			txt_consola.Clear();
 			if (Analizador.AnalizarLup(this.richTextBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count == 0)
 				{
 					//si no hay ErroresCQL semánticos
-					textBox2.Text = "Finalizado con éxito\n";
+					txt_consola.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
 					foreach (Error er in Analizador.ErroresCQL)
 					{
-						textBox2.AppendText(er.ToString());
+						txt_consola.AppendText(er.ToString());
 					}
 				}
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
@@ -129,7 +130,7 @@ namespace Proyecto1Compi2
 			{
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					textBox2.AppendText(er.ToString());
+					txt_consola.AppendText(er.ToString());
 				}
 			}
 		}
@@ -137,7 +138,7 @@ namespace Proyecto1Compi2
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
 		{
 			Analizador.Clear();
-			textBox2.Clear();
+			txt_consola.Clear();
 		}
 
 		private void Btn_GenerarArchivos_Click(object sender, EventArgs e)
@@ -147,25 +148,34 @@ namespace Proyecto1Compi2
 
 		private void Btn_cargarChison_Click(object sender, EventArgs e)
 		{
-			textBox2.Clear();
+			txt_consola.Clear();
 			String chi = HandlerFiles.AbrirArchivo(Analizador.PATH + "principal.chison");
 			if (chi != null)
 			{
 				if (Analizador.AnalizarChison(chi))
 				{
-					textBox2.Text = "Finalizado con éxito\n";
+					txt_consola.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
-					textBox2.Text="Finalizado con errores";
+					txt_consola.Text="Finalizado con errores";
 					
 				}
 			}
 		}
 
 		public static void MostrarMensajeAUsuario(string mensaje) {
-			textBox2.AppendText(mensaje);
-			textBox2.AppendText("\r\n");
+			txt_consola.AppendText(mensaje);
+			txt_consola.AppendText("\r\n");
+		}
+
+		private void toolStripButton1_Click_1(object sender, EventArgs e)
+		{
+			//Console.WriteLine("Ackermann con 0,1: " + Ackermann(0, 1));
+			//Console.WriteLine("Ackermann con 1,0: " + Ackermann(1, 0));
+			//Console.WriteLine("Ackermann con 1,3: " + Ackermann(1, 3));
+			Console.WriteLine("Ackermann con 2,4: " + Ackermann(2, 4));
+			//Console.WriteLine("Ackermann con 5,5: " + Ackermann(5, 5));
 		}
 	}
 }

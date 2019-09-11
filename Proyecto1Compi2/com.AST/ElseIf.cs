@@ -33,14 +33,19 @@ namespace Proyecto1Compi2.com.AST
 		public static object EjecutarSentencias(List<Sentencia> MisSentencias, TablaSimbolos tsLocal,Sesion sesion)
 		{
 			object respuesta;
+			List<ThrowError> errores = new List<ThrowError>();
 			foreach (Sentencia sentencia in MisSentencias)
 			{
-				respuesta = sentencia.Ejecutar(tsLocal,sesion);
+				respuesta = sentencia.Ejecutar(tsLocal, sesion);
 				if (respuesta != null)
 				{
 					if (respuesta.GetType() == typeof(ThrowError))
 					{
-						return respuesta;
+						errores.Add((ThrowError)respuesta);
+					}
+					else if (respuesta.GetType() == typeof(List<ThrowError>))
+					{
+						errores.AddRange((List<ThrowError>)respuesta);
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta))
 					{
@@ -48,10 +53,14 @@ namespace Proyecto1Compi2.com.AST
 					}
 					else
 					{
-						//EVALUAR SI ES RETURN, BREAK O CONTINUE
+						//return-break-continue
+						if (errores.Count > 0) return errores;
+						return respuesta;
 					}
+
 				}
 			}
+			if (errores.Count > 0) return errores;
 			return null;
 		}
 	}
