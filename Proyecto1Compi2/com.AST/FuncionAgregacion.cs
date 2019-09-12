@@ -41,32 +41,68 @@ namespace Proyecto1Compi2.com.AST
 						FilaDatos primeraFila = datos.ElementAt(0);
 						object datoPivote = primeraFila.Datos.ElementAt(0).Valor;
 						TipoObjetoDB tipo = Datos.GetTipoObjetoDB(datoPivote);
-						if (tipo.Tipo == TipoDatoDB.INT || tipo.Tipo == TipoDatoDB.DOUBLE)
+						switch (nombre)
 						{
-							List<double> listadatos = ListarDatos(datos);
-							switch (nombre)
-							{
-								case "count":
-									return listadatos.Count;
-								case "min":
-									return GetMinimo(listadatos);
-								case "max":
-									return GetMayor(listadatos);
-								case "sum":
-									return GetSuma(listadatos);
-								case "avg":
-									return GetPromedio(listadatos);
-								default:
+							case "count":
+								return datos.Count;
+							case "min":
+								if (tipo.Tipo == TipoDatoDB.INT || tipo.Tipo == TipoDatoDB.DOUBLE)
+								{
+									return GetMinimo(ListarDatos(datos));
+								}
+								else if (tipo.Tipo == TipoDatoDB.DATE || tipo.Tipo==TipoDatoDB.TIME)
+								{
+									return GetMinimoDateTime(ListarDatosDateTime(datos));
+								}
+								else
+								{
 									return new ThrowError(TipoThrow.Exception,
-										"Las funciones de agregación '" + this.nombre + "' no existe",
-										Linea, Columna);
-							}
-						}
-						else
-						{
-							return new ThrowError(TipoThrow.Exception,
-							"Las funciones de agregación solo pueden operar sobre columnas de tipo númerico(int/double)",
-							Linea, Columna);
+									"Las funciones de agregación solo pueden operar sobre columnas de tipo númerico(int/double)",
+									Linea, Columna);
+								}
+
+							case "max":
+								if (tipo.Tipo == TipoDatoDB.INT || tipo.Tipo == TipoDatoDB.DOUBLE)
+								{
+									return GetMayor(ListarDatos(datos));
+								}
+								else if (tipo.Tipo == TipoDatoDB.DATE || tipo.Tipo == TipoDatoDB.TIME)
+								{
+									return GetMayorDateTime(ListarDatosDateTime(datos));
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.Exception,
+									"Las funciones de agregación solo pueden operar sobre columnas de tipo númerico(int/double)",
+									Linea, Columna);
+								}
+							case "sum":
+								if (tipo.Tipo == TipoDatoDB.INT || tipo.Tipo == TipoDatoDB.DOUBLE)
+								{
+									return GetSuma(ListarDatos(datos));
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.Exception,
+									"Las funciones de agregación solo pueden operar sobre columnas de tipo númerico(int/double)",
+									Linea, Columna);
+								}
+							case "avg":
+								if (tipo.Tipo == TipoDatoDB.INT || tipo.Tipo == TipoDatoDB.DOUBLE)
+								{
+									return GetPromedio(ListarDatos(datos));
+								}
+								else
+								{
+									return new ThrowError(TipoThrow.Exception,
+									"Las funciones de agregación solo pueden operar sobre columnas de tipo númerico(int/double)",
+									Linea, Columna);
+								}
+
+							default:
+								return new ThrowError(TipoThrow.Exception,
+									"Las funciones de agregación '" + this.nombre + "' no existe",
+									Linea, Columna);
 						}
 					}
 					else
@@ -83,6 +119,32 @@ namespace Proyecto1Compi2.com.AST
 				}
 			}
 			return null;
+		}
+
+		private MyDateTime GetMinimoDateTime(List<MyDateTime> list)
+		{
+			MyDateTime menor = list.ElementAt(0);
+			foreach (MyDateTime valor in list)
+			{
+				if (menor.CompareTo(valor)<0)
+				{
+					menor = valor;
+				}
+			}
+			return menor;
+		}
+
+		private MyDateTime GetMayorDateTime(List<MyDateTime> list)
+		{
+			MyDateTime menor = list.ElementAt(0);
+			foreach (MyDateTime valor in list)
+			{
+				if (menor.CompareTo(valor) > 0)
+				{
+					menor = valor;
+				}
+			}
+			return menor;
 		}
 
 		private double GetMinimo(List<double> listadatos)
@@ -136,8 +198,22 @@ namespace Proyecto1Compi2.com.AST
 			List<double> lista = new List<double>();
 			foreach (FilaDatos fila in datos)
 			{
-				if (double.TryParse(fila.Datos.ElementAt(0).Valor.ToString(), out double result) ){
+				if (double.TryParse(fila.Datos.ElementAt(0).Valor.ToString(), out double result))
+				{
 					lista.Add(result);
+				}
+			}
+			return lista;
+		}
+
+		private List<MyDateTime> ListarDatosDateTime(ResultadoConsulta datos)
+		{
+			List<MyDateTime> lista = new List<MyDateTime>();
+			foreach (FilaDatos fila in datos)
+			{
+				if (fila.Datos.ElementAt(0).Valor.GetType()==typeof(MyDateTime))
+				{
+					lista.Add((MyDateTime)fila.Datos.ElementAt(0).Valor);
 				}
 			}
 			return lista;

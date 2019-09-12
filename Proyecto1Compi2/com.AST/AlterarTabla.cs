@@ -39,6 +39,12 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
+			if (this.nombreTabla == "errors")
+			{
+				return new ThrowError(Util.TipoThrow.Exception,
+					"La tabla 'errors' no se puede modificar",
+					Linea, Columna);
+			}
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
 			{

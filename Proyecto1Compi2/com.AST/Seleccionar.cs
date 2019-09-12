@@ -35,6 +35,9 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb, Sesion sesion)
 		{
+			if (this.tabla=="errors") {
+				return Consultar(Analizador.Errors,tb,sesion);
+			}
 
 			//VALIDANDO TABLA
 			if (sesion.DBActual != null)
@@ -43,125 +46,7 @@ namespace Proyecto1Compi2.com.AST
 				if (db.ExisteTabla(tabla))
 				{
 					Tabla miTabla = db.BuscarTabla(tabla);
-					ResultadoConsulta resultado = new ResultadoConsulta();
-					//TITULOS
-					if (listaAccesos == null)
-					{
-						resultado.Titulos = new List<string>();
-						foreach (Columna cl in miTabla.Columnas)
-						{
-							resultado.Titulos.Add(cl.Nombre);
-						}
-					}
-					else
-					{
-						int cc;
-						resultado.Titulos = new List<string>();
-						for (cc = 0; cc < listaAccesos.Count; cc++)
-						{
-							resultado.Titulos.Add("Resultado " + (cc + 1));
-						}
-					}
-					//DATOS
-					int i = 0;
-					for (i = 0; i < miTabla.ContadorFilas; i++)
-					{
-						//AGREGANDO FILA A LA TABLA DE SIMBOLOS
-						TablaSimbolos local = new TablaSimbolos(tb);
-						foreach (Columna cl in miTabla.Columnas)
-						{
-							object dato = cl.Datos.ElementAt(i);
-							Simbolo s;
-							if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
-							{
-								s = new Simbolo(cl.Nombre, dato, new TipoObjetoDB(TipoDatoDB.INT, "int"), Linea, Columna);
-
-							}
-							else
-							{
-								s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
-							}
-
-							local.AgregarSimbolo(s);
-
-						}
-						//SELECCIONANDO LOS DATOS
-						if (listaAccesos != null)
-						{
-							//HAY COLUMNAS
-							FilaDatos fila = new FilaDatos();
-							//VALORES
-							int indiceColumna;
-							for (indiceColumna = 0; indiceColumna < listaAccesos.Count; indiceColumna++)
-							{
-								object val = listaAccesos.ElementAt(indiceColumna).GetValor(local, sesion);
-								if (val != null)
-								{
-									if (val.GetType() == typeof(ThrowError))
-									{
-										return val;
-									}
-								}
-								fila.Datos.Add(new ParDatos("", val));
-							}
-							//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
-							if (PropiedadWhere != null)
-							{
-								object condicionWhere = PropiedadWhere.GetValor(local, sesion);
-								if (condicionWhere != null)
-								{
-									if (condicionWhere.GetType() == typeof(ThrowError))
-									{
-										return condicionWhere;
-									}
-									if ((bool)condicionWhere)
-									{
-										resultado.Add(fila);
-									}
-								}
-							}
-							else
-							{
-								resultado.Add(fila);
-							}
-							//*********************************************************************************
-						}
-						else
-						{
-							//COMODIN
-							Simbolo val;
-							FilaDatos fila = new FilaDatos();
-							//llenando nombre de columnas
-							foreach (Columna cl in miTabla.Columnas)
-							{
-								val = local.GetSimbolo(cl.Nombre);
-								fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
-							}
-							//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
-							if (PropiedadWhere != null)
-							{
-								object condicionWhere = PropiedadWhere.GetValor(local, sesion);
-								if (condicionWhere != null)
-								{
-									if (condicionWhere.GetType() == typeof(ThrowError))
-									{
-										return condicionWhere;
-									}
-									if ((bool)condicionWhere)
-									{
-										resultado.Add(fila);
-									}
-								}
-							}
-							else
-							{
-								resultado.Add(fila);
-							}
-							//*********************************************************************************
-						}
-					}
-					//Form1.MostrarMensajeAUsuario(resultado.ToString());
-					return resultado;
+					return Consultar(miTabla,tb,sesion);
 				}
 				else
 				{
@@ -177,6 +62,130 @@ namespace Proyecto1Compi2.com.AST
 					Linea, Columna);
 			}
 
+		}
+
+		private object Consultar(Tabla miTabla,TablaSimbolos ts,Sesion sesion)
+		{
+
+			ResultadoConsulta resultado = new ResultadoConsulta();
+			//TITULOS
+			if (listaAccesos == null)
+			{
+				resultado.Titulos = new List<string>();
+				foreach (Columna cl in miTabla.Columnas)
+				{
+					resultado.Titulos.Add(cl.Nombre);
+				}
+			}
+			else
+			{
+				int cc;
+				resultado.Titulos = new List<string>();
+				for (cc = 0; cc < listaAccesos.Count; cc++)
+				{
+					resultado.Titulos.Add("Resultado " + (cc + 1));
+				}
+			}
+			//DATOS
+			int i = 0;
+			for (i = 0; i < miTabla.ContadorFilas; i++)
+			{
+				//AGREGANDO FILA A LA TABLA DE SIMBOLOS
+				TablaSimbolos local = new TablaSimbolos(ts);
+				foreach (Columna cl in miTabla.Columnas)
+				{
+					object dato = cl.Datos.ElementAt(i);
+					Simbolo s;
+					if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+					{
+						s = new Simbolo(cl.Nombre, dato, new TipoObjetoDB(TipoDatoDB.INT, "int"), Linea, Columna);
+
+					}
+					else
+					{
+						s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+					}
+
+					local.AgregarSimbolo(s);
+
+				}
+				//SELECCIONANDO LOS DATOS
+				if (listaAccesos != null)
+				{
+					//HAY COLUMNAS
+					FilaDatos fila = new FilaDatos();
+					//VALORES
+					int indiceColumna;
+					for (indiceColumna = 0; indiceColumna < listaAccesos.Count; indiceColumna++)
+					{
+						object val = listaAccesos.ElementAt(indiceColumna).GetValor(local, sesion);
+						if (val != null)
+						{
+							if (val.GetType() == typeof(ThrowError))
+							{
+								return val;
+							}
+						}
+						fila.Datos.Add(new ParDatos("", val));
+					}
+					//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
+					if (PropiedadWhere != null)
+					{
+						object condicionWhere = PropiedadWhere.GetValor(local, sesion);
+						if (condicionWhere != null)
+						{
+							if (condicionWhere.GetType() == typeof(ThrowError))
+							{
+								return condicionWhere;
+							}
+							if ((bool)condicionWhere)
+							{
+								resultado.Add(fila);
+							}
+						}
+					}
+					else
+					{
+						resultado.Add(fila);
+					}
+					//*********************************************************************************
+				}
+				else
+				{
+					//COMODIN
+					Simbolo val;
+					FilaDatos fila = new FilaDatos();
+					//llenando nombre de columnas
+					foreach (Columna cl in miTabla.Columnas)
+					{
+						val = local.GetSimbolo(cl.Nombre);
+						fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
+					}
+					//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
+					if (PropiedadWhere != null)
+					{
+						object condicionWhere = PropiedadWhere.GetValor(local, sesion);
+						if (condicionWhere != null)
+						{
+							if (condicionWhere.GetType() == typeof(ThrowError))
+							{
+								return condicionWhere;
+							}
+							if ((bool)condicionWhere)
+							{
+								resultado.Add(fila);
+							}
+						}
+					}
+					else
+					{
+						resultado.Add(fila);
+					}
+					//*********************************************************************************
+				}
+			}
+			//Form1.MostrarMensajeAUsuario(resultado.ToString());
+			return resultado;
 		}
 	}
 }

@@ -265,7 +265,6 @@ namespace com.Analisis
 			//IMPORTAR 
 			texto = Importar(texto);
 			ParseTree arbol = parser.Parse(texto);
-			Analizador.ErroresChison.Clear();
 			Analizador.raiz = arbol.Root;
 			
 			if (raiz != null && arbol.ParserMessages.Count==0)
@@ -321,14 +320,14 @@ namespace com.Analisis
 			Queue<object> valores = new Queue<object>();
 			foreach (Error error in erroresChison) {
 				valores.Clear();
-				int contador = errors.BuscarColumna("Numero").GetUltimoValorCounter();
+				int contador = errors.BuscarColumna("numero").GetUltimoValorCounter();
 				valores.Enqueue(contador+1);
 				valores.Enqueue(error.Tipo.ToString());
 				valores.Enqueue(error.Mensaje);
 				valores.Enqueue(error.Linea);
 				valores.Enqueue(error.Columna);
-				valores.Enqueue(error.Fecha);
-				valores.Enqueue(error.Hora);
+				valores.Enqueue(new MyDateTime(TipoDatoDB.DATE,DateTime.Parse(error.Fecha)));
+				valores.Enqueue(new MyDateTime(TipoDatoDB.TIME, DateTime.Parse(error.Hora)));
 				//agregando valores
 				errors.AgregarValores(valores);
 			}
@@ -444,13 +443,13 @@ namespace com.Analisis
 
 		private static Tabla GetTablaErrors() {
 			Tabla tb = new Tabla("errors");
-			tb.AgregarColumna(new Columna("Numero", new TipoObjetoDB(TipoDatoDB.COUNTER, "int"), true));
-			tb.AgregarColumna(new Columna("Tipo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
-			tb.AgregarColumna(new Columna("Descripcion", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
-			tb.AgregarColumna(new Columna("Fila", new TipoObjetoDB(TipoDatoDB.INT, "int"), false));
-			tb.AgregarColumna(new Columna("Columna", new TipoObjetoDB(TipoDatoDB.INT, "int"), false));
-			tb.AgregarColumna(new Columna("Fecha", new TipoObjetoDB(TipoDatoDB.DATE, "date"), false));
-			tb.AgregarColumna(new Columna("Hora", new TipoObjetoDB(TipoDatoDB.TIME, "time"), false));
+			tb.AgregarColumna(new Columna("numero", new TipoObjetoDB(TipoDatoDB.COUNTER, "int"), true));
+			tb.AgregarColumna(new Columna("tipo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
+			tb.AgregarColumna(new Columna("descripcion", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
+			tb.AgregarColumna(new Columna("fila", new TipoObjetoDB(TipoDatoDB.INT, "int"), false));
+			tb.AgregarColumna(new Columna("columna", new TipoObjetoDB(TipoDatoDB.INT, "int"), false));
+			tb.AgregarColumna(new Columna("fecha", new TipoObjetoDB(TipoDatoDB.DATE, "date"), false));
+			tb.AgregarColumna(new Columna("hora", new TipoObjetoDB(TipoDatoDB.TIME, "time"), false));
 			return tb;
 		}
 

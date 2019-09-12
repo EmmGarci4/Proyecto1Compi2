@@ -29,6 +29,11 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
+			if (this.nombre=="errors") {
+				return new ThrowError(Util.TipoThrow.TableAlreadyExists,
+					"La tabla 'errors' ya existe",
+					Linea, Columna);
+			}
 			//VALIDANDO TABLA
 			if (sesion.DBActual != null)
 			{

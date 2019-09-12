@@ -534,12 +534,12 @@ namespace Proyecto1Compi2.com.Util
 
 		internal static string GetDate()
 		{
-			return "'" + DateTime.Now.ToString("yyyy-MM-dd") + "'";
+			return DateTime.Now.ToString("yyyy-MM-dd") ;
 		}
 
 		internal static string GetTime()
 		{
-			return "'" + DateTime.Now.ToString("HH:mm:ss") + "'";
+			return  DateTime.Now.ToString("HH:mm:ss");
 		}
 
 		internal static bool IsPrimitivo(TipoDatoDB ti)
