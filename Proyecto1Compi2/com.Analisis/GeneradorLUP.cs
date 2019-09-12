@@ -15,6 +15,8 @@ namespace Proyecto1Compi2.com.Analisis
 	{
 		private static StringBuilder respuesta = new StringBuilder();
 
+		public static StringBuilder Respuesta { get => respuesta; set => respuesta = value; }
+
 		internal static void AnalizarEntrada(ParseTreeNode raiz)
 		{
 			respuesta.Clear();
@@ -34,7 +36,6 @@ namespace Proyecto1Compi2.com.Analisis
 						Struct(nodo.ChildNodes.ElementAt(0));
 						break;
 				}
-				Console.WriteLine(respuesta.ToString());
 			}
 		}
 
@@ -116,14 +117,27 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ", string.Empty);
 			string codigocql = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
-			//analizar 
-			respuesta.Append("[+DATA]");
-			//INSERTAR RESULTADOS
-			respuesta.Append("[-DATA]");
-			respuesta.Append("[+MESSAGE]");
-			respuesta.Append("Todo salió bien :D");
-			respuesta.Append("[-MESSAGE]");
 
+			if (Analizador.ExisteUsuario(usuario)) {
+				Sesion sesion = new Sesion(usuario, "");
+				//analizar 
+				bool res =Analizador.AnalizarCql(codigocql, sesion);
+				if (res)
+				{
+					//paquete de resultados
+					respuesta.Append("[+DATA]");
+					//INSERTAR RESULTADOS
+					respuesta.Append("[-DATA]");
+					respuesta.Append("[+MESSAGE]");
+					respuesta.Append("Todo salió bien :D");
+					respuesta.Append("[-MESSAGE]");
+
+				}
+				else {
+					//paquete de error 
+				}
+				
+			}
 		}
 
 		private static void Logout(ParseTreeNode nodo)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
-
+using com.Analisis;
 namespace Proyecto1Compi2.com.AST
 {
 	class While : Sentencia
@@ -66,7 +66,7 @@ namespace Proyecto1Compi2.com.AST
 								}
 								else if (respuesta.GetType() == typeof(ResultadoConsulta))
 								{
-
+									Analizador.ResultadosConsultas.Add((ResultadoConsulta)respuesta);
 								}
 								else {
 									//return 

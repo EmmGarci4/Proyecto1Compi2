@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using com.Analisis;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
@@ -91,7 +92,7 @@ namespace Proyecto1Compi2.com.AST
 						errores.AddRange((List<ThrowError>)respuesta);
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta)) {
-
+						Analizador.ResultadosConsultas.Add((ResultadoConsulta)respuesta);
 					} else {
 						//return-break-continue
 						if (errores.Count > 0) return errores;

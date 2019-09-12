@@ -27,6 +27,8 @@ namespace com.Analisis
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
 		private static Tabla errors = GetTablaErrors();
+		private static string resultado = "";
+		private static List<ResultadoConsulta> resultadosConsultas=new List<ResultadoConsulta>();
 
 		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
@@ -37,6 +39,8 @@ namespace com.Analisis
 		public static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
 		public static NodoAST AST { get => ast; }
 		public static Tabla Errors { get => errors; set => errors = value; }
+		public static string Resultado { get => resultado; set => resultado = value; }
+		internal static List<ResultadoConsulta> ResultadosConsultas { get => resultadosConsultas; set => resultadosConsultas = value; }
 
 		//******************************FUNCIONES***********************************************************
 		public static bool ExisteFuncion(string nombre)
@@ -222,16 +226,18 @@ namespace com.Analisis
 							else if (respuesta.GetType() == typeof(Throw))
 							{
 								ErroresCQL.Add(new Error(TipoError.Semantico,
-									"La sentencia throw de tipo "+((Throw)respuesta).NombreExeption+" no está contenida en una estructura try-catch",
+									"La sentencia throw de tipo " + ((Throw)respuesta).NombreExeption + " no está contenida en una estructura try-catch",
 									((Throw)respuesta).Linea, ((Throw)respuesta).Columna));
 								break;
 							}
-							else if(respuesta.GetType() == typeof(Break)|| respuesta.GetType() == typeof(Continue)||
+							else if (respuesta.GetType() == typeof(Break) || respuesta.GetType() == typeof(Continue) ||
 								respuesta.GetType() == typeof(Return)) {
 								Sentencia sent = (Sentencia)respuesta;
-								ErroresCQL.Add(new Error(TipoError.Semantico, 
+								ErroresCQL.Add(new Error(TipoError.Semantico,
 									"La sentencia no está en un bloque de código adecuado",
 									sent.Linea, sent.Columna));
+							} else if (respuesta.GetType()==typeof(ResultadoConsulta)) {
+								resultadosConsultas.Add((ResultadoConsulta)respuesta);
 							}
 						}
 					}
@@ -304,6 +310,7 @@ namespace com.Analisis
 			{
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\LUP.dot");
 				GeneradorLup.AnalizarEntrada(raiz);
+				resultado = GeneradorLup.Respuesta.ToString();
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{

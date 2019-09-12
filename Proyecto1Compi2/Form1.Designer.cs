@@ -30,13 +30,12 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.Btn_EjecutarSql = new System.Windows.Forms.ToolStripButton();
-			this.Btn_leerXml = new System.Windows.Forms.ToolStripButton();
 			this.Bt_EjecutarLup = new System.Windows.Forms.ToolStripButton();
+			this.Btn_leerXml = new System.Windows.Forms.ToolStripButton();
 			this.Btn_LimpiarDB = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-			Form1.txt_consola = new System.Windows.Forms.TextBox();
+			Form1.textBox1 = new System.Windows.Forms.TextBox();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -45,9 +44,8 @@
 			// 
 			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Btn_EjecutarSql,
-            this.Btn_leerXml,
             this.Bt_EjecutarLup,
+            this.Btn_leerXml,
             this.Btn_LimpiarDB});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
@@ -55,26 +53,6 @@
 			this.toolStrip1.Size = new System.Drawing.Size(800, 25);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
-			// 
-			// Btn_EjecutarSql
-			// 
-			this.Btn_EjecutarSql.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.Btn_EjecutarSql.Image = ((System.Drawing.Image)(resources.GetObject("Btn_EjecutarSql.Image")));
-			this.Btn_EjecutarSql.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.Btn_EjecutarSql.Name = "Btn_EjecutarSql";
-			this.Btn_EjecutarSql.Size = new System.Drawing.Size(77, 22);
-			this.Btn_EjecutarSql.Text = "Ejecutar SQL";
-			this.Btn_EjecutarSql.Click += new System.EventHandler(this.ToolStripButton1_Click);
-			// 
-			// Btn_leerXml
-			// 
-			this.Btn_leerXml.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.Btn_leerXml.Image = ((System.Drawing.Image)(resources.GetObject("Btn_leerXml.Image")));
-			this.Btn_leerXml.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.Btn_leerXml.Name = "Btn_leerXml";
-			this.Btn_leerXml.Size = new System.Drawing.Size(93, 22);
-			this.Btn_leerXml.Text = "Ejecutar Chison";
-			this.Btn_leerXml.Click += new System.EventHandler(this.Btn_leerXml_Click);
 			// 
 			// Bt_EjecutarLup
 			// 
@@ -85,6 +63,16 @@
 			this.Bt_EjecutarLup.Size = new System.Drawing.Size(76, 22);
 			this.Bt_EjecutarLup.Text = "Ejecutar Lup";
 			this.Bt_EjecutarLup.Click += new System.EventHandler(this.Bt_EjecutarLup_Click_1);
+			// 
+			// Btn_leerXml
+			// 
+			this.Btn_leerXml.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.Btn_leerXml.Image = ((System.Drawing.Image)(resources.GetObject("Btn_leerXml.Image")));
+			this.Btn_leerXml.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.Btn_leerXml.Name = "Btn_leerXml";
+			this.Btn_leerXml.Size = new System.Drawing.Size(93, 22);
+			this.Btn_leerXml.Text = "Ejecutar Chison";
+			this.Btn_leerXml.Click += new System.EventHandler(this.Btn_leerXml_Click);
 			// 
 			// Btn_LimpiarDB
 			// 
@@ -101,7 +89,7 @@
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(Form1.txt_consola, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(Form1.textBox1, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -123,14 +111,12 @@
 			// 
 			// textBox1
 			// 
-			Form1.txt_consola.Dock = System.Windows.Forms.DockStyle.Fill;
-			Form1.txt_consola.Location = new System.Drawing.Point(3, 215);
-			Form1.txt_consola.Multiline = true;
-			Form1.txt_consola.Name = "textBox1";
-			Form1.txt_consola.Font = new System.Drawing.Font("Consolas", 11F);
-			Form1.txt_consola.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			Form1.txt_consola.Size = new System.Drawing.Size(794, 207);
-			Form1.txt_consola.TabIndex = 3;
+			Form1.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+			Form1.textBox1.Location = new System.Drawing.Point(3, 215);
+			Form1.textBox1.Multiline = true;
+			Form1.textBox1.Name = "textBox1";
+			Form1.textBox1.Size = new System.Drawing.Size(794, 207);
+			Form1.textBox1.TabIndex = 3;
 			// 
 			// Form1
 			// 
@@ -153,13 +139,12 @@
 		#endregion
 
 		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton Btn_EjecutarSql;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.ToolStripButton Btn_leerXml;
 		private System.Windows.Forms.ToolStripButton Bt_EjecutarLup;
 		private System.Windows.Forms.ToolStripButton Btn_LimpiarDB;
 		private System.Windows.Forms.RichTextBox richTextBox1;
-		private static System.Windows.Forms.TextBox txt_consola;
+		private static System.Windows.Forms.TextBox textBox1;
 	}
 }
 

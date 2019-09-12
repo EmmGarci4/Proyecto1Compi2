@@ -23,32 +23,7 @@ namespace Proyecto1Compi2
 
 		private void ToolStripButton1_Click(object sender, EventArgs e)
 		{
-			//EjecutarAckermann();
-			//EjecutarHanoi();
-			txt_consola.Clear();
-			Analizador.AddUsuario(new Usuario("admin", "admin"));
-			Sesion sesion = new Sesion("admin", null);
-			if (Analizador.AnalizarCql(this.richTextBox1.Text,sesion)) //si no hay ErroresCQL sintácticos/léxicos
-			{
-				if (Analizador.ErroresCQL.Count==0) {
-					//si no hay ErroresCQL semánticos
-					txt_consola.AppendText("Finalizado con éxito\n");
-				}
-				else
-				{
-					foreach (Error er in Analizador.ErroresCQL)
-					{
-						txt_consola.AppendText(er.ToString());
-					}
-				}
-			}
-			else
-			{
-				foreach (Error er in Analizador.ErroresCQL)
-				{
-					txt_consola.AppendText(er.ToString());
-				}
-			}
+			
 		}
 
 		private void EjecutarHanoi()
@@ -93,44 +68,40 @@ namespace Proyecto1Compi2
 		private void Btn_leerXml_Click(object sender, EventArgs e)
 		{
 
-			txt_consola.Clear();
+			textBox1.Clear();
 				if (Analizador.AnalizarChison(this.richTextBox1.Text))
 				{
-					txt_consola.Text = "Finalizado con éxito\n";
+					textBox1.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
 				foreach (Error er in Analizador.ErroresChison)
 				{
-					txt_consola.AppendText(er + "\n");
+					textBox1.AppendText(er + "\n");
 				}
 			}
 		}
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
-			txt_consola.Clear();
+			textBox1.Clear();
 			if (Analizador.AnalizarLup(this.richTextBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
 			{
 				if (Analizador.ErroresCQL.Count == 0)
 				{
 					//si no hay ErroresCQL semánticos
-					txt_consola.Text = "Finalizado con éxito\n";
+					textBox1.Text = "Finalizado con éxito\n";
+					
 				}
-				else
-				{
-					foreach (Error er in Analizador.ErroresCQL)
-					{
-						txt_consola.AppendText(er.ToString());
-					}
-				}
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
+				textBox1.AppendText(Analizador.Resultado);
+				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
 			}
 			else
 			{
+				//GENERAR PAQUETE DE ERRORES
 				foreach (Error er in Analizador.ErroresCQL)
 				{
-					txt_consola.AppendText(er.ToString());
+					textBox1.AppendText(er.ToString());
 				}
 			}
 		}
@@ -138,7 +109,7 @@ namespace Proyecto1Compi2
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
 		{
 			Analizador.Clear();
-			txt_consola.Clear();
+			textBox1.Clear();
 		}
 
 		private void Btn_GenerarArchivos_Click(object sender, EventArgs e)
@@ -148,25 +119,25 @@ namespace Proyecto1Compi2
 
 		private void Btn_cargarChison_Click(object sender, EventArgs e)
 		{
-			txt_consola.Clear();
+			textBox1.Clear();
 			String chi = HandlerFiles.AbrirArchivo(Analizador.PATH + "principal.chison");
 			if (chi != null)
 			{
 				if (Analizador.AnalizarChison(chi))
 				{
-					txt_consola.Text = "Finalizado con éxito\n";
+					textBox1.Text = "Finalizado con éxito\n";
 				}
 				else
 				{
-					txt_consola.Text="Finalizado con errores";
+					textBox1.Text="Finalizado con errores";
 					
 				}
 			}
 		}
 
 		public static void MostrarMensajeAUsuario(string mensaje) {
-			txt_consola.AppendText(mensaje);
-			txt_consola.AppendText("\r\n");
+			textBox1.AppendText(mensaje);
+			textBox1.AppendText("\r\n");
 		}
 
 		private void toolStripButton1_Click_1(object sender, EventArgs e)
