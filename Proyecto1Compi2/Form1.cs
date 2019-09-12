@@ -1,5 +1,6 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Analisis;
 using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.db;
 using System;
@@ -65,51 +66,17 @@ namespace Proyecto1Compi2
 				return (Ackermann(m - 1, Ackermann(m, n - 1)));
 		}
 
-		private void Btn_leerXml_Click(object sender, EventArgs e)
-		{
-
-			textBox1.Clear();
-				if (Analizador.AnalizarChison(this.richTextBox1.Text))
-				{
-					textBox1.Text = "Finalizado con éxito\n";
-				}
-				else
-				{
-				foreach (Error er in Analizador.ErroresChison)
-				{
-					textBox1.AppendText(er + "\n");
-				}
-			}
-		}
-
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
-			textBox1.Clear();
-			if (Analizador.AnalizarLup(this.richTextBox1.Text)) //si no hay ErroresCQL sintácticos/léxicos
-			{
-				if (Analizador.ErroresCQL.Count == 0)
-				{
-					//si no hay ErroresCQL semánticos
-					textBox1.Text = "Finalizado con éxito\n";
-					
-				}
-				textBox1.AppendText(Analizador.Resultado);
-				//generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\exp.dot");
-			}
-			else
-			{
-				//GENERAR PAQUETE DE ERRORES
-				foreach (Error er in Analizador.ErroresCQL)
-				{
-					textBox1.AppendText(er.ToString());
-				}
-			}
+			textBox2.Clear();
+			GeneradorLup.Analizar(this.richTextBox1.Text);
+			textBox2.AppendText(GeneradorLup.Resultado.ToString());
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
 		{
 			Analizador.Clear();
-			textBox1.Clear();
+			//textBox1.Clear();
 		}
 
 		private void Btn_GenerarArchivos_Click(object sender, EventArgs e)
@@ -117,27 +84,9 @@ namespace Proyecto1Compi2
 			Analizador.GenerarArchivos("ArchivoPrincipal.txt");
 		}
 
-		private void Btn_cargarChison_Click(object sender, EventArgs e)
-		{
-			textBox1.Clear();
-			String chi = HandlerFiles.AbrirArchivo(Analizador.PATH + "principal.chison");
-			if (chi != null)
-			{
-				if (Analizador.AnalizarChison(chi))
-				{
-					textBox1.Text = "Finalizado con éxito\n";
-				}
-				else
-				{
-					textBox1.Text="Finalizado con errores";
-					
-				}
-			}
-		}
-
 		public static void MostrarMensajeAUsuario(string mensaje) {
-			textBox1.AppendText(mensaje);
-			textBox1.AppendText("\r\n");
+			//textBox2.AppendText(mensaje);
+			//textBox2.AppendText("\r\n");
 		}
 
 		private void toolStripButton1_Click_1(object sender, EventArgs e)

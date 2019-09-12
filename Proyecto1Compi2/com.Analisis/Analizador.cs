@@ -110,7 +110,8 @@ namespace com.Analisis
 					return true;
 				}
 			}
-			return false;
+			
+			return nombre=="admin";
 		}
 
 		public static void AddUsuario(Usuario usu)
@@ -183,9 +184,9 @@ namespace com.Analisis
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
 			ParseTree arbol = parser.Parse(texto);
-			Analizador.ErroresCQL.Clear();
-			Analizador.funciones.Clear();
-			Analizador.raiz = arbol.Root;
+			erroresCQL.Clear();
+			funciones.Clear();
+			raiz = arbol.Root;
 			if (raiz!=null) {
 				//PRUEBAS DE EXPRESIONES
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
@@ -298,28 +299,6 @@ namespace com.Analisis
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count==0;
 		}
 
-		public static bool AnalizarLup(String texto)
-		{
-			GramaticaLup gramatica = new GramaticaLup();
-			LanguageData ldata = new LanguageData(gramatica);
-			Parser parser = new Parser(ldata);
-			ParseTree arbol = parser.Parse(texto);
-			Analizador.ErroresCQL.Clear();
-			Analizador.raiz = arbol.Root;
-			if (raiz != null)
-			{
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\LUP.dot");
-				GeneradorLup.AnalizarEntrada(raiz);
-				resultado = GeneradorLup.Respuesta.ToString();
-			}
-			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
-			{
-				ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
-			}
-
-			return Analizador.raiz != null;
-		}
-
 		//******************************OTROS***************************************************************
 
 		private static void LlenarTablaErrors() {
@@ -396,7 +375,9 @@ namespace com.Analisis
 				Usuario us = BuscarUsuario(usuario);
 				return us.Password.Equals(passwd);
 			}
-			return false;
+			else {
+				return usuario == "admin" && passwd == "admin";
+			}
 		}
 
 		private static string Importar(string texto)
