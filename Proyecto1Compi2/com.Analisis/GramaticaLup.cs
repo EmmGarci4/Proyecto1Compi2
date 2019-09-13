@@ -13,7 +13,7 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			#region ER
 
-			RegexBasedTerminal contenido = new RegexBasedTerminal("contenido", "[^[]*");
+			RegexBasedTerminal contenido = new RegexBasedTerminal("contenido", ".*");
 			RegexBasedTerminal nombre = new RegexBasedTerminal("nombre", "[a-zA-ZñÑ][\\w]*");
 
 

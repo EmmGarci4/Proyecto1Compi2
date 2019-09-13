@@ -276,6 +276,7 @@ namespace com.Analisis
 				| CREAR_USERTYPE
 				| FUNCIONAGREGACION+puntoycoma
 				| SENTENCIAFCL
+				| SyntaxError+llave2
 				;
 
 			#region expresion
@@ -388,14 +389,17 @@ namespace com.Analisis
 				| CREAR_TABLA
 				| ALTERAR_TABLA
 				| ELIMINAR_TABLA
-				| TRUNCAR_TABLA;
+				| TRUNCAR_TABLA
+				| SyntaxError+puntoycoma;
 
 			SENTENCIATCL.Rule =BACKUP
-				| RESTAURAR;
+				| RESTAURAR
+				|SyntaxError+puntoycoma;
 
 			SENTENCIADCL.Rule =CREAR_USUARIO
 				|OTORGAR
-				|DENEGAR;
+				|DENEGAR
+				|SyntaxError+puntoycoma;
 
 			USAR_DB.Rule = pr_usar + nombre + puntoycoma;
 
@@ -456,7 +460,8 @@ namespace com.Analisis
 			SENTENCIADML.Rule =INSERTAR
 				|ACTUALIZAR
 				|BORRAR
-				|SELECCIONAR+puntoycoma;
+				|SELECCIONAR+puntoycoma
+				|SyntaxError+puntoycoma;
 
 			//cambiar si se puede insertar valores en objeto desde aca
 
@@ -489,6 +494,7 @@ namespace com.Analisis
 				| PROPIEDADLIMIT;
 
 			PROPIEDADDONDE.Rule = pr_donde + CONDICION
+				| pr_donde +ACCESO
 				| pr_donde + EXPRESION + pr_in + EXPRESION
 				| pr_donde + EXPRESION + pr_in + par1 + LISTAEXPRESIONES + par2;
 
@@ -543,6 +549,8 @@ namespace com.Analisis
 				| OPERACIONASIGNACION
 				| ASIGNACIONCALL
 				| ACCESOFUNCION
+				| SyntaxError + puntoycoma
+				| SyntaxError + llave2
 				;
 
 			ACCESOFUNCION.Rule = id + punto + ACCESO+puntoycoma;

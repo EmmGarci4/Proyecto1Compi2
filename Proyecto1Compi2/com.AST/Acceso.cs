@@ -607,115 +607,38 @@ namespace Proyecto1Compi2.com.AST
 									case "contains":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
-											bool respuesta = false;
-
-											switch (t)
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
+											if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
 											{
-												case TipoOperacion.Numero:
-													if (collection.TipoDato.Tipo == TipoDatoDB.INT)
+												object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo, ts, sesion, Linea, Columna);
+												if (nuevoDato != null)
+												{
+													if (nuevoDato.GetType() == typeof(ThrowError))
 													{
-														if (!nuevo.ToString().Contains("."))
-														{
-															respuesta = collection.Contains(nuevo);
-														}
-														else
-														{
-															return new ThrowError(Util.TipoThrow.Exception,
-																"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-																Linea, Columna);
-														}
+														return nuevoDato;
 													}
-													else if (collection.TipoDato.Tipo == TipoDatoDB.DOUBLE)
-													{
-														respuesta = collection.Contains(nuevo);
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-																"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-																Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Booleano:
-													if (collection.TipoDato.Tipo == TipoDatoDB.BOOLEAN)
-													{
-														respuesta = collection.Contains(nuevo);
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Fecha:
-													if (collection.TipoDato.Tipo == TipoDatoDB.DATE)
-													{
-														respuesta = collection.Contains(nuevo);
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Hora:
-													if (collection.TipoDato.Tipo == TipoDatoDB.TIME)
-													{
-														respuesta = collection.Contains(nuevo);
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.Objeto:
-													if (collection.TipoDato.Tipo == TipoDatoDB.OBJETO)
-													{
-														respuesta = collection.Contains(nuevo);
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-															Linea, Columna);
-													}
-													break;
-												case TipoOperacion.String:
-													if (collection.TipoDato.Tipo == TipoDatoDB.STRING)
-													{
-														respuesta = collection.Contains(nuevo);
-													}
-													else
-													{
-														return new ThrowError(Util.TipoThrow.Exception,
-															"El Collection tipo " + collection.TipoDato.ToString() + " no contiene el valor '" + nuevo + "'",
-															Linea, Columna);
-													}
-
-													break;
-												default:
-													return new ThrowError(Util.TipoThrow.Exception,
-											"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
-											Linea, Columna);
+													object val = collection.Contains(nuevoDato);
+													Simbolo s = new Simbolo(llaveFuncion, val,
+															Datos.GetTipoObjetoDB(val), 0, 0);
+													simbolosApilados.Push(s);
+													return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
+												}
 											}
-											//retornando el resultado
-											Simbolo s = new Simbolo(llaveFuncion, respuesta,
-												new Util.TipoObjetoDB(TipoDatoDB.BOOLEAN, "boolean"), 0, 0);
-											simbolosApilados.Push(s);
-											return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+											else
+											{
+												return new ThrowError(Util.TipoThrow.Exception,
+													"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
+													Linea, Columna);
+											}
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
+										break;
 									default:
 										return new ThrowError(Util.TipoThrow.Exception,
 											"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",

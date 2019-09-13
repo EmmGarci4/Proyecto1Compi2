@@ -3,6 +3,7 @@ using com.Analisis.Util;
 using Proyecto1Compi2.com.Analisis;
 using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -68,18 +69,34 @@ namespace Proyecto1Compi2
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
-			textBox2.Clear();
-			GeneradorLup.Analizar("[+QUERY][+USER]admin[-USER][+DATA]"+this.richTextBox1.Text+ "[-DATA][-QUERY]");
-			foreach (Error error in Analizador.ErroresCQL) {
-				textBox2.AppendText(error.ToString());
+			richTextBox2.Clear();
+			Sesion sesion = new Sesion("admin", null);
+			//analizar 
+			bool res = Analizador.AnalizarCql(this.richTextBox1.Text, sesion);
+			//paquete de resultados
+			foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
+			{
+				richTextBox2.AppendText(resultado.ToString());
 			}
-			//textBox2.AppendText(GeneradorLup.Resultado.ToString());
+			//mensajes
+			foreach (String mensaje in sesion.Mensajes)
+			{
+				richTextBox2.AppendText(mensaje);
+				richTextBox2.AppendText("\n\r");
+			}
+			//errores lup
+			foreach (Error error in Analizador.ErroresCQL)
+			{
+				richTextBox2.AppendText(error.ToString());
+			}
+
+
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
 		{
 			Analizador.Clear();
-			//textBox1.Clear();
+			richTextBox2.Clear();
 		}
 
 		private void Btn_GenerarArchivos_Click(object sender, EventArgs e)
@@ -88,8 +105,8 @@ namespace Proyecto1Compi2
 		}
 
 		public static void MostrarMensajeAUsuario(string mensaje) {
-			//textBox2.AppendText(mensaje);
-			//textBox2.AppendText("\r\n");
+			//richTextBox2.AppendText(mensaje);
+			//richTextBox2.AppendText("\r\n");
 		}
 
 		private void toolStripButton1_Click_1(object sender, EventArgs e)
@@ -103,9 +120,14 @@ namespace Proyecto1Compi2
 
 		private void toolStripButton1_Click_2(object sender, EventArgs e)
 		{
-			textBox2.Clear();
+			richTextBox2.Clear();
 			GeneradorLup.Analizar(this.richTextBox1.Text);
-			textBox2.AppendText(GeneradorLup.Resultado.ToString());
+			richTextBox2.AppendText(GeneradorLup.Resultado.ToString());
+		}
+
+		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+
 		}
 	}
 }

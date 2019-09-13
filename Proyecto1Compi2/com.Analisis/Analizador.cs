@@ -23,14 +23,12 @@ namespace com.Analisis
 		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
 		static List<Error> erroresChison = new List<Error>();
-		static private ParseTreeNode raiz;
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
 		private static Tabla errors = GetTablaErrors();
 		private static string resultado = "";
 		private static List<ResultadoConsulta> resultadosConsultas = new List<ResultadoConsulta>();
 
-		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static string PATH => path;
 		public static List<Error> ErroresChison { get => erroresChison; set => erroresChison = value; }
@@ -187,11 +185,12 @@ namespace com.Analisis
 			ParseTree arbol = parser.Parse(texto);
 			erroresCQL.Clear();
 			funciones.Clear();
-			raiz = arbol.Root;
+			resultadosConsultas.Clear();
+			ParseTreeNode raiz = arbol.Root;
 			if (raiz != null)
 			{
 				//PRUEBAS DE EXPRESIONES
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
+				generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
 				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
 				//funciones.Add(new Funcion("llamada",new TipoObjetoDB(TipoDatoDB.STRING,"string"),1,1));
 				//TablaSimbolos ts = new TablaSimbolos("Global");
@@ -252,15 +251,17 @@ namespace com.Analisis
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
-				if (mensaje.Message.Contains("Syntax error")) {
+				if (mensaje.Message.Contains("Syntax error"))
+				{
 					ErroresCQL.Add(new Error(TipoError.Sintactico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
 				}
-				else {
+				else
+				{
 					ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
 				}
 			}
 
-			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
+			return raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
 		}
 
 		private static int contarErroresCQL()
@@ -284,11 +285,11 @@ namespace com.Analisis
 			//IMPORTAR 
 			texto = Importar(texto);
 			ParseTree arbol = parser.Parse(texto);
-			Analizador.raiz = arbol.Root;
+			ParseTreeNode raiz = arbol.Root;
 
 			if (raiz != null && arbol.ParserMessages.Count == 0)
 			{
-				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
 				MostrarReporteDeEstadoChison();
 
@@ -308,7 +309,7 @@ namespace com.Analisis
 			}
 			LlenarTablaErrors();
 			//Console.WriteLine(errors.ToString());
-			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count == 0;
+			return raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count == 0;
 		}
 
 		//******************************OTROS***************************************************************
@@ -372,15 +373,17 @@ namespace com.Analisis
 
 		public static void Clear()
 		{
-			ErroresCQL.Clear();
-			ErroresChison.Clear();
-			Usuariosdb=GetListaUsuarios();
 			BasesDeDatos.Clear();
+			Usuariosdb = GetListaUsuarios();
 			funciones.Clear();
+			erroresCQL.Clear();
+			ast = null;
+			erroresChison.Clear();
+			codigoAnalizado = "";
 			errorCatch = GetErrorCatch();
 			errors = GetTablaErrors();
-			ast = null;
-			raiz = null;
+			resultado = "";
+			resultadosConsultas.Clear();
 			Console.WriteLine("****************************************************************************");
 		}
 
@@ -432,7 +435,6 @@ namespace com.Analisis
 			ParseTree arbol = parser.Parse(codigo);
 			Analizador.ErroresCQL.Clear();
 			Analizador.funciones.Clear();
-			Analizador.raiz = arbol.Root;
 			return GeneradorAstCql.GetAST(arbol.Root);
 		}
 

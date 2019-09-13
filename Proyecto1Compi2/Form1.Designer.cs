@@ -31,11 +31,11 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.Bt_EjecutarLup = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.Btn_LimpiarDB = new System.Windows.Forms.ToolStripButton();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-			this.textBox2 = new System.Windows.Forms.TextBox();
-			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+			this.richTextBox2 = new System.Windows.Forms.RichTextBox();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -53,6 +53,7 @@
 			this.toolStrip1.Size = new System.Drawing.Size(800, 25);
 			this.toolStrip1.TabIndex = 1;
 			this.toolStrip1.Text = "toolStrip1";
+			this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
 			// 
 			// Bt_EjecutarLup
 			// 
@@ -63,6 +64,16 @@
 			this.Bt_EjecutarLup.Size = new System.Drawing.Size(56, 22);
 			this.Bt_EjecutarLup.Text = "Ejecutar ";
 			this.Bt_EjecutarLup.Click += new System.EventHandler(this.Bt_EjecutarLup_Click_1);
+			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(103, 22);
+			this.toolStripButton1.Text = "Ejecutar Consulta";
+			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_2);
 			// 
 			// Btn_LimpiarDB
 			// 
@@ -79,7 +90,7 @@
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.textBox2, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.richTextBox2, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -99,25 +110,14 @@
 			this.richTextBox1.TabIndex = 2;
 			this.richTextBox1.Text = "";
 			// 
-			// textBox2
+			// richTextBox2
 			// 
-			this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textBox2.Location = new System.Drawing.Point(3, 215);
-			this.textBox2.Multiline = true;
-			this.textBox2.Name = "textBox2";
-			this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.textBox2.Size = new System.Drawing.Size(794, 207);
-			this.textBox2.TabIndex = 3;
-			// 
-			// toolStripButton1
-			// 
-			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripButton1.Name = "toolStripButton1";
-			this.toolStripButton1.Size = new System.Drawing.Size(103, 22);
-			this.toolStripButton1.Text = "Ejecutar Consulta";
-			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_2);
+			this.richTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.richTextBox2.Location = new System.Drawing.Point(3, 215);
+			this.richTextBox2.Name = "richTextBox2";
+			this.richTextBox2.Size = new System.Drawing.Size(794, 207);
+			this.richTextBox2.TabIndex = 3;
+			this.richTextBox2.Text = "";
 			// 
 			// Form1
 			// 
@@ -131,7 +131,6 @@
 			this.toolStrip1.ResumeLayout(false);
 			this.toolStrip1.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
-			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -144,8 +143,8 @@
 		private System.Windows.Forms.ToolStripButton Bt_EjecutarLup;
 		private System.Windows.Forms.ToolStripButton Btn_LimpiarDB;
 		private System.Windows.Forms.RichTextBox richTextBox1;
-		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.ToolStripButton toolStripButton1;
+		private System.Windows.Forms.RichTextBox richTextBox2;
 	}
 }
 

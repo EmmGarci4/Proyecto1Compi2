@@ -839,8 +839,14 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			if (parseTreeNode.ChildNodes.Count == 1)
 			{
-				return new Where(GetCondicion(parseTreeNode.ChildNodes.ElementAt(0)), parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line,
+				if (parseTreeNode.ChildNodes.ElementAt(0).Term.Name=="CONDICION") {
+					return new Where(GetCondicion(parseTreeNode.ChildNodes.ElementAt(0)), parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line,
 					parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Column);
+				}
+				else {
+					return new Where(GetAcceso(parseTreeNode.ChildNodes.ElementAt(0)), parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line,
+					parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Column);
+				}
 			}
 			else
 			{
@@ -1293,7 +1299,7 @@ namespace Proyecto1Compi2.com.Analisis
 						case "numero":
 							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower()), TipoOperacion.Numero, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "cadena":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("\\", "\\\\"), TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "id":
 							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "nombre":

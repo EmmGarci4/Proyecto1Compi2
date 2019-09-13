@@ -258,6 +258,7 @@ namespace Proyecto1Compi2.com.Util
 			//cadena
 			else if (respuesta.GetType() == typeof(string))
 			{
+				if ((string)respuesta == "null") return new TipoObjetoDB(TipoDatoDB.NULO, "null");
 				return new TipoObjetoDB(TipoDatoDB.STRING, "string");
 			}
 			//fecha u hora
@@ -288,6 +289,9 @@ namespace Proyecto1Compi2.com.Util
 			else if (respuesta.GetType() == typeof(Objeto))
 			{
 				return new TipoObjetoDB(TipoDatoDB.OBJETO, ((Objeto)respuesta).Plantilla.Nombre);
+			}
+			else if (respuesta.GetType() == typeof(bool)) {
+				return new TipoObjetoDB(TipoDatoDB.BOOLEAN, "boolean");
 			}
 
 			return new TipoObjetoDB(TipoDatoDB.NULO, "null");

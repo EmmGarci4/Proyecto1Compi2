@@ -63,9 +63,10 @@ namespace Proyecto1Compi2.com.AST
 								//no es un error
 								if (cl.Tipo.Tipo != TipoDatoDB.COUNTER)
 								{
-									if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
+									if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta))
 									{
-										valoresAInsertar.Enqueue(respuesta);
+										object nuevovalor = Datos.CasteoImplicito(cl.Tipo, respuesta, tb, sesion, Linea, Columna);
+										valoresAInsertar.Enqueue(nuevovalor);
 											indiceDatos++;
 									}
 									else
@@ -142,15 +143,16 @@ namespace Proyecto1Compi2.com.AST
 									//no es un error
 									if (cl.Tipo.Tipo != TipoDatoDB.COUNTER)
 									{
-										if (Datos.IsTipoCompatible(cl.Tipo, respuesta))
+										if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta))
 										{
-											valoresAInsertar.Enqueue(respuesta);
+											object nuevovalor = Datos.CasteoImplicito(cl.Tipo, respuesta, tb, sesion, Linea, Columna);
+											valoresAInsertar.Enqueue(nuevovalor);
 											indiceDatos++;
 										}
 										else
 										{
 											return new ThrowError(TipoThrow.ValuesException,
-											"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+											"El valor No." + (indiceDatos + 1)+"("+Datos.GetTipoObjetoDB(respuesta).ToString()+")" + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
 											Linea, Columna);
 										}
 									}

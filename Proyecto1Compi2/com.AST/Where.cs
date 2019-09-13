@@ -7,13 +7,13 @@ namespace Proyecto1Compi2.com.AST
 {
 	internal class Where:Expresion
 	{
-		Condicion condicion;
+		Expresion condicion;
 		Expresion izquierda; //para clausula in
 		Expresion expresiones;
 		List<Expresion> listaExpresiones;
 
 		//WHERE CON CONDICION
-		public Where(Condicion condicion,int linea,int columna):base(linea,columna)
+		public Where(Expresion condicion,int linea,int columna):base(linea,columna)
 		{
 			this.condicion = condicion;
 			this.izquierda = null;
@@ -40,7 +40,7 @@ namespace Proyecto1Compi2.com.AST
 			this.listaExpresiones = expresiones;
 		}
 
-		internal Condicion Condicion { get => condicion; set => condicion = value; }
+		internal Expresion Condicion { get => condicion; set => condicion = value; }
 		internal Expresion Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Expresiones { get => expresiones; set => expresiones = value; }
 		internal List<Expresion> ListaExpresiones { get => listaExpresiones; set => listaExpresiones = value; }
@@ -55,7 +55,18 @@ namespace Proyecto1Compi2.com.AST
 			//WHERE CON CONDICION
 			if (this.izquierda == null && this.expresiones == null && this.listaExpresiones == null)
 			{
-				return this.condicion.GetValor(ts, sesion);
+				object val= this.condicion.GetValor(ts, sesion);
+				if (val!=null) {
+					if (val.GetType()==typeof(ThrowError)) {
+						return val;
+					}
+					if (val.GetType()!=typeof(bool)) {
+						return new ThrowError(TipoThrow.Exception, 
+							"La propiedad where debe evaluar un valor booleano", 
+							Linea, Columna);
+					}
+					return val;
+				}
 			}
 			else
 			//WHERE CON IN Y EXPRESION
