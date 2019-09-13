@@ -69,8 +69,11 @@ namespace Proyecto1Compi2
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
 			textBox2.Clear();
-			GeneradorLup.Analizar(this.richTextBox1.Text);
-			textBox2.AppendText(GeneradorLup.Resultado.ToString());
+			GeneradorLup.Analizar("[+QUERY][+USER]admin[-USER][+DATA]"+this.richTextBox1.Text+ "[-DATA][-QUERY]");
+			foreach (Error error in Analizador.ErroresCQL) {
+				textBox2.AppendText(error.ToString());
+			}
+			//textBox2.AppendText(GeneradorLup.Resultado.ToString());
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
@@ -96,6 +99,13 @@ namespace Proyecto1Compi2
 			//Console.WriteLine("Ackermann con 1,3: " + Ackermann(1, 3));
 			//Console.WriteLine("Ackermann con 2,4: " + Ackermann(2, 4));
 			//Console.WriteLine("Ackermann con 5,5: " + Ackermann(5, 5));
+		}
+
+		private void toolStripButton1_Click_2(object sender, EventArgs e)
+		{
+			textBox2.Clear();
+			GeneradorLup.Analizar(this.richTextBox1.Text);
+			textBox2.AppendText(GeneradorLup.Resultado.ToString());
 		}
 	}
 }

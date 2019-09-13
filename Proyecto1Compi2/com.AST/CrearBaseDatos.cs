@@ -37,6 +37,9 @@ namespace Proyecto1Compi2.com.AST
 				Analizador.AddBaseDatos(new BaseDatos(Nombre));
 				if (Analizador.ExisteUsuario(sesion.Usuario)) {
 					Analizador.BuscarUsuario(sesion.Usuario).Permisos.Add(Nombre);
+					if (nombre!="admin") {
+						Analizador.BuscarUsuario("admin").Permisos.Add(nombre);
+					}
 				}
 			}
 			return null;

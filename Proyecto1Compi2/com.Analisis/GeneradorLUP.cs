@@ -50,7 +50,7 @@ namespace Proyecto1Compi2.com.Analisis
 				respuesta.Append("[+DESC]");
 				respuesta.Append(error.Mensaje);
 				respuesta.Append("[-DESC]");
-				respuesta.Append("[-ERROR]");
+				respuesta.Append("[-ERROR]\n");
 			}
 
 			return raiz != null;
@@ -176,14 +176,14 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					respuesta.Append("[+DATA]");
 					respuesta.Append(resultado.ToString());
-					respuesta.Append("[-DATA]");
+					respuesta.Append("[-DATA]\n");
 				}
 				//mensajes
 				foreach (String mensaje in sesion.Mensajes)
 				{
 					respuesta.Append("[+MESSAGE]");
 					respuesta.Append(mensaje);
-					respuesta.Append("[-MESSAGE]");
+					respuesta.Append("[-MESSAGE]\n");
 				}
 				//errores lup
 				foreach (Error error in Analizador.ErroresCQL)
@@ -201,7 +201,7 @@ namespace Proyecto1Compi2.com.Analisis
 					respuesta.Append("[+DESC]");
 					respuesta.Append(error.Mensaje);
 					respuesta.Append("[-DESC]");
-					respuesta.Append("[-ERROR]");
+					respuesta.Append("[-ERROR]\n");
 				}
 			}
 			else {
@@ -219,7 +219,7 @@ namespace Proyecto1Compi2.com.Analisis
 				respuesta.Append("[+DESC]");
 				respuesta.Append("el usuario '"+usuario+"' no existe");
 				respuesta.Append("[-DESC]");
-				respuesta.Append("[-ERROR]");
+				respuesta.Append("[-ERROR]\n");
 			}
 		}
 

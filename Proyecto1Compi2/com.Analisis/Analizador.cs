@@ -18,7 +18,7 @@ namespace com.Analisis
 	{
 		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
 		private static List<BaseDatos> BasesDeDatos = new List<BaseDatos>();
-		private static List<Usuario> Usuariosdb = new List<Usuario>();
+		private static List<Usuario> Usuariosdb = GetListaUsuarios();
 		private static List<Funcion> funciones = new List<Funcion>();
 		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
@@ -28,7 +28,7 @@ namespace com.Analisis
 		static UserType errorCatch = GetErrorCatch();
 		private static Tabla errors = GetTablaErrors();
 		private static string resultado = "";
-		private static List<ResultadoConsulta> resultadosConsultas=new List<ResultadoConsulta>();
+		private static List<ResultadoConsulta> resultadosConsultas = new List<ResultadoConsulta>();
 
 		public static ParseTreeNode Raiz { get => raiz; set => raiz = value; }
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
@@ -110,8 +110,8 @@ namespace com.Analisis
 					return true;
 				}
 			}
-			
-			return nombre=="admin";
+
+			return false;
 		}
 
 		public static void AddUsuario(Usuario usu)
@@ -178,7 +178,8 @@ namespace com.Analisis
 
 		//******************************ANALIZADORES********************************************************
 
-		public static bool AnalizarCql(String texto,Sesion sesion){
+		public static bool AnalizarCql(String texto, Sesion sesion)
+		{
 			codigoAnalizado = texto;
 			GramaticaCql gramatica = new GramaticaCql();
 			LanguageData ldata = new LanguageData(gramatica);
@@ -187,7 +188,8 @@ namespace com.Analisis
 			erroresCQL.Clear();
 			funciones.Clear();
 			raiz = arbol.Root;
-			if (raiz!=null) {
+			if (raiz != null)
+			{
 				//PRUEBAS DE EXPRESIONES
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
 				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
@@ -208,7 +210,7 @@ namespace com.Analisis
 					TablaSimbolos ts = new TablaSimbolos();
 					foreach (Sentencia sentencia in sentencias)
 					{
-						object respuesta = sentencia.Ejecutar(ts,sesion);
+						object respuesta = sentencia.Ejecutar(ts, sesion);
 						if (respuesta != null)
 						{
 							if (respuesta.GetType() == typeof(ThrowError))
@@ -232,12 +234,15 @@ namespace com.Analisis
 								break;
 							}
 							else if (respuesta.GetType() == typeof(Break) || respuesta.GetType() == typeof(Continue) ||
-								respuesta.GetType() == typeof(Return)) {
+								respuesta.GetType() == typeof(Return))
+							{
 								Sentencia sent = (Sentencia)respuesta;
 								ErroresCQL.Add(new Error(TipoError.Semantico,
 									"La sentencia no está en un bloque de código adecuado",
 									sent.Linea, sent.Columna));
-							} else if (respuesta.GetType()==typeof(ResultadoConsulta)) {
+							}
+							else if (respuesta.GetType() == typeof(ResultadoConsulta))
+							{
 								resultadosConsultas.Add((ResultadoConsulta)respuesta);
 							}
 						}
@@ -247,7 +252,12 @@ namespace com.Analisis
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
-				ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line,mensaje.Location.Column));
+				if (mensaje.Message.Contains("Syntax error")) {
+					ErroresCQL.Add(new Error(TipoError.Sintactico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
+				}
+				else {
+					ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
+				}
 			}
 
 			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
@@ -256,8 +266,10 @@ namespace com.Analisis
 		private static int contarErroresCQL()
 		{
 			int contador = 0;
-			foreach (Error error in ErroresCQL) {
-				if (error.Tipo!=TipoError.Advertencia) {
+			foreach (Error error in ErroresCQL)
+			{
+				if (error.Tipo != TipoError.Advertencia)
+				{
 					contador++;
 				}
 			}
@@ -273,8 +285,8 @@ namespace com.Analisis
 			texto = Importar(texto);
 			ParseTree arbol = parser.Parse(texto);
 			Analizador.raiz = arbol.Root;
-			
-			if (raiz != null && arbol.ParserMessages.Count==0)
+
+			if (raiz != null && arbol.ParserMessages.Count == 0)
 			{
 				generadorDOT.GenerarDOT(Analizador.Raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
@@ -289,30 +301,32 @@ namespace com.Analisis
 					mensaje.Message,
 					mensaje.Location.Line,
 					mensaje.Location.Column,
-					Datos.GetDate(), 
+					Datos.GetDate(),
 					Datos.GetTime()
 					));
 				//Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
 			}
 			LlenarTablaErrors();
 			//Console.WriteLine(errors.ToString());
-			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count==0;
+			return Analizador.raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count == 0;
 		}
 
 		//******************************OTROS***************************************************************
 
-		private static void LlenarTablaErrors() {
+		private static void LlenarTablaErrors()
+		{
 			errors.Truncar();
 			Queue<object> valores = new Queue<object>();
-			foreach (Error error in erroresChison) {
+			foreach (Error error in erroresChison)
+			{
 				valores.Clear();
 				int contador = errors.BuscarColumna("numero").GetUltimoValorCounter();
-				valores.Enqueue(contador+1);
+				valores.Enqueue(contador + 1);
 				valores.Enqueue(error.Tipo.ToString());
 				valores.Enqueue(error.Mensaje);
 				valores.Enqueue(error.Linea);
 				valores.Enqueue(error.Columna);
-				valores.Enqueue(new MyDateTime(TipoDatoDB.DATE,DateTime.Parse(error.Fecha)));
+				valores.Enqueue(new MyDateTime(TipoDatoDB.DATE, DateTime.Parse(error.Fecha)));
 				valores.Enqueue(new MyDateTime(TipoDatoDB.TIME, DateTime.Parse(error.Hora)));
 				//agregando valores
 				errors.AgregarValores(valores);
@@ -360,9 +374,11 @@ namespace com.Analisis
 		{
 			ErroresCQL.Clear();
 			ErroresChison.Clear();
-			Usuariosdb.Clear();
+			Usuariosdb=GetListaUsuarios();
 			BasesDeDatos.Clear();
 			funciones.Clear();
+			errorCatch = GetErrorCatch();
+			errors = GetTablaErrors();
 			ast = null;
 			raiz = null;
 			Console.WriteLine("****************************************************************************");
@@ -375,9 +391,7 @@ namespace com.Analisis
 				Usuario us = BuscarUsuario(usuario);
 				return us.Password.Equals(passwd);
 			}
-			else {
-				return usuario == "admin" && passwd == "admin";
-			}
+			return false;
 		}
 
 		private static string Importar(string texto)
@@ -429,7 +443,8 @@ namespace com.Analisis
 			return new UserType("error", at);
 		}
 
-		private static Tabla GetTablaErrors() {
+		private static Tabla GetTablaErrors()
+		{
 			Tabla tb = new Tabla("errors");
 			tb.AgregarColumna(new Columna("numero", new TipoObjetoDB(TipoDatoDB.COUNTER, "int"), true));
 			tb.AgregarColumna(new Columna("tipo", new TipoObjetoDB(TipoDatoDB.STRING, "string"), false));
@@ -441,22 +456,33 @@ namespace com.Analisis
 			return tb;
 		}
 
+		private static List<Usuario> GetListaUsuarios()
+		{
+			List<Usuario> lista = new List<Usuario>();
+			lista.Add(new Usuario("admin", "admin"));
+			return lista;
+		}
+
 		//******************************REPORTES************************************************************
 
-		private static void MostrarReporteDeEstado(Sesion sesion) {
+		private static void MostrarReporteDeEstado(Sesion sesion)
+		{
 			Console.WriteLine("********************************************************************************************");
-			Console.WriteLine(Datos.GetDate()+"="+Datos.GetTime());
+			Console.WriteLine(Datos.GetDate() + "=" + Datos.GetTime());
 			Console.WriteLine("------------------------------------------------------");
 			Console.WriteLine("Bases de Datos: ");
-			foreach (BaseDatos db in BasesDeDatos) {
+			foreach (BaseDatos db in BasesDeDatos)
+			{
 				Console.WriteLine(db.Nombre);
 			}
 			Console.WriteLine("------------------------------------------------------");
 			Console.WriteLine("Usuarios: ");
-			foreach (Usuario usu in Usuariosdb) {
-				Console.WriteLine(usu.Nombre+"=>"+usu.Password);
+			foreach (Usuario usu in Usuariosdb)
+			{
+				Console.WriteLine(usu.Nombre + "=>" + usu.Password);
 				Console.WriteLine("Permisos:");
-				foreach (string per in usu.Permisos) {
+				foreach (string per in usu.Permisos)
+				{
 					Console.WriteLine(per);
 				}
 			}
@@ -516,7 +542,7 @@ namespace com.Analisis
 					Console.WriteLine("Tabla: " + tb.Nombre);
 					foreach (Columna cl in tb.Columnas)
 					{
-						Console.WriteLine("\t"+cl.Nombre + "=>" + cl.Tipo);
+						Console.WriteLine("\t" + cl.Nombre + "=>" + cl.Tipo);
 					}
 					Console.WriteLine("*********");
 					tb.MostrarDatos();
@@ -535,8 +561,9 @@ namespace com.Analisis
 				{
 					Console.WriteLine("Procedimiento: " + pr.Nombre);
 					Console.WriteLine("Parametros:");
-					foreach (Parametro par in pr.Parametros) {
-						Console.WriteLine("\t"+par.Nombre+"=>"+par.Tipo);
+					foreach (Parametro par in pr.Parametros)
+					{
+						Console.WriteLine("\t" + par.Nombre + "=>" + par.Tipo);
 					}
 					Console.WriteLine("Retornos:");
 					foreach (Parametro par in pr.Retornos)
@@ -554,7 +581,7 @@ namespace com.Analisis
 				Console.WriteLine("Permisos:");
 				foreach (string per in usu.Permisos)
 				{
-					Console.WriteLine("\t"+per);
+					Console.WriteLine("\t" + per);
 				}
 				Console.WriteLine("-----------------");
 			}

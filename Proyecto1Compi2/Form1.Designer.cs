@@ -35,6 +35,7 @@
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
+			this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
 			this.toolStrip1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -44,6 +45,7 @@
 			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Bt_EjecutarLup,
+            this.toolStripButton1,
             this.Btn_LimpiarDB});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip1.Name = "toolStrip1";
@@ -107,6 +109,16 @@
 			this.textBox2.Size = new System.Drawing.Size(794, 207);
 			this.textBox2.TabIndex = 3;
 			// 
+			// toolStripButton1
+			// 
+			this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+			this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripButton1.Name = "toolStripButton1";
+			this.toolStripButton1.Size = new System.Drawing.Size(103, 22);
+			this.toolStripButton1.Text = "Ejecutar Consulta";
+			this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_2);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -133,6 +145,7 @@
 		private System.Windows.Forms.ToolStripButton Btn_LimpiarDB;
 		private System.Windows.Forms.RichTextBox richTextBox1;
 		private System.Windows.Forms.TextBox textBox2;
+		private System.Windows.Forms.ToolStripButton toolStripButton1;
 	}
 }
 
