@@ -25,13 +25,13 @@ namespace Proyecto1Compi2
 
 		private void ToolStripButton1_Click(object sender, EventArgs e)
 		{
-			
+
 		}
 
 		private void EjecutarHanoi()
 		{
 			Console.WriteLine("Hanoi 1,2,3\n************************");
-			Hanoi(4,1, 2, 3);
+			Hanoi(4, 1, 2, 3);
 		}
 
 		//Método Torres de Hanoi Recursivo
@@ -47,7 +47,7 @@ namespace Proyecto1Compi2
 			}
 		}
 
-	private void EjecutarAckermann()
+		private void EjecutarAckermann()
 		{
 			Console.WriteLine("Ackermann con 0,1: " + Ackermann(0, 1));
 			Console.WriteLine("Ackermann con 1,0: " + Ackermann(1, 0));
@@ -58,13 +58,25 @@ namespace Proyecto1Compi2
 
 		private int Ackermann(int m, int n)
 		{
-			Console.WriteLine("m= "+m+" n="+n);
+			Console.WriteLine("m= " + m + " n=" + n);
 			if (m == 0)
+			{
 				return (n + 1);
+			}
 			else if (n == 0)
-				return (Ackermann(m - 1, 1));
+			{
+				int nn = Ackermann(m - 1, 1);
+				Console.WriteLine("nn "+nn);
+				return nn;
+			}
 			else
-				return (Ackermann(m - 1, Ackermann(m, n - 1)));
+			{
+				int ack1 = Ackermann(m, n - 1);
+				Console.WriteLine("ack1 " + ack1);
+				int ack2 = Ackermann(m - 1, ack1);
+				Console.WriteLine("ack2 " + ack2);
+				return ack2;
+			}
 		}
 
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
@@ -104,7 +116,8 @@ namespace Proyecto1Compi2
 			Analizador.GenerarArchivos("ArchivoPrincipal.txt");
 		}
 
-		public static void MostrarMensajeAUsuario(string mensaje) {
+		public static void MostrarMensajeAUsuario(string mensaje)
+		{
 			//richTextBox2.AppendText(mensaje);
 			//richTextBox2.AppendText("\r\n");
 		}
@@ -128,6 +141,11 @@ namespace Proyecto1Compi2
 		private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
 		{
 
+		}
+
+		private void toolStripButton2_Click(object sender, EventArgs e)
+		{
+			Console.WriteLine("Ackerman con 3,6: " + Ackermann(3, 6));
 		}
 	}
 }
