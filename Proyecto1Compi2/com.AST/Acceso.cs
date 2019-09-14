@@ -355,6 +355,106 @@ namespace Proyecto1Compi2.com.AST
 					switch (valor.Tipo)
 					{
 						case TipoAcceso.AccesoArreglo:
+							AccesoArreglo acceso = (AccesoArreglo)((AccesoPar)valor).Value;
+							if (ts.ExisteSimbolo(acceso.Nombre))
+							{
+								Simbolo sim2 = ts.GetSimbolo(acceso.Nombre);
+								if (Datos.IsLista(sim2.TipoDato.Tipo))
+								{
+									if (sim2.TipoDato.Tipo == TipoDatoDB.MAP_OBJETO || sim.TipoDato.Tipo == TipoDatoDB.MAP_PRIMITIVO)
+									{
+										CollectionMapCql lista = (CollectionMapCql)sim2.Valor;
+										object indiceexp = acceso.Valor.GetValor(ts, sesion);
+										if (indiceexp != null)
+										{
+											if (indiceexp.GetType() == typeof(ThrowError))
+											{
+												return indiceexp;
+											}
+											TipoObjetoDB tipoIndice = Datos.GetTipoObjetoDB(indiceexp);
+											if (tipoIndice.Equals(lista.TipoLlave))
+											{
+												if (lista.ContainsKey(indiceexp))
+												{
+													Simbolo simb = new Simbolo("INDICELISTA", indiceexp, tipoIndice, Linea, Columna);
+													simbolosApilados.Push(sim2);
+													simbolosApilados.Push(simb);
+													object respuesta = GetSimbolosApilados(simbolosApilados, sim2, ts, sesion);
+													return respuesta;
+												}
+												else
+												{
+													////error
+													//return new ThrowError(Util.TipoThrow.IndexOutException,
+													//"El indice debe ser del tipo '" + lista.TipoLlave.ToString() + "'",
+													//Linea, Columna);
+												}
+											}
+											else
+											{
+												//error
+												return new ThrowError(Util.TipoThrow.IndexOutException,
+													"El indice debe ser entero en una lista",
+													Linea, Columna);
+											}
+										}
+									}
+									else
+									{
+										CollectionListCql lista = (CollectionListCql)sim2.Valor;
+										object indiceexp = acceso.Valor.GetValor(ts, sesion);
+										if (indiceexp != null)
+										{
+											if (indiceexp.GetType() == typeof(ThrowError))
+											{
+												return indiceexp;
+											}
+											TipoObjetoDB tipoIndice = Datos.GetTipoObjetoDB(indiceexp);
+											if (tipoIndice.Tipo == TipoDatoDB.INT)
+											{
+												int indice = (int)indiceexp;
+												if (indice >= 0 && indice < lista.Count)
+												{
+
+													Simbolo simb = new Simbolo("INDICELISTA", indiceexp, tipoIndice, Linea, Columna);
+													simbolosApilados.Push(sim2);
+													simbolosApilados.Push(simb);
+													object respuesta = GetSimbolosApilados(simbolosApilados, sim2, ts, sesion);
+													return respuesta;
+												}
+												else
+												{
+													//error
+													return new ThrowError(Util.TipoThrow.IndexOutException,
+													"El indice debe ser mayor a cero y menor que el tamaño de la lista",
+													Linea, Columna);
+												}
+											}
+											else
+											{
+												//error
+												return new ThrowError(Util.TipoThrow.IndexOutException,
+													"El indice debe ser entero en una lista",
+													Linea, Columna);
+											}
+										}
+
+									}
+								}
+								else
+								{
+									return new ThrowError(Util.TipoThrow.Exception,
+										"El campo '" + valor.Value.ToString() + "' no es una lista",
+										Linea, Columna);
+								}
+							}
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+									"El campo '" + valor.Value.ToString() + "' no existe",
+									Linea, Columna);
+							}
+							break;
 						case TipoAcceso.Campo:
 							if (sim.TipoDato.Tipo != TipoDatoDB.NULO)
 							{

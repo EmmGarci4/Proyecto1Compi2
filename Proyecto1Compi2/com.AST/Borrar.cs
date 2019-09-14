@@ -177,7 +177,7 @@ namespace Proyecto1Compi2.com.AST
 												}
 												else
 												{
-													//error index out 
+													////error index out 
 													return new ThrowError(Util.TipoThrow.IndexOutException,
 														"El indice es mayor a la cantidad de elementos en la lista",
 														Linea, Columna);

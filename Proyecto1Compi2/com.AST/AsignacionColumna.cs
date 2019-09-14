@@ -16,8 +16,6 @@ namespace Proyecto1Compi2.com.AST
 		{
 			this.izquierda = izquierda;
 			this.exp = exp;
-			tabla = null;
-			posicionDato = 0;
 		}
 
 		internal Acceso Izquierda { get => izquierda; set => izquierda = value; }
