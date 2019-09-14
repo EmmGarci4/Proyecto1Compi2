@@ -217,6 +217,15 @@ namespace Proyecto1Compi2.com.db
 			return cadena.ToString();
 		}
 
+		internal void ReemplazarValores(Queue<object> valores, int i)
+		{
+			int cont = 0;
+			foreach (Columna cl in this.columnas) {
+				cl.Datos[i] = valores.ElementAt(cont);
+				cont++;
+			}
+		}
+
 		internal object ValidarPk(Queue<object> valoresAInsertar, int linea, int columna)
 		{
 			List<Columna> llaves = GetPks();

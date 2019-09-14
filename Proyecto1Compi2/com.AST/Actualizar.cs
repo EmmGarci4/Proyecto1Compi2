@@ -44,32 +44,24 @@ namespace Proyecto1Compi2.com.AST
 				if (db.ExisteTabla(tabla))
 				{
 					Tabla miTabla = db.BuscarTabla(tabla);
-					//**************************************************************************
-					foreach (AsignacionColumna asignacion in this.asignaciones)
+					int i = 0;
+					for (i = 0; i < miTabla.ContadorFilas; i++)
 					{
-						int i = 0;
-						for (i = 0; i < miTabla.ContadorFilas; i++)
+						List<string> listaNombres = new List<string>();
+						//AGREGANDO FILA A LA TABLA DE SIMBOLOS
+						TablaSimbolos local = new TablaSimbolos(tb);
+
+						foreach (Columna cl in miTabla.Columnas)
 						{
-							//AGREGANDO FILA A LA TABLA DE SIMBOLOS
-							TablaSimbolos local = new TablaSimbolos(tb);
-							foreach (Columna cl in miTabla.Columnas)
-							{
-								object dato = cl.Datos.ElementAt(i);
-								Simbolo s;
-								if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
-								{
-									s = new Simbolo(cl.Nombre, dato, new TipoObjetoDB(TipoDatoDB.INT,"int"), Linea, Columna);
+							listaNombres.Add(cl.Nombre);
+							object dato = cl.Datos.ElementAt(i);
+							Simbolo s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+							local.AgregarSimbolo(s);
 
-								}
-								else
-								{
-									s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
-								}
-
-								local.AgregarSimbolo(s);
-
-							}
-							//**************************************************************************
+						}
+						//**************************************************************************
+						foreach (AsignacionColumna asignacion in this.asignaciones)
+						{
 							if (condicion != null)
 							{
 								object condicionWhere = condicion.GetValor(local, sesion);
@@ -81,8 +73,6 @@ namespace Proyecto1Compi2.com.AST
 									}
 									if ((bool)condicionWhere)
 									{
-										asignacion.PasarTabla(miTabla);
-										asignacion.PasarPosicion(i);
 										object res = asignacion.Ejecutar(local, sesion);
 										if (res != null)
 										{
@@ -91,14 +81,11 @@ namespace Proyecto1Compi2.com.AST
 												return res;
 											}
 										}
-										asignacion.LimpiarTabla();
 									}
 								}
 							}
 							else
 							{
-								asignacion.PasarTabla(miTabla);
-								asignacion.PasarPosicion(i);
 								object res = asignacion.Ejecutar(local, sesion);
 								if (res != null)
 								{
@@ -107,11 +94,34 @@ namespace Proyecto1Compi2.com.AST
 										return res;
 									}
 								}
-								asignacion.LimpiarTabla();
 							}
 							//**************************************************************************
 						}
 						//**************************************************************************
+						//reemplazando valores
+						Queue<object> valores = new Queue<object>();
+						foreach (string columna in listaNombres)
+						{
+							Simbolo nuevoValor = local.GetSimbolo(columna);
+							if (nuevoValor != null)
+							{
+								valores.Enqueue(nuevoValor.Valor);
+							}
+						}
+						if (valores.Count == miTabla.Columnas.Count)
+						{
+							object vares = miTabla.ValidarPk(valores, Linea, Columna);
+							if (vares != null) {
+								if (vares.GetType()==typeof(ThrowError)) {
+									return vares;
+								}
+								if ((bool)vares)
+								{
+									miTabla.ReemplazarValores(valores, i);
+								}
+							}
+							
+						}
 					}
 				}
 				else

@@ -31,10 +31,10 @@ namespace Proyecto1Compi2.com.AST
 
 		public List<AccesoPar> Objetos { get => accesos; set => accesos = value; }
 
-		public override object GetValor(TablaSimbolos ts,Sesion sesion)
+		public override object GetValor(TablaSimbolos ts, Sesion sesion)
 		{
 			LlenarCola();
-			object respuesta = GetSimbolosApilados(ts,sesion);
+			object respuesta = GetSimbolosApilados(ts, sesion);
 			Stack<Simbolo> simbolos;
 			if (respuesta.GetType() == typeof(ThrowError))
 			{
@@ -44,94 +44,148 @@ namespace Proyecto1Compi2.com.AST
 			{
 				simbolos = (Stack<Simbolo>)respuesta;
 			}
-			if (simbolos.Count>0) {
+			if (simbolos.Count > 0)
+			{
 				Simbolo s = simbolos.Pop();
 				this.tipo = Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(s.Valor).Tipo);
 				return s.Valor;
 			}
-				return null;
+			return null;
 		}
 
 		private void LlenarCola()
 		{
 			objetos = new Queue<AccesoPar>();
-			foreach (AccesoPar acceso in this.accesos) {
+			foreach (AccesoPar acceso in this.accesos)
+			{
 				objetos.Enqueue(acceso);
 			}
 		}
 
-		internal object Asignar(object nuevoValor, TipoObjetoDB tipoObjetoDB, TablaSimbolos ts,Sesion sesion)
+		internal object Asignar(object nuevoValor, TipoObjetoDB tipoObjetoDB, TablaSimbolos ts, Sesion sesion)
 		{
 			LlenarCola();
-			object respuesta = GetSimbolosApilados(ts,sesion);
+			object respuesta = GetSimbolosApilados(ts, sesion);
 			Stack<Simbolo> simbolos;
 			if (respuesta.GetType() == typeof(ThrowError))
 			{
 				return respuesta;
 			}
-			else {
+			else
+			{
 				simbolos = (Stack<Simbolo>)respuesta;
 			}
 
 			if (simbolos.Count > 1)
 			{
-				String nombreAtributo = simbolos.Pop().Nombre;
-				Simbolo s = simbolos.Pop();
-				if (s.TipoDato.Tipo==TipoDatoDB.OBJETO) {
-					Objeto objeto = (Objeto)s.Valor;
-					if (objeto.Atributos.ContainsKey(nombreAtributo))
+				Simbolo ant = simbolos.Pop();
+				if (ant.Nombre == "INDICELISTA")
+				{
+					Simbolo sig = simbolos.Pop();
+					object indice = ant.Valor;
+					if (Datos.IsLista(sig.TipoDato.Tipo))
 					{
-						if (Datos.IsTipoCompatibleParaAsignar(objeto.Plantilla.Atributos[nombreAtributo], nuevoValor))
-						{
-							object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor,ts,sesion,Linea,Columna);
-							if (nuevoDato != null)
+						if (sig.Valor.GetType()==typeof(CollectionListCql)) {
+							CollectionListCql lista = (CollectionListCql)sig.Valor;
+							object res = lista.SetItem((int)indice, nuevoValor, Linea, Columna);
+							if (res != null)
 							{
-								if (nuevoDato.GetType() == typeof(ThrowError))
+								if (res.GetType() == typeof(ThrowError))
 								{
-									return nuevoDato;
+									return res;
 								}
-								objeto.Atributos[nombreAtributo] = nuevoDato;
 							}
-							
+						}
+						else {
+							CollectionMapCql lista = (CollectionMapCql)sig.Valor;
+							object res = lista.SetItem((int)indice, nuevoValor, Linea, Columna);
+							if (res != null)
+							{
+								if (res.GetType() == typeof(ThrowError))
+								{
+									return res;
+								}
+							}
+						}
+					}
+					else
+					{
+						//error
+						return new ThrowError(Util.TipoThrow.Exception,
+									"'"+sig.Nombre+"' no es una lista ",
+									Linea, Columna);
+					}
+				}
+				else {
+					Simbolo s = simbolos.Pop();
+					if (s.TipoDato.Tipo == TipoDatoDB.OBJETO)
+					{
+						Objeto objeto = (Objeto)s.Valor;
+						if (objeto.Atributos.ContainsKey(ant.Nombre))
+						{
+							if (Datos.IsTipoCompatibleParaAsignar(objeto.Plantilla.Atributos[ant.Nombre], nuevoValor))
+							{
+								object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
+								if (nuevoDato != null)
+								{
+									if (nuevoDato.GetType() == typeof(ThrowError))
+									{
+										return nuevoDato;
+									}
+									objeto.Atributos[ant.Nombre] = nuevoDato;
+								}
+							}
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+									"No se puede asignar el valor",
+									Linea, Columna);
+							}
 						}
 						else
 						{
 							return new ThrowError(Util.TipoThrow.Exception,
-								"No se puede asignar el valor",
-								Linea, Columna);
+							"No existe el atributo '" + ant.Nombre + "' en '" + s.Nombre + "'",
+							Linea, Columna);
+						}
+					}
+				}
+			}
+			else if(simbolos.Count == 1)
+			{
+				Simbolo s = simbolos.Pop();
+				if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, nuevoValor))
+				{
+					if (s.TipoDato.Tipo != TipoDatoDB.COUNTER)
+					{
+						object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
+						if (nuevoDato != null)
+						{
+							if (nuevoDato.GetType() == typeof(ThrowError))
+							{
+								return nuevoDato;
+							}
+							s.Valor = nuevoDato;
 						}
 					}
 					else {
 						return new ThrowError(Util.TipoThrow.Exception,
-						"No existe el atributo '"+nombreAtributo+"' en '"+s.Nombre+"'",
-						Linea, Columna);
+							"No se puede actualizar una columna tipo counter",
+							Linea, Columna);
 					}
 				}
-			}
-			else {
-				Simbolo s = simbolos.Pop();
-				if (Datos.IsTipoCompatibleParaAsignar(s.TipoDato, nuevoValor)) {
-					object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor,ts,sesion,Linea,Columna);
-					if (nuevoDato != null)
-					{
-						if (nuevoDato.GetType() == typeof(ThrowError))
-						{
-							return nuevoDato;
-						}
-						s.Valor = nuevoDato;
-					}
-				}
-				else {
+				else
+				{
 					return new ThrowError(Util.TipoThrow.Exception,
 						"No se puede asignar el valor",
 						Linea, Columna);
 				}
 			}
-			
+
 			return null;
 		}
 
-		private object GetSimbolosApilados(TablaSimbolos ts,Sesion sesion)
+		private object GetSimbolosApilados(TablaSimbolos ts, Sesion sesion)
 		{
 			Stack<Simbolo> simbolosApilados = new Stack<Simbolo>();
 			if (objetos.Count > 0)
@@ -140,12 +194,106 @@ namespace Proyecto1Compi2.com.AST
 				switch (valor.Tipo)
 				{
 					case TipoAcceso.AccesoArreglo:
-						AccesoArreglo acceso = (AccesoArreglo)valor.Value;
-						
-							//ACCESO A ALGO EN LAS TABLAS 
-							return new ThrowError(Util.TipoThrow.NullPointerException,
-												"NULL",
+						AccesoArreglo acceso = (AccesoArreglo)((AccesoPar)valor).Value;
+						if (ts.ExisteSimbolo(acceso.Nombre))
+						{
+							Simbolo sim = ts.GetSimbolo(acceso.Nombre);
+							if (Datos.IsLista(sim.TipoDato.Tipo))
+							{
+								if (sim.TipoDato.Tipo == TipoDatoDB.MAP_OBJETO || sim.TipoDato.Tipo == TipoDatoDB.MAP_PRIMITIVO)
+								{
+									CollectionMapCql lista = (CollectionMapCql)sim.Valor;
+									object indiceexp = acceso.Valor.GetValor(ts, sesion);
+									if (indiceexp != null)
+									{
+										if (indiceexp.GetType() == typeof(ThrowError))
+										{
+											return indiceexp;
+										}
+										TipoObjetoDB tipoIndice = Datos.GetTipoObjetoDB(indiceexp);
+										if (tipoIndice.Equals(lista.TipoLlave))
+										{
+											if (lista.ContainsKey(indiceexp))
+											{
+												Simbolo simb = new Simbolo("INDICELISTA", indiceexp, tipoIndice, Linea, Columna);
+												simbolosApilados.Push(sim);
+												simbolosApilados.Push(simb);
+												object respuesta = GetSimbolosApilados(simbolosApilados, sim, ts, sesion);
+												return respuesta;
+											}
+											else
+											{
+												////error
+												//return new ThrowError(Util.TipoThrow.IndexOutException,
+												//"El indice debe ser del tipo '" + lista.TipoLlave.ToString() + "'",
+												//Linea, Columna);
+											}
+										}
+										else
+										{
+											//error
+											return new ThrowError(Util.TipoThrow.IndexOutException,
+												"El indice debe ser entero en una lista",
 												Linea, Columna);
+										}
+									}
+								}
+								else
+								{
+									CollectionListCql lista = (CollectionListCql)sim.Valor;
+									object indiceexp = acceso.Valor.GetValor(ts, sesion);
+									if (indiceexp != null)
+									{
+										if (indiceexp.GetType() == typeof(ThrowError))
+										{
+											return indiceexp;
+										}
+										TipoObjetoDB tipoIndice = Datos.GetTipoObjetoDB(indiceexp);
+										if (tipoIndice.Tipo == TipoDatoDB.INT)
+										{
+											int indice = (int)indiceexp;
+											if (indice >= 0 && indice < lista.Count)
+											{
+
+												Simbolo simb = new Simbolo("INDICELISTA", indiceexp, tipoIndice, Linea, Columna);
+												simbolosApilados.Push(sim);
+												simbolosApilados.Push(simb);
+												object respuesta = GetSimbolosApilados(simbolosApilados, sim, ts, sesion);
+												return respuesta;
+											}
+											else
+											{
+												//error
+												return new ThrowError(Util.TipoThrow.IndexOutException,
+												"El indice debe ser mayor a cero y menor que el tamaño de la lista",
+												Linea, Columna);
+											}
+										}
+										else
+										{
+											//error
+											return new ThrowError(Util.TipoThrow.IndexOutException,
+												"El indice debe ser entero en una lista",
+												Linea, Columna);
+										}
+									}
+
+								}
+							}
+							else
+							{
+								return new ThrowError(Util.TipoThrow.Exception,
+									"El campo '" + valor.Value.ToString() + "' no es una lista",
+									Linea, Columna);
+							}
+						}
+						else
+						{
+							return new ThrowError(Util.TipoThrow.Exception,
+								"El campo '" + valor.Value.ToString() + "' no existe",
+								Linea, Columna);
+						}
+						break;
 					case TipoAcceso.Campo:
 						//tablas Y COLUMNAS
 						if (ts.ExisteSimbolo(valor.Value.ToString()))
@@ -165,21 +313,23 @@ namespace Proyecto1Compi2.com.AST
 					case TipoAcceso.LlamadaFuncion:
 						//ejecutar llamada de funcion y retornar el valor 
 						LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
-						object res = llamada.Ejecutar(ts,sesion);
-						if (res!=null) {
-							if (res.GetType()==typeof(ThrowError)) {
+						object res = llamada.Ejecutar(ts, sesion);
+						if (res != null)
+						{
+							if (res.GetType() == typeof(ThrowError))
+							{
 								return res;
 							}
 						}
-						Simbolo s = new Simbolo(llamada.getLlave(ts,sesion), res, Datos.GetTipoObjetoDB(res), Linea, Columna);
+						Simbolo s = new Simbolo(llamada.getLlave(ts, sesion), res, Datos.GetTipoObjetoDB(res), Linea, Columna);
 						simbolosApilados.Push(s);
-						return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+						return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 					case TipoAcceso.Variable:
 						if (ts.ExisteSimbolo(valor.Value.ToString()))
 						{
 							Simbolo sim = ts.GetSimbolo(valor.Value.ToString());
 							simbolosApilados.Push(sim);
-							object respuesta = GetSimbolosApilados(simbolosApilados, sim, ts,sesion);
+							object respuesta = GetSimbolosApilados(simbolosApilados, sim, ts, sesion);
 							return respuesta;
 						}
 						else
@@ -194,7 +344,7 @@ namespace Proyecto1Compi2.com.AST
 			return simbolosApilados;
 		}
 
-		private object GetSimbolosApilados(Stack<Simbolo> simbolosApilados,Simbolo sim, TablaSimbolos ts,Sesion sesion)
+		private object GetSimbolosApilados(Stack<Simbolo> simbolosApilados, Simbolo sim, TablaSimbolos ts, Sesion sesion)
 		{
 			if (objetos.Count > 0)
 			{
@@ -225,7 +375,7 @@ namespace Proyecto1Compi2.com.AST
 									Simbolo s = new Simbolo(valor.Value.ToString(),
 											val, tipo, 0, 0);
 									simbolosApilados.Push(s);
-									return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+									return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 								}
 								else
 								{
@@ -255,36 +405,36 @@ namespace Proyecto1Compi2.com.AST
 								#region FuncionesNativasSobreCadenas
 								string VALORFINAL = sim.Valor.ToString();
 								LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
-								string llaveFuncion = llamada.getLlave(ts,sesion);
+								string llaveFuncion = llamada.getLlave(ts, sesion);
 								switch (llaveFuncion.ToLower())
 								{
 									case "length()":
 										Simbolo s = new Simbolo(llaveFuncion, VALORFINAL.Length, new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "touppercase()":
 										s = new Simbolo(llaveFuncion, VALORFINAL.ToUpper(), new Util.TipoObjetoDB(Util.TipoDatoDB.STRING, "string"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "tolowercase()":
 										s = new Simbolo(llaveFuncion, VALORFINAL.ToLower(), new Util.TipoObjetoDB(Util.TipoDatoDB.STRING, "string"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "startswith(string)":
-										s = new Simbolo(llaveFuncion, VALORFINAL.StartsWith(llamada.Parametros.ElementAt(0).GetValor(ts,sesion).ToString()),
+										s = new Simbolo(llaveFuncion, VALORFINAL.StartsWith(llamada.Parametros.ElementAt(0).GetValor(ts, sesion).ToString()),
 											new Util.TipoObjetoDB(Util.TipoDatoDB.BOOLEAN, "boolean"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "endswith(string)":
-										s = new Simbolo(llaveFuncion, VALORFINAL.EndsWith(llamada.Parametros.ElementAt(0).GetValor(ts,sesion).ToString()),
+										s = new Simbolo(llaveFuncion, VALORFINAL.EndsWith(llamada.Parametros.ElementAt(0).GetValor(ts, sesion).ToString()),
 											new Util.TipoObjetoDB(Util.TipoDatoDB.BOOLEAN, "boolean"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "substring(int,int)":
 										try
 										{
 											s = new Simbolo(llaveFuncion,
-											VALORFINAL.Substring(int.Parse(llamada.Parametros.ElementAt(0).GetValor(ts,sesion).ToString()), int.Parse(llamada.Parametros.ElementAt(1).GetValor(ts,sesion).ToString())),
+											VALORFINAL.Substring(int.Parse(llamada.Parametros.ElementAt(0).GetValor(ts, sesion).ToString()), int.Parse(llamada.Parametros.ElementAt(1).GetValor(ts, sesion).ToString())),
 											new Util.TipoObjetoDB(Util.TipoDatoDB.STRING, "string"), 0, 0);
 										}
 										catch (ArgumentOutOfRangeException)
@@ -294,7 +444,7 @@ namespace Proyecto1Compi2.com.AST
 											Linea, Columna);
 										}
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									default:
 										return new ThrowError(Util.TipoThrow.Exception,
 											"La función '" + llaveFuncion + "' no se puede aplicar sobre '" + sim.Nombre + "'",
@@ -307,24 +457,24 @@ namespace Proyecto1Compi2.com.AST
 								#region FuncionesNativasSobreFecha
 								MyDateTime hora = (MyDateTime)sim.Valor;
 								LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
-								string llaveFuncion = llamada.getLlave(ts,sesion);
+								string llaveFuncion = llamada.getLlave(ts, sesion);
 								switch (llaveFuncion.ToLower())
 								{
 									case "getyear()":
 										Simbolo s = new Simbolo(llaveFuncion, hora.Dato.Year,
 											new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "getmonth()":
 										s = new Simbolo(llaveFuncion, hora.Dato.Month,
 										   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "getday()":
 										s = new Simbolo(llaveFuncion, hora.Dato.Day,
 										   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									default:
 										return new ThrowError(Util.TipoThrow.Exception,
 											"La función '" + llaveFuncion + "' no se puede aplicar sobre '" + sim.Nombre + "'",
@@ -338,24 +488,24 @@ namespace Proyecto1Compi2.com.AST
 
 								MyDateTime hora = (MyDateTime)sim.Valor;
 								LlamadaFuncion llamada = (LlamadaFuncion)valor.Value;
-								string llaveFuncion = llamada.getLlave(ts,sesion);
+								string llaveFuncion = llamada.getLlave(ts, sesion);
 								switch (llaveFuncion.ToLower())
 								{
 									case "gethour()":
 										Simbolo s = new Simbolo(llaveFuncion, hora.Dato.Hour,
 											new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "getminuts()":
 										s = new Simbolo(llaveFuncion, hora.Dato.Minute,
 										   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									case "getseconds()":
 										s = new Simbolo(llaveFuncion, hora.Dato.Second,
 										   new Util.TipoObjetoDB(Util.TipoDatoDB.INT, "int"), 0, 0);
 										simbolosApilados.Push(s);
-										return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+										return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 									default:
 										return new ThrowError(Util.TipoThrow.Exception,
 											"La función '" + llaveFuncion + "' no se puede aplicar sobre '" + sim.Nombre + "'",
@@ -375,10 +525,11 @@ namespace Proyecto1Compi2.com.AST
 									case "insert":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
-											if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo)) {
-												object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo,ts,sesion,Linea,Columna);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
+											if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+											{
+												object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo, ts, sesion, Linea, Columna);
 												if (nuevoDato != null)
 												{
 													if (nuevoDato.GetType() == typeof(ThrowError))
@@ -396,24 +547,25 @@ namespace Proyecto1Compi2.com.AST
 													}
 												}
 											}
-											else {
+											else
+											{
 												return new ThrowError(Util.TipoThrow.Exception,
-													"No se puede almacenar un valor "+Datos.GetTipoObjetoDB(nuevo)+" en un Collection tipo "+collection.TipoDato.ToString(),
+													"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
 													Linea, Columna);
 											}
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
 									case "get":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (t == TipoOperacion.Numero)
 											{
 												if (!nuevo.ToString().Contains("."))
@@ -433,7 +585,7 @@ namespace Proyecto1Compi2.com.AST
 														Simbolo s = new Simbolo(llaveFuncion, nuevoValor,
 															Datos.GetTipoObjetoDB(nuevoValor), 0, 0);
 														simbolosApilados.Push(s);
-														return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+														return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 													}
 													else
 													{
@@ -452,22 +604,22 @@ namespace Proyecto1Compi2.com.AST
 											else
 											{
 												return new ThrowError(Util.TipoThrow.Exception,
-													"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre un Collection'",
+													"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre un Collection'",
 													Linea, Columna);
 											}
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 									case "set":
 										if (llamada.Parametros.Count == 2)
 										{
 											//PRIMER PARAMETRO = POSICION
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (t == TipoOperacion.Numero)
 											{
 												if (!nuevo.ToString().Contains("."))
@@ -477,12 +629,12 @@ namespace Proyecto1Compi2.com.AST
 													if (posicion >= 0 && posicion < collection.Count)
 													{
 														//SEGUNDO PARAMETRO= VALOR
-														object nuevoValor = llamada.Parametros.ElementAt(1).GetValor(ts,sesion);
-														TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts,sesion);
+														object nuevoValor = llamada.Parametros.ElementAt(1).GetValor(ts, sesion);
+														TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
 
 														if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor))
 														{
-															object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevoValor,ts,sesion,Linea,Columna);
+															object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
 															if (nuevoDato != null)
 															{
 																if (nuevoDato.GetType() == typeof(ThrowError))
@@ -523,22 +675,22 @@ namespace Proyecto1Compi2.com.AST
 											else
 											{
 												return new ThrowError(Util.TipoThrow.Exception,
-													"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre un Collection'",
+													"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre un Collection'",
 													Linea, Columna);
 											}
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
 									case "remove":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (t == TipoOperacion.Numero)
 											{
 												if (!nuevo.ToString().Contains("."))
@@ -566,7 +718,7 @@ namespace Proyecto1Compi2.com.AST
 											else
 											{
 												return new ThrowError(Util.TipoThrow.Exception,
-													"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre un Collection'",
+													"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre un Collection'",
 													Linea, Columna);
 											}
 
@@ -574,7 +726,7 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
@@ -584,12 +736,12 @@ namespace Proyecto1Compi2.com.AST
 											Simbolo s = new Simbolo(llaveFuncion, collection.Count,
 												new Util.TipoObjetoDB(TipoDatoDB.INT, "int"), 0, 0);
 											simbolosApilados.Push(s);
-											return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+											return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 									case "clear":
@@ -600,7 +752,7 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
@@ -641,7 +793,7 @@ namespace Proyecto1Compi2.com.AST
 										break;
 									default:
 										return new ThrowError(Util.TipoThrow.Exception,
-											"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 
 								}
@@ -658,13 +810,13 @@ namespace Proyecto1Compi2.com.AST
 									case "insert":
 										if (llamada.Parametros.Count == 2)
 										{
-											object clave = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object clave = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (Datos.Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
 											{
 
-												object nuevo = llamada.Parametros.ElementAt(1).GetValor(ts,sesion);
-												TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts,sesion);
+												object nuevo = llamada.Parametros.ElementAt(1).GetValor(ts, sesion);
+												TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
 
 												if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, nuevo))
 												{
@@ -676,7 +828,7 @@ namespace Proyecto1Compi2.com.AST
 															return nuevoDato;
 														}
 
-														object posibleError = collection.AddItem(clave,nuevoDato, Linea, Columna);
+														object posibleError = collection.AddItem(clave, nuevoDato, Linea, Columna);
 														if (posibleError != null)
 														{
 															if (posibleError.GetType() == typeof(ThrowError))
@@ -703,15 +855,15 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
 									case "get":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (Datos.Equivale(collection.TipoLlave, nuevo.ToString(), t))
 											{
 												object nuevoValor = collection.GetItem(nuevo, Linea, Columna);
@@ -737,19 +889,19 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 									case "set":
 										if (llamada.Parametros.Count == 2)
 										{
-											object clave = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object clave = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion tipoClave = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (Datos.Equivale(collection.TipoLlave, clave.ToString(), tipoClave))
 											{
 
-												object valorr = llamada.Parametros.ElementAt(1).GetValor(ts,sesion);
-												TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts,sesion);
+												object valorr = llamada.Parametros.ElementAt(1).GetValor(ts, sesion);
+												TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
 												if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, valorr))
 												{
 													object nuevoDato = Datos.CasteoImplicito(collection.TipoValor, valorr, ts, sesion, Linea, Columna);
@@ -787,19 +939,19 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
 									case "remove":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (Datos.Equivale(collection.TipoLlave, nuevo.ToString(), t))
 											{
 												object respuesta = collection.EliminarItem(nuevo, Linea, Columna);
-												if(respuesta!=null)return respuesta;
+												if (respuesta != null) return respuesta;
 											}
 											else
 											{
@@ -811,7 +963,7 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
@@ -821,12 +973,12 @@ namespace Proyecto1Compi2.com.AST
 											Simbolo s = new Simbolo(llaveFuncion, collection.Count,
 												new Util.TipoObjetoDB(TipoDatoDB.INT, "int"), 0, 0);
 											simbolosApilados.Push(s);
-											return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+											return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 										}
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 									case "clear":
@@ -837,22 +989,22 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 										break;
 									case "contains":
 										if (llamada.Parametros.Count == 1)
 										{
-											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts,sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts,sesion);
+											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
+											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (Datos.Equivale(collection.TipoLlave, nuevo.ToString(), t))
 											{
 
 												Simbolo s = new Simbolo(llaveFuncion, collection.ContainsKey(nuevo),
 													new Util.TipoObjetoDB(TipoDatoDB.BOOLEAN, "boolean"), 0, 0);
 												simbolosApilados.Push(s);
-												return GetSimbolosApilados(simbolosApilados, s, ts,sesion);
+												return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
 											}
 											else
 											{
@@ -864,12 +1016,12 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(Util.TipoThrow.Exception,
-												"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+												"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 												Linea, Columna);
 										}
 									default:
 										return new ThrowError(Util.TipoThrow.Exception,
-											"No se puede aplicar la función '" + llamada.getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+											"No se puede aplicar la función '" + llamada.getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 											Linea, Columna);
 
 								}
@@ -878,23 +1030,24 @@ namespace Proyecto1Compi2.com.AST
 							else
 							{
 								return new ThrowError(Util.TipoThrow.Exception,
-									"No se puede aplicar la función '" + ((LlamadaFuncion)valor.Value).getLlave(ts,sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
+									"No se puede aplicar la función '" + ((LlamadaFuncion)valor.Value).getLlave(ts, sesion) + "' sobre el valor tipo '" + sim.TipoDato.ToString() + "'",
 									Linea, Columna);
 							}
 							break;
 					}
 				}
-				else {
-					       return new ThrowError(Util.TipoThrow.NullPointerException,
-												"la variable '" + sim.Nombre + "' no se ha inicializado",
-												Linea, Columna);
+				else
+				{
+					return new ThrowError(Util.TipoThrow.NullPointerException,
+										 "la variable '" + sim.Nombre + "' no se ha inicializado",
+										 Linea, Columna);
 				}
-				
+
 			}
 			return simbolosApilados;
 		}
 
-		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
+		public override TipoOperacion GetTipo(TablaSimbolos ts, Sesion sesion)
 		{
 			return this.tipo;
 		}
