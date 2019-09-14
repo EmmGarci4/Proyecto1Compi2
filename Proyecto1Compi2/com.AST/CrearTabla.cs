@@ -64,6 +64,7 @@ namespace Proyecto1Compi2.com.AST
 					List<Columna> columnas = (List<Columna>)respuesta;
 
 					Tabla tabla = new Tabla(Nombre);
+					bool hayCounter = false;
 					//VALIDANDO COLUMNAS
 					foreach (Columna cl in columnas)
 					{
@@ -71,34 +72,37 @@ namespace Proyecto1Compi2.com.AST
 						//VALIDANDO COUNTER
 						if (cl.Tipo.Tipo == Util.TipoDatoDB.COUNTER)
 						{
-							if (cl.IsPrimary)
-							{
-								if (llavePrimariaCompuesta == null)
-								{
-									//AGREGANDO COLUMNA A TABLA
-									tabla.AgregarColumna(cl);
-								}
-								else
-								{
-									//validando que no se pueda agregar una pk y una pk compuesta al mismo tiempo
-									return new ThrowError(Util.TipoThrow.Exception,
-									"No se puede agregar una llave primaria compuesta y una llave primaria unitaria al mismo tiempo",
-									Linea, Columna);
-								}
-							}
-							else
-							{
-								//validando que una columna counter debe ser llave primaria
-								return new ThrowError(Util.TipoThrow.Exception,
-									"Una columna de tipo counter debe ser una llave primaria",
-									Linea, Columna);
-							}
+							//AGREGANDO COLUMNA A TABLA
+							tabla.AgregarColumna(cl);
+							hayCounter=true;
+							//if (cl.IsPrimary)
+							//{
+							//	if (llavePrimariaCompuesta == null)
+							//	{
+							//		//AGREGANDO COLUMNA A TABLA
+							//		tabla.AgregarColumna(cl);
+							//	}
+							//	else
+							//	{
+							//		//validando que no se pueda agregar una pk y una pk compuesta al mismo tiempo
+							//		return new ThrowError(Util.TipoThrow.Exception,
+							//		"No se puede agregar una llave primaria compuesta y una llave primaria unitaria al mismo tiempo",
+							//		Linea, Columna);
+							//	}
+							//}
+							//else
+							//{
+							//	//validando que una columna counter debe ser llave primaria
+							//	return new ThrowError(Util.TipoThrow.Exception,
+							//		"Una columna de tipo counter debe ser una llave primaria",
+							//		Linea, Columna);
+							//}
 						}
 						else
 						{
 							//VALIDANDO COUNTER EN LLAVES PRIMARIAS COMPUESTAS
 							if (cl.IsPrimary) {
-								bool hayCounter = false;
+								hayCounter = false;
 								foreach (Columna col in tabla.Columnas)
 								{
 									if (col.Tipo.Tipo == TipoDatoDB.COUNTER)
@@ -172,7 +176,7 @@ namespace Proyecto1Compi2.com.AST
 							}
 						}
 						//VALIDANDO COUNTER EN LLAVES PRIMARIAS COMPUESTAS
-						bool hayCounter = false;
+						hayCounter = false;
 						foreach (Columna cl in tabla.Columnas) {
 							if (cl.Tipo.Tipo==TipoDatoDB.COUNTER) {
 								hayCounter = true;
@@ -210,7 +214,7 @@ namespace Proyecto1Compi2.com.AST
 					Linea, Columna);
 			}
 
-			return null;
+			return null; 
 		}
 
 		private object BuscarColumnas()

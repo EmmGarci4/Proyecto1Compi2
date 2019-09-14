@@ -110,16 +110,16 @@ namespace Proyecto1Compi2.com.AST
 						}
 						if (valores.Count == miTabla.Columnas.Count)
 						{
-							object vares = miTabla.ValidarPk(valores, Linea, Columna);
-							if (vares != null) {
-								if (vares.GetType()==typeof(ThrowError)) {
-									return vares;
-								}
-								if ((bool)vares)
-								{
+							//object vares = miTabla.ValidarPk(valores, Linea, Columna);
+							//if (vares != null) {
+							//	if (vares.GetType()==typeof(ThrowError)) {
+							//		return vares;
+							//	}
+							//	if ((bool)vares)
+							//	{
 									miTabla.ReemplazarValores(valores, i);
-								}
-							}
+							//	}
+							//}
 							
 						}
 					}

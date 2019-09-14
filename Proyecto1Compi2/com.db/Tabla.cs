@@ -158,6 +158,11 @@ namespace Proyecto1Compi2.com.db
 			}
 		}
 
+		internal object ValidarPkActualizar(Queue<object> valores, int linea, int columna)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();

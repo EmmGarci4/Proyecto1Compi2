@@ -267,7 +267,7 @@ namespace com.Analisis
 		private static int contarErroresCQL()
 		{
 			int contador = 0;
-			foreach (Error error in ErroresCQL)
+			foreach (Error error in erroresCQL)
 			{
 				if (error.Tipo != TipoError.Advertencia)
 				{
