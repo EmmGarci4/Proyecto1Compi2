@@ -190,7 +190,7 @@ namespace com.Analisis
 			if (raiz != null)
 			{
 				//PRUEBAS DE EXPRESIONES
-				generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
+				//generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\CQL.dot");
 				//Expresion ex = GeneradorAstCql.GetAST(arbol.Root);
 				//funciones.Add(new Funcion("llamada",new TipoObjetoDB(TipoDatoDB.STRING,"string"),1,1));
 				//TablaSimbolos ts = new TablaSimbolos("Global");
@@ -289,7 +289,7 @@ namespace com.Analisis
 
 			if (raiz != null && arbol.ParserMessages.Count == 0)
 			{
-				generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				//generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
 				MostrarReporteDeEstadoChison();
 

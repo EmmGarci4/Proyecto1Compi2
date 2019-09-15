@@ -11,6 +11,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -61,6 +62,7 @@ namespace Proyecto1Compi2
 			Console.WriteLine("m= " + m + " n=" + n);
 			if (m == 0)
 			{
+
 				return (n + 1);
 			}
 			else if (n == 0)
@@ -79,30 +81,46 @@ namespace Proyecto1Compi2
 			}
 		}
 
+		String texto = "";
 		private void Bt_EjecutarLup_Click_1(object sender, EventArgs e)
 		{
+			texto = this.richTextBox1.Text;
 			richTextBox2.Clear();
+
+			ThreadStart delegado = new ThreadStart(ejecutar);
+			Thread hilo = new Thread(delegado, 80000000);
+			hilo.Start();
+
+		}
+
+		public void ejecutar() {
+
+			//acciones de analisis y ejecucion
 			Sesion sesion = new Sesion("admin", null);
 			//analizar 
-			bool res = Analizador.AnalizarCql(this.richTextBox1.Text, sesion);
-			//paquete de resultados
-			foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
+			bool res = Analizador.AnalizarCql(texto, sesion);
+			MethodInvoker action = delegate
 			{
-				richTextBox2.AppendText(resultado.ToString());
-			}
-			//mensajes
-			foreach (String mensaje in sesion.Mensajes)
-			{
-				richTextBox2.AppendText(mensaje);
-				richTextBox2.AppendText("\n\r");
-			}
-			//errores lup
-			foreach (Error error in Analizador.ErroresCQL)
-			{
-				richTextBox2.AppendText(error.ToString());
-			}
+				//acciones que interactuan con la interface
+				//paquete de resultados
+				foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
+				{
+					richTextBox2.AppendText(resultado.ToString());
+				}
+				//mensajes
+				foreach (String mensaje in sesion.Mensajes)
+				{
+					richTextBox2.AppendText(mensaje);
+					richTextBox2.AppendText("\n\r");
+				}
+				//errores lup
+				foreach (Error error in Analizador.ErroresCQL)
+				{
+					richTextBox2.AppendText(error.ToString());
+				}
+			};
 
-
+			BeginInvoke(action);
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
