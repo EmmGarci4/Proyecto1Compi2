@@ -201,6 +201,11 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) + double.Parse(der.ToString());
+							if (valor < -214748364) {
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número es muy pequeño",
+									Linea, Columna);
+							}
 							return valor;
 						}
 						//NUMERO-CADENA

@@ -1299,7 +1299,7 @@ namespace Proyecto1Compi2.com.Analisis
 						case "numero":
 							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower()), TipoOperacion.Numero, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "cadena":
-							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.Replace("\\", "\\\\"), TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(FormatearCadena(raiz.ChildNodes.ElementAt(0).Token.ValueString), TipoOperacion.String, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "id":
 							return new Operacion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower(), TipoOperacion.Identificador, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "nombre":
@@ -1409,6 +1409,14 @@ namespace Proyecto1Compi2.com.Analisis
 					return aces;
 			}
 			return null;
+		}
+
+		private static string FormatearCadena(string valueString)
+		{
+			valueString = valueString.Replace("\n", "\\\\n");
+			valueString = valueString.Replace("\r", "\\\\r");
+			valueString = valueString.Replace("\t", "\\\\t");
+			return valueString;
 		}
 
 		private static Expresion GetFuncionAgregacionExp(ParseTreeNode raiz)

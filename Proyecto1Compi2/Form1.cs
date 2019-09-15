@@ -163,7 +163,10 @@ namespace Proyecto1Compi2
 
 		private void toolStripButton2_Click(object sender, EventArgs e)
 		{
-			Console.WriteLine("Ackerman con 3,6: " + Ackermann(3, 6));
+			//Console.WriteLine("Ackerman con 3,6: " + Ackermann(3, 6));
+			int a = -214748364;
+			Console.WriteLine("holiiiis");
+			Console.WriteLine(a);
 		}
 	}
 }
