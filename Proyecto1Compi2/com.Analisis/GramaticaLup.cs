@@ -13,10 +13,10 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			#region ER
 
-			RegexBasedTerminal contenido = new RegexBasedTerminal("contenido", ".*");
+			RegexBasedTerminal data = new RegexBasedTerminal("data", "DATA](.|\n)*\\[-DATA");
 			RegexBasedTerminal nombre = new RegexBasedTerminal("nombre", "[a-zA-ZñÑ][\\w]*");
-
-
+			RegexBasedTerminal id = new RegexBasedTerminal("id", "[a-zA-ZñÑ]([a-zA-ZñÑ0-9_])*");
+			RegexBasedTerminal pass = new RegexBasedTerminal("pass", "PASS](.)*\\[-PASS");
 			#endregion
 
 			#region Term
@@ -60,15 +60,15 @@ namespace Proyecto1Compi2.com.Analisis
 
 			STRUCT.Rule = abrir1 + pr_struct + cerrar+USUARIO + abrir2 + pr_struct + cerrar;
 
-			CONSULTA.Rule = abrir1 + pr_query + cerrar+USUARIO+DATA + abrir2 + pr_query + cerrar;
+			CONSULTA.Rule = abrir1 + pr_query + cerrar+USUARIO+DATA+abrir2 + pr_query + cerrar;
 
-			DATA.Rule = abrir1 + pr_data + cerrar+contenido + abrir2 + pr_data + cerrar;
+			DATA.Rule = abrir1 + data + cerrar;
 
 			LOGIN.Rule = abrir1 + pr_login + cerrar + USUARIO + PASSWD + abrir2 + pr_login + cerrar;
 
-			USUARIO.Rule = abrir1 + pr_user + cerrar + contenido + abrir2 + pr_user + cerrar;
+			USUARIO.Rule = abrir1 + pr_user + cerrar + id + abrir2 + pr_user + cerrar;
 
-			PASSWD.Rule = abrir1 + pr_pass + cerrar + contenido + abrir2 + pr_pass + cerrar;
+			PASSWD.Rule = abrir1 +pass + cerrar;
 
 			LOGOUT.Rule = abrir1 + pr_logout + cerrar + USUARIO + abrir2 + pr_logout + cerrar;
 			

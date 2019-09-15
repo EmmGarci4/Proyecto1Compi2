@@ -164,7 +164,10 @@ namespace Proyecto1Compi2.com.Analisis
 		private static void Consulta(ParseTreeNode nodo)
 		{
 			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ", string.Empty);
-			string codigocql = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
+			string codigocql = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+			codigocql = codigocql.Replace("DATA]", string.Empty);
+			codigocql = codigocql.Replace("[-DATA", string.Empty);
+			
 
 			if (Analizador.ExisteUsuario(usuario))
 			{
@@ -230,11 +233,11 @@ namespace Proyecto1Compi2.com.Analisis
 			respuesta.Append("[+LOGOUT]");
 			if (r)
 			{
-				respuesta.Append("[SUCCESS]");
+				respuesta.Append("SUCCESS");
 			}
 			else
 			{
-				respuesta.Append("[FAIL]");
+				respuesta.Append("FAIL");
 			}
 			respuesta.Append("[-LOGOUT]");
 		}
@@ -244,7 +247,10 @@ namespace Proyecto1Compi2.com.Analisis
 			//0 = usuario
 			//1 = password
 			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ",string.Empty);
-			string passwd = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower().Replace(" ", string.Empty);
+			string passwd = nodo.ChildNodes.ElementAt(1).Token.ValueString;
+			passwd = passwd.Replace("PASS]", string.Empty);
+			passwd = passwd.Replace("[-PASS", string.Empty);
+			passwd = passwd.Replace(" ",string.Empty);
 			bool r=Analizador.IniciarSesion(usuario,passwd);
 			respuesta.Append("[+LOGIN]");
 			if (r)
@@ -252,7 +258,7 @@ namespace Proyecto1Compi2.com.Analisis
 				respuesta.Append("SUCCESS");
 			}
 			else {
-				respuesta.Append("[FAIL]");
+				respuesta.Append("FAIL");
 			}
 			respuesta.Append("[-LOGIN]");
 		}
