@@ -158,9 +158,26 @@ namespace Proyecto1Compi2.com.db
 			}
 		}
 
-		internal object ValidarPkActualizar(Queue<object> valores, int linea, int columna)
+		internal object ValidarPkActualizar(Queue<object> valores,int i, int linea, int columna)
 		{
-			throw new NotImplementedException();
+			List<Columna> llaves = GetPks();
+			//*****
+			StringBuilder llavePrimaria = new StringBuilder();
+			int indiceFila;
+			for (indiceFila = 0; indiceFila < contadorFilas; indiceFila++)
+			{
+				bool existe = existeLlaveEnFila(indiceFila, llaves, valores, llavePrimaria);
+				if (existe)
+				{
+					if (indiceFila==i) {
+						return true;
+					}
+					return new ThrowError(TipoThrow.ValuesException,
+					"La llave primaria compuesta '" + llavePrimaria.ToString().TrimEnd('+') + "' ya existe",
+					linea, columna);
+				}
+			}
+			return true;
 		}
 
 		public override string ToString()
@@ -289,7 +306,6 @@ namespace Proyecto1Compi2.com.db
 			}
 			return sonIguales == llaves.Count;
 		}
-
 
 		private List<Columna> GetPks()
 		{
