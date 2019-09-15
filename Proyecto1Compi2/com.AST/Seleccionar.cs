@@ -43,16 +43,18 @@ namespace Proyecto1Compi2.com.AST
 			if (sesion.DBActual != null)
 			{
 				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
-				if (db.ExisteTabla(tabla))
-				{
-					Tabla miTabla = db.BuscarTabla(tabla);
-					return Consultar(miTabla,tb,sesion);
-				}
-				else
-				{
-					return new ThrowError(Util.TipoThrow.TableAlreadyExists,
-						"La tabla '" + tabla + "' no existe",
-						Linea, Columna);
+				if (db!=null) {
+					if (db.ExisteTabla(tabla))
+					{
+						Tabla miTabla = db.BuscarTabla(tabla);
+						return Consultar(miTabla, tb, sesion);
+					}
+					else
+					{
+						return new ThrowError(Util.TipoThrow.TableAlreadyExists,
+							"La tabla '" + tabla + "' no existe",
+							Linea, Columna);
+					}
 				}
 			}
 			else
@@ -61,7 +63,7 @@ namespace Proyecto1Compi2.com.AST
 					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
 					Linea, Columna);
 			}
-
+			return null;
 		}
 
 		private object Consultar(Tabla miTabla,TablaSimbolos ts,Sesion sesion)

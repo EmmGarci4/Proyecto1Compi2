@@ -375,7 +375,7 @@ namespace com.Analisis
 		{
 			BasesDeDatos.Clear();
 			Usuariosdb = GetListaUsuarios();
-			funciones.Clear();
+			//funciones.Clear();
 			erroresCQL.Clear();
 			ast = null;
 			erroresChison.Clear();
@@ -434,8 +434,11 @@ namespace com.Analisis
 			Parser parser = new Parser(ldata);
 			ParseTree arbol = parser.Parse(codigo);
 			Analizador.ErroresCQL.Clear();
-			Analizador.funciones.Clear();
-			return GeneradorAstCql.GetAST(arbol.Root);
+			List<Funcion> aux = funciones;
+			funciones.Clear();
+			List<Sentencia> res=GeneradorAstCql.GetAST(arbol.Root);
+			funciones = aux;
+			return res;
 		}
 
 		private static UserType GetErrorCatch()

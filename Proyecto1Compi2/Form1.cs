@@ -87,20 +87,20 @@ namespace Proyecto1Compi2
 			texto = this.richTextBox1.Text;
 			richTextBox2.Clear();
 
-			ThreadStart delegado = new ThreadStart(ejecutar);
+			/*ThreadStart delegado = new ThreadStart(ejecutar);
 			Thread hilo = new Thread(delegado, 80000000);
 			hilo.Start();
-
+			*/
+			ejecutar();
 		}
 
 		public void ejecutar() {
 
 			//acciones de analisis y ejecucion
 			Sesion sesion = new Sesion("admin", null);
-			//analizar 
 			bool res = Analizador.AnalizarCql(texto, sesion);
-			MethodInvoker action = delegate
-			{
+		//	MethodInvoker action = delegate
+		//	{
 				//acciones que interactuan con la interface
 				//paquete de resultados
 				foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
@@ -118,9 +118,9 @@ namespace Proyecto1Compi2
 				{
 					richTextBox2.AppendText(error.ToString());
 				}
-			};
+		//	};
 
-			BeginInvoke(action);
+		//	BeginInvoke(action);
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
