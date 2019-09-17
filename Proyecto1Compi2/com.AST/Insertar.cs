@@ -41,101 +41,24 @@ namespace Proyecto1Compi2.com.AST
 			{
 				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				//VALLIDANDO TABLA
-				if (db.ExisteTabla(tabla))
-				{
-					Tabla tab = db.BuscarTabla(tabla);
-					//**************************************************************************
-					//INSERSION NORMAL
-					if (this.columnas == null)
+				if (db!=null) {
+					if (db.ExisteTabla(tabla))
 					{
-						int counters = tab.ContarCounters();
-						if (this.valores.Count == (tab.Columnas.Count - counters))
+						Tabla tab = db.BuscarTabla(tabla);
+						//**************************************************************************
+						//INSERSION NORMAL
+						if (this.columnas == null)
 						{
-							//VALIDANDO
-							int indiceDatos = 0;
-							int indiceColumnas = 0;
-							Queue<object> valoresAInsertar = new Queue<object>();
-							foreach (Columna cl in tab.Columnas) {
-								object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb, sesion);
-								if (respuesta.GetType() == typeof(ThrowError)) {
-									return respuesta;
-								}
-								//no es un error
-								if (cl.Tipo.Tipo != TipoDatoDB.COUNTER)
+							int counters = tab.ContarCounters();
+							if (this.valores.Count == (tab.Columnas.Count - counters))
+							{
+								//VALIDANDO
+								int indiceDatos = 0;
+								int indiceColumnas = 0;
+								Queue<object> valoresAInsertar = new Queue<object>();
+								foreach (Columna cl in tab.Columnas)
 								{
-									if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta))
-									{
-										object nuevovalor = Datos.CasteoImplicito(cl.Tipo, respuesta, tb, sesion, Linea, Columna);
-										valoresAInsertar.Enqueue(nuevovalor);
-											indiceDatos++;
-									}
-									else
-									{
-										return new ThrowError(TipoThrow.ValuesException,
-										"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
-										Linea, Columna);
-									}
-								}
-								else {
-									int UltimoValor = cl.GetUltimoValorCounter();
-									UltimoValor++;
-									valoresAInsertar.Enqueue(UltimoValor);
-								}
-								indiceColumnas++;
-							}
-							//INSERTANDO
-							if (tab.Columnas.Count == valoresAInsertar.Count) {
-								object correcto = tab.ValidarPk(valoresAInsertar,Linea,Columna);
-								if (correcto.GetType()==typeof(ThrowError)) {
-									return correcto;
-								}
-								//LLENANDO TABLA
-								tab.AgregarValores(valoresAInsertar);
-							}
-						}
-						else {
-							if (this.valores.Count == tab.Columnas.Count) {
-								return new ThrowError(TipoThrow.CounterTypeException,
-								"No se pueden insertar valores en las columnas Counter",
-								Linea, Columna);
-							}
-							return new ThrowError(TipoThrow.ValuesException,
-								"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
-								Linea, Columna);
-						}
-					}
-					//INSERSION ESPECIAL
-					else {
-
-					 if (this.columnas.Count == this.valores.Count)
-						{
-							//VALIDANDO DATOS
-							foreach (string nombreColumna in this.columnas) {
-								if (!tab.ExisteColumna(nombreColumna))
-								{
-									return new ThrowError(TipoThrow.ColumnException,
-								"La columna '" + nombreColumna + "' no existe",
-								Linea, Columna);
-								}
-								else {
-									Columna cl = tab.BuscarColumna(nombreColumna);
-									if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
-									{
-										return new ThrowError(TipoThrow.CounterTypeException,
-										"No se puede insertar datos en una columna autoincrementable",
-										Linea, Columna);
-									}
-								}
-							}
-							//VALIDANDO COMPATIBILIDAD DE DATOS
-							int indiceDatos = 0;
-							Queue<object> valoresAInsertar = new Queue<object>();
-							foreach (Columna cl in tab.Columnas) {
-								if (this.columnas.Contains(cl.Nombre))
-								{
-									//comparar datos
-									indiceDatos = this.columnas.IndexOf(cl.Nombre);
-									object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb,sesion);
+									object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb, sesion);
 									if (respuesta.GetType() == typeof(ThrowError))
 									{
 										return respuesta;
@@ -152,7 +75,7 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											return new ThrowError(TipoThrow.ValuesException,
-											"El valor No." + (indiceDatos + 1)+"("+Datos.GetTipoObjetoDB(respuesta).ToString()+")" + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+											"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
 											Linea, Columna);
 										}
 									}
@@ -162,53 +85,147 @@ namespace Proyecto1Compi2.com.AST
 										UltimoValor++;
 										valoresAInsertar.Enqueue(UltimoValor);
 									}
+									indiceColumnas++;
 								}
-								else {
-									if (cl.IsPrimary)
+								//INSERTANDO
+								if (tab.Columnas.Count == valoresAInsertar.Count)
+								{
+									object correcto = tab.ValidarPk(valoresAInsertar, Linea, Columna);
+									if (correcto.GetType() == typeof(ThrowError))
 									{
+										return correcto;
+									}
+									//LLENANDO TABLA
+									tab.AgregarValores(valoresAInsertar);
+								}
+							}
+							else
+							{
+								if (this.valores.Count == tab.Columnas.Count)
+								{
+									return new ThrowError(TipoThrow.CounterTypeException,
+									"No se pueden insertar valores en las columnas Counter",
+									Linea, Columna);
+								}
+								return new ThrowError(TipoThrow.ValuesException,
+									"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
+									Linea, Columna);
+							}
+						}
+						//INSERSION ESPECIAL
+						else
+						{
+
+							if (this.columnas.Count == this.valores.Count)
+							{
+								//VALIDANDO DATOS
+								foreach (string nombreColumna in this.columnas)
+								{
+									if (!tab.ExisteColumna(nombreColumna))
+									{
+										return new ThrowError(TipoThrow.ColumnException,
+									"La columna '" + nombreColumna + "' no existe",
+									Linea, Columna);
+									}
+									else
+									{
+										Columna cl = tab.BuscarColumna(nombreColumna);
 										if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+										{
+											return new ThrowError(TipoThrow.CounterTypeException,
+											"No se puede insertar datos en una columna autoincrementable",
+											Linea, Columna);
+										}
+									}
+								}
+								//VALIDANDO COMPATIBILIDAD DE DATOS
+								int indiceDatos = 0;
+								Queue<object> valoresAInsertar = new Queue<object>();
+								foreach (Columna cl in tab.Columnas)
+								{
+									if (this.columnas.Contains(cl.Nombre))
+									{
+										//comparar datos
+										indiceDatos = this.columnas.IndexOf(cl.Nombre);
+										object respuesta = this.valores.ElementAt(indiceDatos).GetValor(tb, sesion);
+										if (respuesta.GetType() == typeof(ThrowError))
+										{
+											return respuesta;
+										}
+										//no es un error
+										if (cl.Tipo.Tipo != TipoDatoDB.COUNTER)
+										{
+											if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta))
+											{
+												object nuevovalor = Datos.CasteoImplicito(cl.Tipo, respuesta, tb, sesion, Linea, Columna);
+												valoresAInsertar.Enqueue(nuevovalor);
+												indiceDatos++;
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.ValuesException,
+												"El valor No." + (indiceDatos + 1) + "(" + Datos.GetTipoObjetoDB(respuesta).ToString() + ")" + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
+												Linea, Columna);
+											}
+										}
+										else
 										{
 											int UltimoValor = cl.GetUltimoValorCounter();
 											UltimoValor++;
 											valoresAInsertar.Enqueue(UltimoValor);
 										}
-										else {
-											return new ThrowError(TipoThrow.ValuesException,
-											"No se puede insertar un dato nulo en una llave primaria",
-											Linea, Columna);
+									}
+									else
+									{
+										if (cl.IsPrimary)
+										{
+											if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+											{
+												int UltimoValor = cl.GetUltimoValorCounter();
+												UltimoValor++;
+												valoresAInsertar.Enqueue(UltimoValor);
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.ValuesException,
+												"No se puede insertar un dato nulo en una llave primaria",
+												Linea, Columna);
+											}
+										}
+										else
+										{
+											valoresAInsertar.Enqueue("null");
 										}
 									}
-									else {
-										valoresAInsertar.Enqueue("null");
-									}
 								}
-							}
-							//INSERTANDO
-							if (tab.Columnas.Count == valoresAInsertar.Count)
-							{
-								object correcto = tab.ValidarPk(valoresAInsertar, Linea, Columna);
-								if (correcto.GetType() == typeof(ThrowError))
+								//INSERTANDO
+								if (tab.Columnas.Count == valoresAInsertar.Count)
 								{
-									return correcto;
+									object correcto = tab.ValidarPk(valoresAInsertar, Linea, Columna);
+									if (correcto.GetType() == typeof(ThrowError))
+									{
+										return correcto;
+									}
+									//LLENANDO TABLA
+									tab.AgregarValores(valoresAInsertar);
 								}
-								//LLENANDO TABLA
-								tab.AgregarValores(valoresAInsertar);
 							}
+							else
+							{
+								return new ThrowError(TipoThrow.ValuesException,
+									"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
+									Linea, Columna);
+							}
+
 						}
-						else {
-							return new ThrowError(TipoThrow.ValuesException,
-								"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
-								Linea, Columna);
-						}
-						
+						//**************************************************************************
 					}
-				//**************************************************************************
-				}
-				else
-				{
-					return new ThrowError(Util.TipoThrow.TableDontExists,
-					"La tabla '" + tabla + "' no existe",
-					Linea, Columna);
+					else
+					{
+						return new ThrowError(Util.TipoThrow.TableDontExists,
+						"La tabla '" + tabla + "' no existe",
+						Linea, Columna);
+					}
 				}
 			}
 			else

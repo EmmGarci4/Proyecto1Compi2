@@ -30,10 +30,11 @@ namespace Proyecto1Compi2.com.AST
 					return respuesta;
 				}
 				sesion.Mensajes.Add(respuesta.ToString());
-				Form1.MostrarMensajeAUsuario(respuesta.ToString());
+				//Form1.MostrarMensajeAUsuario(respuesta.ToString());
 			}
 			else {
-				Form1.MostrarMensajeAUsuario("null");
+				sesion.Mensajes.Add("null");
+				//Form1.MostrarMensajeAUsuario("null");
 			}
 			return null;
 		}

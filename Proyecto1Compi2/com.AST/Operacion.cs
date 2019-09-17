@@ -323,6 +323,28 @@ namespace Proyecto1Compi2.com.AST
 									Linea, Columna);
 							}
 						}
+						if (izq.GetType() == typeof(CollectionListCql))
+						{
+							TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(((CollectionListCql)izq).TipoDato.Nombre);
+							if (Datos.IsTipoCompatibleParaAsignar(tipoAdentro, der))
+							{
+								object posibleError = ((CollectionListCql)izq).AddItem(der,Linea,Columna);
+								if (posibleError != null)
+								{
+									if (posibleError.GetType() == typeof(ThrowError))
+									{
+										Analizador.ErroresCQL.Add(new Error((ThrowError)posibleError));
+									}
+								}
+								return izq;
+							}
+							else {
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se pueden sumar los operandos de tipo " + tipoAdentro.ToString() + " y " 
+									+ Datos.GetTipoObjetoDB(der).ToString(),
+									Linea, Columna);
+							}
+						}
 						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,

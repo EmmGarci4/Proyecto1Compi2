@@ -17,7 +17,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
-			Analizador.GenerarArchivos("data\\principal.chison");
+			Analizador.GenerarArchivos("principal.chison");
 			Console.WriteLine("ARCHIVO PRINCIPAL.chison GENERADO");
 			return null;
 		}

@@ -17,6 +17,7 @@ namespace com.Analisis
 	static class Analizador
 	{
 		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
+
 		private static List<BaseDatos> BasesDeDatos = new List<BaseDatos>();
 		private static List<Usuario> Usuariosdb = GetListaUsuarios();
 		private static List<Funcion> funciones = new List<Funcion>();
@@ -26,7 +27,6 @@ namespace com.Analisis
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
 		private static Tabla errors = GetTablaErrors();
-		private static string resultado = "";
 		private static List<ResultadoConsulta> resultadosConsultas = new List<ResultadoConsulta>();
 
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
@@ -37,7 +37,6 @@ namespace com.Analisis
 		public static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
 		public static NodoAST AST { get => ast; }
 		public static Tabla Errors { get => errors; set => errors = value; }
-		public static string Resultado { get => resultado; set => resultado = value; }
 		internal static List<ResultadoConsulta> ResultadosConsultas { get => resultadosConsultas; set => resultadosConsultas = value; }
 
 		//******************************FUNCIONES***********************************************************
@@ -249,18 +248,21 @@ namespace com.Analisis
 					MostrarReporteDeEstado(sesion);
 				}
 			}
+			List<Error> erroresIrony = new List<Error>();
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
 				if (mensaje.Message.Contains("Syntax error"))
 				{
-					ErroresCQL.Add(new Error(TipoError.Sintactico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
+					erroresIrony.Add(new Error(TipoError.Sintactico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
 				}
 				else
 				{
-					ErroresCQL.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
+					erroresIrony.Add(new Error(TipoError.Lexico, mensaje.Message, mensaje.Location.Line, mensaje.Location.Column));
 				}
 			}
-
+			if(raiz!=null)erroresIrony.Reverse();
+			ErroresCQL.AddRange(erroresIrony);
+			if(raiz!=null)ErroresCQL.Reverse();
 			return raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
 		}
 
@@ -373,18 +375,30 @@ namespace com.Analisis
 
 		public static void Clear()
 		{
+			//BasesDeDatos.Clear();
+			//Usuariosdb = GetListaUsuarios();
+			//funciones.Clear();
+			erroresCQL.Clear();
+			//ast = null;
+			erroresChison.Clear();
+			//codigoAnalizado = "";
+			errorCatch = GetErrorCatch();
+			errors = GetTablaErrors();
+			resultadosConsultas.Clear();
+			//Console.WriteLine("****************************************************************************");
+		}
+
+		internal static void ClearToRollback()
+		{
 			BasesDeDatos.Clear();
 			Usuariosdb = GetListaUsuarios();
 			//funciones.Clear();
-			erroresCQL.Clear();
+			//erroresCQL.Clear();
 			ast = null;
 			erroresChison.Clear();
-			codigoAnalizado = "";
-			errorCatch = GetErrorCatch();
+			//codigoAnalizado = "";
+			//errorCatch = GetErrorCatch();
 			errors = GetTablaErrors();
-			resultado = "";
-			resultadosConsultas.Clear();
-			Console.WriteLine("****************************************************************************");
 		}
 
 		public static bool IniciarSesion(string usuario, string passwd)

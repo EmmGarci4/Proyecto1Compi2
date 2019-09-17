@@ -9,9 +9,16 @@ namespace com.Analisis.Util
 {
 	static class HandlerFiles
 	{
+		//static string relativePath = System.Web.Hosting.HostingEnvironment.MapPath("~/");
+		static string relativePath = "";
+
 		public static void guardarArchivo(String texto,String filePath) {
-				//Path
-				using (StreamWriter we = new StreamWriter(filePath))
+			if (!Directory.Exists(relativePath+"data")) {
+				Directory.CreateDirectory(relativePath + "data");
+			}
+			Console.WriteLine(relativePath);
+			//Path
+			using (StreamWriter we = new StreamWriter(relativePath + "data/"+filePath))
 				{
 				we.Write(texto);
 				we.Close();
@@ -19,9 +26,10 @@ namespace com.Analisis.Util
 		}
 
 		public static String AbrirArchivo(String filePath) {
+			
 			String fileContent = "";
 			try {
-				using (StreamReader reader = new StreamReader(filePath))
+				using (StreamReader reader = new StreamReader(relativePath + "data/"+filePath))
 				{
 					fileContent = reader.ReadToEnd();
 					reader.Close();

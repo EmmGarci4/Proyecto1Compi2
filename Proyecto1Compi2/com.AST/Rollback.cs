@@ -17,8 +17,8 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
-			Analizador.Clear();
-			String chi = HandlerFiles.AbrirArchivo("data\\principal.chison");
+			Analizador.ClearToRollback();
+			String chi = HandlerFiles.AbrirArchivo("principal.chison");
 			if (chi != null)
 			{
 				if (Analizador.AnalizarChison(chi))
