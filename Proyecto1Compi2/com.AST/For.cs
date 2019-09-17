@@ -18,6 +18,7 @@ namespace Proyecto1Compi2.com.AST
 		Condicion condicion;
 		Expresion operacion;
 		List<Sentencia> sentencias;
+		string variableLocal;
 
 		public For(Asignacion asignacion, Declaracion declaracion, Condicion condicion, Expresion operacion,List<Sentencia> sentencias, int linea, int columna):base(linea,columna)
 		{
@@ -36,21 +37,31 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
-			TablaSimbolos local = new TablaSimbolos(ts);
 			List<ThrowError> errores = new List<ThrowError>();
 			if (asignacion != null) {
-				object res = asignacion.Ejecutar(local,sesion);
+				object res = asignacion.Ejecutar(ts,sesion);
 				if (res != null)if (res.GetType() == typeof(ThrowError))
 						return res;
 				
 			} else if (declaracion!=null) {
-				object res = declaracion.Ejecutar(local,sesion);
-				if (res != null) if (res.GetType() == typeof(ThrowError))
-						return res;
+				if (declaracion.Variables.Count == 1)
+				{
+					this.variableLocal = declaracion.Variables.ElementAt(0);
+					object res = declaracion.Ejecutar(ts, sesion);
+					if (res != null) if (res.GetType() == typeof(ThrowError))
+							return res;
+				}
+				else {
+					return new ThrowError(TipoThrow.Exception,
+						"cantidad de variables incorrecta en un ciclo for",
+					   Linea, Columna);
+				}
+				
 			}
 			int contador = 0;
 			bool ejecutar = true;
 			while (contador<ITERACIONESMAXIMAS && ejecutar && errores.Count==0) {
+				TablaSimbolos local = new TablaSimbolos(ts);
 				object res = condicion.GetValor(local,sesion);
 				if (res != null)
 				{
@@ -100,7 +111,7 @@ namespace Proyecto1Compi2.com.AST
 					//******************************************************************************************
 					//ejecutando operacion
 					if (ejecutar) {
-						res = operacion.GetValor(local,sesion);
+						res = operacion.GetValor(ts,sesion);
 						if (res != null)
 						{
 							if (res.GetType() == typeof(ThrowError))
@@ -115,6 +126,9 @@ namespace Proyecto1Compi2.com.AST
 				}
 
 				contador++;
+			}
+			if (this.declaracion!=null) {
+				ts.Remove(this.variableLocal);
 			}
 			if (contador == ITERACIONESMAXIMAS && ejecutar)
 			{

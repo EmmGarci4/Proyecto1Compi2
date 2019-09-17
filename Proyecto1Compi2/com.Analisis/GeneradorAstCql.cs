@@ -285,8 +285,15 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetCrearCursor(ParseTreeNode sentencia)
 		{
-			return new CrearCursor(sentencia.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),(Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(2)),
-				sentencia.Span.Location.Line,sentencia.Span.Location.Column);
+			if (sentencia.ChildNodes.Count == 3)
+			{
+				return new CrearCursor(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), GetExpresion(sentencia.ChildNodes.ElementAt(2)),
+								sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			}
+			else {
+				return new CrearCursor(sentencia.ChildNodes.ElementAt(1).Token.ValueString.ToLower(), (Seleccionar)GetSeleccionar(sentencia.ChildNodes.ElementAt(3)),
+								sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+			}	
 		}
 
 		private static Sentencia GetAsignacionCall(ParseTreeNode sentencia)
@@ -1524,6 +1531,8 @@ namespace Proyecto1Compi2.com.Analisis
 					return "time";
 				case TipoDatoDB.COUNTER:
 					return "counter";
+				case TipoDatoDB.CURSOR:
+					return "cursor";
 				case TipoDatoDB.NULO:
 					return "nulo";
 				default:
@@ -1547,6 +1556,8 @@ namespace Proyecto1Compi2.com.Analisis
 						return TipoDatoDB.DATE;
 					case "time":
 						return TipoDatoDB.TIME;
+					case "cursor":
+						return TipoDatoDB.CURSOR;
 					case "counter":
 						return TipoDatoDB.COUNTER;
 					//listas

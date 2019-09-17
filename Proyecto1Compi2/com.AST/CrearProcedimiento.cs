@@ -1,6 +1,7 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ namespace Proyecto1Compi2.com.AST
 		List<Parametro> parametros;
 		List<Parametro> retornos;
 		List<Sentencia> sentencias;
-		List<object> valoresParametros;
 		string codigo;
 
 		public CrearProcedimiento(string nombre, List<Parametro> parametros, List<Parametro> retornos, List<Sentencia> sentencias,String codigo, int linea, int columna) : base(linea, columna)
@@ -68,7 +68,14 @@ namespace Proyecto1Compi2.com.AST
 			int contador = 0;
 			foreach (Parametro par in this.parametros)
 			{
-				llave.Append(par.Tipo.ToString());
+				if (par.Tipo.Tipo == TipoDatoDB.INT || par.Tipo.Tipo == TipoDatoDB.DOUBLE)
+				{
+					llave.Append("numero");
+				}
+				else
+				{
+					llave.Append(par.Tipo.ToString());
+				}
 				if (contador < parametros.Count - 1)
 				{
 					llave.Append(",");

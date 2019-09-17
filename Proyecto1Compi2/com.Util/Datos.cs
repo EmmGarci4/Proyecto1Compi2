@@ -232,6 +232,8 @@ namespace Proyecto1Compi2.com.Util
 						return ((Objeto)v).IsObjetoTipo(tipoDato.Nombre);
 					}
 					return false;
+				case TipoDatoDB.CURSOR:
+					return v.GetType() == typeof(Cursor);
 			}
 			return false;
 		}
@@ -292,6 +294,8 @@ namespace Proyecto1Compi2.com.Util
 			}
 			else if (respuesta.GetType() == typeof(bool)) {
 				return new TipoObjetoDB(TipoDatoDB.BOOLEAN, "boolean");
+			} else if (respuesta.GetType()==typeof(Cursor)) {
+				return new TipoObjetoDB(TipoDatoDB.CURSOR,"cursor");
 			}
 
 			return new TipoObjetoDB(TipoDatoDB.NULO, "null");

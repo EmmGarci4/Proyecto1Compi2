@@ -94,6 +94,7 @@ namespace Proyecto1Compi2.com.AST
 											}
 										}
 									}
+									if (errores.Count > 0) return errores;
 									//******************************************************************************************
 								}
 							}
@@ -123,6 +124,7 @@ namespace Proyecto1Compi2.com.AST
 						"La variable '" + nombre + "' no existe",
 						Linea, Columna);
 			}
+			
 			return null;
 		}
 
