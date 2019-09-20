@@ -47,9 +47,9 @@ namespace Proyecto1Compi2.com.Analisis
 				respuesta.Append("[+TYPE]");
 				respuesta.Append(error.Tipo);
 				respuesta.Append("[-TYPE]");
-				respuesta.Append("[+DESC]");
+				respuesta.Append("[+DESC]½");
 				respuesta.Append(error.Mensaje);
-				respuesta.Append("[-DESC]");
+				respuesta.Append("½[-DESC]");
 				respuesta.Append("[-ERROR]\n");
 			}
 
@@ -177,16 +177,16 @@ namespace Proyecto1Compi2.com.Analisis
 				//paquete de resultados
 				foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
 				{
-					respuesta.Append("[+DATA]");
+					respuesta.Append("[+DATA]½");
 					respuesta.Append(resultado.ToString());
-					respuesta.Append("[-DATA]\n");
+					respuesta.Append("½[-DATA]\n");
 				}
 				//mensajes
 				foreach (String mensaje in sesion.Mensajes)
 				{
-					respuesta.Append("[+MESSAGE]");
+					respuesta.Append("[+MESSAGE]½");
 					respuesta.Append(mensaje);
-					respuesta.Append("[-MESSAGE]\n");
+					respuesta.Append("½[-MESSAGE]\n");
 				}
 				//errores lup
 				foreach (Error error in Analizador.ErroresCQL)
@@ -201,9 +201,9 @@ namespace Proyecto1Compi2.com.Analisis
 					respuesta.Append("[+TYPE]");
 					respuesta.Append(error.Tipo);
 					respuesta.Append("[-TYPE]");
-					respuesta.Append("[+DESC]");
+					respuesta.Append("[+DESC]½");
 					respuesta.Append(error.Mensaje);
-					respuesta.Append("[-DESC]");
+					respuesta.Append("½[-DESC]");
 					respuesta.Append("[-ERROR]\n");
 				}
 			}
@@ -219,9 +219,9 @@ namespace Proyecto1Compi2.com.Analisis
 				respuesta.Append("[+TYPE]");
 				respuesta.Append(TipoError.Semantico);
 				respuesta.Append("[-TYPE]");
-				respuesta.Append("[+DESC]");
+				respuesta.Append("[+DESC]½");
 				respuesta.Append("el usuario '"+usuario+"' no existe");
-				respuesta.Append("[-DESC]");
+				respuesta.Append("½[-DESC]");
 				respuesta.Append("[-ERROR]\n");
 			}
 		}

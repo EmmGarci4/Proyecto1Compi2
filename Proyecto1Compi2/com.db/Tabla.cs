@@ -215,10 +215,17 @@ namespace Proyecto1Compi2.com.db
 					if (cl.Tipo.Tipo.Equals(TipoDatoDB.STRING))
 					{
 						cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
+					} else if (cl.Tipo.Tipo.Equals(TipoDatoDB.DATE)||cl.Tipo.Tipo.Equals(TipoDatoDB.TIME)) {
+						if (cl.Datos.ElementAt(indice).Equals("null")) {
+							cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
+						}
+						else {
+							cadena.Append("\"" + cl.Nombre + "\"=\'" + cl.Datos.ElementAt(indice) + "\'");
+						}
 					}
 					else
 					{
-						cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
+						cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice).ToString());
 					}
 
 					if (cont < this.columnas.Count - 1)

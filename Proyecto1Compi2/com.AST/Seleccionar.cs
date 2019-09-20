@@ -47,6 +47,15 @@ namespace Proyecto1Compi2.com.AST
 					if (db.ExisteTabla(tabla))
 					{
 						Tabla miTabla = db.BuscarTabla(tabla);
+						//VALIDANDO QUE NO HAYA FUNCION DE AGREGACION
+						if (this.listaAccesos!=null) {
+							foreach (Expresion exp in this.listaAccesos) {
+								if (exp.GetType()==typeof(FuncionAgregacionExp)) {
+									return new ThrowError(TipoThrow.Exception,"Función de agregación no permitida en select",
+										Linea,Columna);
+								}
+							}
+						}
 						return Consultar(miTabla, tb, sesion);
 					}
 					else

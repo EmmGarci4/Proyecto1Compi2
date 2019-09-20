@@ -14,6 +14,7 @@ namespace Proyecto1Compi2.com.db
 		List<Tabla> tablas;
 		List<UserType> objetos;
 		List<Procedimiento> procedimientos;
+		bool enUso;
 
 		public BaseDatos(String nombre)
 		{
@@ -21,6 +22,7 @@ namespace Proyecto1Compi2.com.db
 			this.tablas = new List<Tabla>();
 			this.objetos = new List<UserType>();
 			this.procedimientos = new List<Procedimiento>();
+			this.enUso = false;
 		}
 
 		public BaseDatos()
@@ -29,12 +31,14 @@ namespace Proyecto1Compi2.com.db
 			this.tablas = new List<Tabla>();
 			this.objetos = new List<UserType>();
 			this.procedimientos = new List<Procedimiento>();
+			this.enUso = false;
 		}
 
 		public string Nombre { get => nombre; set => nombre = value; }
 		internal List<Tabla> Tablas { get => tablas; set => tablas = value; }
 		internal List<UserType> UserTypes { get => objetos; set => objetos = value; }
 		internal List<Procedimiento> Procedimientos { get => procedimientos; set => procedimientos = value; }
+		public bool EnUso { get => enUso; set => enUso = value; }
 
 		//*****************************TABLAS****************************************************
 		public void AgregarTabla(Tabla tb)

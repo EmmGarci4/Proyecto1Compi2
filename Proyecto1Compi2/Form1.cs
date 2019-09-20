@@ -168,5 +168,21 @@ namespace Proyecto1Compi2
 			Console.WriteLine("holiiiis");
 			Console.WriteLine(a);
 		}
+
+		private void toolStripButton3_Click(object sender, EventArgs e)
+		{
+			Analizador.ClearToRollback();
+
+				if (Analizador.AnalizarChison(this.richTextBox1.Text))
+				{
+					Console.WriteLine("ARCHIVO CARGADO CON EXITO");
+				}
+				else
+				{
+					Console.WriteLine("ARCHIVO CARGADO CON ERRORES");
+					Analizador.Errors.MostrarCabecera();
+					Analizador.Errors.MostrarDatos();
+				}
+		}
 	}
 }

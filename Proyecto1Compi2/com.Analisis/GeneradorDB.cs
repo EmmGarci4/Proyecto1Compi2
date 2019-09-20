@@ -688,9 +688,9 @@ namespace Proyecto1Compi2.com.Analisis
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
 				case "cadena":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
-				case "pr_true":
+				case "true":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
-				case "pr_false":
+				case "false":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
 				case "NULL":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());

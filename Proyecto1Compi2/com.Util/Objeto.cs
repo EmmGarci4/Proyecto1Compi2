@@ -37,14 +37,28 @@ namespace Proyecto1Compi2.com.Util
 			foreach (KeyValuePair<string, object> val in atributos)
 			{
 				cadena.Append("\"" + val.Key + "\"=");
-				if (val.Value.GetType() == typeof(string) & !Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'") &&
-					!Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+				TipoObjetoDB tipo = this.plantilla.Atributos[val.Key];
+				if (tipo != null)
 				{
-					cadena.Append("\"" + val.Value + "\"");
-				}
-				else
-				{
-					cadena.Append(val.Value);
+					if (tipo.Tipo.Equals(TipoDatoDB.STRING))
+					{
+						cadena.Append("\"" + val.Value + "\"");
+					}
+					else if (tipo.Tipo.Equals(TipoDatoDB.DATE) || tipo.Tipo.Equals(TipoDatoDB.TIME))
+					{
+						if (val.Value.Equals("null"))
+						{
+							cadena.Append(val.Value);
+						}
+						else
+						{
+							cadena.Append("\'" + val.Value + "\'");
+						}
+					}
+					else
+					{
+						cadena.Append(val.Value.ToString());
+					}
 				}
 
 				if (i < atributos.Count - 1)
@@ -86,8 +100,7 @@ namespace Proyecto1Compi2.com.Util
 			foreach (KeyValuePair<string, object> val in atributos)
 			{
 				cadena.Append("\"" + val.Key + "\":");
-				if (val.Value.GetType() == typeof(string) & !Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{4}-[0-9]{2}-[0-9]{2}'") &&
-					!Regex.IsMatch(val.Value.ToString(), "\b'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+				if (val.Value.GetType() == typeof(string))
 				{
 					cadena.Append("\"" + val.Value + "\"");
 				}

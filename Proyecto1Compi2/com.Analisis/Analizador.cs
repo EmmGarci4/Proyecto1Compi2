@@ -391,7 +391,8 @@ namespace com.Analisis
 		internal static void ClearToRollback()
 		{
 			BasesDeDatos.Clear();
-			Usuariosdb = GetListaUsuarios();
+			//Usuariosdb = GetListaUsuarios();
+			Usuariosdb.Clear();
 			//funciones.Clear();
 			//erroresCQL.Clear();
 			ast = null;

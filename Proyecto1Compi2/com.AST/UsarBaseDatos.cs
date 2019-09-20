@@ -25,8 +25,19 @@ namespace Proyecto1Compi2.com.AST
 		{
 			if (Analizador.ExisteDB(nombre))
 			{
-				//indicar al usuario que db esta en uso
-				sesion.DBActual = nombre;
+				BaseDatos db= Analizador.BuscarDB(nombre);
+				if (!db.EnUso)
+				{
+					//liberar base de datos en uso
+					if (sesion.DBActual!=null) {
+						Analizador.BuscarDB(sesion.DBActual).EnUso = false;
+					}
+					sesion.DBActual = nombre;
+					db.EnUso = true;
+				}
+				else {
+					return new ThrowError(TipoThrow.Exception, "La base de datos '" + Nombre + "' esta en uso", Linea, Columna);
+				}
 			}
 			else {
 				return new ThrowError(TipoThrow.BDDontExists,"La base de datos '"+Nombre+"' no existe",Linea,Columna);
