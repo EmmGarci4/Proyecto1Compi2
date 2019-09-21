@@ -572,7 +572,7 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					ParDatos respuesta = valores.ElementAt(indiceDatos);
 
-						if (Datos.IsTipoCompatible(cl.Tipo, respuesta.Valor))
+						if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta.Valor))
 						{
 							valoresAInsertar.Enqueue(respuesta.Valor);
 						}
@@ -581,11 +581,27 @@ namespace Proyecto1Compi2.com.Analisis
 						TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(respuesta.Valor);
 						if (Datos.IsLista(tipoRes.Tipo))
 						{
-							CollectionListCql colection = (CollectionListCql)respuesta.Valor;
-							if (tipoRes.Nombre == "null")
-							{
-								colection.TipoDato = cl.Tipo;
-								valoresAInsertar.Enqueue(colection);
+							if (tipoRes.Tipo!=TipoDatoDB.MAP_OBJETO && tipoRes.Tipo!=TipoDatoDB.MAP_PRIMITIVO) {
+								CollectionListCql colection = (CollectionListCql)respuesta.Valor;
+								if (tipoRes.Nombre == "null")
+								{
+									colection.TipoDato = cl.Tipo;
+									valoresAInsertar.Enqueue(colection);
+								}
+								else
+								{
+									if (cl.Tipo.Nombre.Equals(colection.TipoDato.Nombre))
+									{
+										if (cl.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || cl.Tipo.Tipo == TipoDatoDB.LISTA_PRIMITIVO) {
+											colection.IsLista = true;
+											valoresAInsertar.Enqueue(colection);
+										} else if (cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO || cl.Tipo.Tipo == TipoDatoDB.SET_PRIMITIVO)
+										{
+											colection.IsLista = false;
+											valoresAInsertar.Enqueue(colection);
+										}
+									}
+								}
 							}
 						}
 						else

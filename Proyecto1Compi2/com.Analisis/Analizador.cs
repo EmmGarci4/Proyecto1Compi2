@@ -266,6 +266,13 @@ namespace com.Analisis
 			return raiz != null && arbol.ParserMessages.Count == 0 && erroresCQL.Count == 0;
 		}
 
+		internal static void LiberarDB(Sesion sesion)
+		{
+			if (sesion.DBActual!=null) {
+				BuscarDB(sesion.DBActual).EnUso = false;
+			}
+		}
+
 		private static int contarErroresCQL()
 		{
 			int contador = 0;

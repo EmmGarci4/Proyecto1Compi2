@@ -206,6 +206,7 @@ namespace Proyecto1Compi2.com.Analisis
 					respuesta.Append("½[-DESC]");
 					respuesta.Append("[-ERROR]\n");
 				}
+				Analizador.LiberarDB(sesion);
 			}
 			else {
 				//el usuario es incorrecto
