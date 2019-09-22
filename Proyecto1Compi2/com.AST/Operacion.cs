@@ -79,6 +79,8 @@ namespace Proyecto1Compi2.com.AST
 				case TipoOperacion.ListaDatos:
 				case TipoOperacion.NuevaInstancia:
 					return this.tipoOp;
+				case TipoOperacion.Menos:
+					return TipoOperacion.Numero;
 				case TipoOperacion.Identificador:
 					if (ts.ExisteSimbolo(this.Valor.ToString()))
 					{

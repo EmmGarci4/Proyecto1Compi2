@@ -141,8 +141,11 @@ namespace Proyecto1Compi2.com.AST
 			int contador = 0;
 			foreach (Parametro par in this.parametros)
 			{
-				if (par.Tipo.Tipo==TipoDatoDB.INT || par.Tipo.Tipo==TipoDatoDB.DOUBLE) {
+				if (par.Tipo.Tipo == TipoDatoDB.INT || par.Tipo.Tipo == TipoDatoDB.DOUBLE) {
 					llave.Append("numero");
+				}
+				else if (par.Tipo.Tipo == TipoDatoDB.OBJETO) {
+					llave.Append("objeto");
 				}
 				else {
 					llave.Append(par.Tipo.ToString());

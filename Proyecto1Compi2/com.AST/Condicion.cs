@@ -120,14 +120,19 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Objeto))
 						{
 							return der.GetType() == typeof(Objeto);
-						}
-						//else
+						}else
 						//OBJETO-OBJETO 
 						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Objeto))
 						{
 							//Console.WriteLine(izq.GetHashCode());
 							//Console.WriteLine(der.GetHashCode());
 							return !izq.Equals(der);
+						}
+						else 
+						//NULL - NULL
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							return izq!=der;
 						}
 						else
 						{
@@ -190,6 +195,12 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Objeto) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Objeto))
 						{
 							return izq.Equals(der);
+						}
+						else
+						//NULL - NULL
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							return izq == der;
 						}
 						else
 						{

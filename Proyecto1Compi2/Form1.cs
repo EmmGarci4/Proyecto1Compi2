@@ -98,12 +98,22 @@ namespace Proyecto1Compi2
 
 			//acciones de analisis y ejecucion
 			Sesion sesion = new Sesion("admin", null);
-			bool res = Analizador.AnalizarCql(texto, sesion);
-		//	MethodInvoker action = delegate
-		//	{
-				//acciones que interactuan con la interface
-				//paquete de resultados
-				foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
+			try
+			{
+				Analizador.AnalizarCql(texto, sesion);
+				Analizador.LiberarDB(sesion);
+
+			}
+			catch (StackOverflowException ex)
+			{
+				Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia, 
+					"Se ha producido un desbordamiento de pila", 0, 0));
+			}
+			//	MethodInvoker action = delegate
+			//	{
+			//acciones que interactuan con la interface
+			//paquete de resultados
+			foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
 				{
 					richTextBox2.AppendText(resultado.ToString());
 				}
@@ -164,10 +174,14 @@ namespace Proyecto1Compi2
 		private void toolStripButton2_Click(object sender, EventArgs e)
 		{
 			//Console.WriteLine("Ackerman con 3,6: " + Ackermann(3, 6));
-			int a = -214748364;
-			Console.WriteLine("holiiiis");
-			Console.WriteLine(a);
+			Console.WriteLine(modulo(1,1));
 		}
+
+		double modulo(double n, double p)
+		{
+			return n < p ? n : modulo(n - p, -p);
+		}
+
 
 		private void toolStripButton3_Click(object sender, EventArgs e)
 		{

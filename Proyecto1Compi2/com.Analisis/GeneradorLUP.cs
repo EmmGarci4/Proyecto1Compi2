@@ -173,7 +173,13 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				Sesion sesion = new Sesion(usuario, null);
 				//analizar 
-				bool res = Analizador.AnalizarCql(codigocql, sesion);
+				try
+				{
+					Analizador.AnalizarCql(codigocql, sesion);
+				}
+				catch (StackOverflowException ex) {
+					Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,"Se ha producido un desbordamiento de pila",0,0));
+				}
 				//paquete de resultados
 				foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
 				{
