@@ -185,6 +185,22 @@ namespace Proyecto1Compi2.com.AST
 			return null;
 		}
 
+		internal string getTitulo()
+		{
+			StringBuilder cadenas = new StringBuilder();
+			int i = 0;
+			foreach (AccesoPar access in this.accesos) {
+				if (access.Tipo==TipoAcceso.Campo) {
+					if (i>0) {
+						cadenas.Append(",");
+					}
+					cadenas.Append(access.Value.ToString());
+					i++;
+				}
+			}
+			return cadenas.ToString();
+		}
+
 		private object GetSimbolosApilados(TablaSimbolos ts, Sesion sesion)
 		{
 			Stack<Simbolo> simbolosApilados = new Stack<Simbolo>();

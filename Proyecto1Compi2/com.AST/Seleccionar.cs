@@ -94,7 +94,14 @@ namespace Proyecto1Compi2.com.AST
 				resultado.Titulos = new List<string>();
 				for (cc = 0; cc < listaAccesos.Count; cc++)
 				{
-					resultado.Titulos.Add("Resultado " + (cc + 1));
+					if (listaAccesos.ElementAt(cc).GetType() == typeof(Acceso))
+					{
+						string titulo = ((Acceso)listaAccesos.ElementAt(cc)).getTitulo();
+						resultado.Titulos.Add(titulo);
+					}
+					else {
+						resultado.Titulos.Add("Resultado " + (cc + 1));
+					}
 				}
 			}
 			//DATOS
