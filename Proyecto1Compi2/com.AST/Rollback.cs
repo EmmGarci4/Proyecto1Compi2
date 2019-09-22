@@ -1,5 +1,6 @@
 ﻿using com.Analisis;
 using com.Analisis.Util;
+using Proyecto1Compi2.com.Analisis;
 using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace Proyecto1Compi2.com.AST
 			String chi = HandlerFiles.AbrirArchivo("principal.chison");
 			if (chi != null)
 			{
-				if (Analizador.AnalizarChison(chi))
+				if (GeneradorDB.AnalizarChison(chi))
 				{
 					Console.WriteLine("ARCHIVO CARGADO CON EXITO");
 				}

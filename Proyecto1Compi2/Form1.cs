@@ -187,7 +187,7 @@ namespace Proyecto1Compi2
 		{
 			Analizador.ClearToRollback();
 
-				if (Analizador.AnalizarChison(this.richTextBox1.Text))
+				if (GeneradorDB.AnalizarChison(this.richTextBox1.Text))
 				{
 					Console.WriteLine("ARCHIVO CARGADO CON EXITO");
 				}

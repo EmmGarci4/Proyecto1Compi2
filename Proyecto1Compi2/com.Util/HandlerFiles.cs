@@ -10,15 +10,14 @@ namespace com.Analisis.Util
 	static class HandlerFiles
 	{
 		//static string relativePath = System.Web.Hosting.HostingEnvironment.MapPath("~/");
-		static string relativePath = "";
+		static string relativePath = Directory.GetCurrentDirectory();
 
 		public static void guardarArchivo(String texto,String filePath) {
 			if (!Directory.Exists(relativePath+"data")) {
 				Directory.CreateDirectory(relativePath + "data");
 			}
-			Console.WriteLine(relativePath);
 			//Path
-			using (StreamWriter we = new StreamWriter(relativePath + "data/"+filePath))
+			using (StreamWriter we = new StreamWriter(relativePath + "\\data\\"+filePath))
 				{
 				we.Write(texto);
 				we.Close();
@@ -29,7 +28,7 @@ namespace com.Analisis.Util
 			
 			String fileContent = "";
 			try {
-				using (StreamReader reader = new StreamReader(relativePath + "data/"+filePath))
+				using (StreamReader reader = new StreamReader(relativePath + "\\data\\"+filePath))
 				{
 					fileContent = reader.ReadToEnd();
 					reader.Close();
@@ -39,6 +38,21 @@ namespace com.Analisis.Util
 				return null;
 			}
 			return fileContent;
+		}
+
+		public static StreamReader AbrirArchivoGetStream(String filePath)
+		{
+			try
+			{
+				using (StreamReader reader = new StreamReader(relativePath + "\\data\\" + filePath))
+				{
+					return reader;
+				}
+			}
+			catch (Exception ex)
+			{
+				return null;
+			}
 		}
 
 	}

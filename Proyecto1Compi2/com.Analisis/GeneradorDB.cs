@@ -13,6 +13,140 @@ namespace Proyecto1Compi2.com.Analisis
 {
 	class GeneradorDB
 	{
+		static List<Error> erroresChison = new List<Error>();
+		static Dictionary<int,int> intervalos = new Dictionary<int, int>();
+
+		public static List<Error> ErroresChison { get => erroresChison; set => erroresChison = value; }
+
+		public static bool AnalizarChison(String texto)
+		{
+			GramaticaChison gramatica = new GramaticaChison();
+			LanguageData ldata = new LanguageData(gramatica);
+			Parser parser = new Parser(ldata);
+			//IMPORTAR 
+			texto = Importar(texto);
+			ParseTree arbol = parser.Parse(texto);
+			ParseTreeNode raiz = arbol.Root;
+
+			if (raiz != null && arbol.ParserMessages.Count == 0)
+			{
+				//generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				GeneradorDB.GuardarInformación(raiz);
+				Analizador.MostrarReporteDeEstadoChison();
+			}
+			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
+			{
+				//INSERTANDO ERROR EN ErroresChison
+				ErroresChison.Add(new Error(
+					TipoError.Semantico,
+					mensaje.Message,
+					mensaje.Location.Line,
+					mensaje.Location.Column,
+					Datos.GetDate(),
+					Datos.GetTime()
+					));
+				//Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
+			}
+			LlenarTablaErrors();
+			//Console.WriteLine(errors.ToString());
+			return raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count == 0;
+		}
+
+		private static string Importar(string texto)
+		{
+			intervalos.Clear();
+			int contadorLineas = 1;
+			string[] lineas = texto.Split('\n');
+
+			foreach (string linea in lineas)
+			{
+				Match match2 = Regex.Match(linea, "\\${.*}\\$");
+				if (match2.Success)
+				{
+					String t1 = HandlerFiles.AbrirArchivo(GetURL(match2.Value));
+					if (t1 != null)
+					{
+						texto = texto.Replace(match2.Value, t1);
+						intervalos.Add(contadorLineas, t1.Split('\n').Length+contadorLineas);
+					}
+					else
+					{
+						texto = texto.Replace(linea, String.Empty);
+						erroresChison.Add(new Error(TipoError.Advertencia, "El archivo '"+match2.Value+"' no existe en la carpeta data",
+							contadorLineas, 1,
+							Datos.GetDate(), Datos.GetTime()));
+					}
+				}
+				contadorLineas++;
+			}
+			return texto;
+		}
+
+		private static string GetURL(string value)
+		{
+			value = value.Replace("$", String.Empty);
+			value = value.Replace("{", String.Empty);
+			value = value.Replace("}", String.Empty);
+			value = value.Replace(" ", String.Empty);
+			//agregando path directo
+			return value;
+		}
+
+		private static void LlenarTablaErrors()
+		{
+			Analizador.Errors.Truncar();
+			Queue<object> valores = new Queue<object>();
+			foreach (Error error in erroresChison)
+			{
+				int linea = GetLineaError(error.Linea);
+				String mensajeExtra = "";
+				if (linea!=error.Linea) {
+					mensajeExtra = "(línea:"+GetLineaRealError(error.Linea) +" en archivo)";
+				}
+				valores.Clear();
+				int contador = Analizador.Errors.BuscarColumna("numero").GetUltimoValorCounter();
+				valores.Enqueue(contador + 1);
+				valores.Enqueue(error.Tipo.ToString());
+				valores.Enqueue(error.Mensaje+mensajeExtra);
+				valores.Enqueue(linea);
+				valores.Enqueue(error.Columna);
+				valores.Enqueue(new MyDateTime(TipoDatoDB.DATE, DateTime.Parse(error.Fecha)));
+				valores.Enqueue(new MyDateTime(TipoDatoDB.TIME, DateTime.Parse(error.Hora)));
+				//agregando valores
+				Analizador.Errors.AgregarValores(valores);
+			}
+		}
+
+		private static int GetLineaRealError(int line)
+		{
+			if (intervalos.Count > 0)
+			{
+
+				foreach (KeyValuePair<int, int> intervalo in intervalos)
+				{
+					if (line >= intervalo.Key && line <= intervalo.Value)
+					{
+						return line-intervalo.Key;
+					}
+				}
+			}
+			return line;
+		}
+
+		private static int GetLineaError(int line)
+		{
+			if (intervalos.Count>0) {
+
+				foreach (KeyValuePair<int, int> intervalo in intervalos)
+				{			
+					if (line>intervalo.Key && line<intervalo.Value) {
+						return intervalo.Key;
+					}
+				}
+			}
+			return line;
+		}
+
 		public static void GuardarInformación(ParseTreeNode raiz)
 		{
 			//RECORRIENDO LA ESTRUCTURA PRINCIPAL
@@ -37,7 +171,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					default:
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura principal incorrecta. Solamente se deben incluir los atributos 'DATABASES' y 'USERS'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -50,7 +184,7 @@ namespace Proyecto1Compi2.com.Analisis
 			bool todoBien = true;
 			if (indexDb < 0)
 			{
-				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+				erroresChison.Add(new Error(TipoError.Semantico,
 					   "Estructura principal incorrecta. Se debe incluir el atributo 'DATABASES'",
 					   raiz.Span.Location.Line,
 					   raiz.Span.Location.Column,
@@ -60,7 +194,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			if (indexUs < 0)
 			{
-				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+				erroresChison.Add(new Error(TipoError.Semantico,
 						   "Estructura principal incorrecta. Se debe incluir el atributo 'USERS'",
 						   raiz.Span.Location.Line,
 						   raiz.Span.Location.Column,
@@ -78,7 +212,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 						"El atributo 'DATABASES' debe contener una lista de bases de datos",
 						raiz.Span.Location.Line,
 						raiz.Span.Location.Column,
@@ -92,7 +226,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 						"El atributo 'USERS' debe contener una lista de usuarios",
 						raiz.Span.Location.Line,
 						raiz.Span.Location.Column,
@@ -110,7 +244,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				if (nodo.Term.Name != "OBJETO")
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 						"La lista debe estar compuesta solamente por bases de datos",
 						raiz.Span.Location.Line, raiz.Span.Location.Column,
 						Datos.GetDate(),
@@ -132,7 +266,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 								"La base de datos '" + nuevo.Nombre + "' ya existe en el sistema",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -159,7 +293,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -168,7 +302,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -193,7 +327,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 												"El user Type '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
 												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
@@ -209,7 +343,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 												"El procedimiento '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
 												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
@@ -225,7 +359,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 												"La tabla '" + ut.Nombre + "' ya existe",
 												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
 												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
@@ -236,7 +370,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'DATA' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -245,7 +379,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'DATA' debe ser una lista",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -254,7 +388,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					default:
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'base de datos' es incorrecta. Solamente se deben incluir los atributos 'NAME' y 'DATA'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -264,7 +398,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 			if (based.IsValido()) return based;
-			Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME' o 'DATA'",
 				raiz.Span.Location.Line,
 				raiz.Span.Location.Column,
@@ -300,7 +434,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+					erroresChison.Add(new Error(TipoError.Advertencia,
 							"La lista de 'DATA' solo debe contener objetos CQL",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -331,7 +465,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -340,7 +474,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -357,7 +491,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'CQL-TYPE' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -366,7 +500,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'CQL-TYPE' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -392,7 +526,7 @@ namespace Proyecto1Compi2.com.Analisis
 											}
 											else
 											{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El objeto '" + col.Tipo.ToString() + "' no existe",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -413,7 +547,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 										"La columna '" + col.Nombre + "' no existe",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -423,7 +557,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'COLUMNS' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -432,7 +566,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'COLUMNS' debe ser una lista",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -454,7 +588,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'DATA' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -463,7 +597,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'DATA' debe ser una lista",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -472,7 +606,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					default:
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'tabla' es incorrecta. Solamente se deben incluir los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' y 'DATA'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -483,7 +617,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 			}
 			if (tabla.Nombre != null && t != null) return tabla;
-			Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' o 'DATA'",
 				raiz.Span.Location.Line,
 				raiz.Span.Location.Column,
@@ -516,7 +650,7 @@ namespace Proyecto1Compi2.com.Analisis
 						//comprobar que exista el objeto
 						if (!ExisteUt(tipoAdentro.Nombre,objetos))
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El objeto '"+tipoAdentro.Nombre+"' no existe",
 								  linea, columna,
 								  Datos.GetDate(), Datos.GetTime()));
@@ -548,7 +682,7 @@ namespace Proyecto1Compi2.com.Analisis
 						//comprobar que exista el objeto
 						if (!ExisteUt(tipoAdentro.Nombre, objetos))
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El objeto '" + tipoAdentro.Nombre + "' no existe",
 								  linea, columna,
 								  Datos.GetDate(), Datos.GetTime()));
@@ -606,7 +740,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
 								  linea, columna,
 								  Datos.GetDate(), Datos.GetTime()));
@@ -622,7 +756,7 @@ namespace Proyecto1Compi2.com.Analisis
 					object correcto = tab.ValidarPk(valoresAInsertar, linea, columna);
 					if (correcto.GetType() == typeof(ThrowError))
 					{
-						Analizador.ErroresChison.Add(new Error((ThrowError)correcto,true));
+						erroresChison.Add(new Error((ThrowError)correcto,true));
 					}
 					else {
 						//LLENANDO TABLA
@@ -633,7 +767,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			else
 			{
-				Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+				erroresChison.Add(new Error(TipoError.Semantico,
 						"La cantidad de valores no concuerda con la cantidad de columnas en las que se puede insertar",
 						linea, columna,
 						Datos.GetDate(), Datos.GetTime()));
@@ -667,7 +801,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 									"La data de una tabla solo debe contener columnas",
 								   parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column,
 								   Datos.GetDate(), Datos.GetTime()));
@@ -720,7 +854,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 									"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
 								   linea, column,
 								   Datos.GetDate(), Datos.GetTime()));
@@ -735,7 +869,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 									"La hora es incorrecta, el formato debe ser HH:MM:SS",
 								   linea, column,
 								   Datos.GetDate(), Datos.GetTime()));
@@ -765,23 +899,24 @@ namespace Proyecto1Compi2.com.Analisis
 							tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
 						}
 						CollectionListCql collection = new CollectionListCql(tipoCol, true);
+						TipoObjetoDB tipo = Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre);
 						foreach (object exp in lista)
 						{
-							if (Datos.IsTipoCompatible(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), exp))
+							if (Datos.IsTipoCompatibleParaAsignar(tipo, exp))
 							{
-
-								object posibleError = collection.AddItem(exp, linea, column);
+								object nuevoVal = CasteoImplicito(tipo, exp,linea, column);
+								object posibleError = collection.AddItem(nuevoVal, linea, column);
 								if (posibleError != null)
 								{
 									if (posibleError.GetType() == typeof(ThrowError))
 									{
-										Analizador.ErroresChison.Add(new Error((ThrowError)posibleError, true));
+										erroresChison.Add(new Error((ThrowError)posibleError, true));
 									}
 								}
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 									"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(exp) + " en un Collection tipo " + collection.TipoDato.ToString(),
 									linea, column, Datos.GetDate(), Datos.GetTime()));
 							}
@@ -818,16 +953,90 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
-								"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
-								linea, column, Datos.GetDate(), Datos.GetTime()));
+									TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(expresiones.ElementAt(indice));
+									if (Datos.IsLista(tipoRes.Tipo))
+									{
+										if (tipoRes.Tipo != TipoDatoDB.MAP_OBJETO && tipoRes.Tipo != TipoDatoDB.MAP_PRIMITIVO)
+										{
+											CollectionListCql colection = (CollectionListCql)expresiones.ElementAt(indice);
+											if (tipoRes.Nombre == "null")
+											{
+												//colection.TipoDato = ;
+												nuevaInstancia.Atributos.Add(atributo.Key, colection);
+											}
+											else
+											{
+												if (atributo.Value.Nombre.Equals(colection.TipoDato.Nombre))
+												{
+													if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+													{
+														colection.IsLista = true;
+														nuevaInstancia.Atributos.Add(atributo.Key, colection);
+													}
+													else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
+													{
+														colection.IsLista = false;
+														nuevaInstancia.Atributos.Add(atributo.Key, colection);
+													}
+												} else if (atributo.Value.Nombre.Equals("double")&&colection.TipoDato.Nombre.Equals("int")) {
+													colection.TipoDato.Nombre = "double";
+													List<object> nuevosDatos = new List<object>();
+													foreach (object contenido in colection) {
+														nuevosDatos.Add(double.Parse(contenido.ToString()));
+													}
+													colection.Clear();
+													colection.AddRange(nuevosDatos);
+
+													if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+													{
+														colection.IsLista = true;
+													}
+													else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
+													{
+														colection.IsLista = false;
+													}
+
+													nuevaInstancia.Atributos.Add(atributo.Key, colection);
+												}
+												else if (atributo.Value.Nombre.Equals("int") && colection.TipoDato.Nombre.Equals("double"))
+												{
+													colection.TipoDato.Nombre = "int";
+													List<object> nuevosDatos = new List<object>();
+													foreach (object contenido in colection)
+													{
+														nuevosDatos.Add(int.Parse(contenido.ToString()));
+													}
+													colection.Clear();
+													colection.AddRange(nuevosDatos);
+
+													if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+													{
+														colection.IsLista = true;
+													}
+													else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
+													{
+														colection.IsLista = false;
+													}
+
+													nuevaInstancia.Atributos.Add(atributo.Key, colection);
+												}
+											}
+										}
+									}
+									else
+									{
+										erroresChison.Add(new Error(TipoError.Semantico,
+										"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
+										linea, column, Datos.GetDate(), Datos.GetTime()));
+									}
 								}
+								
 								indice++;
 							}
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"Los atributos no corresponden en numero al tipo '" + usert.Nombre + "'",
 								linea, column, Datos.GetDate(), Datos.GetTime()));
 						}
@@ -837,7 +1046,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						//error
-						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+						erroresChison.Add(new Error(TipoError.Semantico,
 									"No existe un objeto con esos atributos en la base de datos",
 								   linea, column, Datos.GetDate(), Datos.GetTime()));
 					}
@@ -863,7 +1072,7 @@ namespace Proyecto1Compi2.com.Analisis
 					object posibleError = map.AddItem(llave, valor, nodo.Span.Location.Line, nodo.Span.Location.Column);
 					if (posibleError!=null) {
 						if (posibleError.GetType()==typeof(ThrowError)) {
-							Analizador.ErroresChison.Add(new Error((ThrowError)posibleError, true));
+							erroresChison.Add(new Error((ThrowError)posibleError, true));
 						}
 					}
 				}
@@ -896,7 +1105,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 									"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
 								   linea, column,
 								   Datos.GetDate(), Datos.GetTime()));
@@ -911,7 +1120,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 									"La hora es incorrecta, el formato debe ser HH:MM:SS",
 								   linea, column,
 								   Datos.GetDate(), Datos.GetTime()));
@@ -926,9 +1135,22 @@ namespace Proyecto1Compi2.com.Analisis
 			List<UserType> usertpypes = GetUserTypesLista(tab);
 			foreach (UserType ut in usertpypes)
 			{
-				if (ut.Contiene(attrs))
-				{
-					return ut;
+				if (ut.Atributos.Count==attrs.Count) {
+					bool contienetodo = true;
+					int contadorAt = 0;
+					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
+					{
+						if (!atributo.Key.Equals(attrs.ElementAt(contadorAt)))
+						{
+							contienetodo = false;
+							break;
+						}
+						contadorAt++;
+					}
+					if (contienetodo)
+					{
+						return ut;
+					}
 				}
 			}
 			return null;
@@ -970,7 +1192,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'NAME' solo debe aparecer una vez",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -979,7 +1201,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'NAME' debe ser un dato tipo string",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -996,7 +1218,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'TYPE' solo debe aparecer una vez",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1005,7 +1227,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'TYPE' debe ser un dato tipo string",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1022,7 +1244,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'AS' solo debe aparecer una vez",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1031,7 +1253,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								break;
 							default:
-								Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+								erroresChison.Add(new Error(TipoError.Advertencia,
 									"Estructura de 'Columna' es incorrecta. Solamente se deben incluir los atributos 'NAME', 'PK' y 'TYPE'",
 									raiz.Span.Location.Line,
 									raiz.Span.Location.Column,
@@ -1048,7 +1270,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					else
 					{
-						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+						erroresChison.Add(new Error(TipoError.Semantico,
 								"No se incluyó alguno de los atributos 'NAME','PK' o 'TYPE'",
 								col.Span.Location.Line, col.Span.Location.Column,
 								Datos.GetDate(),
@@ -1057,7 +1279,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'COLUMNS' solo puede contener columnas",
 								col.Span.Location.Line, col.Span.Location.Column,
 								Datos.GetDate(),
@@ -1085,7 +1307,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1094,7 +1316,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1111,7 +1333,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'CQL-TYPE' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1120,7 +1342,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'CQL-TYPE' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1150,7 +1372,7 @@ namespace Proyecto1Compi2.com.Analisis
 												}
 												else
 												{
-													Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+													erroresChison.Add(new Error(TipoError.Semantico,
 													"El objeto '" + par.Tipo.ToString() + "' no existe",
 													raiz.Span.Location.Line, raiz.Span.Location.Column,
 													Datos.GetDate(),
@@ -1161,8 +1383,14 @@ namespace Proyecto1Compi2.com.Analisis
 											{
 												if (Datos.IsLista(par.Tipo.Tipo))
 												{
-													if (ValidarInstanciaLista(par.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
+													if (par.Tipo.Nombre != "")
 													{
+														if (ValidarInstanciaLista(par.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
+														{
+															proc.Parametros.Add(par);
+														}
+													}
+													else {
 														proc.Parametros.Add(par);
 													}
 												}
@@ -1175,7 +1403,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 												"El parámetro '" + par.Nombre + "' ya existe",
 												raiz.Span.Location.Line, raiz.Span.Location.Column,
 												Datos.GetDate(),
@@ -1200,7 +1428,7 @@ namespace Proyecto1Compi2.com.Analisis
 												}
 												else
 												{
-													Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+													erroresChison.Add(new Error(TipoError.Semantico,
 													"El objeto '" + par.Tipo.ToString() + "' no existe",
 													raiz.Span.Location.Line, raiz.Span.Location.Column,
 													Datos.GetDate(),
@@ -1224,7 +1452,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 												"El retorno '" + par.Nombre + "' ya existe",
 												raiz.Span.Location.Line, raiz.Span.Location.Column,
 												Datos.GetDate(),
@@ -1235,7 +1463,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PARAMETERS' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1244,7 +1472,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PARAMETERS' debe ser una lista",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1272,7 +1500,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'INSTR' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1281,7 +1509,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'INSTR' debe ser una cadena encerrada entre $",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1290,7 +1518,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					default:
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'CQL-Type Procedure' es incorrecta. Solamente se deben incluir los atributos 'INSTR','NAME','PARAMETERS' y 'CQL-TYPE'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1300,7 +1528,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 			if (proc.isValido() && t != null && bren != null) return proc;
-			Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME','PARAMETERS', 'INSTR' o 'CQL-TYPE'",
 				raiz.Span.Location.Line,
 				raiz.Span.Location.Column,
@@ -1334,7 +1562,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'NAME' solo debe aparecer una vez",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1343,7 +1571,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'NAME' debe ser un dato tipo string",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1360,7 +1588,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'TYPE' solo debe aparecer una vez",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1369,7 +1597,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'TYPE' debe ser un dato tipo string",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1386,7 +1614,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'AS' solo debe aparecer una vez",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1395,7 +1623,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									break;
 								default:
-									Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+									erroresChison.Add(new Error(TipoError.Advertencia,
 										"Estructura de 'Atributo de Objeto' es incorrecta. Solamente se deben incluir los atributos 'NAME' y 'TYPE'",
 										raiz.Span.Location.Line,
 										raiz.Span.Location.Column,
@@ -1410,7 +1638,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+							erroresChison.Add(new Error(TipoError.Advertencia,
 								"No se incluyó alguno de los atributos 'AS','NAME' o 'TYPE'",
 								nodo.Span.Location.Line,
 								nodo.Span.Location.Column,
@@ -1421,7 +1649,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+					erroresChison.Add(new Error(TipoError.Advertencia,
 							"La lista de 'PARAMETERS' solo debe contener parámetros",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1457,7 +1685,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'NAME' solo debe aparecer una vez",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1466,7 +1694,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'NAME' debe ser un dato tipo string",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1483,7 +1711,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'TYPE' solo debe aparecer una vez",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1492,7 +1720,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'TYPE' debe ser un dato tipo string",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1509,7 +1737,7 @@ namespace Proyecto1Compi2.com.Analisis
 										}
 										else
 										{
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+											erroresChison.Add(new Error(TipoError.Semantico,
 											"El atributo 'AS' solo debe aparecer una vez",
 											raiz.Span.Location.Line, raiz.Span.Location.Column,
 											Datos.GetDate(),
@@ -1518,7 +1746,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									break;
 								default:
-									Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+									erroresChison.Add(new Error(TipoError.Advertencia,
 										"Estructura de 'Atributo de Objeto' es incorrecta. Solamente se deben incluir los atributos 'NAME' y 'TYPE'",
 										raiz.Span.Location.Line,
 										raiz.Span.Location.Column,
@@ -1533,7 +1761,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+							erroresChison.Add(new Error(TipoError.Advertencia,
 								"No se incluyó alguno de los atributos 'AS','NAME' o 'TYPE'",
 								nodo.Span.Location.Line,
 								nodo.Span.Location.Column,
@@ -1544,7 +1772,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+					erroresChison.Add(new Error(TipoError.Advertencia,
 							"La lista de 'PARAMETERS' solo debe contener parámetros",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1567,7 +1795,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					else
 					{
-						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+						erroresChison.Add(new Error(TipoError.Semantico,
 							"El atributo 'AS' debe ser una cadena OUT o IN",
 							no.Span.Location.Line,
 							no.Span.Location.Column,
@@ -1596,7 +1824,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1605,7 +1833,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1622,7 +1850,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'CQL-TYPE' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1631,7 +1859,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'CQL-TYPE' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1650,7 +1878,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'ATTRS' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1659,7 +1887,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'ATTRS' debe ser una lista",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1668,7 +1896,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					default:
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'CQL-Type object' es incorrecta. Solamente se deben incluir los atributos 'NAME','ATTRS' y 'CQL-TYPE'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1682,7 +1910,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				return user;
 			}
-			Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME','ATTRS' o 'CQL-TYPE'",
 				raiz.Span.Location.Line,
 				raiz.Span.Location.Column,
@@ -1715,7 +1943,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'NAME' solo debe aparecer una vez",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1724,7 +1952,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'NAME' debe ser un dato tipo string",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1746,7 +1974,7 @@ namespace Proyecto1Compi2.com.Analisis
 											}
 											else
 											{
-												Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+												erroresChison.Add(new Error(TipoError.Semantico,
 												"El objeto '" + tipodato.ToString() + "' no existe",
 												raiz.Span.Location.Line, raiz.Span.Location.Column,
 												Datos.GetDate(),
@@ -1770,7 +1998,7 @@ namespace Proyecto1Compi2.com.Analisis
 									}
 									else
 									{
-										Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+										erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'TYPE' solo debe aparecer una vez",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1779,7 +2007,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									erroresChison.Add(new Error(TipoError.Semantico,
 										"El atributo 'TYPE' debe ser un dato tipo string",
 										raiz.Span.Location.Line, raiz.Span.Location.Column,
 										Datos.GetDate(),
@@ -1788,7 +2016,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								break;
 							default:
-								Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+								erroresChison.Add(new Error(TipoError.Advertencia,
 									"Estructura de 'Atributo de Objeto' es incorrecta. Solamente se deben incluir los atributos 'NAME' y 'TYPE'",
 									raiz.Span.Location.Line,
 									raiz.Span.Location.Column,
@@ -1805,7 +2033,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						catch (ArgumentException)
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+							erroresChison.Add(new Error(TipoError.Advertencia,
 							"El atributo '" + nombre + "' ya existe",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1815,7 +2043,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					else
 					{
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"No se incluyó alguno de los atributos 'NAME' o 'TYPE'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1825,7 +2053,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+					erroresChison.Add(new Error(TipoError.Advertencia,
 							"La lista de 'ATTRS' solo debe contener atributos",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -1859,7 +2087,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					else
 					{
-						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+						erroresChison.Add(new Error(TipoError.Semantico,
 							"El atributo 'CQL-TYPE' debe ser una cadena",
 							no.Span.Location.Line,
 							no.Span.Location.Column,
@@ -1879,7 +2107,7 @@ namespace Proyecto1Compi2.com.Analisis
 			{
 				if (nodo.Term.Name != "OBJETO")
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 						"La lista debe estar compuesta solamente por usuarios",
 						raiz.Span.Location.Line, raiz.Span.Location.Column,
 						Datos.GetDate(),
@@ -1901,7 +2129,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else
 				{
-					Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+					erroresChison.Add(new Error(TipoError.Semantico,
 								"El usuario '" + nuevo.Nombre + "' ya existe en el sistema",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1927,7 +2155,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1936,7 +2164,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1953,7 +2181,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PASSWORD' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1962,7 +2190,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PASSWORD' debe ser un dato tipo string",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -1984,7 +2212,7 @@ namespace Proyecto1Compi2.com.Analisis
 											permisos.Add(permiso);
 										}
 										else {
-											Analizador.ErroresChison.Add(new Error(TipoError.Semantico, "No se puede asignar el permiso sobre la base de datos '" + permiso + "' si no existe",
+											erroresChison.Add(new Error(TipoError.Semantico, "No se puede asignar el permiso sobre la base de datos '" + permiso + "' si no existe",
 														nodo.Span.Location.Line,nodo.Span.Location.Column, 
 														Datos.GetDate(), Datos.GetTime()));
 										}
@@ -1995,7 +2223,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PERMISSIONS' solo debe aparecer una vez",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -2004,7 +2232,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+							erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'PERMISSIONS' debe ser una lista",
 								raiz.Span.Location.Line, raiz.Span.Location.Column,
 								Datos.GetDate(),
@@ -2013,7 +2241,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						break;
 					default:
-						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+						erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'usuario' es incorrecta. Solamente se deben incluir los atributos 'NAME','PERMISSIONS' y 'PASSWORD'",
 							nodo.Span.Location.Line,
 							nodo.Span.Location.Column,
@@ -2048,7 +2276,7 @@ namespace Proyecto1Compi2.com.Analisis
 								}
 								else
 								{
-									Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+									erroresChison.Add(new Error(TipoError.Semantico,
 										"El permiso ya existe para el usuario",
 										raiz.Span.Location.Line,
 										raiz.Span.Location.Column,
@@ -2058,7 +2286,7 @@ namespace Proyecto1Compi2.com.Analisis
 							}
 							else
 							{
-								Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+								erroresChison.Add(new Error(TipoError.Semantico,
 								"El atributo 'NAME' debe ser un dato tipo string",
 								raiz.Span.Location.Line,
 								raiz.Span.Location.Column,
@@ -2068,7 +2296,7 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 						else
 						{
-							Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+							erroresChison.Add(new Error(TipoError.Advertencia,
 							"Estructura de 'permiso' es incorrecta. Solamente se deben incluir el atributo 'NAME'",
 							raiz.Span.Location.Line,
 							raiz.Span.Location.Column,
@@ -2078,7 +2306,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					else
 					{
-						Analizador.ErroresChison.Add(new Error(TipoError.Semantico,
+						erroresChison.Add(new Error(TipoError.Semantico,
 						"La lista debe estar compuesta solamente por permisos",
 						nodo.Span.Location.Line, nodo.Span.Location.Column,
 						Datos.GetDate(),
@@ -2090,6 +2318,35 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			//LISTA VACIA
 			return permisos;
+		}
+
+		public static object CasteoImplicito(TipoObjetoDB tipo, object res, int linea, int columna)
+		{
+			switch (tipo.Tipo)
+			{
+				case TipoDatoDB.INT:
+					{
+						if (double.TryParse(res.ToString(), out double d2))
+						{
+							return (int)d2;
+						}
+
+						break;
+					}
+
+				case TipoDatoDB.DOUBLE:
+					{
+						if (double.TryParse(res.ToString(), out double d2))
+						{
+							return d2;
+						}
+
+						break;
+					}
+					break;
+			}
+
+			return res;
 		}
 	}
 }

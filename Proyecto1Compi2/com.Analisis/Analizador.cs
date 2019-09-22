@@ -16,22 +16,18 @@ namespace com.Analisis
 {
 	static class Analizador
 	{
-		private const string path = "C:\\Users\\Emely\\Documents\\Visual Studio 2017\\Projects\\Proyecto1Compi2\\Proyecto1Compi2\\bin\\Debug\\data\\";
 
 		private static List<BaseDatos> BasesDeDatos = new List<BaseDatos>();
 		private static List<Usuario> Usuariosdb = GetListaUsuarios();
 		private static List<Funcion> funciones = new List<Funcion>();
 		private static List<Error> erroresCQL = new List<Error>();
 		private static NodoAST ast = null;
-		static List<Error> erroresChison = new List<Error>();
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
 		private static Tabla errors = GetTablaErrors();
 		private static List<ResultadoConsulta> resultadosConsultas = new List<ResultadoConsulta>();
 
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
-		public static string PATH => path;
-		public static List<Error> ErroresChison { get => erroresChison; set => erroresChison = value; }
 		public static List<Funcion> Funciones { get => funciones; set => funciones = value; }
 		public static string CodigoAnalizado { get => codigoAnalizado; set => codigoAnalizado = value; }
 		public static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
@@ -286,61 +282,7 @@ namespace com.Analisis
 			return contador;
 		}
 
-		public static bool AnalizarChison(String texto)
-		{
-			GramaticaChison gramatica = new GramaticaChison();
-			LanguageData ldata = new LanguageData(gramatica);
-			Parser parser = new Parser(ldata);
-			//IMPORTAR 
-			texto = Importar(texto);
-			ParseTree arbol = parser.Parse(texto);
-			ParseTreeNode raiz = arbol.Root;
-
-			if (raiz != null && arbol.ParserMessages.Count == 0)
-			{
-				generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
-				GeneradorDB.GuardarInformación(raiz);
-				MostrarReporteDeEstadoChison();
-			}
-			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
-			{
-				//INSERTANDO ERROR EN ErroresChison
-				ErroresChison.Add(new Error(
-					TipoError.Semantico,
-					mensaje.Message,
-					mensaje.Location.Line,
-					mensaje.Location.Column,
-					Datos.GetDate(),
-					Datos.GetTime()
-					));
-				//Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
-			}
-			LlenarTablaErrors();
-			//Console.WriteLine(errors.ToString());
-			return raiz != null && arbol.ParserMessages.Count == 0 && ErroresChison.Count == 0;
-		}
-
 		//******************************OTROS***************************************************************
-
-		private static void LlenarTablaErrors()
-		{
-			errors.Truncar();
-			Queue<object> valores = new Queue<object>();
-			foreach (Error error in erroresChison)
-			{
-				valores.Clear();
-				int contador = errors.BuscarColumna("numero").GetUltimoValorCounter();
-				valores.Enqueue(contador + 1);
-				valores.Enqueue(error.Tipo.ToString());
-				valores.Enqueue(error.Mensaje);
-				valores.Enqueue(error.Linea);
-				valores.Enqueue(error.Columna);
-				valores.Enqueue(new MyDateTime(TipoDatoDB.DATE, DateTime.Parse(error.Fecha)));
-				valores.Enqueue(new MyDateTime(TipoDatoDB.TIME, DateTime.Parse(error.Hora)));
-				//agregando valores
-				errors.AgregarValores(valores);
-			}
-		}
 
 		public static void GenerarArchivos(string v)
 		{
@@ -386,7 +328,7 @@ namespace com.Analisis
 			//funciones.Clear();
 			erroresCQL.Clear();
 			//ast = null;
-			erroresChison.Clear();
+			GeneradorDB.ErroresChison.Clear();
 			//codigoAnalizado = "";
 			errorCatch = GetErrorCatch();
 			errors = GetTablaErrors();
@@ -402,7 +344,7 @@ namespace com.Analisis
 			//funciones.Clear();
 			//erroresCQL.Clear();
 			ast = null;
-			erroresChison.Clear();
+			GeneradorDB.ErroresChison.Clear();
 			//codigoAnalizado = "";
 			//errorCatch = GetErrorCatch();
 			errors = GetTablaErrors();
@@ -416,35 +358,6 @@ namespace com.Analisis
 				return us.Password.Equals(passwd);
 			}
 			return false;
-		}
-
-		private static string Importar(string texto)
-		{
-			foreach (Match match in Regex.Matches(texto, "\\${.*}\\$", RegexOptions.IgnoreCase))
-			{
-				String t1 = HandlerFiles.AbrirArchivo(GetURL(match.Value));
-				if (t1 != null)
-				{
-					texto = texto.Replace(match.Value, t1);
-				}
-				else
-				{
-					texto = texto.Replace(match.Value, String.Empty);
-					Console.Error.WriteLine("ERROR EL ARCHIVO NO EXISTE");
-				}
-			}
-			return texto;
-		}
-
-		private static string GetURL(string value)
-		{
-			value = value.Replace("$", String.Empty);
-			value = value.Replace("{", String.Empty);
-			value = value.Replace("}", String.Empty);
-			value = value.Replace(" ", String.Empty);
-			//agregando path directo
-			value = PATH + value;
-			return value;
 		}
 
 		public static List<Sentencia> GetSentenciasCQL(String codigo)
@@ -552,7 +465,7 @@ namespace com.Analisis
 			}
 		}
 
-		private static void MostrarReporteDeEstadoChison()
+		public static void MostrarReporteDeEstadoChison()
 		{
 			Console.WriteLine("********************************************************************************************");
 			Console.WriteLine(Datos.GetDate() + "=" + Datos.GetTime());
