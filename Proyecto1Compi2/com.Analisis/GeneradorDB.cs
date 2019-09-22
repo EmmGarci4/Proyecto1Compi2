@@ -837,13 +837,15 @@ namespace Proyecto1Compi2.com.Analisis
 				case "numero":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
 				case "cadena":
-					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+					return parseTreeNode.Token.ValueString.ToString();
 				case "true":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
 				case "false":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
 				case "NULL":
 					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "null":
+					return "null";
 				case "date":
 					MyDateTime di;
 					if (DateTime.TryParse(parseTreeNode.Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt) &&
@@ -932,123 +934,131 @@ namespace Proyecto1Compi2.com.Analisis
 					FilaDatos atributos = GetFilaDatos(parseTreeNode, db);
 					List<object> expresiones = new List<object>();
 					List<String> attrs = new List<string>();
-					foreach (ParDatos par in atributos.Datos)
-					{
-						attrs.Add(par.Nombre);
-						expresiones.Add(par.Valor);
-					}
-					UserType usert = GetUt(attrs, db);
-					if (usert != null)
-					{
-						//CREANDO INSTANCIAS***************************
-						Objeto nuevaInstancia = new Objeto(usert);
-						int indice = 0;
-						if (usert.Atributos.Count == expresiones.Count)
+					if (atributos!=null) {
+						foreach (ParDatos par in atributos.Datos)
 						{
-							foreach (KeyValuePair<string, TipoObjetoDB> atributo in usert.Atributos)
+							attrs.Add(par.Nombre);
+							expresiones.Add(par.Valor);
+						}
+						UserType usert = GetUt(attrs, db);
+						if (usert != null)
+						{
+							//CREANDO INSTANCIAS***************************
+							Objeto nuevaInstancia = new Objeto(usert);
+							int indice = 0;
+							if (usert.Atributos.Count == expresiones.Count)
 							{
-								if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, expresiones.ElementAt(indice)))
+								foreach (KeyValuePair<string, TipoObjetoDB> atributo in usert.Atributos)
 								{
-									nuevaInstancia.Atributos.Add(atributo.Key, expresiones.ElementAt(indice));
-								}
-								else
-								{
-									TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(expresiones.ElementAt(indice));
-									if (Datos.IsLista(tipoRes.Tipo))
+									if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, expresiones.ElementAt(indice)))
 									{
-										if (tipoRes.Tipo != TipoDatoDB.MAP_OBJETO && tipoRes.Tipo != TipoDatoDB.MAP_PRIMITIVO)
-										{
-											CollectionListCql colection = (CollectionListCql)expresiones.ElementAt(indice);
-											if (tipoRes.Nombre == "null")
-											{
-												//colection.TipoDato = ;
-												nuevaInstancia.Atributos.Add(atributo.Key, colection);
-											}
-											else
-											{
-												if (atributo.Value.Nombre.Equals(colection.TipoDato.Nombre))
-												{
-													if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-													{
-														colection.IsLista = true;
-														nuevaInstancia.Atributos.Add(atributo.Key, colection);
-													}
-													else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
-													{
-														colection.IsLista = false;
-														nuevaInstancia.Atributos.Add(atributo.Key, colection);
-													}
-												} else if (atributo.Value.Nombre.Equals("double")&&colection.TipoDato.Nombre.Equals("int")) {
-													colection.TipoDato.Nombre = "double";
-													List<object> nuevosDatos = new List<object>();
-													foreach (object contenido in colection) {
-														nuevosDatos.Add(double.Parse(contenido.ToString()));
-													}
-													colection.Clear();
-													colection.AddRange(nuevosDatos);
-
-													if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-													{
-														colection.IsLista = true;
-													}
-													else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
-													{
-														colection.IsLista = false;
-													}
-
-													nuevaInstancia.Atributos.Add(atributo.Key, colection);
-												}
-												else if (atributo.Value.Nombre.Equals("int") && colection.TipoDato.Nombre.Equals("double"))
-												{
-													colection.TipoDato.Nombre = "int";
-													List<object> nuevosDatos = new List<object>();
-													foreach (object contenido in colection)
-													{
-														nuevosDatos.Add(int.Parse(contenido.ToString()));
-													}
-													colection.Clear();
-													colection.AddRange(nuevosDatos);
-
-													if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-													{
-														colection.IsLista = true;
-													}
-													else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
-													{
-														colection.IsLista = false;
-													}
-
-													nuevaInstancia.Atributos.Add(atributo.Key, colection);
-												}
-											}
-										}
+										nuevaInstancia.Atributos.Add(atributo.Key, expresiones.ElementAt(indice));
 									}
 									else
 									{
-										erroresChison.Add(new Error(TipoError.Semantico,
-										"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
-										linea, column, Datos.GetDate(), Datos.GetTime()));
+										TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(expresiones.ElementAt(indice));
+										if (Datos.IsLista(tipoRes.Tipo))
+										{
+											if (tipoRes.Tipo != TipoDatoDB.MAP_OBJETO && tipoRes.Tipo != TipoDatoDB.MAP_PRIMITIVO)
+											{
+												CollectionListCql colection = (CollectionListCql)expresiones.ElementAt(indice);
+												if (tipoRes.Nombre == "null")
+												{
+													//colection.TipoDato = ;
+													nuevaInstancia.Atributos.Add(atributo.Key, colection);
+												}
+												else
+												{
+													if (atributo.Value.Nombre.Equals(colection.TipoDato.Nombre))
+													{
+														if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+														{
+															colection.IsLista = true;
+															nuevaInstancia.Atributos.Add(atributo.Key, colection);
+														}
+														else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
+														{
+															colection.IsLista = false;
+															nuevaInstancia.Atributos.Add(atributo.Key, colection);
+														}
+													}
+													else if (atributo.Value.Nombre.Equals("double") && colection.TipoDato.Nombre.Equals("int"))
+													{
+														colection.TipoDato.Nombre = "double";
+														List<object> nuevosDatos = new List<object>();
+														foreach (object contenido in colection)
+														{
+															nuevosDatos.Add(double.Parse(contenido.ToString()));
+														}
+														colection.Clear();
+														colection.AddRange(nuevosDatos);
+
+														if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+														{
+															colection.IsLista = true;
+														}
+														else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
+														{
+															colection.IsLista = false;
+														}
+
+														nuevaInstancia.Atributos.Add(atributo.Key, colection);
+													}
+													else if (atributo.Value.Nombre.Equals("int") && colection.TipoDato.Nombre.Equals("double"))
+													{
+														colection.TipoDato.Nombre = "int";
+														List<object> nuevosDatos = new List<object>();
+														foreach (object contenido in colection)
+														{
+															nuevosDatos.Add(int.Parse(contenido.ToString()));
+														}
+														colection.Clear();
+														colection.AddRange(nuevosDatos);
+
+														if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+														{
+															colection.IsLista = true;
+														}
+														else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
+														{
+															colection.IsLista = false;
+														}
+
+														nuevaInstancia.Atributos.Add(atributo.Key, colection);
+													}
+												}
+											}
+										} else if (atributo.Value.Tipo==TipoDatoDB.OBJETO && tipoRes.Tipo==TipoDatoDB.NULO) {
+											Objeto obj = new Objeto(usert, true);
+											nuevaInstancia.Atributos.Add(atributo.Key, obj);
+										}
+										else
+										{
+											erroresChison.Add(new Error(TipoError.Semantico,
+											"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
+											linea, column, Datos.GetDate(), Datos.GetTime()));
+										}
 									}
+
+									indice++;
 								}
-								
-								indice++;
 							}
+							else
+							{
+								erroresChison.Add(new Error(TipoError.Semantico,
+									"Los atributos no corresponden en numero al tipo '" + usert.Nombre + "'",
+									linea, column, Datos.GetDate(), Datos.GetTime()));
+							}
+							return nuevaInstancia;
+							//*************************************************
 						}
 						else
 						{
+							//error
 							erroresChison.Add(new Error(TipoError.Semantico,
-								"Los atributos no corresponden en numero al tipo '" + usert.Nombre + "'",
-								linea, column, Datos.GetDate(), Datos.GetTime()));
+										"No existe un objeto con esos atributos en la base de datos",
+									   linea, column, Datos.GetDate(), Datos.GetTime()));
 						}
-						return nuevaInstancia;
-						//*************************************************
-					}
-					else
-					{
-						//error
-						erroresChison.Add(new Error(TipoError.Semantico,
-									"No existe un objeto con esos atributos en la base de datos",
-								   linea, column, Datos.GetDate(), Datos.GetTime()));
 					}
 					break;
 				case "MAP":
@@ -1968,18 +1978,19 @@ namespace Proyecto1Compi2.com.Analisis
 										TipoObjetoDB tipodato = Datos.GetTipoObjetoDBPorCadena(raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower());
 										if (tipodato.Tipo == TipoDatoDB.OBJETO)
 										{
-											if (ExisteUt(tipodato.Nombre, db))
-											{
+										//	if (ExisteUt(tipodato.Nombre, db))
+										//	{
 												tipo = tipodato.ToString() ;
-											}
-											else
+										//	}
+										/*	else
 											{
+												
 												erroresChison.Add(new Error(TipoError.Semantico,
 												"El objeto '" + tipodato.ToString() + "' no existe",
 												raiz.Span.Location.Line, raiz.Span.Location.Column,
 												Datos.GetDate(),
 												Datos.GetTime()));
-											}
+											}*/
 										}
 										else
 										{

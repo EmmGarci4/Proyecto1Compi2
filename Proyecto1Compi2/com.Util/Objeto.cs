@@ -114,28 +114,50 @@ namespace Proyecto1Compi2.com.Util
 		internal string GetLinealizado()
 		{
 			StringBuilder cadena = new StringBuilder();
-			cadena.Append("{\n");
-			int i = 0;
-			foreach (KeyValuePair<string, object> val in atributos)
+			if (atributos != null)
 			{
-				cadena.Append("\"" + val.Key + "\":");
-				if (val.Value.GetType() == typeof(string))
+				cadena.Append("{\n");
+				int i = 0;
+				foreach (KeyValuePair<string, object> val in atributos)
 				{
-					cadena.Append("\"" + val.Value + "\"");
-				}
-				else
-				{
-					cadena.Append(val.Value);
+					cadena.Append("\"" + val.Key + "\":");
+					TipoObjetoDB tipo = this.plantilla.Atributos[val.Key];
+					if (tipo != null)
+					{
+						if (tipo.Tipo.Equals(TipoDatoDB.STRING))
+						{
+							cadena.Append("\"" + val.Value + "\"");
+						}
+						else if (tipo.Tipo.Equals(TipoDatoDB.DATE) || tipo.Tipo.Equals(TipoDatoDB.TIME))
+						{
+							if (val.Value.Equals("null"))
+							{
+								cadena.Append(val.Value);
+							}
+							else
+							{
+								cadena.Append("\'" + val.Value + "\'");
+							}
+						} else if (tipo.Tipo==TipoDatoDB.OBJETO) {
+							cadena.Append(((Objeto)val.Value).GetLinealizado());
+						}
+						else
+						{
+							cadena.Append(val.Value.ToString());
+						}
+					}
+					if (i < atributos.Count - 1)
+					{
+						cadena.Append(",\n");
+					}
+					i++;
 				}
 
-				if (i < atributos.Count - 1)
-				{
-					cadena.Append(",\n");
-				}
-				i++;
+				cadena.Append("\n}");
 			}
-
-			cadena.Append("\n}");
+			else {
+				cadena.Append("null");
+			}
 			return cadena.ToString();
 		}
 	}
