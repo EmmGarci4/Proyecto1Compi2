@@ -1,4 +1,5 @@
-﻿using com.Analisis.Util;
+﻿using com.Analisis;
+using com.Analisis.Util;
 using Proyecto1Compi2.com.AST;
 using Proyecto1Compi2.com.Util;
 using System;
@@ -44,12 +45,22 @@ namespace Proyecto1Compi2.com.db
 			columnas.Add(columna);
 		}
 
-		public void AgregarColumnaNueva(Columna columna)
+		public void AgregarColumnaNueva(Columna columna,Sesion sesio, int Linea,int Columna)
 		{
 			int i;
 			for (i = 0; i < contadorFilas; i++)
 			{
-				columna.Datos.Add(Declaracion.GetValorPredeterminado(columna.Tipo.Tipo));
+				object valPre = Declaracion.GetValorPredeterminado(columna.Tipo, sesio, Linea, Columna);
+				if (valPre!=null) {
+					if (valPre.GetType() == typeof(ThrowError))
+					{
+						Analizador.ErroresCQL.Add(new Error((ThrowError)valPre));
+					}
+					else {
+						columna.Datos.Add(valPre);
+					}
+				}
+				
 			}
 			columnas.Add(columna);
 		}

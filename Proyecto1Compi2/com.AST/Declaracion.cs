@@ -69,6 +69,16 @@ namespace Proyecto1Compi2.com.AST
 					{
 						return respuesta;
 					}
+
+					if (this.tipo.Tipo==TipoDatoDB.OBJETO && tipoRespuesta==TipoOperacion.Nulo) {
+						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
+						if (nuevares!=null) {
+							if (nuevares.GetType()==typeof(ThrowError)) {
+								return nuevares;
+							}
+							respuesta = nuevares;
+						}
+					}
 				}
 			}
 
@@ -91,7 +101,14 @@ namespace Proyecto1Compi2.com.AST
 				}
 				else
 				{
-					ts.AgregarSimbolo(new Simbolo(variable, GetValorPredeterminado(this.tipo.Tipo), tipo, Linea, Columna));
+					object valorPre = GetValorPredeterminado(this.tipo, sesion, Linea, Columna);
+					if (valorPre!=null) {
+						if (valorPre.GetType()==typeof(ThrowError)) {
+							return valorPre;
+						}
+						ts.AgregarSimbolo(new Simbolo(variable,valorPre , tipo, Linea, Columna));
+
+					}
 				}
 				contador++;
 			}
@@ -114,9 +131,9 @@ namespace Proyecto1Compi2.com.AST
 			}
 		}
 
-		public static object GetValorPredeterminado(TipoDatoDB tipo)
+		public static object GetValorPredeterminado(TipoObjetoDB tipo,Sesion sesion,int Linea,int Columna)
 		{
-			switch (tipo)
+			switch (tipo.Tipo)
 			{
 				case TipoDatoDB.BOOLEAN:
 					return false;
@@ -130,12 +147,36 @@ namespace Proyecto1Compi2.com.AST
 				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.MAP_OBJETO:
 				case TipoDatoDB.MAP_PRIMITIVO:
-				case TipoDatoDB.OBJETO:
 				case TipoDatoDB.SET_OBJETO:
 				case TipoDatoDB.DATE:
 				case TipoDatoDB.SET_PRIMITIVO:
 				case TipoDatoDB.TIME:
 					return "null";
+				case TipoDatoDB.OBJETO:
+					//VALIDANDO BASEDATOS
+					if (sesion.DBActual != null)
+					{
+						BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
+						if (db.ExisteUserType(tipo.Nombre))
+						{
+
+							//buscar objeto;
+							Objeto objeto = new Objeto(db.BuscarUserType(tipo.Nombre),true);
+							return objeto;
+						}
+						else
+						{
+								return new ThrowError(Util.TipoThrow.TypeDontExists,
+							"El user Type '" + tipo.Nombre + "' no existe",
+							Linea, Columna);
+						}
+					}
+					else
+					{
+						return new ThrowError(Util.TipoThrow.UseBDException,
+							"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
+							Linea, Columna);
+					}
 				default:
 					return "null";
 			}

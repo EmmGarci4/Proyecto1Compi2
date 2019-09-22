@@ -843,7 +843,14 @@ namespace Proyecto1Compi2.com.AST
 					Objeto nuevaInstancia = new Objeto(ut);
 					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
 					{
-						nuevaInstancia.Atributos.Add(atributo.Key, Declaracion.GetValorPredeterminado(atributo.Value.Tipo));
+						object valPre = Declaracion.GetValorPredeterminado(atributo.Value, sesion, Linea, Columna);
+						if (valPre!=null) {
+							if (valPre.GetType()==typeof(ThrowError)) {
+								return valPre;
+							}
+							nuevaInstancia.Atributos.Add(atributo.Key,valPre);
+
+						}
 					}
 					return nuevaInstancia;
 				}

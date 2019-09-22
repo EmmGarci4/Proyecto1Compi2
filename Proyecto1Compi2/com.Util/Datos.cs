@@ -230,8 +230,6 @@ namespace Proyecto1Compi2.com.Util
 					if (v.GetType() == typeof(Objeto))
 					{
 						return ((Objeto)v).IsObjetoTipo(tipoDato.Nombre);
-					} else if (v.GetType()==typeof(string)) {
-						return v.Equals("null");
 					}
 					return false;
 				case TipoDatoDB.CURSOR:

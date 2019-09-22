@@ -68,9 +68,23 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else
 							{
-								return new ThrowError(Util.TipoThrow.Exception,
-									"Los atributos no corresponden al tipo '" + this.nombreUserType + "'",
-									Linea, Columna);
+								if (resExp.Equals("null") && atributo.Value.Tipo == TipoDatoDB.OBJETO)
+								{
+									object valorPre = Declaracion.GetValorPredeterminado(atributo.Value, sesion, Linea, Columna);
+									if (valorPre != null)
+									{
+										if (valorPre.GetType() == typeof(ThrowError))
+										{
+											return valorPre;
+										}
+										nuevaInstancia.Atributos.Add(atributo.Key, valorPre);
+									}
+								}
+								else {
+									return new ThrowError(Util.TipoThrow.Exception,
+																		"Los atributos no corresponden al tipo '" + this.nombreUserType + "'",
+																		Linea, Columna);
+								}
 							}
 							indice++;
 						}

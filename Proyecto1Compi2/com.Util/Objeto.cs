@@ -13,62 +13,81 @@ namespace Proyecto1Compi2.com.Util
 	{
 		Dictionary<string, object> atributos;
 		UserType plantilla;
+		bool isNull;
 
 		public Objeto(Dictionary<string, object> atributos,UserType plantilla)
 		{
 			this.atributos = atributos;
 			this.plantilla = plantilla;
+			this.isNull = false;
 		}
 
 		public Objeto( UserType plantilla)
 		{
 			this.atributos = new Dictionary<string, object>();
 			this.plantilla = plantilla;
+			this.isNull = false;
+		}
+
+		public Objeto(UserType plantilla,bool isnull)
+		{
+			this.atributos = null;
+			this.plantilla = plantilla;
+			this.isNull = isnull;
 		}
 
 		internal Dictionary<string, object> Atributos { get => atributos; set => atributos = value; }
 		internal UserType Plantilla { get => plantilla; set => plantilla = value; }
+		public bool IsNull { get => isNull; set => isNull = value; }
 
 		public override string ToString()
 		{
 			StringBuilder cadena = new StringBuilder();
-			cadena.Append("<");
+			
 			int i = 0;
-			foreach (KeyValuePair<string, object> val in atributos)
+			if (atributos != null)
 			{
-				cadena.Append("\"" + val.Key + "\"=");
-				TipoObjetoDB tipo = this.plantilla.Atributos[val.Key];
-				if (tipo != null)
+				cadena.Append("<");
+				foreach (KeyValuePair<string, object> val in atributos)
 				{
-					if (tipo.Tipo.Equals(TipoDatoDB.STRING))
+					cadena.Append("\"" + val.Key + "\"=");
+					TipoObjetoDB tipo = this.plantilla.Atributos[val.Key];
+					if (tipo != null)
 					{
-						cadena.Append("\"" + val.Value + "\"");
-					}
-					else if (tipo.Tipo.Equals(TipoDatoDB.DATE) || tipo.Tipo.Equals(TipoDatoDB.TIME))
-					{
-						if (val.Value.Equals("null"))
+						if (tipo.Tipo.Equals(TipoDatoDB.STRING))
 						{
-							cadena.Append(val.Value);
+							cadena.Append("\"" + val.Value + "\"");
+						}
+						else if (tipo.Tipo.Equals(TipoDatoDB.DATE) || tipo.Tipo.Equals(TipoDatoDB.TIME))
+						{
+							if (val.Value.Equals("null"))
+							{
+								cadena.Append(val.Value);
+							}
+							else
+							{
+								cadena.Append("\'" + val.Value + "\'");
+							}
 						}
 						else
 						{
-							cadena.Append("\'" + val.Value + "\'");
+							cadena.Append(val.Value.ToString());
 						}
 					}
-					else
-					{
-						cadena.Append(val.Value.ToString());
-					}
-				}
 
-				if (i < atributos.Count - 1)
-				{
-					cadena.Append(",");
+					if (i < atributos.Count - 1)
+					{
+						cadena.Append(",");
+					}
+					i++;
 				}
-				i++;
+				cadena.Append(">");
+			}
+			else {
+				cadena.Append("null");
 			}
 
-			cadena.Append(">");
+			
 			return cadena.ToString();
 		}
 
