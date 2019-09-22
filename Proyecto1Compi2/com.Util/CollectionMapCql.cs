@@ -78,18 +78,60 @@ namespace Proyecto1Compi2.com.Util
 		public override string ToString()
 		{
 			StringBuilder cad = new StringBuilder();
-			cad.Append("{");
+			cad.Append("<");
 			int i = 0;
 			foreach (KeyValuePair<object,object> ib in this)
 			{
-				cad.Append(ib.Key.ToString()+"="+ib.Value.ToString());
+				//***************************************************
+				if (this.tipoLlave.Tipo.Equals(TipoDatoDB.STRING))
+				{
+					cad.Append("\"" + ib.Key.ToString() + "\"");
+				}
+				else if (this.tipoLlave.Tipo.Equals(TipoDatoDB.DATE) || this.tipoLlave.Tipo.Equals(TipoDatoDB.TIME))
+				{
+					if (ib.Key.ToString().Equals("null"))
+					{
+						cad.Append("null");
+					}
+					else
+					{
+						cad.Append("\'" + ib.Key.ToString() + "\'");
+					}
+				}
+				else
+				{
+					cad.Append(ib.Key.ToString());
+				}
+				//***************************************************
+				cad.Append("=");
+				//***************************************************
+				if (this.tipoValor.Tipo.Equals(TipoDatoDB.STRING))
+				{
+					cad.Append("\"" + ib.Value.ToString() + "\"");
+				}
+				else if (this.tipoValor.Tipo.Equals(TipoDatoDB.DATE) || this.tipoValor.Tipo.Equals(TipoDatoDB.TIME))
+				{
+					if (ib.Value.ToString().Equals("null"))
+					{
+						cad.Append("null");
+					}
+					else
+					{
+						cad.Append("\'" + ib.Value.ToString() + "\'");
+					}
+				}
+				else
+				{
+					cad.Append(ib.Value.ToString());
+				}
+				//***************************************************
 				if (i < this.Count - 1)
 				{
 					cad.Append(",");
 				}
 				i++;
 			}
-			cad.Append("}");
+			cad.Append(">");
 			return cad.ToString();
 		}
 

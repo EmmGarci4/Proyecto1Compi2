@@ -842,9 +842,84 @@ namespace Proyecto1Compi2.com.Analisis
 								   linea, column, Datos.GetDate(), Datos.GetTime()));
 					}
 					break;
+				case "MAP":
+					return GetMap(parseTreeNode.ChildNodes.ElementAt(0));
 			}
 			return null;
 		}
+
+		private static object GetMap(ParseTreeNode parseTreeNode)
+		{
+			CollectionMapCql map = new CollectionMapCql(null, null);
+			if (parseTreeNode.ChildNodes.Count>0) {
+				object llave = GetDatoP(parseTreeNode.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0).ChildNodes.ElementAt(0));
+				object valor = Datos.GetValor(parseTreeNode.ChildNodes.ElementAt(0).ChildNodes.ElementAt(1).Token.ValueString);
+				map.TipoLlave = Datos.GetTipoObjetoDB(llave);
+				map.TipoValor = Datos.GetTipoObjetoDB(valor);
+				foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
+				{
+					llave = GetDatoP(nodo.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0));
+					valor = Datos.GetValor(nodo.ChildNodes.ElementAt(1).Token.ValueString);
+					object posibleError = map.AddItem(llave, valor, nodo.Span.Location.Line, nodo.Span.Location.Column);
+					if (posibleError!=null) {
+						if (posibleError.GetType()==typeof(ThrowError)) {
+							Analizador.ErroresChison.Add(new Error((ThrowError)posibleError, true));
+						}
+					}
+				}
+			}
+
+			return map;
+		}
+
+		private static object GetDatoP(ParseTreeNode parseTreeNode)
+		{
+			int linea = parseTreeNode.Span.Location.Line;
+			int column = parseTreeNode.Span.Location.Column;
+			switch (parseTreeNode.Term.Name)
+			{
+				case "numero":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "cadena":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "true":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "false":
+					return Datos.GetValor(parseTreeNode.Token.ValueString.ToString());
+				case "date":
+					MyDateTime di;
+					if (DateTime.TryParse(parseTreeNode.Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt) &&
+					Regex.IsMatch(parseTreeNode.Token.ValueString.ToLower().ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
+					{
+						di = new MyDateTime(TipoDatoDB.DATE, dt);
+					}
+					else
+					{
+						di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
+						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+									"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
+								   linea, column,
+								   Datos.GetDate(), Datos.GetTime()));
+					}
+					return di;
+				case "time":
+					if (DateTime.TryParse(parseTreeNode.Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt1) &&
+								Regex.IsMatch(parseTreeNode.Token.ValueString.ToLower().ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
+					{
+						di = new MyDateTime(TipoDatoDB.TIME, dt1);
+					}
+					else
+					{
+						di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
+						Analizador.ErroresChison.Add(new Error(TipoError.Advertencia,
+									"La hora es incorrecta, el formato debe ser HH:MM:SS",
+								   linea, column,
+								   Datos.GetDate(), Datos.GetTime()));
+					}
+					return di;
+			}
+			return null;
+			}
 
 		private static UserType GetUt(List<string> attrs, List<object> tab)
 		{

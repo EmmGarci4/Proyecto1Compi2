@@ -45,7 +45,11 @@ namespace Proyecto1Compi2.com.Analisis
 				LISTA_ATRIBUTOS = new NonTerminal("OBJETO"),
 				ATRIBUTO = new NonTerminal("ATRIBUTO"),
 				VALOR = new NonTerminal("VALOR"),
-				LISTA = new NonTerminal("LISTA")
+				LISTA = new NonTerminal("LISTA"),
+				MAP = new NonTerminal("MAP"),
+				LISTAMAP = new NonTerminal("LISTAMAP"),
+				DATOMAP = new NonTerminal("DATOMAP"),
+				VALORP=new NonTerminal("VALORP")
 				;
 			#endregion
 
@@ -72,10 +76,26 @@ namespace Proyecto1Compi2.com.Analisis
 				|instrucciones
 				|cor1+ LISTA+cor2
 				|OBJETO
+				|MAP
 				|SyntaxError
 				;
 
 			LISTA.Rule = MakeStarRule(LISTA,coma,VALOR);
+
+			MAP.Rule = menor + LISTAMAP + mayor;
+
+			LISTAMAP.Rule = MakeStarRule(LISTAMAP, coma, DATOMAP);
+
+			DATOMAP.Rule = VALORP + igual + VALOR
+				| SyntaxError;
+
+			VALORP.Rule=cadena
+				|numero
+				|date
+				|time
+				|pr_true
+				|pr_false;
+
 
 			#endregion
 

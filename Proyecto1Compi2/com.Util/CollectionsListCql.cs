@@ -73,7 +73,26 @@ namespace Proyecto1Compi2.com.Util
 			int i = 0;
 			foreach (object ib in this)
 			{
-				cad.Append(ib.ToString());
+					if (this.tipoDato.Tipo.Equals(TipoDatoDB.STRING))
+					{
+						cad.Append("\"" + ib.ToString() + "\"");
+					}
+					else if (this.tipoDato.Tipo.Equals(TipoDatoDB.DATE) || this.tipoDato.Tipo.Equals(TipoDatoDB.TIME))
+					{
+						if (ib.ToString().Equals("null"))
+						{
+							cad.Append("null");
+						}
+						else
+						{
+							cad.Append("\'" + ib.ToString() + "\'");
+						}
+					}
+					else
+					{
+						cad.Append(ib.ToString());
+					}
+				
 				if (i < this.Count - 1)
 				{
 					cad.Append(",");

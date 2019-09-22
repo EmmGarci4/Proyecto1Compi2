@@ -298,10 +298,9 @@ namespace com.Analisis
 
 			if (raiz != null && arbol.ParserMessages.Count == 0)
 			{
-				//generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
+				generadorDOT.GenerarDOT(raiz, "C:\\Users\\Emely\\Desktop\\chison.dot");
 				GeneradorDB.GuardarInformación(raiz);
 				MostrarReporteDeEstadoChison();
-
 			}
 			foreach (Irony.LogMessage mensaje in arbol.ParserMessages)
 			{
