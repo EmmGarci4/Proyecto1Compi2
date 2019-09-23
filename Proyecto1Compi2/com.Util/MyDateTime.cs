@@ -10,21 +10,35 @@ namespace Proyecto1Compi2.com.Util
 	{
 		TipoDatoDB tipo;
 		DateTime dato;
+		bool isNull;
 
 		public MyDateTime(TipoDatoDB tipo, DateTime dato)
 		{
 			this.tipo = tipo;
 			this.dato = dato;
+			this.isNull = false;
+		}
+
+		public MyDateTime()
+		{
+			this.isNull = true;
 		}
 
 		public override string ToString()
 		{
-			if (tipo == TipoDatoDB.TIME)
+			if (!isNull)
 			{
-				return dato.ToString("HH:mm:ss");
+				if (tipo == TipoDatoDB.TIME)
+				{
+					return dato.ToString("HH:mm:ss");
+				}
+				else
+				{
+					return dato.ToString("yyyy-MM-dd");
+				}
 			}
 			else {
-				return dato.ToString("yyyy-MM-dd");
+				return "null";
 			}
 		}
 
@@ -116,5 +130,6 @@ namespace Proyecto1Compi2.com.Util
 
 		public TipoDatoDB Tipo { get => tipo; set => tipo = value; }
 		public DateTime Dato { get => dato; set => dato = value; }
+		public bool IsNull { get => isNull; set => isNull = value; }
 	}
 }

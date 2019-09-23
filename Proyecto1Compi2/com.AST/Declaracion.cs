@@ -70,10 +70,33 @@ namespace Proyecto1Compi2.com.AST
 						return respuesta;
 					}
 
-					if (this.tipo.Tipo==TipoDatoDB.OBJETO && tipoRespuesta==TipoOperacion.Nulo) {
+					if (this.tipo.Tipo == TipoDatoDB.OBJETO && tipoRespuesta == TipoOperacion.Nulo) {
 						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
-						if (nuevares!=null) {
-							if (nuevares.GetType()==typeof(ThrowError)) {
+						if (nuevares != null) {
+							if (nuevares.GetType() == typeof(ThrowError)) {
+								return nuevares;
+							}
+							respuesta = nuevares;
+						}
+					} else if (this.tipo.Tipo == TipoDatoDB.DATE && tipoRespuesta == TipoOperacion.Nulo)
+					{
+						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
+						if (nuevares != null)
+						{
+							if (nuevares.GetType() == typeof(ThrowError))
+							{
+								return nuevares;
+							}
+							respuesta = nuevares;
+						}
+					}
+					else if (this.tipo.Tipo == TipoDatoDB.TIME && tipoRespuesta == TipoOperacion.Nulo)
+					{
+						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
+						if (nuevares != null)
+						{
+							if (nuevares.GetType() == typeof(ThrowError))
+							{
 								return nuevares;
 							}
 							respuesta = nuevares;
@@ -148,10 +171,11 @@ namespace Proyecto1Compi2.com.AST
 				case TipoDatoDB.MAP_OBJETO:
 				case TipoDatoDB.MAP_PRIMITIVO:
 				case TipoDatoDB.SET_OBJETO:
-				case TipoDatoDB.DATE:
 				case TipoDatoDB.SET_PRIMITIVO:
-				case TipoDatoDB.TIME:
 					return "null";
+				case TipoDatoDB.DATE:
+				case TipoDatoDB.TIME:
+					return new MyDateTime();
 				case TipoDatoDB.OBJETO:
 					//VALIDANDO BASEDATOS
 					if (sesion.DBActual != null)

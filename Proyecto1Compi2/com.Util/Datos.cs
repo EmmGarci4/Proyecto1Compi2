@@ -156,12 +156,18 @@ namespace Proyecto1Compi2.com.Util
 					if (v.GetType() == typeof(MyDateTime))
 					{
 						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.DATE);
+					} else if (v.Equals("null")) {
+						return true;
 					}
 					return false;
 				case TipoDatoDB.NULO:
 					if (v.GetType() == typeof(string))
 					{
 						return v.ToString().ToLower().Equals("null");
+					}
+					else if (v.Equals("null"))
+					{
+						return true;
 					}
 					return false;
 				case TipoDatoDB.STRING:
@@ -597,7 +603,9 @@ namespace Proyecto1Compi2.com.Util
 
 						break;
 					}
-
+				case TipoDatoDB.DATE:
+				case TipoDatoDB.TIME:
+					return new MyDateTime();
 				case TipoDatoDB.LISTA_OBJETO:
 					{
 						//if (res.GetType() == typeof(List<Expresion>)) {

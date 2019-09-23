@@ -97,6 +97,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor != 0;
 						}
@@ -106,6 +110,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor != 0;
 						}
@@ -120,6 +128,20 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Objeto))
 						{
 							return !((Objeto)der).IsNull;
+						}
+						else
+						//DATE/TIME - NULL
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha)|| Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) && 
+							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							return !((MyDateTime)izq).IsNull;
+						}
+						else
+						//NULL - DATETIME
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && 
+							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha)|| Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
+						{
+							return !((MyDateTime)der).IsNull;
 						}
 						else
 						//OBJETO-OBJETO 
@@ -162,6 +184,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor == 0;
 						}
@@ -171,6 +197,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor == 0;
 						}else
@@ -192,6 +222,20 @@ namespace Proyecto1Compi2.com.AST
 							return izq.Equals(der);
 						}
 						else
+						//DATE/TIME - NULL
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) || Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) &&
+							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							return ((MyDateTime)izq).IsNull;
+						}
+						else
+						//NULL - DATETIME
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) &&
+							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) || Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
+						{
+							return ((MyDateTime)der).IsNull;
+						}
+						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
 									"No se pueden comparar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
@@ -210,6 +254,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor > 0;
 						}
@@ -219,6 +267,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor > 0;
 						}
@@ -241,6 +293,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor >= 0;
 						}
@@ -250,6 +306,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor >= 0;
 						}
@@ -272,6 +332,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor < 0;
 						}
@@ -281,6 +345,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor < 0;
 						}
@@ -303,6 +371,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor <= 0;
 						}
@@ -312,6 +384,10 @@ namespace Proyecto1Compi2.com.AST
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
+							if (d1.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se ha inicializado", Linea, Columna);
+							if (d2.IsNull) return new ThrowError(TipoThrow.ArithmeticException,
+									"El valor no se inicializado", Linea, Columna);
 							int valor = DateTime.Compare(d1.Dato, d2.Dato);
 							return valor <= 0;
 						}
