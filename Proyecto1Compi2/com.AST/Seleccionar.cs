@@ -202,6 +202,10 @@ namespace Proyecto1Compi2.com.AST
 					//*********************************************************************************
 				}
 			}
+			if (limit!=null) {
+				limit.PasarResultado(resultado);
+				return limit.Ejecutar(ts,sesion);
+			}
 			//Form1.MostrarMensajeAUsuario(resultado.ToString());
 			return resultado;
 		}
