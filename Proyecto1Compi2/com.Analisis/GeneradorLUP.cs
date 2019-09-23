@@ -125,7 +125,13 @@ namespace Proyecto1Compi2.com.Analisis
 							respuesta.AppendLine("[-NAME]");
 							respuesta.AppendLine("[+ATRIBUTES]");
 							foreach (KeyValuePair<string,TipoObjetoDB> par in ut.Atributos) {
-								respuesta.AppendLine(par.Key+":"+par.Value.ToString());
+								respuesta.AppendLine("[+NAME]");
+								respuesta.AppendLine(par.Key);
+								respuesta.AppendLine("[-NAME]");
+								respuesta.AppendLine("[+TYPE]");
+								respuesta.AppendLine(par.Value.ToString());
+								respuesta.AppendLine("[-TYPE]");
+								
 							}
 							respuesta.AppendLine("[-ATRIBUTES]");
 							respuesta.AppendLine("[-TYPE]");
@@ -142,13 +148,23 @@ namespace Proyecto1Compi2.com.Analisis
 							respuesta.AppendLine("[+PARAMETERS]");
 							foreach (Parametro par in ut.Parametros)
 							{
-								respuesta.AppendLine("" + par.Nombre + ":" + par.Tipo.ToString());
+								respuesta.AppendLine("[+NAME]");
+								respuesta.AppendLine(par.Nombre);
+								respuesta.AppendLine("[-NAME]");
+								respuesta.AppendLine("[+TYPE]");
+								respuesta.AppendLine(par.Tipo.ToString());
+								respuesta.AppendLine("[-TYPE]");
 							}
 							respuesta.AppendLine("[-PARAMETERS]");
 							respuesta.AppendLine("[+RETURNS]");
 							foreach (Parametro par in ut.Retornos)
 							{
-								respuesta.AppendLine("" + par.Nombre + ":" + par.Tipo.ToString());
+								respuesta.AppendLine("[+NAME]");
+								respuesta.AppendLine(par.Nombre);
+								respuesta.AppendLine("[-NAME]");
+								respuesta.AppendLine("[+TYPE]");
+								respuesta.AppendLine(par.Tipo.ToString());
+								respuesta.AppendLine("[-TYPE]");
 							}
 							respuesta.AppendLine("[-RETURNS]");
 							respuesta.AppendLine("[-PROCEDURE]");
