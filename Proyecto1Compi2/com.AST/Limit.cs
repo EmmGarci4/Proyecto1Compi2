@@ -27,7 +27,7 @@ namespace Proyecto1Compi2.com.AST
 				{
 					if (int.TryParse(valor.ToString(), out int num))
 					{
-						if (num>resultado.Count) {
+						if (num<resultado.Count) {
 							resultado.RemoveRange(num, resultado.Count - num);
 						}
 						return resultado;

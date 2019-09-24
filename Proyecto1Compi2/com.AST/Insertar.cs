@@ -50,6 +50,11 @@ namespace Proyecto1Compi2.com.AST
 						if (this.columnas == null)
 						{
 							int counters = tab.ContarCounters();
+							if (counters>0) {
+								return new ThrowError(TipoThrow.ValuesException,
+											"No se puede insertar los valores por qué hay columnas de tipo counter",
+											Linea, Columna);
+							}
 							if (this.valores.Count == (tab.Columnas.Count - counters))
 							{
 								//VALIDANDO

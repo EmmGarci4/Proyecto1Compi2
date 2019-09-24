@@ -102,6 +102,7 @@ namespace Proyecto1Compi2.com.AST
 									{
 										//eliminar valor
 										miTabla.EliminarDatos(i);
+										i--;
 									}
 								}
 								//**************************************************************************

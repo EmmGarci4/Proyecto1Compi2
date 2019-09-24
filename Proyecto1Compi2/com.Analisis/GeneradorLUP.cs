@@ -89,28 +89,40 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static void Struct(ParseTreeNode nodo)
 		{
-			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ",string.Empty);
+			string usuario = nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace(" ", string.Empty);
 			//RECORRER BASE DE DATOS
 			respuesta.AppendLine("[+DATABASES]");
 			Usuario usu = Analizador.BuscarUsuario(usuario);
-			if (usu!=null) {
-				foreach (string str in usu.Permisos) {
+			if (usu != null)
+			{
+				foreach (string str in usu.Permisos)
+				{
 					BaseDatos db = Analizador.BuscarDB(str);
-					if (db != null) {
+					if (db != null)
+					{
 						respuesta.AppendLine("[+DATABASE]");
 						respuesta.AppendLine("[+NAME]");
 						respuesta.AppendLine(db.Nombre);
 						respuesta.AppendLine("[-NAME]");
 						//TABLAS
 						respuesta.AppendLine("[+TABLES]");
-						foreach (Tabla tb in db.Tablas) {
+						foreach (Tabla tb in db.Tablas)
+						{
 							respuesta.AppendLine("[+TABLE]");
 							respuesta.AppendLine("[+NAME]");
 							respuesta.AppendLine(tb.Nombre);
 							respuesta.AppendLine("[-NAME]");
 							respuesta.AppendLine("[+COLUMNS]");
-							foreach (Columna col in tb.Columnas) {
-								respuesta.AppendLine( col.Nombre+":"+col.Tipo.ToString());
+							foreach (Columna col in tb.Columnas)
+							{
+								respuesta.AppendLine("[+COLUMN]");
+								respuesta.AppendLine("[+NAME]");
+								respuesta.AppendLine(col.Nombre);
+								respuesta.AppendLine("[-NAME]");
+								respuesta.AppendLine("[+TYPE]");
+								respuesta.AppendLine(col.Tipo.ToString());
+								respuesta.AppendLine("[-TYPE]");
+								respuesta.AppendLine("[-COLUMN]");
 							}
 							respuesta.AppendLine("[-COLUMNS]");
 							respuesta.AppendLine("[-TABLE]");
@@ -118,20 +130,24 @@ namespace Proyecto1Compi2.com.Analisis
 						respuesta.AppendLine("[-TABLES]");
 						//USERTYPES
 						respuesta.AppendLine("[+TYPES]");
-						foreach (UserType ut in db.UserTypes) {
+						foreach (UserType ut in db.UserTypes)
+						{
 							respuesta.AppendLine("[+TYPE]");
 							respuesta.AppendLine("[+NAME]");
 							respuesta.AppendLine(ut.Nombre);
 							respuesta.AppendLine("[-NAME]");
 							respuesta.AppendLine("[+ATRIBUTES]");
-							foreach (KeyValuePair<string,TipoObjetoDB> par in ut.Atributos) {
+							foreach (KeyValuePair<string, TipoObjetoDB> par in ut.Atributos)
+							{
+								respuesta.AppendLine("[+ATRIBUTE]");
 								respuesta.AppendLine("[+NAME]");
 								respuesta.AppendLine(par.Key);
 								respuesta.AppendLine("[-NAME]");
 								respuesta.AppendLine("[+TYPE]");
 								respuesta.AppendLine(par.Value.ToString());
 								respuesta.AppendLine("[-TYPE]");
-								
+								respuesta.AppendLine("[-ATRIBUTE]");
+
 							}
 							respuesta.AppendLine("[-ATRIBUTES]");
 							respuesta.AppendLine("[-TYPE]");
@@ -148,23 +164,27 @@ namespace Proyecto1Compi2.com.Analisis
 							respuesta.AppendLine("[+PARAMETERS]");
 							foreach (Parametro par in ut.Parametros)
 							{
+								respuesta.AppendLine("[+PARAMETER]");
 								respuesta.AppendLine("[+NAME]");
 								respuesta.AppendLine(par.Nombre);
 								respuesta.AppendLine("[-NAME]");
 								respuesta.AppendLine("[+TYPE]");
 								respuesta.AppendLine(par.Tipo.ToString());
 								respuesta.AppendLine("[-TYPE]");
+								respuesta.AppendLine("[-PARAMETER]");
 							}
 							respuesta.AppendLine("[-PARAMETERS]");
 							respuesta.AppendLine("[+RETURNS]");
 							foreach (Parametro par in ut.Retornos)
 							{
+								respuesta.AppendLine("[+RETURN]");
 								respuesta.AppendLine("[+NAME]");
 								respuesta.AppendLine(par.Nombre);
 								respuesta.AppendLine("[-NAME]");
 								respuesta.AppendLine("[+TYPE]");
 								respuesta.AppendLine(par.Tipo.ToString());
 								respuesta.AppendLine("[-TYPE]");
+								respuesta.AppendLine("[-RETURN]");
 							}
 							respuesta.AppendLine("[-RETURNS]");
 							respuesta.AppendLine("[-PROCEDURE]");
