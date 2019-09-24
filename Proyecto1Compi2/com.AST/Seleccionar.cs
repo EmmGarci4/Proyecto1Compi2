@@ -82,10 +82,10 @@ namespace Proyecto1Compi2.com.AST
 			//TITULOS
 			if (listaAccesos == null)
 			{
-				resultado.Titulos = new List<string>();
 				foreach (Columna cl in miTabla.Columnas)
 				{
 					resultado.Titulos.Add(cl.Nombre);
+					resultado.Tipos.Add(cl.Tipo);
 				}
 			}
 			else
@@ -98,9 +98,17 @@ namespace Proyecto1Compi2.com.AST
 					{
 						string titulo = ((Acceso)listaAccesos.ElementAt(cc)).getTitulo();
 						resultado.Titulos.Add(titulo);
+						if (miTabla.ExisteColumna(titulo))
+						{
+							resultado.Tipos.Add(miTabla.BuscarColumna(titulo).Tipo);
+						}
+						else {
+							resultado.Tipos.Add(new TipoObjetoDB(TipoDatoDB.OBJETO,"%%"));
+						}
 					}
 					else {
 						resultado.Titulos.Add("Resultado " + (cc + 1));
+						resultado.Tipos.Add(new TipoObjetoDB(TipoDatoDB.OBJETO, "%%"));
 					}
 				}
 			}
@@ -202,6 +210,17 @@ namespace Proyecto1Compi2.com.AST
 					//*********************************************************************************
 				}
 			}
+			if (order!=null) {
+				order.PasarResultado(resultado);
+				object posibleError = order.Ejecutar(ts,sesion);
+				if (posibleError!=null) {
+					if (posibleError.GetType()==typeof(ThrowError)) {
+						return posibleError;
+					}
+					resultado = (ResultadoConsulta)posibleError;
+				}
+			}
+
 			if (limit!=null) {
 				limit.PasarResultado(resultado);
 				return limit.Ejecutar(ts,sesion);

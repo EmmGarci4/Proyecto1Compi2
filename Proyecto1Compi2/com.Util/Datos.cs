@@ -605,7 +605,10 @@ namespace Proyecto1Compi2.com.Util
 					}
 				case TipoDatoDB.DATE:
 				case TipoDatoDB.TIME:
-					return new MyDateTime();
+					if (res.Equals("null")) {
+						return new MyDateTime();
+					}
+					break;
 				case TipoDatoDB.LISTA_OBJETO:
 					{
 						//if (res.GetType() == typeof(List<Expresion>)) {

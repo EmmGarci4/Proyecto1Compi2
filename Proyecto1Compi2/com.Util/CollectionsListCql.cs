@@ -304,7 +304,7 @@ namespace Proyecto1Compi2.com.Util
 
 		internal void Ordenar()
 		{
-			this.Ordenar();
+			this.Sort();
 		}
 	}
 }

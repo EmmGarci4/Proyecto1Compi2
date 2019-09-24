@@ -786,8 +786,11 @@ namespace Proyecto1Compi2.com.Analisis
 			OrderBy order = new OrderBy(nodo.Span.Location.Line, nodo.Span.Location.Column);
 			foreach (ParseTreeNode nodito in nodo.ChildNodes)
 			{
-				bool isAsc = nodito.ChildNodes.ElementAt(1).Token.ValueString.ToLower().Equals("asc");
-				order.Propiedades.Add(new PropOrderBy(GetAcceso(nodito.ChildNodes.ElementAt(0)), isAsc));
+				bool isAsc = true;
+				if (nodito.ChildNodes.Count>1) {
+					isAsc=nodito.ChildNodes.ElementAt(1).Token.ValueString.ToLower().Equals("asc");
+				}
+				order.Propiedades.Add(new PropOrderBy(nodito.ChildNodes.ElementAt(0).Token.ValueString, isAsc));
 			}
 			return order;
 		}

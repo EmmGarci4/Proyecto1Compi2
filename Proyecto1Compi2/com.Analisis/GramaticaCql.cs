@@ -501,7 +501,7 @@ namespace com.Analisis
 
 			PROPIEDADORDENAR.Rule = MakePlusRule(PROPIEDADORDENAR,coma,PROPORDER);
 
-			PROPORDER.Rule = ACCESO + ASCDESC;
+			PROPORDER.Rule = nombre + ASCDESC;
 
 			ASCDESC.Rule =pr_asc|pr_desc|Empty;
 
