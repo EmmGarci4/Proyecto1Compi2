@@ -68,40 +68,7 @@ namespace Proyecto1Compi2.com.AST
 					if (respuesta.GetType() == typeof(ThrowError))
 					{
 						return respuesta;
-					}
-
-					if (this.tipo.Tipo == TipoDatoDB.OBJETO && tipoRespuesta == TipoOperacion.Nulo) {
-						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
-						if (nuevares != null) {
-							if (nuevares.GetType() == typeof(ThrowError)) {
-								return nuevares;
-							}
-							respuesta = nuevares;
-						}
-					} else if (this.tipo.Tipo == TipoDatoDB.DATE && tipoRespuesta == TipoOperacion.Nulo)
-					{
-						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
-						if (nuevares != null)
-						{
-							if (nuevares.GetType() == typeof(ThrowError))
-							{
-								return nuevares;
-							}
-							respuesta = nuevares;
-						}
-					}
-					else if (this.tipo.Tipo == TipoDatoDB.TIME && tipoRespuesta == TipoOperacion.Nulo)
-					{
-						object nuevares = GetValorPredeterminado(tipo, sesion, Linea, Columna);
-						if (nuevares != null)
-						{
-							if (nuevares.GetType() == typeof(ThrowError))
-							{
-								return nuevares;
-							}
-							respuesta = nuevares;
-						}
-					}
+					}	
 				}
 			}
 
@@ -111,16 +78,23 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (contador == variables.Count - 1 && expresion != null && respuesta != null)
 				{
-					object nuevaRespuesta = Datos.CasteoImplicito(tipo, respuesta,ts,sesion,Linea,Columna);
-					if (nuevaRespuesta != null)
+					if (Datos.IsTipoCompatibleParaAsignar(this.tipo, respuesta))
 					{
-						if (nuevaRespuesta.GetType() == typeof(ThrowError))
+						object nuevaRespuesta = Datos.CasteoImplicito(tipo, respuesta, ts, sesion, Linea, Columna);
+						if (nuevaRespuesta != null)
 						{
-							return nuevaRespuesta;
+							if (nuevaRespuesta.GetType() == typeof(ThrowError))
+							{
+								return nuevaRespuesta;
+							}
+							ts.AgregarSimbolo(new Simbolo(variable, nuevaRespuesta, tipo, Linea, Columna));
 						}
-						ts.AgregarSimbolo(new Simbolo(variable, nuevaRespuesta, tipo, Linea, Columna));
 					}
-					
+					else {
+						return new ThrowError(Util.TipoThrow.Exception,
+							"No se puede asignar el valor '"+respuesta.ToString()+"' a una variable tipo '"+this.tipo.ToString()+"'",
+							Linea, Columna);
+					}
 				}
 				else
 				{
