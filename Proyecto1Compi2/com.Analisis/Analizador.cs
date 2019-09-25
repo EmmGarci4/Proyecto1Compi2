@@ -25,7 +25,7 @@ namespace com.Analisis
 		static string codigoAnalizado;
 		static UserType errorCatch = GetErrorCatch();
 		private static Tabla errors = GetTablaErrors();
-		private static List<ResultadoConsulta> resultadosConsultas = new List<ResultadoConsulta>();
+		private static List<string> resultadosConsultas = new List<string>();
 
 		public static List<Error> ErroresCQL { get => erroresCQL; set => erroresCQL = value; }
 		public static List<Funcion> Funciones { get => funciones; set => funciones = value; }
@@ -33,7 +33,7 @@ namespace com.Analisis
 		public static UserType ErrorCatch { get => errorCatch; set => errorCatch = value; }
 		public static NodoAST AST { get => ast; }
 		public static Tabla Errors { get => errors; set => errors = value; }
-		internal static List<ResultadoConsulta> ResultadosConsultas { get => resultadosConsultas; set => resultadosConsultas = value; }
+		internal static List<string> ResultadosConsultas { get => resultadosConsultas; set => resultadosConsultas = value; }
 
 		//******************************FUNCIONES***********************************************************
 		public static bool ExisteFuncion(string nombre)
@@ -237,7 +237,7 @@ namespace com.Analisis
 							}
 							else if (respuesta.GetType() == typeof(ResultadoConsulta))
 							{
-								resultadosConsultas.Add((ResultadoConsulta)respuesta);
+								resultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 							}
 						}
 					}

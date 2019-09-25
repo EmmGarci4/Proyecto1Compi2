@@ -121,6 +121,10 @@ namespace Proyecto1Compi2.com.Analisis
 								respuesta.AppendLine("[-NAME]");
 								respuesta.AppendLine("[+TYPE]");
 								respuesta.AppendLine(col.Tipo.ToString());
+								if (col.IsPrimary)
+								{
+									respuesta.AppendLine(":llave_primaria");
+								}
 								respuesta.AppendLine("[-TYPE]");
 								respuesta.AppendLine("[-COLUMN]");
 							}

@@ -32,8 +32,15 @@ namespace Proyecto1Compi2.com.AST
 					if (sesion.DBActual!=null) {
 						Analizador.BuscarDB(sesion.DBActual).EnUso = false;
 					}
-					sesion.DBActual = nombre;
-					db.EnUso = true;
+					if (Analizador.BuscarUsuario(sesion.Usuario).ExistePermiso(sesion.DBActual))
+					{
+						sesion.DBActual = nombre;
+						db.EnUso = true;
+					}
+					else
+					{
+						return new ThrowError(TipoThrow.Exception, "No tiene permiso para utilizar la base de datos '" + Nombre + "'", Linea, Columna);
+					}
 				}
 				else {
 					return new ThrowError(TipoThrow.Exception, "La base de datos '" + Nombre + "' esta en uso", Linea, Columna);

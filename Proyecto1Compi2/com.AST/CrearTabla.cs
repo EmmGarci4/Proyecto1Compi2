@@ -40,7 +40,6 @@ namespace Proyecto1Compi2.com.AST
 				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
 				if (!db.ExisteTabla(Nombre))
 				{
-
 					//BUSCANDO LLAVES COMPUESTAS
 					List<string> llavePrimariaCompuesta = null;
 					object respuesta = BuscarLlavesCompuestas();
@@ -75,28 +74,28 @@ namespace Proyecto1Compi2.com.AST
 							//AGREGANDO COLUMNA A TABLA
 							tabla.AgregarColumna(cl);
 							hayCounter=true;
-							//if (cl.IsPrimary)
-							//{
-							//	if (llavePrimariaCompuesta == null)
-							//	{
-							//		//AGREGANDO COLUMNA A TABLA
-							//		tabla.AgregarColumna(cl);
-							//	}
-							//	else
-							//	{
-							//		//validando que no se pueda agregar una pk y una pk compuesta al mismo tiempo
-							//		return new ThrowError(Util.TipoThrow.Exception,
-							//		"No se puede agregar una llave primaria compuesta y una llave primaria unitaria al mismo tiempo",
-							//		Linea, Columna);
-							//	}
-							//}
-							//else
-							//{
-							//	//validando que una columna counter debe ser llave primaria
-							//	return new ThrowError(Util.TipoThrow.Exception,
-							//		"Una columna de tipo counter debe ser una llave primaria",
-							//		Linea, Columna);
-							//}
+							if (cl.IsPrimary)
+							{
+								if (llavePrimariaCompuesta == null)
+								{
+									//AGREGANDO COLUMNA A TABLA
+									tabla.AgregarColumna(cl);
+								}
+								else
+								{
+									//validando que no se pueda agregar una pk y una pk compuesta al mismo tiempo
+									return new ThrowError(Util.TipoThrow.Exception,
+									"No se puede agregar una llave primaria compuesta y una llave primaria unitaria al mismo tiempo",
+									Linea, Columna);
+								}
+							}
+							else
+							{
+								//validando que una columna counter debe ser llave primaria
+								return new ThrowError(Util.TipoThrow.Exception,
+									"Una columna de tipo counter debe ser una llave primaria",
+									Linea, Columna);
+							}
 						}
 						else
 						{
