@@ -29,19 +29,22 @@ namespace Proyecto1Compi2.com.Util
 		public override string ToString()
 		{
 			StringBuilder resultado = new StringBuilder();
-			resultado.Append("<table>\n");
+			resultado.Append("<table class=\"table table - striped\">\n");
 			//CABECERA
 			if (this.titulos != null)
 			{
+				resultado.Append("<thead class=\"thead - dark\">\n");
 				resultado.Append("\t<tr>\n");
 				foreach (string titulo in titulos)
 				{
-					resultado.Append("\t\t<th>");
+					resultado.Append("\t\t<th scope=\"col\">");
 					resultado.Append(titulo);
 					resultado.Append("</th>\n");
 				}
 				resultado.Append("</tr>\n");
+				resultado.Append("</thead>\n");
 				//CONTENIDO
+				resultado.Append("<tbody>\n");
 				foreach (FilaDatos fila in this)
 				{
 					resultado.Append("\t<tr>\n");
@@ -68,6 +71,7 @@ namespace Proyecto1Compi2.com.Util
 					}
 					resultado.Append("\t</tr>\n");
 				}
+				resultado.Append("</tbody>\n");
 			}
 			resultado.Append("</table>");
 			return resultado.ToString();
