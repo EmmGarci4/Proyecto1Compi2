@@ -32,7 +32,7 @@ namespace Proyecto1Compi2.com.AST
 					if (sesion.DBActual!=null) {
 						Analizador.BuscarDB(sesion.DBActual).EnUso = false;
 					}
-					if (Analizador.BuscarUsuario(sesion.Usuario).ExistePermiso(sesion.DBActual))
+					if (Analizador.BuscarUsuario(sesion.Usuario).ExistePermiso(nombre))
 					{
 						sesion.DBActual = nombre;
 						db.EnUso = true;

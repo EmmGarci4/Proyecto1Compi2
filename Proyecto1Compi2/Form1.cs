@@ -113,9 +113,9 @@ namespace Proyecto1Compi2
 			//	{
 			//acciones que interactuan con la interface
 			//paquete de resultados
-			foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
+			foreach (string resultado in Analizador.ResultadosConsultas)
 				{
-					richTextBox2.AppendText(resultado.ToString());
+					richTextBox2.AppendText(resultado);
 				}
 				//mensajes
 				foreach (String mensaje in sesion.Mensajes)

@@ -113,7 +113,7 @@ namespace Proyecto1Compi2.com.db
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta))
 					{
-						Analizador.ResultadosConsultas.Add((ResultadoConsulta)respuesta);
+						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 					}
 					else
 					{

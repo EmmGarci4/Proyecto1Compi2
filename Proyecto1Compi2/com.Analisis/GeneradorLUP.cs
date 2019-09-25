@@ -221,10 +221,10 @@ namespace Proyecto1Compi2.com.Analisis
 					Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,"Se ha producido un desbordamiento de pila",0,0));
 				}
 				//paquete de resultados
-				foreach (ResultadoConsulta resultado in Analizador.ResultadosConsultas)
+				foreach (string resultado in Analizador.ResultadosConsultas)
 				{
 					respuesta.Append("[+DATA]½");
-					respuesta.Append(resultado.ToString());
+					respuesta.Append(resultado);
 					respuesta.Append("½[-DATA]\n");
 				}
 				//mensajes

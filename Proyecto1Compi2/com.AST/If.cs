@@ -92,7 +92,7 @@ namespace Proyecto1Compi2.com.AST
 						errores.AddRange((List<ThrowError>)respuesta);
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta)) {
-						Analizador.ResultadosConsultas.Add((ResultadoConsulta)respuesta);
+						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 					} else {
 						//return-break-continue
 						if (errores.Count > 0) return errores;

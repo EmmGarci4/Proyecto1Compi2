@@ -77,7 +77,7 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else if (res.GetType() == typeof(ResultadoConsulta))
 							{
-								Analizador.ResultadosConsultas.Add((ResultadoConsulta)res);
+								Analizador.ResultadosConsultas.Add(((ResultadoConsulta)res).ToString());
 							}
 							else {
 								//continue - return
@@ -111,7 +111,7 @@ namespace Proyecto1Compi2.com.AST
 							}
 							else if (res.GetType() == typeof(ResultadoConsulta))
 							{
-								Analizador.ResultadosConsultas.Add((ResultadoConsulta)res);
+								Analizador.ResultadosConsultas.Add(((ResultadoConsulta)res).ToString());
 							}
 							else
 							{

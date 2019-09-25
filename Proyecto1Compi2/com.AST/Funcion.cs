@@ -98,7 +98,7 @@ namespace Proyecto1Compi2.com.AST
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta))
 					{
-						Analizador.ResultadosConsultas.Add((ResultadoConsulta)respuesta);
+						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 					}
 					else {
 						//break - continue
