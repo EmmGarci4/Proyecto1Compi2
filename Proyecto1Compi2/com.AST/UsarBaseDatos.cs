@@ -43,7 +43,9 @@ namespace Proyecto1Compi2.com.AST
 					}
 				}
 				else {
-					return new ThrowError(TipoThrow.Exception, "La base de datos '" + Nombre + "' esta en uso", Linea, Columna);
+					if (!sesion.DBActual.Equals(nombre)) {
+						return new ThrowError(TipoThrow.Exception, "La base de datos '" + Nombre + "' esta en uso", Linea, Columna);
+					}
 				}
 			}
 			else {

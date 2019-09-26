@@ -102,7 +102,6 @@ namespace Proyecto1Compi2
 			{
 				Analizador.AnalizarCql(texto, sesion);
 				Analizador.LiberarDB(sesion);
-
 			}
 			catch (StackOverflowException ex)
 			{

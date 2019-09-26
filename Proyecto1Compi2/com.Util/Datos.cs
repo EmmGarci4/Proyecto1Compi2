@@ -609,6 +609,11 @@ namespace Proyecto1Compi2.com.Util
 						return new MyDateTime();
 					}
 					break;
+				case TipoDatoDB.STRING:
+					if (res.Equals("null")) {
+						return "$%_null_%$";
+					}
+					break;
 				case TipoDatoDB.LISTA_OBJETO:
 					{
 						//if (res.GetType() == typeof(List<Expresion>)) {

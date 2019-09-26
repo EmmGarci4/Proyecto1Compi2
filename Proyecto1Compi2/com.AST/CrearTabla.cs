@@ -72,7 +72,6 @@ namespace Proyecto1Compi2.com.AST
 						if (cl.Tipo.Tipo == Util.TipoDatoDB.COUNTER)
 						{
 							//AGREGANDO COLUMNA A TABLA
-							tabla.AgregarColumna(cl);
 							hayCounter=true;
 							if (cl.IsPrimary)
 							{

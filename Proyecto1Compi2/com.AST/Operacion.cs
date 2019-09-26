@@ -197,6 +197,11 @@ namespace Proyecto1Compi2.com.AST
 						//BOOLEANO-CADENA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
+							if (der.ToString().Equals("$%_null_%$")) {
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'boolean' con 'null'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//NUMERO-NUMERO
@@ -213,41 +218,96 @@ namespace Proyecto1Compi2.com.AST
 						//NUMERO-CADENA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
+							if (der.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'int' o 'double' con 'null'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-BOOLEANO
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Booleano))
 						{
+							if (izq.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'boolean'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-NUMERO
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
+							if (izq.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'int' o 'double'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-FECHA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha))
 						{
+							if (izq.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'date'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-HORA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
 						{
+							if (izq.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'time'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//CADENA-CADENA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
+							if (izq.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'string'",
+									Linea, Columna);
+							}
+							if (der.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'string' con 'null'",
+									Linea, Columna);
+							}
+
 							return izq.ToString() + der.ToString();
 						}
 						//FECHA-CADENA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
+							if (der.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'date' con 'null'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//HORA-CADENA
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
 						{
+							if (der.ToString().Equals("$%_null_%$"))
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'time' con 'null'",
+									Linea, Columna);
+							}
 							return izq.ToString() + der.ToString();
 						}
 						//LISTA-LISTA == SET-SET

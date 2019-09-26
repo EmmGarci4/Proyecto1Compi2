@@ -118,7 +118,9 @@ namespace Proyecto1Compi2.com.AST
 			if (sesion.DBActual != null)
 			{
 				BaseDatos db = Analizador.BuscarDB(sesion.DBActual);
-				return (db.ExisteUserType(tipo.ToString()));
+				if (db!=null) {
+					return (db.ExisteUserType(tipo.ToString()));
+				}
 			}
 			else
 			{
@@ -126,6 +128,7 @@ namespace Proyecto1Compi2.com.AST
 					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
 					Linea, Columna);
 			}
+			return null;
 		}
 
 		public static object GetValorPredeterminado(TipoObjetoDB tipo,Sesion sesion,int Linea,int Columna)

@@ -78,6 +78,16 @@ namespace Proyecto1Compi2.com.AST
 							return valor;
 						}
 						else
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							bool valor = izq.ToString() != "$%_null_%$";
+							return valor;
+						}else
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
+						{
+							bool valor = "$%_null_%$" != der.ToString();
+							return valor;
+						}else
 						//NUMERO-NUMERO
 						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Numero))
 						{
@@ -162,6 +172,18 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.String))
 						{
 							bool valor = izq.ToString() == der.ToString();
+							return valor;
+						}
+						else
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.String) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							bool valor = izq.ToString() == "$%_null_%$";
+							return valor;
+						}
+						else
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.String))
+						{
+							bool valor = "$%_null_%$" == der.ToString();
 							return valor;
 						}
 						else

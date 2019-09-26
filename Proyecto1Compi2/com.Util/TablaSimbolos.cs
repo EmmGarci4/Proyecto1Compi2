@@ -23,7 +23,12 @@ namespace com.Analisis.Util
 
 		public void AgregarSimbolo(Simbolo s)
 		{
-			Add(s.Nombre,s);
+			try {
+				Add(s.Nombre, s);
+			}
+			catch (Exception) {
+				Console.WriteLine("Ya existe");
+			}
 		}
 
 		public Simbolo GetSimbolo(string nombre)
