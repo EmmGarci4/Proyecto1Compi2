@@ -942,7 +942,7 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 		}
 
-		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion,int Linea,int Columna)
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion,int linea,int columna)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
@@ -979,7 +979,6 @@ namespace Proyecto1Compi2.com.AST
 					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
 					linea, columna);
 			}
-			return null;
 		}
 
 		private object GetInstanciaLista(TipoObjetoDB tipoInstancia, Sesion sesion)
