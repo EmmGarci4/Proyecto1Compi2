@@ -115,7 +115,7 @@ namespace Proyecto1Compi2.com.db
 					{
 						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 					}
-					else if (respuesta.GetType() == typeof(Sentencia))
+					else if (respuesta.GetType() == typeof(Break)|| respuesta.GetType() == typeof(Continue))
 					{
 						//break - continue
 						Sentencia sent = (Sentencia)respuesta;

@@ -104,7 +104,9 @@ namespace Proyecto1Compi2.com.AST
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta)) {
 						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
-					} else if(respuesta.GetType()==typeof(Sentencia)){
+					} else if(respuesta.GetType()==typeof(Return)|| respuesta.GetType() == typeof(Break)||
+						respuesta.GetType() == typeof(Continue))
+					{
 						//return-break-continue
 						if (errores.Count > 0) return errores;
 						return respuesta;

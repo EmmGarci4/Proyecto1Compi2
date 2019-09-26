@@ -100,7 +100,8 @@ namespace Proyecto1Compi2.com.AST
 					{
 						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 					}
-					else if(respuesta.GetType()==typeof(Sentencia)){
+					else if(respuesta.GetType()==typeof(Break)|| respuesta.GetType() == typeof(Continue))
+					{
 						//break - continue
 						Sentencia sent = (Sentencia)respuesta;
 						Analizador.ErroresCQL.Add(new Error(TipoError.Semantico,
