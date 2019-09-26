@@ -1265,7 +1265,7 @@ namespace Proyecto1Compi2.com.Analisis
 					if (raiz.ChildNodes.ElementAt(0).Term.Name=="CONDICION") {
 						return GetCondicion(raiz.ChildNodes.ElementAt(0));
 					}
-					return new Condicion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower() == "true", TipoOperacion.Booleano, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					return new Condicion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower() == "true", TipoOperacion.Boolean, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 2://not
 					return new Condicion(GetCondicion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 3://operaciones
@@ -1328,7 +1328,7 @@ namespace Proyecto1Compi2.com.Analisis
 											"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
 										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
 							}
-							return new Operacion(di, TipoOperacion.Fecha, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(di, TipoOperacion.Date, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "time":
 							if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt1)&&
 								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().ToString(),"'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
@@ -1339,10 +1339,10 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
 								Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
-											"La hora es incorrecta, el formato debe ser HH:MM:SS",
+											"La Time es incorrecta, el formato debe ser HH:MM:SS",
 										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
 							}
-							return new Operacion(di, TipoOperacion.Hora, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							return new Operacion(di, TipoOperacion.Time, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "EXPRESION":
 							return GetExpresion(raiz.ChildNodes.ElementAt(0));
 						case "ACCESO":

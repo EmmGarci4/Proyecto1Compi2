@@ -47,7 +47,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
-			return TipoOperacion.Booleano;
+			return TipoOperacion.Boolean;
 		}
 
 		public override object GetValor(TablaSimbolos ts,Sesion sesion)

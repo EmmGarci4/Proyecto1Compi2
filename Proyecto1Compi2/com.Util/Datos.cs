@@ -155,7 +155,11 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.DATE:
 					if (v.GetType() == typeof(MyDateTime))
 					{
-						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.DATE);
+						MyDateTime myDate = (MyDateTime)v;
+						if (myDate.IsNull) {
+							return true;
+						}
+						return myDate.Tipo.Equals(TipoDatoDB.DATE);
 					} else if (v.Equals("null")) {
 						return true;
 					}
@@ -175,9 +179,18 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.TIME:
 					if (v.GetType() == typeof(MyDateTime))
 					{
+						MyDateTime myDate = (MyDateTime)v;
+						if (myDate.IsNull)
+						{
+							return true;
+						}
 						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.TIME);
 					}
-					return false;
+					else if (v.Equals("null"))
+					{
+						return true;
+					}
+					break;
 				case TipoDatoDB.SET_OBJETO:
 				case TipoDatoDB.SET_PRIMITIVO:
 					if (v.GetType() == typeof(CollectionListCql) && !((CollectionListCql)v).IsLista)
@@ -457,13 +470,13 @@ namespace Proyecto1Compi2.com.Util
 			switch (tipo.Tipo)
 			{
 				case TipoDatoDB.BOOLEAN:
-					if (tipoClave == TipoOperacion.Booleano)
+					if (tipoClave == TipoOperacion.Boolean)
 					{
 						return true;
 					}
 					break;
 				case TipoDatoDB.DATE:
-					if (tipoClave == TipoOperacion.Fecha)
+					if (tipoClave == TipoOperacion.Date)
 					{
 						return true;
 					}
@@ -499,7 +512,7 @@ namespace Proyecto1Compi2.com.Util
 					}
 					break;
 				case TipoDatoDB.TIME:
-					if (tipoClave == TipoOperacion.Hora)
+					if (tipoClave == TipoOperacion.Time)
 					{
 						return true;
 					}
@@ -512,11 +525,11 @@ namespace Proyecto1Compi2.com.Util
 		{
 			switch (tipoClave)
 			{
-				case TipoOperacion.Booleano:
+				case TipoOperacion.Boolean:
 				case TipoOperacion.String:
 				case TipoOperacion.Numero:
-				case TipoOperacion.Hora:
-				case TipoOperacion.Fecha:
+				case TipoOperacion.Time:
+				case TipoOperacion.Date:
 					return true;
 				default:
 					return false;
@@ -528,9 +541,9 @@ namespace Proyecto1Compi2.com.Util
 			switch (tipo)
 			{
 				case TipoDatoDB.BOOLEAN:
-					return TipoOperacion.Booleano;
+					return TipoOperacion.Boolean;
 				case TipoDatoDB.DATE:
-					return TipoOperacion.Fecha;
+					return TipoOperacion.Date;
 				case TipoDatoDB.COUNTER:
 				case TipoDatoDB.DOUBLE:
 				case TipoDatoDB.INT:
@@ -538,7 +551,7 @@ namespace Proyecto1Compi2.com.Util
 				case TipoDatoDB.STRING:
 					return TipoOperacion.String;
 				case TipoDatoDB.TIME:
-					return TipoOperacion.Hora;
+					return TipoOperacion.Time;
 				case TipoDatoDB.NULO:
 					return TipoOperacion.Nulo;
 				default:

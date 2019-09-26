@@ -308,13 +308,6 @@ namespace Proyecto1Compi2.com.db
 						"El valor '" + valoresAInsertar.ElementAt(valor) + "' no puede repetirse en la columna '"
 						+ llaves.ElementAt(0).Nombre + "'",
 						linea, columna);
-					}else if(llaves.ElementAt(0).Tipo.Tipo==TipoDatoDB.STRING)
-					{
-						if (valoresAInsertar.ElementAt(valor).Equals("$%_null_%$")) {
-							return new ThrowError(TipoThrow.ValuesException,
-						"No se pueden insertar nulos en la columna '"+ llaves.ElementAt(0).Nombre + "'",
-						linea, columna);
-						}
 					}
 				}
 			}

@@ -74,6 +74,26 @@ namespace Proyecto1Compi2.com.AST
 										if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta))
 										{
 											object nuevovalor = Datos.CasteoImplicito(cl.Tipo, respuesta, tb, sesion, Linea, Columna);
+											if (cl.IsPrimary) {
+												if (cl.Tipo.Tipo == TipoDatoDB.STRING)
+												{
+													if (respuesta.Equals("$%_null_%$"))
+													{
+														return new ThrowError(TipoThrow.ValuesException,
+														"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+															Linea, Columna);
+													}
+												}
+												else if (cl.Tipo.Tipo == TipoDatoDB.DATE|| cl.Tipo.Tipo == TipoDatoDB.TIME)
+												{
+													MyDateTime date = (MyDateTime)respuesta;
+													if (date.IsNull) {
+														return new ThrowError(TipoThrow.ValuesException,
+														"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+															Linea, Columna);
+													}
+												}
+											}
 											valoresAInsertar.Enqueue(nuevovalor);
 											indiceDatos++;
 										}
@@ -120,7 +140,6 @@ namespace Proyecto1Compi2.com.AST
 						//INSERSION ESPECIAL
 						else
 						{
-
 							if (this.columnas.Count == this.valores.Count)
 							{
 								//VALIDANDO DATOS

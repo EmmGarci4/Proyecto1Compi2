@@ -46,7 +46,7 @@ namespace Proyecto1Compi2.com.AST
 
 		public override TipoOperacion GetTipo(TablaSimbolos ts,Sesion sesion)
 		{
-			return TipoOperacion.Booleano;
+			return TipoOperacion.Boolean;
 		}
 
 		public override object GetValor(TablaSimbolos ts,Sesion sesion)
@@ -96,14 +96,14 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//BOOLEANO-BOOLEANO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean))
 						{
 							bool valor = bool.Parse(izq.ToString()) != bool.Parse(der.ToString());
 							return valor;
 						}
 						else
 						//FECHA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Date) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Date))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -116,7 +116,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//HORA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Time) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Time))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -141,7 +141,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//DATE/TIME - NULL
-						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha)|| Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) && 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Date)|| Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Time) && 
 							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
 						{
 							return !((MyDateTime)izq).IsNull;
@@ -149,7 +149,7 @@ namespace Proyecto1Compi2.com.AST
 						else
 						//NULL - DATETIME
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && 
-							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha)|| Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
+							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Date)|| Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Time))
 						{
 							return !((MyDateTime)der).IsNull;
 						}
@@ -195,14 +195,14 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//BOOLEANO-BOOLEANO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean))
 						{
 							bool valor = bool.Parse(izq.ToString()) == bool.Parse(der.ToString());
 							return valor;
 						}
 						else
 						//FECHA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Date) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Date))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -215,7 +215,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//HORA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Time) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Time))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -245,7 +245,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//DATE/TIME - NULL
-						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) || Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Hora) &&
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Date) || Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Time) &&
 							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
 						{
 							return ((MyDateTime)izq).IsNull;
@@ -253,7 +253,7 @@ namespace Proyecto1Compi2.com.AST
 						else
 						//NULL - DATETIME
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) &&
-							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Fecha) || Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Hora))
+							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Date) || Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Time))
 						{
 							return ((MyDateTime)der).IsNull;
 						}
@@ -272,7 +272,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//FECHA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Date) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Date))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -285,7 +285,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//HORA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Time) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Time))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -311,7 +311,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//FECHA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Date) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Date))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -324,7 +324,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//HORA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Time) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Time))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -350,7 +350,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//FECHA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Date) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Date))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -363,7 +363,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//HORA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Time) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Time))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -389,7 +389,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//FECHA-FECHA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Fecha))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Date) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Date))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -402,7 +402,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 						else
 						//HORA-HORA
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Hora) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Hora))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Time) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Time))
 						{
 							MyDateTime d1 = (MyDateTime)izq;
 							MyDateTime d2 = (MyDateTime)der;
@@ -421,7 +421,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 					case TipoOperacion.Or:
 						//BOOLEANO-BOOLEANO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean))
 						{
 							bool valor = bool.Parse(izq.ToString()) || bool.Parse(der.ToString());
 							return valor;
@@ -434,7 +434,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 					case TipoOperacion.And:
 						//BOOLEANO-BOOLEANO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean))
 						{
 							bool valor = bool.Parse(izq.ToString()) && bool.Parse(der.ToString());
 							return valor;
@@ -447,7 +447,7 @@ namespace Proyecto1Compi2.com.AST
 						}
 					case TipoOperacion.Xor:
 						//BOOLEANO-BOOLEANO
-						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Booleano))
+						if (Izquierda.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean) && Derecha.GetTipo(ts,sesion).Equals(TipoOperacion.Boolean))
 						{
 							bool valor = bool.Parse(izq.ToString()) == bool.Parse(der.ToString());
 							return !valor;
@@ -464,7 +464,7 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (tipoOp == TipoOperacion.Not)
 				{
-					if (izquierda.GetTipo(ts,sesion) == TipoOperacion.Booleano)
+					if (izquierda.GetTipo(ts,sesion) == TipoOperacion.Boolean)
 					{
 						bool valor = !bool.Parse(izq.ToString());
 						return valor;
