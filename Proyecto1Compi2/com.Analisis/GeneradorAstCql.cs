@@ -410,7 +410,7 @@ namespace Proyecto1Compi2.com.Analisis
 			Asignacion asignacion=null;
 			Declaracion dec=null;
 			Expresion op=GetExpresion(sentencia.ChildNodes.ElementAt(2));
-			Condicion cond=GetCondicion(sentencia.ChildNodes.ElementAt(1));
+			Expresion cond=GetExpresion(sentencia.ChildNodes.ElementAt(1));
 			List<Sentencia> lista = GetSentencias(sentencia.ChildNodes.ElementAt(3));
 			if (sentencia.ChildNodes.ElementAt(0).ChildNodes.Count == 3)
 			{
@@ -518,13 +518,13 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Sentencia GetDoWhile(ParseTreeNode sentencia)
 		{
-			return new DoWhile(GetCondicion(sentencia.ChildNodes.ElementAt(1)), GetSentencias(sentencia.ChildNodes.ElementAt(0)),
+			return new DoWhile(GetExpresion(sentencia.ChildNodes.ElementAt(1)), GetSentencias(sentencia.ChildNodes.ElementAt(0)),
 				sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 		}
 
 		private static Sentencia GetWhile(ParseTreeNode sentencia)
 		{
-			return new While(GetCondicion(sentencia.ChildNodes.ElementAt(0)),GetSentencias(sentencia.ChildNodes.ElementAt(1)),
+			return new While(GetExpresion(sentencia.ChildNodes.ElementAt(0)),GetSentencias(sentencia.ChildNodes.ElementAt(1)),
 				sentencia.Span.Location.Line,sentencia.Span.Location.Column); 
 		}
 
@@ -585,12 +585,12 @@ namespace Proyecto1Compi2.com.Analisis
 			switch (sentencia.ChildNodes.Count)
 			{
 				case 2: //if normal
-					Condicion condicion = GetCondicion(sentencia.ChildNodes.ElementAt(0));
+					Expresion condicion = GetExpresion(sentencia.ChildNodes.ElementAt(0));
 					List<Sentencia> sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(1));
 					return new If(condicion, null, sentencias, null, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 				case 3:
 					//if elseifs sin else 
-					condicion = GetCondicion(sentencia.ChildNodes.ElementAt(0));
+					condicion = GetExpresion(sentencia.ChildNodes.ElementAt(0));
 					sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(1));
 					List<ElseIf> elseifs = null;
 					List<Sentencia> sentenclasElse = null;
@@ -604,7 +604,7 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					return new If(condicion, elseifs, sentencias, sentenclasElse, sentencia.Span.Location.Line, sentencia.Span.Location.Column);
 				case 4://if elseifs con else 
-					condicion = GetCondicion(sentencia.ChildNodes.ElementAt(0));
+					condicion = GetExpresion(sentencia.ChildNodes.ElementAt(0));
 					sentencias = GetSentencias(sentencia.ChildNodes.ElementAt(1));
 					elseifs = GetElseIfs(sentencia.ChildNodes.ElementAt(2));
 					sentenclasElse = GetSentencias(sentencia.ChildNodes.ElementAt(3));
@@ -626,7 +626,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static ElseIf GetElseIf(ParseTreeNode nodo)
 		{
-			Condicion condicion = GetCondicion(nodo.ChildNodes.ElementAt(0));
+			Expresion condicion = GetExpresion(nodo.ChildNodes.ElementAt(0));
 			List<Sentencia> sentencias = GetSentencias(nodo.ChildNodes.ElementAt(1));
 			return new ElseIf(condicion, sentencias, nodo.Span.Location.Line, nodo.Span.Location.Column);
 		}
@@ -849,8 +849,8 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			if (parseTreeNode.ChildNodes.Count == 1)
 			{
-				if (parseTreeNode.ChildNodes.ElementAt(0).Term.Name=="CONDICION") {
-					return new Where(GetCondicion(parseTreeNode.ChildNodes.ElementAt(0)), parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line,
+				if (parseTreeNode.ChildNodes.ElementAt(0).Term.Name=="EXPRESION") {
+					return new Where(GetExpresion(parseTreeNode.ChildNodes.ElementAt(0)), parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Line,
 					parseTreeNode.ChildNodes.ElementAt(0).Span.Location.Column);
 				}
 				else {
@@ -1234,16 +1234,28 @@ namespace Proyecto1Compi2.com.Analisis
 						if (ob != null)
 							return (Expresion)ob;
 					}
-					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("CONDICION"))
+					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("EXPRESION"))
 					{
-						return GetCondicion(raiz.ChildNodes.ElementAt(0));
+						return GetExpresion(raiz.ChildNodes.ElementAt(0));
 					}
 					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("TERNARIO"))
 					{
 						return GetTernario(raiz.ChildNodes.ElementAt(0));
 					}
 					break;
-				case 3: //operaciones 
+				case 2://not
+					if (raiz.ChildNodes.ElementAt(0).Token.ValueString.Equals("!")) {
+						return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					}
+					return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+				case 3://operaciones
+					TipoOperacion tipo = GetTipoOperacion(raiz.ChildNodes.ElementAt(1));
+					if (tipo==TipoOperacion.And||tipo==TipoOperacion.Or||tipo==TipoOperacion.Xor||
+						tipo==TipoOperacion.Mayor||tipo==TipoOperacion.MayorIgual||tipo==TipoOperacion.Menor||tipo==TipoOperacion.MenorIgual||
+						tipo==TipoOperacion.Igual||tipo==TipoOperacion.Diferente) {
+						return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(0)), GetExpresion(raiz.ChildNodes.ElementAt(2)), GetTipoOperacion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(1).Token.Location.Line, raiz.ChildNodes.ElementAt(1).Token.Location.Column);
+
+					}
 					return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(0)), GetExpresion(raiz.ChildNodes.ElementAt(2)), GetTipoOperacion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(1).Token.Location.Line, raiz.ChildNodes.ElementAt(1).Token.Location.Column);
 			}
 			return null;
@@ -1251,27 +1263,10 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static Expresion GetTernario(ParseTreeNode parseTreeNode)
 		{
-			Condicion condicion = GetCondicion(parseTreeNode.ChildNodes.ElementAt(0));
+			Expresion condicion = GetExpresion(parseTreeNode.ChildNodes.ElementAt(0));
 			Expresion exp1 = GetExpresion(parseTreeNode.ChildNodes.ElementAt(1));
 			Expresion exp2 = GetExpresion(parseTreeNode.ChildNodes.ElementAt(2));
 			return new Ternario(condicion,exp1,exp2, parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column);
-		}
-
-		private static Condicion GetCondicion(ParseTreeNode raiz)
-		{
-			switch (raiz.ChildNodes.Count)
-			{
-				case 1://true o false
-					if (raiz.ChildNodes.ElementAt(0).Term.Name=="CONDICION") {
-						return GetCondicion(raiz.ChildNodes.ElementAt(0));
-					}
-					return new Condicion(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower() == "true", TipoOperacion.Boolean, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
-				case 2://not
-					return new Condicion(GetCondicion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
-				case 3://operaciones
-					return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(0)), GetExpresion(raiz.ChildNodes.ElementAt(2)), GetTipoOperacion(raiz.ChildNodes.ElementAt(1)), raiz.ChildNodes.ElementAt(1).Token.Location.Line, raiz.ChildNodes.ElementAt(1).Token.Location.Column);
-			}
-			return null;
 		}
 
 		private static TipoOperacion GetTipoOperacion(ParseTreeNode parseTreeNode)
@@ -1306,6 +1301,10 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						case "NULL":
 							return new Operacion("null", TipoOperacion.Nulo, raiz.Span.Location.Line, raiz.Span.Location.Column);
+						case "true":
+							return new Operacion(true, TipoOperacion.Boolean, raiz.Span.Location.Line, raiz.Span.Location.Column);
+						case "false":
+							return new Operacion(false, TipoOperacion.Boolean, raiz.Span.Location.Line, raiz.Span.Location.Column);
 						case "numero":
 							return new Operacion(Datos.GetValor(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower()), TipoOperacion.Numero, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 						case "cadena":

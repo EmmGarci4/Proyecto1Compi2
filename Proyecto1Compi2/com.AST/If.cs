@@ -38,6 +38,11 @@ namespace Proyecto1Compi2.com.AST
 			if (respuesta.GetType()==typeof(ThrowError)) {
 				return respuesta;
 			}
+			if (respuesta.GetType()!=typeof(bool)) {
+				return new ThrowError(Util.TipoThrow.ArithmeticException,
+					"No se puede evaluar una condición con un valor no booleano",
+					Linea, Columna);
+			}
 			if ((bool)respuesta)
 			{
 				//EJECUTANDO SENTENCIAS ******************************************************************
@@ -52,7 +57,14 @@ namespace Proyecto1Compi2.com.AST
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
-						}else 
+						}
+						if (respuesta.GetType() != typeof(bool))
+						{
+							return new ThrowError(Util.TipoThrow.ArithmeticException,
+								"No se puede evaluar una condición con un valor no booleano",
+								Linea, Columna);
+						}
+						else 
 						//evaluando condicion de if
 						if ((bool)respuesta) {
 							evaluado = true;

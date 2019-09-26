@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using com.Analisis.Util;
 using Proyecto1Compi2.com.db;
+using Proyecto1Compi2.com.Util;
 
 namespace Proyecto1Compi2.com.AST
 {
 	class Ternario:Expresion
 	{
-		Condicion condicion;
+		Expresion condicion;
 		Expresion exp1;
 		Expresion exp2;
 
-		public Ternario(Condicion condicion, Expresion exp1, Expresion exp2,int linea,int columna):base(linea,columna)
+		public Ternario(Expresion condicion, Expresion exp1, Expresion exp2,int linea,int columna):base(linea,columna)
 		{
 			this.condicion = condicion;
 			this.exp1 = exp1;
@@ -27,6 +28,10 @@ namespace Proyecto1Compi2.com.AST
 			if (cond.GetType() == typeof(ThrowError))
 			{
 				return TipoOperacion.Nulo;
+			}
+			if (cond.GetType() != typeof(bool))
+			{
+				return Datos.GetTipoDatoDB(Datos.GetTipoObjetoDB(cond).Tipo);
 			}
 			if ((bool)cond)
 			{
@@ -45,6 +50,12 @@ namespace Proyecto1Compi2.com.AST
 			object cond = condicion.GetValor(ts,sesion);
 			if (cond.GetType()==typeof(ThrowError)) {
 				return cond;
+			}
+			if (cond.GetType() != typeof(bool))
+			{
+				return new ThrowError(Util.TipoThrow.ArithmeticException,
+					"No se puede evaluar una condición con un valor no booleano",
+					Linea, Columna);
 			}
 			if ((bool)cond)
 			{

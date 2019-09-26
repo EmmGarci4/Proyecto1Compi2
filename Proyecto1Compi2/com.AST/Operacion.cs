@@ -659,9 +659,11 @@ namespace Proyecto1Compi2.com.AST
 								{
 									if (val.ToString().Equals("null") && (s.TipoDato.Tipo != TipoDatoDB.NULO && s.TipoDato.Tipo != TipoDatoDB.OBJETO))
 									{
-										return new ThrowError(Util.TipoThrow.NullPointerException,
+										if (s.Nombre.StartsWith("@")) {
+											return new ThrowError(Util.TipoThrow.NullPointerException,
 													"la variable '" + this.Valor + "' no se ha inicializado",
 													Linea, Columna);
+										}
 									}
 								}
 								return val;

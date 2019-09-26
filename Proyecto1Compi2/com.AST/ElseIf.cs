@@ -12,15 +12,15 @@ namespace Proyecto1Compi2.com.AST
 {
 	class ElseIf:Sentencia
 	{
-		Condicion condicion;
+		Expresion condicion;
 		List<Sentencia> sentencias;
-		public ElseIf(Condicion condicion, List<Sentencia> sentencias,int linea,int columna):base(linea,columna)
+		public ElseIf(Expresion condicion, List<Sentencia> sentencias,int linea,int columna):base(linea,columna)
 		{
 			this.condicion = condicion;
 			this.sentencias = sentencias;
 		}
 
-		internal Condicion Condicion { get => condicion; set => condicion = value; }
+		internal Expresion Condicion { get => condicion; set => condicion = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
