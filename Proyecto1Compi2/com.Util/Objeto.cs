@@ -45,7 +45,7 @@ namespace Proyecto1Compi2.com.Util
 			StringBuilder cadena = new StringBuilder();
 			
 			int i = 0;
-			if (!isNull) {
+			if (!IsNull) {
 				if (atributos != null)
 				{
 					cadena.Append("<");
@@ -116,8 +116,7 @@ namespace Proyecto1Compi2.com.Util
 		internal string GetLinealizado()
 		{
 			StringBuilder cadena = new StringBuilder();
-			if (!isNull)
-			{
+			if (!IsNull) {
 				if (atributos != null)
 				{
 					cadena.Append("{\n");

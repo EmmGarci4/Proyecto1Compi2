@@ -149,7 +149,6 @@ namespace com.Analisis
 
 			NonTerminal EXPRESION = new NonTerminal("EXPRESION"),
 				VALOR = new NonTerminal("VALOR"),
-				CONDICION=new NonTerminal("CONDICION"),
 				LLAMADAFUNCION = new NonTerminal("LLAMADAFUNCION"),
 				LISTAEXPRESIONES = new NonTerminal("LISTAEXPRESIONES"),
 				INFOCOLLECTIONS=new NonTerminal("INFOCOLLECTIONS"),
@@ -289,7 +288,15 @@ namespace com.Analisis
 				| EXPRESION + pot + EXPRESION
 				| EXPRESION + mod + EXPRESION
 				//otros
-				| CONDICION
+				| EXPRESION + mayor + EXPRESION
+				| EXPRESION + menor + EXPRESION
+				| EXPRESION + mayorigual + EXPRESION
+				| EXPRESION + menorigual + EXPRESION
+				| EXPRESION + igualigual + EXPRESION
+				| EXPRESION + notigual + EXPRESION
+				| EXPRESION + and + EXPRESION
+				| EXPRESION + or + EXPRESION
+				| EXPRESION + xor + EXPRESION
 				| VALOR
 				| TERNARIO;
 
@@ -301,8 +308,11 @@ namespace com.Analisis
 				| id
 				| par1 + EXPRESION + par2
 				| menos + EXPRESION
+				| not + EXPRESION
+				| pr_true
+				| pr_false
 				| LLAMADAFUNCION
-		//		| nombre
+				| nombre
 				| ACCESO
 				| llave1 + INFOCOLLECTIONS + llave2 //map
 				| cor1 + INFOCOLLECTIONS + cor2 //map
@@ -340,21 +350,7 @@ namespace com.Analisis
 
 			INFO.Rule = EXPRESION + dospuntos + EXPRESION;
 
-			TERNARIO.Rule = CONDICION + khe + EXPRESION + dospuntos + EXPRESION;
-
-			CONDICION.Rule = EXPRESION + mayor + EXPRESION
-				| EXPRESION + menor + EXPRESION
-				| EXPRESION + mayorigual + EXPRESION
-				| EXPRESION + menorigual + EXPRESION
-				| EXPRESION + igualigual + EXPRESION
-				| EXPRESION + notigual + EXPRESION
-				| EXPRESION + and + EXPRESION
-				| EXPRESION + or + EXPRESION
-				| EXPRESION + xor + EXPRESION
-				| par1 +CONDICION+par2
-				| not + CONDICION
-				| pr_true
-				| pr_false;
+			TERNARIO.Rule = EXPRESION + khe + EXPRESION + dospuntos + EXPRESION;
 
 			LLAMADAFUNCION.Rule = nombre + par1 + LISTAEXPRESIONES + par2;
 
@@ -494,7 +490,7 @@ namespace com.Analisis
 				| pr_ordenar + pr_ordPor+PROPIEDADORDENAR
 				| PROPIEDADLIMIT;
 
-			PROPIEDADDONDE.Rule = pr_donde + CONDICION
+			PROPIEDADDONDE.Rule = pr_donde + EXPRESION
 				| pr_donde +ACCESO
 				| pr_donde + EXPRESION + pr_in + EXPRESION
 				| pr_donde + EXPRESION + pr_in + par1 + LISTAEXPRESIONES + par2;
@@ -571,14 +567,14 @@ namespace com.Analisis
 			ASIGNACION.Rule = id + igual + EXPRESION + puntoycoma
 				| id + punto + ACCESO + igual + EXPRESION + puntoycoma;
 
-			IF.Rule = pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2
-				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else+ llave1 + BLOQUESENTENCIAS + llave2
-				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + ELSEIFS
-				 | pr_if + par1 + CONDICION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + ELSEIFS + pr_else + llave1 + BLOQUESENTENCIAS + llave2;
+			IF.Rule = pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2
+				 | pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + pr_else+ llave1 + BLOQUESENTENCIAS + llave2
+				 | pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + ELSEIFS
+				 | pr_if + par1 + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2 + ELSEIFS + pr_else + llave1 + BLOQUESENTENCIAS + llave2;
 
 			ELSEIFS.Rule = MakePlusRule(ELSEIFS,ELSEIF);
 
-			ELSEIF.Rule = pr_else + pr_if + par1 + CONDICION + par2  + llave1 + BLOQUESENTENCIAS + llave2;
+			ELSEIF.Rule = pr_else + pr_if + par1 + EXPRESION + par2  + llave1 + BLOQUESENTENCIAS + llave2;
 
 			SWITCH.Rule = pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + DEFAULT + llave2
 				| pr_switch + par1 + EXPRESION + par2 + llave1 + LISTACASE + llave2;
@@ -591,14 +587,14 @@ namespace com.Analisis
 
 			BREAK.Rule = pr_break + puntoycoma;
 
-			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + CONDICION + puntoycoma + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2;
+			FOR.Rule = pr_for + par1 +INIFOR+ puntoycoma + EXPRESION + puntoycoma + EXPRESION + par2 + llave1 + BLOQUESENTENCIAS + llave2;
 
 			INIFOR.Rule = id + igual + EXPRESION
 				| TIPODATO+id + igual + EXPRESION;
 
-			WHILE.Rule =pr_while+par1+CONDICION+par2+ llave1 + BLOQUESENTENCIAS + llave2;
+			WHILE.Rule =pr_while+par1+EXPRESION+par2+ llave1 + BLOQUESENTENCIAS + llave2;
 
-			DOWHILE.Rule = pr_do + llave1 + BLOQUESENTENCIAS + llave2 + pr_while + par1 + CONDICION + par2 + puntoycoma;
+			DOWHILE.Rule = pr_do + llave1 + BLOQUESENTENCIAS + llave2 + pr_while + par1 + EXPRESION + par2 + puntoycoma;
 
 			CREAR_PROC.Rule = pr_proc + nombre + par1 + LISTAPARAMETROS + par2+coma + par1 + LISTAPARAMETROS + par2  + llave1 + BLOQUESENTENCIAS + llave2;
 

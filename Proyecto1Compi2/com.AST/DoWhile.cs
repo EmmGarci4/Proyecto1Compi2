@@ -12,16 +12,16 @@ namespace Proyecto1Compi2.com.AST
 {
 	class DoWhile : Sentencia
 	{
-		Condicion condicion;
+		Expresion condicion;
 		List<Sentencia> sentencias;
 
-		public DoWhile(Condicion condicion, List<Sentencia> sentencias, int linea, int columna) : base(linea, columna)
+		public DoWhile(Expresion condicion, List<Sentencia> sentencias, int linea, int columna) : base(linea, columna)
 		{
 			this.condicion = condicion;
 			this.sentencias = sentencias;
 		}
 
-		internal Condicion Condicion { get => condicion; set => condicion = value; }
+		internal Expresion Condicion { get => condicion; set => condicion = value; }
 		internal List<Sentencia> Sentencias { get => sentencias; set => sentencias = value; }
 
 		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
@@ -61,7 +61,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
 						}
-						else
+						else if (respuesta.GetType() == typeof(Sentencia))
 						{
 							//return 
 							if (errores.Count > 0) return errores;
@@ -79,6 +79,12 @@ namespace Proyecto1Compi2.com.AST
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
+						}
+						if (respuesta.GetType() != typeof(bool))
+						{
+							return new ThrowError(Util.TipoThrow.ArithmeticException,
+								"No se puede evaluar una condición con un valor no booleano",
+								Linea, Columna);
 						}
 						if (!(bool)respuesta)
 						{

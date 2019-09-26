@@ -33,10 +33,14 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
-
 			object respuesta = condicion.GetValor(tsLocal,sesion);
 			if (respuesta.GetType()==typeof(ThrowError)) {
 				return respuesta;
+			}
+			if (respuesta.GetType()!=typeof(bool)) {
+				return new ThrowError(Util.TipoThrow.ArithmeticException,
+					"No se puede evaluar una condición con un valor no booleano",
+					Linea, Columna);
 			}
 			if ((bool)respuesta)
 			{
@@ -52,7 +56,14 @@ namespace Proyecto1Compi2.com.AST
 						if (respuesta.GetType() == typeof(ThrowError))
 						{
 							return respuesta;
-						}else 
+						}
+						if (respuesta.GetType() != typeof(bool))
+						{
+							return new ThrowError(Util.TipoThrow.ArithmeticException,
+								"No se puede evaluar una condición con un valor no booleano",
+								Linea, Columna);
+						}
+						else 
 						//evaluando condicion de if
 						if ((bool)respuesta) {
 							evaluado = true;
@@ -93,7 +104,7 @@ namespace Proyecto1Compi2.com.AST
 					}
 					else if (respuesta.GetType() == typeof(ResultadoConsulta)) {
 						Analizador.ResultadosConsultas.Add(((ResultadoConsulta)respuesta).ToString());
-					} else {
+					} else if(respuesta.GetType()==typeof(Sentencia)){
 						//return-break-continue
 						if (errores.Count > 0) return errores;
 						return respuesta;

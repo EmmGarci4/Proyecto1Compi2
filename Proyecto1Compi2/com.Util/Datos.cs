@@ -647,17 +647,20 @@ namespace Proyecto1Compi2.com.Util
 					}
 					break;
 				case TipoDatoDB.OBJETO:
-					if (res.Equals("null")) {
-							object ob= Operacion.GetInstanciaObjeto(tipo, sesion, linea, columna);
-						if (ob!=null) {
-							if (ob.GetType() == typeof(ThrowError)) {
-								return ob;
-							} else if (ob.GetType()==typeof(Objeto)) {
-								((Objeto)ob).IsNull = true;
-								return ob;
+					if (res.Equals("null"))
+					{
+						object obj = Operacion.GetInstanciaObjeto(tipo,sesion,linea,columna);
+						if (obj!=null) {
+							if (obj.GetType() == typeof(ThrowError))
+							{
+								return obj;
+							}
+							if (obj.GetType()==typeof(Objeto)) {
+								((Objeto)obj).IsNull = true;
+								return obj;
 							}
 						}
-						}
+					}
 					break;
 			}
 
