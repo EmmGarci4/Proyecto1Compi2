@@ -104,7 +104,6 @@ namespace Proyecto1Compi2.com.AST
 							return valorPre;
 						}
 						ts.AgregarSimbolo(new Simbolo(variable,valorPre , tipo, Linea, Columna));
-
 					}
 				}
 				contador++;

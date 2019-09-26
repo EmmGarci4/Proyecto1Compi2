@@ -694,7 +694,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 							{
-								object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion);
+								object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion,Linea,Columna);
 								if (instanciaObjeto != null)
 								{
 									return instanciaObjeto;
@@ -940,7 +940,7 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 		}
 
-		private object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion)
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion,int linea,int columna)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)
@@ -952,23 +952,30 @@ namespace Proyecto1Compi2.com.AST
 					Objeto nuevaInstancia = new Objeto(ut);
 					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
 					{
-						object valPre = Declaracion.GetValorPredeterminado(atributo.Value, sesion, Linea, Columna);
-						if (valPre!=null) {
-							if (valPre.GetType()==typeof(ThrowError)) {
+						object valPre = Declaracion.GetValorPredeterminado(atributo.Value, sesion, linea, columna);
+						if (valPre != null)
+						{
+							if (valPre.GetType() == typeof(ThrowError))
+							{
 								return valPre;
 							}
-							nuevaInstancia.Atributos.Add(atributo.Key,valPre);
+							nuevaInstancia.Atributos.Add(atributo.Key, valPre);
 
 						}
 					}
 					return nuevaInstancia;
+				}
+				else {
+					return new ThrowError(Util.TipoThrow.UseBDException,
+						"No existe el tipo '"+tipoInstancia.ToString()+"'",
+						linea, columna);
 				}
 			}
 			else
 			{
 				return new ThrowError(Util.TipoThrow.UseBDException,
 					"No se puede ejecutar la sentencia porque no hay una base de datos seleccionada",
-					Linea, Columna);
+					linea, columna);
 			}
 			return null;
 		}

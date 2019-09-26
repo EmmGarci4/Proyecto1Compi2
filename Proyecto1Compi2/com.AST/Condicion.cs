@@ -590,7 +590,7 @@ namespace Proyecto1Compi2.com.AST
 			{
 				if (tipoOp == TipoOperacion.Not)
 				{
-					if (izquierda.GetTipo(ts,sesion) == TipoOperacion.Boolean)
+					if (izquierda.GetTipo(ts, sesion) == TipoOperacion.Boolean)
 					{
 						bool valor = !bool.Parse(izq.ToString());
 						return valor;
@@ -600,6 +600,23 @@ namespace Proyecto1Compi2.com.AST
 						return new ThrowError(TipoThrow.ArithmeticException,
 									"No se puede negar un valor no booleano",
 								   Linea, Columna);
+					}
+				} else if (TipoOp==TipoOperacion.Igual) {
+					//BOOLEANO
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Boolean))
+					{
+						bool valor = bool.Parse(izq.ToString());
+						return valor;
+					}
+
+				}
+				else if (TipoOp == TipoOperacion.Diferente)
+				{
+					//BOOLEANO
+					if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Boolean))
+					{
+						bool valor = !bool.Parse(izq.ToString());
+						return valor;
 					}
 				}
 			}
