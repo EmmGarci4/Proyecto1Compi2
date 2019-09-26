@@ -1247,7 +1247,7 @@ namespace Proyecto1Compi2.com.Analisis
 					if (raiz.ChildNodes.ElementAt(0).Token.ValueString.Equals("!")) {
 						return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 					}
-					return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Menos, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 				case 3://operaciones
 					TipoOperacion tipo = GetTipoOperacion(raiz.ChildNodes.ElementAt(1));
 					if (tipo==TipoOperacion.And||tipo==TipoOperacion.Or||tipo==TipoOperacion.Xor||
@@ -1373,6 +1373,11 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 					break;
 				case 2://menos
+
+					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("!"))
+					{
+						return new Condicion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Not, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+					}
 					if (raiz.ChildNodes.ElementAt(0).Term.Name.Equals("-"))
 					{
 						return new Operacion(GetExpresion(raiz.ChildNodes.ElementAt(1)), TipoOperacion.Menos, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);

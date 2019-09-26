@@ -33,7 +33,6 @@ namespace Proyecto1Compi2.com.AST
 		public override object Ejecutar(TablaSimbolos ts,Sesion sesion)
 		{
 			TablaSimbolos tsLocal = new TablaSimbolos(ts);
-
 			object respuesta = condicion.GetValor(tsLocal,sesion);
 			if (respuesta.GetType()==typeof(ThrowError)) {
 				return respuesta;
