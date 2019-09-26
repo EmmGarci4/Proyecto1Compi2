@@ -162,6 +162,69 @@ namespace Proyecto1Compi2.com.AST
 							return !izq.Equals(der);
 						}
 						else
+						//MAP-NULL 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Map) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							CollectionMapCql map = (CollectionMapCql)izq;
+							return !map.IsNull;
+						}
+						else
+						//NULL-MAP 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Map))
+						{
+							CollectionMapCql map = (CollectionMapCql)der;
+							return !map.IsNull;
+						}else
+						//MAP-MAP 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Map) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Map))
+						{
+							CollectionMapCql map = (CollectionMapCql)der;
+							CollectionMapCql map2 = (CollectionMapCql)izq;
+							return !map.Equals(map2);
+						}else
+						//LIST-NULL 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.List) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							CollectionListCql map = (CollectionListCql)izq;
+							return !map.IsNull;
+						}
+						else
+						//NULL-LIST 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.List))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							return !map.IsNull;
+						}
+						else
+						//LIST-LIST 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.List) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.List))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							CollectionListCql map2 = (CollectionListCql)izq;
+							return !map.Equals(map2);
+						} else
+						//SET-NULL 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Set) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							CollectionListCql map = (CollectionListCql)izq;
+							return !map.IsNull;
+						}
+						else
+						//NULL-SET 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Set))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							return !map.IsNull;
+						}
+						else
+						//SET-SET 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Set) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Set))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							CollectionListCql map2 = (CollectionListCql)izq;
+							return !map.Equals(map2);
+						}
+						else
 						{
 							return new ThrowError(TipoThrow.ArithmeticException,
 									"No se pueden comparar los operandos de tipo " + izquierda.GetTipo(ts,sesion) + " y " + derecha.GetTipo(ts,sesion),
@@ -256,6 +319,69 @@ namespace Proyecto1Compi2.com.AST
 							Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Date) || Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Time))
 						{
 							return ((MyDateTime)der).IsNull;
+						}
+						else //MAP-NULL 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Map) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							CollectionMapCql map = (CollectionMapCql)izq;
+							return map.IsNull;
+						}
+						else
+						//NULL-MAP 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Map))
+						{
+							CollectionMapCql map = (CollectionMapCql)der;
+							return map.IsNull;
+						}
+						//MAP-MAP 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Map))
+						{
+							CollectionMapCql map = (CollectionMapCql)der;
+							CollectionMapCql map2 = (CollectionMapCql)izq;
+							return map.Equals(map2);
+						} else
+						//LIST-NULL 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.List) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							CollectionListCql map = (CollectionListCql)izq;
+							return map.IsNull;
+						}
+						else
+						//NULL-LIST 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.List))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							return map.IsNull;
+						}
+						else
+						//LIST-LIST 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.List) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.List))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							CollectionListCql map2 = (CollectionListCql)izq;
+							return map.Equals(map2);
+						}
+						else
+						//SET-NULL 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Set) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo))
+						{
+							CollectionListCql map = (CollectionListCql)izq;
+							return map.IsNull;
+						}
+						else
+						//NULL-SET 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Nulo) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Set))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							return map.IsNull;
+						}
+						else
+						//SET-SET 
+						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Set) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Set))
+						{
+							CollectionListCql map = (CollectionListCql)der;
+							CollectionListCql map2 = (CollectionListCql)izq;
+							return map.Equals(map2);
 						}
 						else
 						{

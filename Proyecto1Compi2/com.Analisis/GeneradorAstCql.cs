@@ -1354,13 +1354,13 @@ namespace Proyecto1Compi2.com.Analisis
 						case "LISTAEXPRESIONES": //[1112,2,3,3,2]
 							List<Expresion> lista = GetListaExpresiones(raiz.ChildNodes.ElementAt(0));
 							return new Operacion(lista,
-							TipoOperacion.ListaDatos,
+							TipoOperacion.List,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
 						case "SETDATOS":
 							lista = GetListaExpresiones(raiz.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0));
 							return new Operacion(lista,
-							TipoOperacion.SetDatos,
+							TipoOperacion.Set,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
 						case "MODIFICADORES":
@@ -1443,7 +1443,7 @@ namespace Proyecto1Compi2.com.Analisis
 				info.Add(new Info(GetExpresion(nodo.ChildNodes.ElementAt(0)), GetExpresion(nodo.ChildNodes.ElementAt(1))));
 			}
 			return new Operacion(info,
-							TipoOperacion.MapDatos,
+							TipoOperacion.Map,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Line,
 							raiz.ChildNodes.ElementAt(0).Span.Location.Column);
 		}

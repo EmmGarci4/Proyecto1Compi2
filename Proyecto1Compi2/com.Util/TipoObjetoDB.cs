@@ -16,16 +16,39 @@ namespace Proyecto1Compi2.com.Util
 		{
 			switch (tipo) {
 				case TipoDatoDB.LISTA_PRIMITIVO:
-					return "List<"+this.nombre+">";
+					if (nombre.Equals("null")) {
+						return "List";
+					}
+					return "List<" + this.nombre + ">";
 				case TipoDatoDB.LISTA_OBJETO:
+					if (nombre.Equals("null"))
+					{
+						return "List";
+					}
 					return "List<"+this.nombre+">";
 				case TipoDatoDB.SET_PRIMITIVO:
+					if (nombre.Equals("null"))
+					{
+						return "Set";
+					}
 					return "Set<"+this.nombre+">";
 				case TipoDatoDB.SET_OBJETO:
+					if (nombre.Equals("null"))
+					{
+						return "Set";
+					}
 					return "Set<" + this.nombre + ">";
 				case TipoDatoDB.MAP_PRIMITIVO:
+					if (nombre.Equals("null,null"))
+					{
+						return "Map";
+					}
 					return "Map<"+this.nombre+">";
 				case TipoDatoDB.MAP_OBJETO:
+					if (nombre.Equals("null,null"))
+					{
+						return "Map";
+					}
 					return "Map<" + this.nombre + ">";
 				case TipoDatoDB.OBJETO:
 					return this.nombre;

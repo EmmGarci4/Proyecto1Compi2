@@ -146,6 +146,16 @@ namespace Proyecto1Compi2.com.AST
 				}
 				else if (par.Tipo.Tipo == TipoDatoDB.OBJETO) {
 					llave.Append("objeto");
+				} else if (par.Tipo.Tipo == TipoDatoDB.MAP_OBJETO || par.Tipo.Tipo==TipoDatoDB.MAP_PRIMITIVO) {
+					llave.Append("map");
+				}
+				else if (par.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || par.Tipo.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+				{
+					llave.Append("list");
+				}
+				else if (par.Tipo.Tipo == TipoDatoDB.SET_OBJETO || par.Tipo.Tipo == TipoDatoDB.SET_PRIMITIVO)
+				{
+					llave.Append("set");
 				}
 				else {
 					llave.Append(par.Tipo.ToString());

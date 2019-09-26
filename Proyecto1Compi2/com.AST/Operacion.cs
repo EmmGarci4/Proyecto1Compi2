@@ -75,7 +75,9 @@ namespace Proyecto1Compi2.com.AST
 				case TipoOperacion.Boolean:
 				case TipoOperacion.Date:
 				case TipoOperacion.Time:
-				case TipoOperacion.ListaDatos:
+				case TipoOperacion.List:
+				case TipoOperacion.Map:
+				case TipoOperacion.Set:
 				case TipoOperacion.NuevaInstancia:
 					return this.tipoOp;
 				case TipoOperacion.Menos:
@@ -314,6 +316,18 @@ namespace Proyecto1Compi2.com.AST
 						{
 							CollectionListCql c1 = (CollectionListCql)izq;
 							CollectionListCql c2 = (CollectionListCql)der;
+							if (c1.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'List' o 'Set'",
+									Linea, Columna);
+							}
+							if (c2.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'map' con 'List' o 'Set'",
+									Linea, Columna);
+							}
 							if (c1.IsLista && c2.IsLista || (!c1.IsLista && !c2.IsLista))
 							{
 								if (c1.TipoDato.Tipo == c2.TipoDato.Tipo && c1.TipoDato.Nombre == c2.TipoDato.Nombre)
@@ -350,6 +364,18 @@ namespace Proyecto1Compi2.com.AST
 						{
 							CollectionMapCql c1 = (CollectionMapCql)izq;
 							CollectionMapCql c2 = (CollectionMapCql)der;
+
+							if (c1.IsNull) {
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'Map'",
+									Linea, Columna);
+							}
+							if (c1.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'map' con 'null'",
+									Linea, Columna);
+							}
 							if (c1.TipoLlave.Equals(c2.TipoLlave) && c1.TipoValor.Equals(c2.TipoValor))
 							{
 								if (c1.TipoLlave.Tipo.Equals(c2.TipoLlave.Tipo) && c1.TipoLlave.Nombre.Equals(c2.TipoLlave.Nombre) &&
@@ -423,6 +449,18 @@ namespace Proyecto1Compi2.com.AST
 						{
 							CollectionListCql c1 = (CollectionListCql)izq;
 							CollectionListCql c2 = (CollectionListCql)der;
+							if (c1.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'List' o 'Set'",
+									Linea, Columna);
+							}
+							if (c2.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'map' con 'List' o 'Set'",
+									Linea, Columna);
+							}
 							if (c1.IsLista && c2.IsLista || (!c1.IsLista && !c2.IsLista))
 							{
 								if (c1.TipoDato.Tipo == c2.TipoDato.Tipo && c1.TipoDato.Nombre == c2.TipoDato.Nombre)
@@ -466,6 +504,18 @@ namespace Proyecto1Compi2.com.AST
 						{
 							CollectionMapCql collection = (CollectionMapCql)izq;
 							CollectionListCql datos = (CollectionListCql)der;
+							if (collection.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'null' con 'Map'",
+									Linea, Columna);
+							}
+							if (datos.IsNull)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"No se puede sumar 'map' con 'null'",
+									Linea, Columna);
+							}
 							if (!datos.IsLista)
 							{
 								if (collection.TipoValor.Equals(Datos.GetTipoObjetoDB(datos.TipoDato.Nombre)))
@@ -659,7 +709,7 @@ namespace Proyecto1Compi2.com.AST
 							}
 						}
 						break;
-					case TipoOperacion.ListaDatos:
+					case TipoOperacion.List:
 						List<Expresion> expresiones = (List<Expresion>)this.Valor;
 						if (expresiones.Count > 0)
 						{
@@ -724,7 +774,7 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 
 						}
-					case TipoOperacion.SetDatos:
+					case TipoOperacion.Set:
 						expresiones = (List<Expresion>)this.Valor;
 						if (expresiones.Count > 0)
 						{
@@ -789,7 +839,7 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 
 						}
-					case TipoOperacion.MapDatos:
+					case TipoOperacion.Map:
 						InfoCollection info = (InfoCollection)this.Valor;
 						if (info.Count > 0)
 						{
@@ -1106,9 +1156,9 @@ namespace Proyecto1Compi2.com.AST
 		Nombre,
 		NuevaInstancia,
 		InstanciaObjeto,
-		ListaDatos,
-		SetDatos,
-		MapDatos,
+		List,
+		Set,
+		Map,
 		//operaciones
 		Suma,
 		Resta,

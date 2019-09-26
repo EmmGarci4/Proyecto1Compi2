@@ -11,15 +11,25 @@ namespace Proyecto1Compi2.com.Util
 	{
 		TipoObjetoDB tipoLlave;
 		TipoObjetoDB tipoValor;
+		bool isNull;
 
 		public CollectionMapCql(TipoObjetoDB tipoLlave, TipoObjetoDB tipoValor):base()
 		{
 			this.tipoLlave = tipoLlave;
 			this.tipoValor = tipoValor;
+			this.isNull = false;
+		}
+
+		public CollectionMapCql()
+		{
+			this.isNull = true;
+			this.tipoLlave = null;
+			this.TipoValor = null;
 		}
 
 		public TipoObjetoDB TipoLlave { get => tipoLlave; set => tipoLlave = value; }
 		public TipoObjetoDB TipoValor { get => tipoValor; set => tipoValor = value; }
+		public bool IsNull { get => isNull; set => isNull = value; }
 
 		internal object AddItem(object clave, object valorr, int linea, int columna)
 		{
@@ -78,110 +88,122 @@ namespace Proyecto1Compi2.com.Util
 		public override string ToString()
 		{
 			StringBuilder cad = new StringBuilder();
-			cad.Append("<");
-			int i = 0;
-			foreach (KeyValuePair<object,object> ib in this)
+			if (!isNull)
 			{
-				//***************************************************
-				if (this.tipoLlave.Tipo.Equals(TipoDatoDB.STRING))
+				cad.Append("<");
+				int i = 0;
+				foreach (KeyValuePair<object, object> ib in this)
 				{
-					cad.Append("\"" + ib.Key.ToString() + "\"");
-				}
-				else if (this.tipoLlave.Tipo.Equals(TipoDatoDB.DATE) || this.tipoLlave.Tipo.Equals(TipoDatoDB.TIME))
-				{
-					if (ib.Key.ToString().Equals("null"))
+					//***************************************************
+					if (this.tipoLlave.Tipo.Equals(TipoDatoDB.STRING))
 					{
-						cad.Append("null");
+						cad.Append("\"" + ib.Key.ToString() + "\"");
+					}
+					else if (this.tipoLlave.Tipo.Equals(TipoDatoDB.DATE) || this.tipoLlave.Tipo.Equals(TipoDatoDB.TIME))
+					{
+						if (ib.Key.ToString().Equals("null"))
+						{
+							cad.Append("null");
+						}
+						else
+						{
+							cad.Append("\'" + ib.Key.ToString() + "\'");
+						}
 					}
 					else
 					{
-						cad.Append("\'" + ib.Key.ToString() + "\'");
+						cad.Append(ib.Key.ToString());
 					}
-				}
-				else
-				{
-					cad.Append(ib.Key.ToString());
-				}
-				//***************************************************
-				cad.Append("=");
-				//***************************************************
-				if (this.tipoValor.Tipo.Equals(TipoDatoDB.STRING))
-				{
-					cad.Append("\"" + ib.Value.ToString() + "\"");
-				}
-				else if (this.tipoValor.Tipo.Equals(TipoDatoDB.DATE) || this.tipoValor.Tipo.Equals(TipoDatoDB.TIME))
-				{
-					if (ib.Value.ToString().Equals("null"))
+					//***************************************************
+					cad.Append("=");
+					//***************************************************
+					if (this.tipoValor.Tipo.Equals(TipoDatoDB.STRING))
 					{
-						cad.Append("null");
+						cad.Append("\"" + ib.Value.ToString() + "\"");
+					}
+					else if (this.tipoValor.Tipo.Equals(TipoDatoDB.DATE) || this.tipoValor.Tipo.Equals(TipoDatoDB.TIME))
+					{
+						if (ib.Value.ToString().Equals("null"))
+						{
+							cad.Append("null");
+						}
+						else
+						{
+							cad.Append("\'" + ib.Value.ToString() + "\'");
+						}
 					}
 					else
 					{
-						cad.Append("\'" + ib.Value.ToString() + "\'");
+						cad.Append(ib.Value.ToString());
 					}
+					//***************************************************
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
 				}
-				else
-				{
-					cad.Append(ib.Value.ToString());
-				}
-				//***************************************************
-				if (i < this.Count - 1)
-				{
-					cad.Append(",");
-				}
-				i++;
+				cad.Append(">");
 			}
-			cad.Append(">");
+			else {
+				cad.Append("null");
+			}
 			return cad.ToString();
 		}
 
 		internal string GetLinealizado()
 		{
 			StringBuilder cad = new StringBuilder();
-			cad.Append("{");
-			int i = 0;
-			foreach (KeyValuePair<object, object> ib in this)
+			if (!isNull)
 			{
-				cad.Append(ib.Key.ToString() + ":");
-				//***
-				if (ib.Value.GetType() == typeof(CollectionListCql))
+				cad.Append("{");
+				int i = 0;
+				foreach (KeyValuePair<object, object> ib in this)
 				{
-					cad.Append(((CollectionListCql)ib.Value).GetLinealizado());
-					if (i < this.Count - 1)
+					cad.Append(ib.Key.ToString() + ":");
+					//***
+					if (ib.Value.GetType() == typeof(CollectionListCql))
 					{
-						cad.Append(",");
+						cad.Append(((CollectionListCql)ib.Value).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
-				}
-				else if (ib.Value.GetType() == typeof(CollectionMapCql))
-				{
-					cad.Append(((CollectionMapCql)ib.Value).GetLinealizado());
-					if (i < this.Count - 1)
+					else if (ib.Value.GetType() == typeof(CollectionMapCql))
 					{
-						cad.Append(",");
+						cad.Append(((CollectionMapCql)ib.Value).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
-				}
-				else if (ib.Value.GetType() == typeof(Objeto))
-				{
-					cad.Append(((Objeto)ib.Value).GetLinealizado());
-					if (i < this.Count - 1)
+					else if (ib.Value.GetType() == typeof(Objeto))
 					{
-						cad.Append(",");
+						cad.Append(((Objeto)ib.Value).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
-				}
-				else
-				{
-					cad.Append(ib.Value.ToString());
-					if (i < this.Count - 1)
+					else
 					{
-						cad.Append(",");
+						cad.Append(ib.Value.ToString());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
 				}
+				cad.Append("}");
 			}
-			cad.Append("}");
+			else {
+				cad.Append("null");
+			}
 
 			return cad.ToString();
 		}

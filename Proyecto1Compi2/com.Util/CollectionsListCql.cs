@@ -12,15 +12,26 @@ namespace Proyecto1Compi2.com.Util
 	{
 		bool isList;
 		TipoObjetoDB tipoDato;
+		bool isNull;
 
 		public CollectionListCql(TipoObjetoDB tipo, bool isList)
 		{
 			this.tipoDato = tipo;
 			this.isList = isList;
+			this.isNull = false;
 		}
+
+		public CollectionListCql(bool isList)
+		{
+			this.isNull = true;
+			this.isList = isList;
+			this.tipoDato = null;
+		}
+
 		public bool IsLista { get => isList; set => isList = value; }
 		public bool IsSet { get => !isList; }
 		public TipoObjetoDB TipoDato { get => tipoDato; set => tipoDato = value; }
+		public bool IsNull { get => isNull; set => isNull = value; }
 
 		public object AddItem(object obj, int linea, int columna)
 		{
@@ -65,44 +76,6 @@ namespace Proyecto1Compi2.com.Util
 			}
 			return null;
 		}
-
-		public override string ToString()
-		{
-			StringBuilder cad = new StringBuilder();
-			cad.Append("[");
-			int i = 0;
-			foreach (object ib in this)
-			{
-					if (this.tipoDato.Tipo.Equals(TipoDatoDB.STRING))
-					{
-						cad.Append("\"" + ib.ToString() + "\"");
-					}
-					else if (this.tipoDato.Tipo.Equals(TipoDatoDB.DATE) || this.tipoDato.Tipo.Equals(TipoDatoDB.TIME))
-					{
-						if (ib.ToString().Equals("null"))
-						{
-							cad.Append("null");
-						}
-						else
-						{
-							cad.Append("\'" + ib.ToString() + "\'");
-						}
-					}
-					else
-					{
-						cad.Append(ib.ToString());
-					}
-				
-				if (i < this.Count - 1)
-				{
-					cad.Append(",");
-				}
-				i++;
-			}
-			cad.Append("]");
-			return cad.ToString();
-		}
-		
 		//Metodos usados desde GeneradorDB
 		public bool IsAllInteger()
 		{
@@ -258,47 +231,100 @@ namespace Proyecto1Compi2.com.Util
 			this.RemoveAt(posicion);
 		}
 
+
+		public override string ToString()
+		{
+			StringBuilder cad = new StringBuilder();
+			if (!isNull)
+			{
+				cad.Append("[");
+				int i = 0;
+				foreach (object ib in this)
+				{
+					if (this.tipoDato.Tipo.Equals(TipoDatoDB.STRING))
+					{
+						cad.Append("\"" + ib.ToString() + "\"");
+					}
+					else if (this.tipoDato.Tipo.Equals(TipoDatoDB.DATE) || this.tipoDato.Tipo.Equals(TipoDatoDB.TIME))
+					{
+						if (ib.ToString().Equals("null"))
+						{
+							cad.Append("null");
+						}
+						else
+						{
+							cad.Append("\'" + ib.ToString() + "\'");
+						}
+					}
+					else
+					{
+						cad.Append(ib.ToString());
+					}
+
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+					}
+					i++;
+				}
+				cad.Append("]");
+			}
+			else {
+				cad.Append("null");
+			}
+			return cad.ToString();
+		}
+
 		public string GetLinealizado() {
 			StringBuilder cad = new StringBuilder();
-			cad.Append("[");
-			int i = 0;
-			foreach (object ib in this)
+			if (!isNull)
 			{
-				if (ib.GetType() == typeof(CollectionListCql))
+				cad.Append("[");
+				int i = 0;
+				foreach (object ib in this)
 				{
-					cad.Append(((CollectionListCql)ib).GetLinealizado());
-					if (i < this.Count - 1)
+					if (ib.GetType() == typeof(CollectionListCql))
 					{
-						cad.Append(",");
+						cad.Append(((CollectionListCql)ib).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
-				} else if (ib.GetType() == typeof(CollectionMapCql))
-				{
-					cad.Append(((CollectionMapCql)ib).GetLinealizado());
-					if (i < this.Count - 1)
+					else if (ib.GetType() == typeof(CollectionMapCql))
 					{
-						cad.Append(",");
+						cad.Append(((CollectionMapCql)ib).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
-				} else if (ib.GetType()==typeof(Objeto)) {
-					cad.Append(((Objeto)ib).GetLinealizado());
-					if (i < this.Count - 1)
+					else if (ib.GetType() == typeof(Objeto))
 					{
-						cad.Append(",");
+						cad.Append(((Objeto)ib).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
 					}
-					i++;
+					else
+					{
+						cad.Append(ib.ToString());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
+					}
 				}
-				else
-				{
-					cad.Append(ib.ToString());
-					if (i < this.Count - 1)
-					{
-						cad.Append(",");
-					}
-					i++;
-				}
+				cad.Append("]");
 			}
-			cad.Append("]");
+			else {
+				cad.Append("null");
+			}
 			return cad.ToString();
 		}
 

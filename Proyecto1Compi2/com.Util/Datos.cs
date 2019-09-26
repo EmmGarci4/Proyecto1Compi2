@@ -193,49 +193,31 @@ namespace Proyecto1Compi2.com.Util
 					break;
 				case TipoDatoDB.SET_OBJETO:
 				case TipoDatoDB.SET_PRIMITIVO:
-					if (v.GetType() == typeof(CollectionListCql) && !((CollectionListCql)v).IsLista)
+					if (v.GetType() == typeof(CollectionListCql))
 					{
-						if (tipoDato.Equals(((CollectionListCql)v).TipoDato) && !((CollectionListCql)v).IsLista)
-						{
-							return true;
-						}
-						else if (tipoDato.Nombre.Equals("null") && !((CollectionListCql)v).IsLista)
+						CollectionListCql cl = (CollectionListCql)v;
+						if (!cl.IsLista)
 						{
 							return true;
 						}
 					}
-					else if ((v.GetType() == typeof(string) && v.ToString().Equals("null")) && !((CollectionListCql)v).IsLista)
+					else if (v.Equals("null"))
 					{
 						return true;
 					}
-					else if (tipoDato.Nombre.Equals("null") && !((CollectionListCql)v).IsLista)
-					{
-						if (v.GetType() == typeof(List<Expresion>) && !((CollectionListCql)v).IsLista)
-						{
-							return true;
-						}
-					}
-					return false;
+					break;
 				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.LISTA_PRIMITIVO:
-					if (v.GetType() == typeof(CollectionListCql)&& ((CollectionListCql)v).IsLista)
+					if (v.GetType() == typeof(CollectionListCql))
 					{
-						if (tipoDato.Equals(((CollectionListCql)v).TipoDato)&& ((CollectionListCql)v).IsLista) {
-							return true;
-						} else if (tipoDato.Nombre.Equals("null") && ((CollectionListCql)v).IsLista) {
+						CollectionListCql cl = (CollectionListCql)v;
+						if (cl.IsLista) {
 							return true;
 						}
 					}
-					else if ((v.GetType() == typeof(string) && v.ToString().Equals("null")) && ((CollectionListCql)v).IsLista)
+					else if (v.Equals("null"))
 					{
 						return true;
-					}
-					else if (tipoDato.Nombre.Equals("null") && ((CollectionListCql)v).IsLista)
-					{
-						if (v.GetType() == typeof(List<Expresion>) && ((CollectionListCql)v).IsLista)
-						{
-							return true;
-						}
 					}
 					break;
 				case TipoDatoDB.MAP_PRIMITIVO:
@@ -244,11 +226,18 @@ namespace Proyecto1Compi2.com.Util
 					{
 						return true;
 					}
+					else if (v.Equals("null"))
+					{
+						return true;
+					}
 					break;
 				case TipoDatoDB.OBJETO:
 					if (v.GetType() == typeof(Objeto))
 					{
 						return ((Objeto)v).IsObjetoTipo(tipoDato.Nombre);
+					}else if (v.Equals("null"))
+					{
+						return true;
 					}
 					return false;
 				case TipoDatoDB.CURSOR:
@@ -554,6 +543,15 @@ namespace Proyecto1Compi2.com.Util
 					return TipoOperacion.Time;
 				case TipoDatoDB.NULO:
 					return TipoOperacion.Nulo;
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+					return TipoOperacion.Map;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+					return TipoOperacion.List;
+				case TipoDatoDB.SET_OBJETO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					return TipoOperacion.Set;
 				default:
 					return TipoOperacion.Objeto;
 			}
@@ -627,38 +625,25 @@ namespace Proyecto1Compi2.com.Util
 						return "$%_null_%$";
 					}
 					break;
-				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+					if (res.Equals("null"))
 					{
-						//if (res.GetType() == typeof(List<Expresion>)) {
-						//	CollectionListCql colection = new CollectionListCql(tipo, true);
-						//	List<Expresion> valores = (List<Expresion>)res;
-						//	TipoObjetoDB tipoPrimero = null;
-						//	if (valores.Count > 0) {
-						//		object posible = Datos.GetTipoObjetoDB(valores.ElementAt(0).GetValor(ts, sesion));
-						//		if (posible != null)
-						//		{
-						//			if (posible.GetType() == typeof(ThrowError))
-						//			{
-						//				return posible;
-						//			}
-						//			tipoPrimero = (TipoObjetoDB)posible;
-
-						//		foreach (Expresion ex in valores) {
-						//				object respuesta = ex.GetValor(ts, sesion);
-						//				if (res != null) {
-						//					if (res.GetType() == typeof(ThrowError)) {
-						//						return res;
-						//					}
-						//					posible = colection.AddItem(respuesta, linea, columna);
-						//					if (posible != null) {
-						//						if (posible.GetType() == typeof(ThrowError)) {
-						//							return posible;
-						//						}
-						//					}
-						//				}
-						//			} return colection;
-						//		}
-						//	}
+						return new CollectionMapCql();
+					}
+					break;
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.LISTA_OBJETO:
+					if (res.Equals("null"))
+					{
+						return new CollectionListCql(true);
+					}
+					break;
+				case TipoDatoDB.SET_PRIMITIVO:
+				case TipoDatoDB.SET_OBJETO:
+					if (res.Equals("null"))
+					{
+						return new CollectionListCql(false);
 					}
 					break;
 			}

@@ -126,6 +126,7 @@ namespace Proyecto1Compi2.com.AST
 							if (Datos.IsTipoCompatibleParaAsignar(objeto.Plantilla.Atributos[ant.Nombre], nuevoValor))
 							{
 								object nuevoDato = Datos.CasteoImplicito(s.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
+
 								if (nuevoDato != null)
 								{
 									if (nuevoDato.GetType() == typeof(ThrowError))
