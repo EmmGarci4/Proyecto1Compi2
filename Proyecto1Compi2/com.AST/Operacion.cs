@@ -696,7 +696,7 @@ namespace Proyecto1Compi2.com.AST
 						{
 							if (tipoInstancia.Tipo == TipoDatoDB.OBJETO)
 							{
-								object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion);
+								object instanciaObjeto = GetInstanciaObjeto(tipoInstancia, sesion,Linea,Columna);
 								if (instanciaObjeto != null)
 								{
 									return instanciaObjeto;
@@ -942,7 +942,7 @@ namespace Proyecto1Compi2.com.AST
 								   Linea, Columna);
 		}
 
-		private object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion)
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, Sesion sesion,int Linea,int Columna)
 		{
 			//VALIDANDO BASEDATOS
 			if (sesion.DBActual != null)

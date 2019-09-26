@@ -646,6 +646,22 @@ namespace Proyecto1Compi2.com.Util
 						return new CollectionListCql(false);
 					}
 					break;
+				case TipoDatoDB.OBJETO:
+					if (res.Equals("null"))
+					{
+						object obj = Operacion.GetInstanciaObjeto(tipo,sesion,linea,columna);
+						if (obj!=null) {
+							if (obj.GetType() == typeof(ThrowError))
+							{
+								return obj;
+							}
+							if (obj.GetType()==typeof(Objeto)) {
+								((Objeto)obj).IsNull = true;
+								return obj;
+							}
+						}
+					}
+					break;
 			}
 
 			return res;
