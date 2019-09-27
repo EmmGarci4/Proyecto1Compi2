@@ -61,8 +61,10 @@ namespace Proyecto1Compi2.com.Analisis
 
 			LISTA_ATRIBUTOS.Rule =MakeStarRule(LISTA_ATRIBUTOS,coma,ATRIBUTO);
 
-			ATRIBUTO.Rule = cadena + igual +VALOR
-				|SyntaxError;
+			ATRIBUTO.Rule = cadena + igual + VALOR;
+
+			ATRIBUTO.ErrorRule=SyntaxError+mayor
+				|SyntaxError+coma;
 
 			VALOR.Rule =cadena
 				|numero
@@ -77,8 +79,10 @@ namespace Proyecto1Compi2.com.Analisis
 				|cor1+ LISTA+cor2
 				|OBJETO
 				|MAP
-				|SyntaxError
 				;
+
+			VALOR.ErrorRule = SyntaxError + mayor
+				| SyntaxError + coma;
 
 			LISTA.Rule = MakeStarRule(LISTA,coma,VALOR);
 
@@ -86,8 +90,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 			LISTAMAP.Rule = MakeStarRule(LISTAMAP, coma, DATOMAP);
 
-			DATOMAP.Rule = VALORP + igual + VALOR
-				| SyntaxError;
+			DATOMAP.Rule = VALORP + igual + VALOR;
 
 			VALORP.Rule=cadena
 				|numero

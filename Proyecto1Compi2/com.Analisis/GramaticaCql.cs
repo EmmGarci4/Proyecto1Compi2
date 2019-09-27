@@ -267,7 +267,7 @@ namespace com.Analisis
 
 			SENTENCIAS.Rule = MakeStarRule(SENTENCIAS, SENTENCIA);
 
-			SENTENCIA.Rule = SENTENCIADDL 
+			SENTENCIA.Rule = SENTENCIADDL
 				| SENTENCIATCL //commit y rollback
 				| SENTENCIADCL //usuarios y permisos
 				| SENTENCIADML //base de datos
@@ -275,10 +275,11 @@ namespace com.Analisis
 				| CREAR_FUNCION
 				| CREAR_PROC
 				| CREAR_USERTYPE
-				| FUNCIONAGREGACION+puntoycoma
-				| SENTENCIAFCL
-				| SyntaxError+llave2
-				;
+				| FUNCIONAGREGACION + puntoycoma
+				| SENTENCIAFCL;
+
+			SENTENCIA.ErrorRule = SyntaxError + llave2
+				| SyntaxError + puntoycoma;
 
 			#region expresion
 
@@ -388,17 +389,20 @@ namespace com.Analisis
 				| CREAR_TABLA
 				| ALTERAR_TABLA
 				| ELIMINAR_TABLA
-				| TRUNCAR_TABLA
-				| SyntaxError+puntoycoma;
+				| TRUNCAR_TABLA;
 
-			SENTENCIATCL.Rule =BACKUP
-				| RESTAURAR
-				|SyntaxError+puntoycoma;
+		 SENTENCIADDL.ErrorRule=SyntaxError +puntoycoma;
 
-			SENTENCIADCL.Rule =CREAR_USUARIO
-				|OTORGAR
-				|DENEGAR
-				|SyntaxError+puntoycoma;
+			SENTENCIATCL.Rule = BACKUP
+				| RESTAURAR;
+
+		SENTENCIATCL.ErrorRule=SyntaxError+puntoycoma;
+
+			SENTENCIADCL.Rule = CREAR_USUARIO
+				| OTORGAR
+				| DENEGAR;
+
+			SENTENCIADCL.ErrorRule=SyntaxError +puntoycoma;
 
 			USAR_DB.Rule = pr_usar + nombre + puntoycoma;
 
@@ -456,11 +460,12 @@ namespace com.Analisis
 
 			SENTENCIASDML.Rule = MakePlusRule(SENTENCIASDML, SENTENCIADML);
 
-			SENTENCIADML.Rule =INSERTAR
-				|ACTUALIZAR
-				|BORRAR
-				|SELECCIONAR+puntoycoma
-				|SyntaxError+puntoycoma;
+			SENTENCIADML.Rule = INSERTAR
+				| ACTUALIZAR
+				| BORRAR
+				| SELECCIONAR + puntoycoma;
+
+			SENTENCIADML.ErrorRule=SyntaxError +puntoycoma;
 
 			//cambiar si se puede insertar valores en objeto desde aca
 
@@ -547,8 +552,9 @@ namespace com.Analisis
 				| TRYCATCH
 				| OPERACIONASIGNACION
 				| ASIGNACIONCALL
-				| ACCESOFUNCION
-				| SyntaxError + puntoycoma
+				| ACCESOFUNCION;
+
+			SENTENCIAFCL.ErrorRule = SyntaxError + puntoycoma
 				| SyntaxError + llave2
 				;
 

@@ -58,6 +58,8 @@ namespace Proyecto1Compi2.com.Analisis
 				|CONSULTA
 				|STRUCT;
 
+			PAQUETE.ErrorRule = SyntaxError + cerrar;
+
 			STRUCT.Rule = abrir1 + pr_struct + cerrar+USUARIO + abrir2 + pr_struct + cerrar;
 
 			CONSULTA.Rule = abrir1 + pr_query + cerrar+USUARIO+DATA+abrir2 + pr_query + cerrar;
