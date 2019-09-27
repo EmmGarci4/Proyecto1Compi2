@@ -129,9 +129,18 @@ namespace Proyecto1Compi2.com.AST
 										}
 										else
 										{
-											return new ThrowError(TipoThrow.ValuesException,
+											if (respuesta.Equals("null")) {
+												valoresAInsertar.Enqueue("null");
+												indiceDatos++;
+											}
+											else
+											{
+												return new ThrowError(TipoThrow.ValuesException,
 											"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
 											Linea, Columna);
+
+											}
+											
 										}
 									}
 									else
@@ -269,9 +278,17 @@ namespace Proyecto1Compi2.com.AST
 											}
 											else
 											{
-												return new ThrowError(TipoThrow.ValuesException,
+												if (respuesta.Equals("null"))
+												{
+													valoresAInsertar.Enqueue("null");
+													indiceDatos++;
+												}
+												else
+												{
+													return new ThrowError(TipoThrow.ValuesException,
 												"El valor No." + (indiceDatos + 1) + "(" + Datos.GetTipoObjetoDB(respuesta).ToString() + ")" + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
 												Linea, Columna);
+												}
 											}
 										}
 										else
