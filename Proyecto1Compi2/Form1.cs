@@ -68,7 +68,7 @@ namespace Proyecto1Compi2
 			else if (n == 0)
 			{
 				int nn = Ackermann(m - 1, 1);
-				Console.WriteLine("nn "+nn);
+				Console.WriteLine("nn " + nn);
 				return nn;
 			}
 			else
@@ -86,50 +86,42 @@ namespace Proyecto1Compi2
 		{
 			texto = this.richTextBox1.Text;
 			richTextBox2.Clear();
-			richTextBox2.Text="Ejecutando...";
+			//richTextBox2.Text="Ejecutando...";
 			//ThreadStart delegado = new ThreadStart(ejecutar);
 			//Thread hilo = new Thread(delegado, 80000000);
 			//hilo.Start();
-			
+
 			ejecutar();
 		}
 
-		public void ejecutar() {
-
+		public void ejecutar()
+		{
 			//acciones de analisis y ejecucion
 			Sesion sesion = new Sesion("admin", null);
-			try
+			Analizador.AnalizarCql(texto, sesion);
+			Analizador.LiberarDB(sesion);
+			//MethodInvoker action = delegate
+			//	{
+			//acciones que interactuan con la interface
+			//paquete de resultados
+			foreach (string resultado in Analizador.ResultadosConsultas)
 			{
-				Analizador.AnalizarCql(texto, sesion);
-				Analizador.LiberarDB(sesion);
+				richTextBox2.AppendText(resultado);
 			}
-			catch (StackOverflowException ex)
+			//mensajes
+			foreach (String mensaje in sesion.Mensajes)
 			{
-				Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia, 
-					"Se ha producido un desbordamiento de pila", 0, 0));
+				richTextBox2.AppendText(mensaje);
+				richTextBox2.AppendText("\n\r");
 			}
-			MethodInvoker action = delegate
+			//errores lup
+			foreach (Error error in Analizador.ErroresCQL)
 			{
-					//acciones que interactuan con la interface
-					//paquete de resultados
-					foreach (string resultado in Analizador.ResultadosConsultas)
-				{
-					richTextBox2.AppendText(resultado);
-				}
-				//mensajes
-				foreach (String mensaje in sesion.Mensajes)
-				{
-					richTextBox2.AppendText(mensaje);
-					richTextBox2.AppendText("\n\r");
-				}
-				//errores lup
-				foreach (Error error in Analizador.ErroresCQL)
-				{
-					richTextBox2.AppendText(error.ToString());
-				}
-			};
+				richTextBox2.AppendText(error.ToString());
+			}
+			//	};
 
-			BeginInvoke(action);
+			//	BeginInvoke(action);
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)
@@ -173,7 +165,7 @@ namespace Proyecto1Compi2
 		private void toolStripButton2_Click(object sender, EventArgs e)
 		{
 			//Console.WriteLine("Ackerman con 3,6: " + Ackermann(3, 6));
-			Console.WriteLine(modulo(1,1));
+			Console.WriteLine(modulo(1, 1));
 		}
 
 		double modulo(double n, double p)
@@ -186,16 +178,16 @@ namespace Proyecto1Compi2
 		{
 			Analizador.ClearToRollback();
 
-				if (GeneradorDB.AnalizarChison(this.richTextBox1.Text))
-				{
-					Console.WriteLine("ARCHIVO CARGADO CON EXITO");
-				}
-				else
-				{
-					Console.WriteLine("ARCHIVO CARGADO CON ERRORES");
-					Analizador.Errors.MostrarCabecera();
-					Analizador.Errors.MostrarDatos();
-				}
+			if (GeneradorDB.AnalizarChison(this.richTextBox1.Text))
+			{
+				Console.WriteLine("ARCHIVO CARGADO CON EXITO");
+			}
+			else
+			{
+				Console.WriteLine("ARCHIVO CARGADO CON ERRORES");
+				Analizador.Errors.MostrarCabecera();
+				Analizador.Errors.MostrarDatos();
+			}
 		}
 	}
 }

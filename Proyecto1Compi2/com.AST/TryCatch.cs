@@ -41,6 +41,7 @@ namespace Proyecto1Compi2.com.AST
 						if (tr.Tipo != TipoThrow.Exception)
 						{
 							ERROR = tr;
+							break;
 						}
 						else {
 							Analizador.ErroresCQL.Add(new Error(tr));
@@ -74,7 +75,7 @@ namespace Proyecto1Compi2.com.AST
 			if (ERROR!=null) {
 				TablaSimbolos local = new TablaSimbolos(ts);
 				//AGREGANDO VARIABLE DE EXCEPCION
-				if (!local.ExisteSimbolo(nombreVariable))
+				 if (!local.ExisteSimbolo(nombreVariable))
 				{
 					Objeto error = new Objeto(Analizador.ErrorCatch);
 					error.Atributos.Add("message",ERROR.Tipo.ToString()+":"+ERROR.Mensaje+" en línea "+ERROR.Linea);
