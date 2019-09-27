@@ -143,13 +143,13 @@ namespace Proyecto1Compi2.com.db
 			foreach (Columna cl in columnas)
 			{
 				object valor = valores.Dequeue();
-				if (valor.Equals("$%_null_%$"))
-				{
-					cl.Datos.Add("null");
-				}
-				else {
+				//if (valor.Equals("$%_null_%$"))
+				//{
+				//	cl.Datos.Add("null");
+				//}
+				//else {
 					cl.Datos.Add(valor);
-				}
+				//}
 				
 			}
 			contadorFilas++;
@@ -233,9 +233,15 @@ namespace Proyecto1Compi2.com.db
 				{
 					if (cl.Tipo.Tipo.Equals(TipoDatoDB.STRING))
 					{
-						cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
+						if (cl.Datos.ElementAt(indice).Equals("$%_null_%$")) {
+							cadena.Append("\"" + cl.Nombre + "\"=null");
+						}
+						else {
+							cadena.Append("\"" + cl.Nombre + "\"=\"" + cl.Datos.ElementAt(indice) + "\"");
+						}
 					} else if (cl.Tipo.Tipo.Equals(TipoDatoDB.DATE)||cl.Tipo.Tipo.Equals(TipoDatoDB.TIME)) {
-						if (cl.Datos.ElementAt(indice).Equals("null")) {
+						MyDateTime dt = (MyDateTime)cl.Datos.ElementAt(indice);
+						if (dt.IsNull) {
 							cadena.Append("\"" + cl.Nombre + "\"=" + cl.Datos.ElementAt(indice));
 						}
 						else {
@@ -252,7 +258,7 @@ namespace Proyecto1Compi2.com.db
 						cadena.Append(",\n");
 					}
 					cont++;
-				}
+				 }
 				cadena.Append("\n>");
 				if (indice < ContadorFilas - 1)
 				{

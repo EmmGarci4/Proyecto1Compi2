@@ -45,7 +45,6 @@ namespace Proyecto1Compi2.com.Analisis
 					Datos.GetDate(),
 					Datos.GetTime()
 					));
-				//Console.WriteLine("ERROR "+mensaje.Message+" En línea: "+mensaje.Location.Line," y Columna:"+mensaje.Location.Column);
 			}
 			LlenarTablaErrors();
 			//Console.WriteLine(errors.ToString());
@@ -455,6 +454,8 @@ namespace Proyecto1Compi2.com.Analisis
 			string t = null;
 			List<object> filas = null;
 			List<Columna> columnas = null;
+			List<FilaDatos> datos = null;
+			int linea=0, columna = 0;
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
 				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
@@ -585,11 +586,9 @@ namespace Proyecto1Compi2.com.Analisis
 							if (filas == null)
 							{
 								//recuperar e insertar
-								List<FilaDatos> datos = GetDatosTabla(nodo.ChildNodes.ElementAt(1), db);
-								foreach (FilaDatos fila in datos)
-								{
-									InsertarEnTabla(tabla, fila.Datos, nodo.Span.Location.Line, nodo.Span.Location.Column);
-								}
+								datos = GetDatosTabla(nodo.ChildNodes.ElementAt(1), db);
+								linea = nodo.Span.Location.Line;
+								columna=nodo.Span.Location.Column;
 							}
 							else
 							{
@@ -620,6 +619,13 @@ namespace Proyecto1Compi2.com.Analisis
 						break;
 				}
 
+			}
+
+			if (datos!=null) {
+				foreach (FilaDatos fila in datos)
+				{
+					InsertarEnTabla(tabla, fila.Datos, linea,columna);
+				}
 			}
 			if (tabla.Nombre != null && t != null) return tabla;
 			erroresChison.Add(new Error(TipoError.Advertencia,

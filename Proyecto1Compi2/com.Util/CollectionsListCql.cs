@@ -241,7 +241,7 @@ namespace Proyecto1Compi2.com.Util
 				int i = 0;
 				foreach (object ib in this)
 				{
-					if (this.tipoDato.Tipo.Equals(TipoDatoDB.STRING))
+					if (this.tipoDato.Nombre.Equals("string"))
 					{
 						cad.Append("\"" + ib.ToString() + "\"");
 					}
@@ -304,6 +304,15 @@ namespace Proyecto1Compi2.com.Util
 					else if (ib.GetType() == typeof(Objeto))
 					{
 						cad.Append(((Objeto)ib).GetLinealizado());
+						if (i < this.Count - 1)
+						{
+							cad.Append(",");
+						}
+						i++;
+					}
+					if (this.tipoDato.Nombre.Equals("string"))
+					{
+						cad.Append("\"" + ib.ToString() + "\"");
 						if (i < this.Count - 1)
 						{
 							cad.Append(",");
