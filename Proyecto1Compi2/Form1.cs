@@ -86,11 +86,11 @@ namespace Proyecto1Compi2
 		{
 			texto = this.richTextBox1.Text;
 			richTextBox2.Clear();
-
-			/*ThreadStart delegado = new ThreadStart(ejecutar);
-			Thread hilo = new Thread(delegado, 80000000);
-			hilo.Start();
-			*/
+			richTextBox2.Text="Ejecutando...";
+			//ThreadStart delegado = new ThreadStart(ejecutar);
+			//Thread hilo = new Thread(delegado, 80000000);
+			//hilo.Start();
+			
 			ejecutar();
 		}
 
@@ -108,11 +108,11 @@ namespace Proyecto1Compi2
 				Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia, 
 					"Se ha producido un desbordamiento de pila", 0, 0));
 			}
-			//	MethodInvoker action = delegate
-			//	{
-			//acciones que interactuan con la interface
-			//paquete de resultados
-			foreach (string resultado in Analizador.ResultadosConsultas)
+			MethodInvoker action = delegate
+			{
+					//acciones que interactuan con la interface
+					//paquete de resultados
+					foreach (string resultado in Analizador.ResultadosConsultas)
 				{
 					richTextBox2.AppendText(resultado);
 				}
@@ -127,9 +127,9 @@ namespace Proyecto1Compi2
 				{
 					richTextBox2.AppendText(error.ToString());
 				}
-		//	};
+			};
 
-		//	BeginInvoke(action);
+			BeginInvoke(action);
 		}
 
 		private void Btn_LimpiarDB_Click(object sender, EventArgs e)

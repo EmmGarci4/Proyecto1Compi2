@@ -13,6 +13,8 @@ namespace com.Analisis
 			#region ER
 			StringLiteral cadena = new StringLiteral("cadena", "\"", StringOptions.IsTemplate);
 			NumberLiteral numero = new NumberLiteral("numero",NumberOptions.AllowSign);
+			numero.DefaultIntTypes = new TypeCode[] { TypeCode.Int32, TypeCode.Int64 };
+
 			RegexBasedTerminal id = new RegexBasedTerminal("id", "@[a-zA-ZñÑ]([a-zA-ZñÑ0-9_])*");
 			RegexBasedTerminal date = new RegexBasedTerminal("date", "'[0-9]{4}-[0-9]{2}-[0-9]{2}'");
 			RegexBasedTerminal time = new RegexBasedTerminal("time", "'[0-9]{2}:[0-9]{2}:[0-9]{2}'");

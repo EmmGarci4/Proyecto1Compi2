@@ -1319,29 +1319,51 @@ namespace Proyecto1Compi2.com.Analisis
 								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
 								{
 									di= new MyDateTime(TipoDatoDB.DATE, dt);
-								}
-								else
+								return new Operacion(di, TipoOperacion.Date, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							}
+							else
 								{
-								di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
-								Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
+								try
+								{
+									di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
+									Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
 											"La fecha es incorrecta, el formato debe ser AAAA-MM-DD",
 										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+									return new Operacion(di, TipoOperacion.Date, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+								}
+								catch (Exception) {
+									Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
+											"La fecha está fuera de rango",
+										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+
+								}
 							}
-							return new Operacion(di, TipoOperacion.Date, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							break;
 						case "time":
 							if (DateTime.TryParse(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt1)&&
 								Regex.IsMatch(raiz.ChildNodes.ElementAt(0).Token.ValueString.ToLower().ToString(),"'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 							{
 								di = new MyDateTime(TipoDatoDB.TIME, dt1);
+								return new Operacion(di, TipoOperacion.Time, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
 							}
 							else
 							{
-								di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
-								Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
-											"La Time es incorrecta, el formato debe ser HH:MM:SS",
-										   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+								try {
+									di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
+									Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
+												"La hora es incorrecta, el formato debe ser HH:MM:SS",
+											   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+									return new Operacion(di, TipoOperacion.Time, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+
+								}
+								catch (Exception) {
+									Analizador.ErroresCQL.Add(new Error(TipoError.Advertencia,
+												"La hora está fuera de rango",
+											   raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column));
+
+								}
 							}
-							return new Operacion(di, TipoOperacion.Time, raiz.ChildNodes.ElementAt(0).Token.Location.Line, raiz.ChildNodes.ElementAt(0).Token.Location.Column);
+							break;
 						case "EXPRESION":
 							return GetExpresion(raiz.ChildNodes.ElementAt(0));
 						case "ACCESO":

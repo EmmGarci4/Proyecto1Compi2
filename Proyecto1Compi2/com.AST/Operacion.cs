@@ -209,9 +209,9 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) + double.Parse(der.ToString());
-							if (valor < -214748364) {
+							if (valor < -9223372036854775800 || valor> 9223372036854775800) {
 								return new ThrowError(TipoThrow.ArithmeticException,
-									"El número es muy pequeño",
+									"El número está fuera de rango",
 									Linea, Columna);
 							}
 							return valor;
@@ -443,6 +443,12 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) - double.Parse(der.ToString());
+							if (valor < -9223372036854775800 || valor > 9223372036854775800)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									Linea, Columna);
+							}
 							return valor;
 						}//LISTA-LISTA == SET-SET
 						if (izq.GetType() == typeof(CollectionListCql) && der.GetType() == typeof(CollectionListCql))
@@ -557,6 +563,12 @@ namespace Proyecto1Compi2.com.AST
 							if (double.Parse(der.ToString()) != 0)
 							{
 								double valor = double.Parse(izq.ToString()) / double.Parse(der.ToString());
+								if (valor < -9223372036854775800 || valor > 9223372036854775800)
+								{
+									return new ThrowError(TipoThrow.ArithmeticException,
+										"El número está fuera de rango",
+										Linea, Columna);
+								}
 								return valor;
 							}
 							else
@@ -578,6 +590,12 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = double.Parse(izq.ToString()) * double.Parse(der.ToString());
+							if (valor < -9223372036854775800 || valor > 9223372036854775800)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									Linea, Columna);
+							}
 							return valor;
 						}
 						else
@@ -591,6 +609,12 @@ namespace Proyecto1Compi2.com.AST
 						if (Izquierda.GetTipo(ts, sesion).Equals(TipoOperacion.Numero) && Derecha.GetTipo(ts, sesion).Equals(TipoOperacion.Numero))
 						{
 							double valor = Math.Pow(double.Parse(izq.ToString()), double.Parse(der.ToString()));
+							if (valor < -9223372036854775800 || valor > 9223372036854775800)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									Linea, Columna);
+							}
 							return valor;
 						}
 						else
@@ -606,6 +630,12 @@ namespace Proyecto1Compi2.com.AST
 							if (double.Parse(der.ToString()) != 0)
 							{
 								double valor = double.Parse(izq.ToString()) % double.Parse(der.ToString());
+								if (valor < -9223372036854775800 || valor > 9223372036854775800)
+								{
+									return new ThrowError(TipoThrow.ArithmeticException,
+										"El número está fuera de rango",
+										Linea, Columna);
+								}
 								return valor;
 							}
 							else
@@ -632,6 +662,12 @@ namespace Proyecto1Compi2.com.AST
 					if (izquierda.GetTipo(ts, sesion) == TipoOperacion.Numero)
 					{
 						double valor = double.Parse(izq.ToString()) * -1;
+						if (valor < -9223372036854775800 || valor > 9223372036854775800)
+						{
+							return new ThrowError(TipoThrow.ArithmeticException,
+								"El número está fuera de rango",
+								Linea, Columna);
+						}
 						return valor;
 					}
 					else

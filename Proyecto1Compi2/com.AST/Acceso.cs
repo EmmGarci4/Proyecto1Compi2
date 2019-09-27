@@ -643,32 +643,39 @@ namespace Proyecto1Compi2.com.AST
 										if (llamada.Parametros.Count == 1)
 										{
 											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
-											if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+											if (nuevo != null)
 											{
-												object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo, ts, sesion, Linea, Columna);
-												if (nuevoDato != null)
+												if (nuevo.GetType() == typeof(ThrowError))
 												{
-													if (nuevoDato.GetType() == typeof(ThrowError))
+													return nuevo;
+												}
+												TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
+												if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+												{
+													object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo, ts, sesion, Linea, Columna);
+													if (nuevoDato != null)
 													{
-														return nuevoDato;
-													}
-
-													object posibleError = collection.AddItem(nuevoDato, Linea, Columna);
-													if (posibleError != null)
-													{
-														if (posibleError.GetType() == typeof(ThrowError))
+														if (nuevoDato.GetType() == typeof(ThrowError))
 														{
-															return posibleError;
+															return nuevoDato;
+														}
+
+														object posibleError = collection.AddItem(nuevoDato, Linea, Columna);
+														if (posibleError != null)
+														{
+															if (posibleError.GetType() == typeof(ThrowError))
+															{
+																return posibleError;
+															}
 														}
 													}
 												}
-											}
-											else
-											{
-												return new ThrowError(Util.TipoThrow.Exception,
-													"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
-													Linea, Columna);
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
+														Linea, Columna);
+												}
 											}
 										}
 										else
@@ -747,32 +754,39 @@ namespace Proyecto1Compi2.com.AST
 													{
 														//SEGUNDO PARAMETRO= VALOR
 														object nuevoValor = llamada.Parametros.ElementAt(1).GetValor(ts, sesion);
-														TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
-
-														if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor))
+														if (nuevoValor != null)
 														{
-															object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
-															if (nuevoDato != null)
+															if (nuevoValor.GetType() == typeof(ThrowError))
 															{
-																if (nuevoDato.GetType() == typeof(ThrowError))
+																return nuevoValor;
+															}
+															TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
+
+															if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor))
+															{
+																object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
+																if (nuevoDato != null)
 																{
-																	return nuevoDato;
-																}
-																object posibleError = collection.SetItem(posicion, nuevoDato, Linea, Columna);
-																if (posibleError != null)
-																{
-																	if (posibleError.GetType() == typeof(ThrowError))
+																	if (nuevoDato.GetType() == typeof(ThrowError))
 																	{
-																		return posibleError;
+																		return nuevoDato;
+																	}
+																	object posibleError = collection.SetItem(posicion, nuevoDato, Linea, Columna);
+																	if (posibleError != null)
+																	{
+																		if (posibleError.GetType() == typeof(ThrowError))
+																		{
+																			return posibleError;
+																		}
 																	}
 																}
 															}
-														}
-														else
-														{
-															return new ThrowError(Util.TipoThrow.Exception,
-																"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevoValor) + " en un Collection tipo " + collection.TipoDato.ToString(),
-																Linea, Columna);
+															else
+															{
+																return new ThrowError(Util.TipoThrow.Exception,
+																	"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevoValor) + " en un Collection tipo " + collection.TipoDato.ToString(),
+																	Linea, Columna);
+															}
 														}
 													}
 													else
@@ -877,28 +891,35 @@ namespace Proyecto1Compi2.com.AST
 										if (llamada.Parametros.Count == 1)
 										{
 											object nuevo = llamada.Parametros.ElementAt(0).GetValor(ts, sesion);
-											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
-											if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+											if (nuevo != null)
 											{
-												object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo, ts, sesion, Linea, Columna);
-												if (nuevoDato != null)
+												if (nuevo.GetType() == typeof(ThrowError))
 												{
-													if (nuevoDato.GetType() == typeof(ThrowError))
-													{
-														return nuevoDato;
-													}
-													object val = collection.Contains(nuevoDato);
-													Simbolo s = new Simbolo(llaveFuncion, val,
-															Datos.GetTipoObjetoDB(val), 0, 0);
-													simbolosApilados.Push(s);
-													return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
+													return nuevo;
 												}
-											}
-											else
-											{
-												return new ThrowError(Util.TipoThrow.Exception,
-													"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
-													Linea, Columna);
+												TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
+												if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevo))
+												{
+													object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevo, ts, sesion, Linea, Columna);
+													if (nuevoDato != null)
+													{
+														if (nuevoDato.GetType() == typeof(ThrowError))
+														{
+															return nuevoDato;
+														}
+														object val = collection.Contains(nuevoDato);
+														Simbolo s = new Simbolo(llaveFuncion, val,
+																Datos.GetTipoObjetoDB(val), 0, 0);
+														simbolosApilados.Push(s);
+														return GetSimbolosApilados(simbolosApilados, s, ts, sesion);
+													}
+												}
+												else
+												{
+													return new ThrowError(Util.TipoThrow.Exception,
+														"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un Collection tipo " + collection.TipoDato.ToString(),
+														Linea, Columna);
+												}
 											}
 										}
 										else
@@ -933,33 +954,40 @@ namespace Proyecto1Compi2.com.AST
 											{
 
 												object nuevo = llamada.Parametros.ElementAt(1).GetValor(ts, sesion);
-												TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
-
-												if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, nuevo))
+												if (nuevo != null)
 												{
-													object nuevoDato = Datos.CasteoImplicito(collection.TipoValor, nuevo, ts, sesion, Linea, Columna);
-													if (nuevoDato != null)
+													if (nuevo.GetType() == typeof(ThrowError))
 													{
-														if (nuevoDato.GetType() == typeof(ThrowError))
-														{
-															return nuevoDato;
-														}
+														return nuevo;
+													}
+													TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
 
-														object posibleError = collection.AddItem(clave, nuevoDato, Linea, Columna);
-														if (posibleError != null)
+													if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, nuevo))
+													{
+														object nuevoDato = Datos.CasteoImplicito(collection.TipoValor, nuevo, ts, sesion, Linea, Columna);
+														if (nuevoDato != null)
 														{
-															if (posibleError.GetType() == typeof(ThrowError))
+															if (nuevoDato.GetType() == typeof(ThrowError))
 															{
-																return posibleError;
+																return nuevoDato;
+															}
+
+															object posibleError = collection.AddItem(clave, nuevoDato, Linea, Columna);
+															if (posibleError != null)
+															{
+																if (posibleError.GetType() == typeof(ThrowError))
+																{
+																	return posibleError;
+																}
 															}
 														}
 													}
-												}
-												else
-												{
-													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un valor tipo " + collection.TipoValor.ToString(),
-														Linea, Columna);
+													else
+													{
+														return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(nuevo) + " en un valor tipo " + collection.TipoValor.ToString(),
+															Linea, Columna);
+													}
 												}
 											}
 											else
@@ -1018,32 +1046,39 @@ namespace Proyecto1Compi2.com.AST
 											{
 
 												object valorr = llamada.Parametros.ElementAt(1).GetValor(ts, sesion);
-												TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
-												if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, valorr))
+												if (valorr != null)
 												{
-													object nuevoDato = Datos.CasteoImplicito(collection.TipoValor, valorr, ts, sesion, Linea, Columna);
-													if (nuevoDato != null)
+													if (valorr.GetType() == typeof(ThrowError))
 													{
-														if (nuevoDato.GetType() == typeof(ThrowError))
+														return valorr;
+													}
+													TipoOperacion tipoValorr = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
+													if (Datos.IsTipoCompatibleParaAsignar(collection.TipoValor, valorr))
+													{
+														object nuevoDato = Datos.CasteoImplicito(collection.TipoValor, valorr, ts, sesion, Linea, Columna);
+														if (nuevoDato != null)
 														{
-															return nuevoDato;
-														}
-
-														object posibleError = collection.AddItem(clave, nuevoDato, Linea, Columna);
-														if (posibleError != null)
-														{
-															if (posibleError.GetType() == typeof(ThrowError))
+															if (nuevoDato.GetType() == typeof(ThrowError))
 															{
-																return posibleError;
+																return nuevoDato;
+															}
+
+															object posibleError = collection.AddItem(clave, nuevoDato, Linea, Columna);
+															if (posibleError != null)
+															{
+																if (posibleError.GetType() == typeof(ThrowError))
+																{
+																	return posibleError;
+																}
 															}
 														}
 													}
-												}
-												else
-												{
-													return new ThrowError(Util.TipoThrow.Exception,
-														"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(valorr) + " en un valor tipo " + collection.TipoValor.ToString(),
-														Linea, Columna);
+													else
+													{
+														return new ThrowError(Util.TipoThrow.Exception,
+															"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(valorr) + " en un valor tipo " + collection.TipoValor.ToString(),
+															Linea, Columna);
+													}
 												}
 											}
 											else

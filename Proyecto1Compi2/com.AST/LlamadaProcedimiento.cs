@@ -42,24 +42,32 @@ namespace Proyecto1Compi2.com.AST
 						int contador = 0;
 						foreach (Parametro vals in funcion.Parametros)
 						{
-							if (Datos.IsTipoCompatibleParaAsignar(vals.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion)))
+							object posibleValor = parametros.ElementAt(contador).GetValor(ts, sesion);
+							if (posibleValor != null)
 							{
-								object nuevoDato = Datos.CasteoImplicito(vals.Tipo, parametros.ElementAt(contador).GetValor(ts,sesion),ts,sesion,Linea,Columna);
-								if (nuevoDato != null)
+								if (posibleValor.GetType() == typeof(ThrowError))
 								{
-									if (nuevoDato.GetType() == typeof(ThrowError))
-									{
-										return nuevoDato;
-									}
-									valores.Add(nuevoDato);
+									return posibleValor;
 								}
-								
-							}
-							else
-							{
-								return new ThrowError(Util.TipoThrow.Exception,
-									"No se puede asignar el valor a la variable '" + vals.Nombre + "'",
-									Linea, Columna);
+								if (Datos.IsTipoCompatibleParaAsignar(vals.Tipo, posibleValor))
+								{
+									object nuevoDato = Datos.CasteoImplicito(vals.Tipo, parametros.ElementAt(contador).GetValor(ts, sesion), ts, sesion, Linea, Columna);
+									if (nuevoDato != null)
+									{
+										if (nuevoDato.GetType() == typeof(ThrowError))
+										{
+											return nuevoDato;
+										}
+										valores.Add(nuevoDato);
+									}
+
+								}
+								else
+								{
+									return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede asignar el valor a la variable '" + vals.Nombre + "'",
+										Linea, Columna);
+								}
 							}
 							contador++;
 						}

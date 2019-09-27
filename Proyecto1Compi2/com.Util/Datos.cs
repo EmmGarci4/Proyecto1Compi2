@@ -4,6 +4,7 @@ using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -599,30 +600,63 @@ namespace Proyecto1Compi2.com.Util
 					{
 						if (double.TryParse(res.ToString(), out double d2))
 						{
-							return (int)d2;
+							int entero = (int)d2;
+							if (entero <= -2147483648 || entero >= 2147483647)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									linea, columna);
+							}
+							return entero;
 						}
-
 						break;
 					}
-
 				case TipoDatoDB.DOUBLE:
 					{
 						if (double.TryParse(res.ToString(), out double d2))
 						{
+							if (d2 <= -9223372036854775800 || d2 >= 9223372036854775800)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									linea, columna);
+							}
+
 							return d2;
 						}
 
 						break;
 					}
 				case TipoDatoDB.DATE:
+					if (res.GetType()==typeof(MyDateTime)) {
+						MyDateTime dt = (MyDateTime)res;
+						if (dt.Dato.Year > 2999)
+						{
+							return new ThrowError(TipoThrow.Exception,
+								"El año está fuera de rango",
+								linea, columna);
+						}
+					}
+					if (res.Equals("null"))
+					{
+						return new MyDateTime();
+					}
+					break;
 				case TipoDatoDB.TIME:
 					if (res.Equals("null")) {
 						return new MyDateTime();
 					}
 					break;
 				case TipoDatoDB.STRING:
-					if (res.Equals("null")) {
+					if (res.Equals("null"))
+					{
 						return "$%_null_%$";
+					}
+					else if(res.ToString().Length>=2147483647)
+					{
+						return new ThrowError(TipoThrow.Exception,
+								"La cadena está fuera de rango",
+								linea, columna);
 					}
 					break;
 				case TipoDatoDB.MAP_OBJETO:
