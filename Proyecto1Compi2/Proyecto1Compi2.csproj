@@ -162,6 +162,7 @@
     <Compile Include="com.Util\MyDateTime.cs" />
     <Compile Include="com.Util\Objeto.cs" />
     <Compile Include="com.Util\ParDatos.cs" />
+    <Compile Include="com.Util\ProcedimientoFalso.cs" />
     <Compile Include="com.Util\ResultadoConsulta.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
     <Compile Include="com.Util\TablaFalsa.cs" />

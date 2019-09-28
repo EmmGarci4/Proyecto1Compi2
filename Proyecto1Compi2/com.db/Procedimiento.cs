@@ -254,5 +254,26 @@ namespace Proyecto1Compi2.com.db
 			this.sentencias != null&&
 			this.instrucciones != null;
 		}
+
+		internal bool existeParametro(string nombre)
+		{
+			foreach (Parametro para in this.parametros) {
+				if (para.Nombre == nombre)
+					return true;
+				
+			}
+			return false;
+		}
+
+		internal bool existeRetorno(string nombre)
+		{
+			foreach (Parametro para in this.retornos)
+			{
+				if (para.Nombre == nombre)
+					return true;
+				
+			}
+			return false;
+		}
 	}
 }

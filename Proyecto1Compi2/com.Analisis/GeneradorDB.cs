@@ -282,6 +282,8 @@ namespace Proyecto1Compi2.com.Analisis
 			BaseDatos based = new BaseDatos();
 			List<object> objetos = null;
 			List<TablaFalsa> tablas = new List<TablaFalsa>();
+			List<ProcedimientoFalso> procedimientos = new List<ProcedimientoFalso>();
+			List<UserType> usert = new List<UserType>();
 
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
@@ -324,50 +326,17 @@ namespace Proyecto1Compi2.com.Analisis
 									if (objetodb.GetType() == typeof(UserType))
 									{
 										UserType ut = (UserType)objetodb;
-										if (!based.ExisteUserType(ut.Nombre))
-										{
-											based.AgregarUserType(ut);
-										}
-										else
-										{
-											erroresChison.Add(new Error(TipoError.Semantico,
-												"El user Type '" + ut.Nombre + "' ya existe",
-												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
-												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
-												Datos.GetDate(), Datos.GetTime()));
-										}
+										usert.Add(ut);
 									}
-									else if (objetodb.GetType() == typeof(Procedimiento))
+									else if (objetodb.GetType() == typeof(ProcedimientoFalso))
 									{
-										Procedimiento ut = (Procedimiento)objetodb;
-										if (!based.ExisteProcedimiento(ut.Nombre))
-										{
-											based.AgregarProcedimiento(ut);
-										}
-										else
-										{
-											erroresChison.Add(new Error(TipoError.Semantico,
-												"El procedimiento '" + ut.Nombre + "' ya existe",
-												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
-												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
-												Datos.GetDate(), Datos.GetTime()));
-										}
+										ProcedimientoFalso ut = (ProcedimientoFalso)objetodb;
+										procedimientos.Add(ut);
 									}
 									else if (objetodb.GetType() == typeof(TablaFalsa))
 									{
 										TablaFalsa ut = (TablaFalsa)objetodb;
-										if (!based.ExisteTabla(ut.Nombre))
-										{
-											tablas.Add(ut);
-										}
-										else
-										{
-											erroresChison.Add(new Error(TipoError.Semantico,
-												"La tabla '" + ut.Nombre + "' ya existe",
-												nodo.ChildNodes.ElementAt(1).Span.Location.Line,
-												nodo.ChildNodes.ElementAt(1).Span.Location.Column,
-												Datos.GetDate(), Datos.GetTime()));
-										}
+										tablas.Add(ut);
 									}
 								}
 							}
@@ -407,6 +376,9 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					ValidarTabla(tabla, based);
 				}
+				foreach (ProcedimientoFalso proc in procedimientos) {
+					ValidarProcedimiento(proc,based);
+				}
 				return based;
 			}
 			erroresChison.Add(new Error(TipoError.Advertencia,
@@ -416,6 +388,113 @@ namespace Proyecto1Compi2.com.Analisis
 				Datos.GetDate(),
 				Datos.GetTime()));
 			return null;
+		}
+
+		private static void ValidarProcedimiento(ProcedimientoFalso proc, BaseDatos based)
+		{
+			Procedimiento procedimiento = new Procedimiento(proc.Linea,proc.Columna);
+			Boolean valido = true;
+			int cont = 0;
+			foreach (Parametro param in proc.Parametros)
+			{
+				if (!procedimiento.existeParametro(param.Nombre))
+				{
+					if (param.Tipo.Tipo == TipoDatoDB.OBJETO) {
+
+						if (based.ExisteUserType(param.Tipo.Nombre) ){
+							procedimiento.Parametros.Add(param);
+						}
+						else
+						{
+							erroresChison.Add(new Error(TipoError.Semantico,
+								"El user Type '" + proc.Nombre + "' no existe",
+								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
+								Datos.GetDate(), Datos.GetTime()));
+							valido = false;
+						}
+
+					} else if (Datos.IsLista(param.Tipo.Tipo)) {
+						if (ValidarInstanciaLista(param.Tipo, based, proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont)))
+						{
+							procedimiento.Parametros.Add(param);
+						}
+					}
+					else {
+						procedimiento.Parametros.Add(param);
+
+					}
+				}
+				else {
+					erroresChison.Add(new Error(TipoError.Semantico,
+								"El parámetro '" + proc.Nombre + "' ya existe",
+								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
+								Datos.GetDate(), Datos.GetTime()));
+					valido = false;
+				}
+				
+				cont++;
+			}
+
+			foreach (Parametro param in proc.Retornos)
+			{
+				if (!procedimiento.existeRetorno(param.Nombre))
+				{
+					if (param.Tipo.Tipo == TipoDatoDB.OBJETO)
+					{
+
+						if (based.ExisteUserType(param.Tipo.Nombre))
+						{
+							procedimiento.Retornos.Add(param);
+						}
+						else
+						{
+							erroresChison.Add(new Error(TipoError.Semantico,
+								"El user Type '" + proc.Nombre + "' no existe",
+								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
+								Datos.GetDate(), Datos.GetTime()));
+							valido = false;
+						}
+
+					}
+					else if (Datos.IsLista(param.Tipo.Tipo))
+					{
+						if (ValidarInstanciaLista(param.Tipo, based, proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont)))
+						{
+							procedimiento.Retornos.Add(param);
+						}
+					}
+					else
+					{
+						procedimiento.Retornos.Add(param);
+
+					}
+				}
+				else
+				{
+					erroresChison.Add(new Error(TipoError.Semantico,
+								"El parámetro '" + proc.Nombre + "' ya existe",
+								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
+								Datos.GetDate(), Datos.GetTime()));
+					valido = false;
+				}
+
+				cont++;
+			}
+
+			if (valido) {
+				if (!based.ExisteProcedimiento(proc.Nombre))
+			{
+				based.AgregarProcedimiento(procedimiento);
+			}
+			else
+			{
+				erroresChison.Add(new Error(TipoError.Semantico,
+					"El procedimiento '" + proc.Nombre + "' ya existe",
+					proc.LineasNum.ElementAt(cont),
+					proc.ColumnasNum.ElementAt(cont),
+					Datos.GetDate(), Datos.GetTime()));
+			}
+			}
 		}
 
 		private static void ValidarTabla(TablaFalsa tablaFalsa, BaseDatos based)
@@ -483,10 +562,10 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 			else {
 				erroresChison.Add(new Error(TipoError.Semantico,
-												"La tabla '"+tabla.Nombre+"' ya existe",
-											tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
-												Datos.GetDate(),
-												Datos.GetTime()));
+					"La tabla '"+tabla.Nombre+"' ya existe",
+					tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
+					Datos.GetDate(),
+					Datos.GetTime()));
 			}
 		}
 
@@ -506,7 +585,7 @@ namespace Proyecto1Compi2.com.Analisis
 							if (ustype != null) lista.Add(ustype);
 							break;
 						case TipoObjeto.Procedimiento:
-							Procedimiento proc = GetProcedimiento(nodo, lista);
+							ProcedimientoFalso proc = GetProcedimiento(nodo, lista);
 							if (proc != null) lista.Add(proc);
 							break;
 						case TipoObjeto.Tabla:
@@ -1203,9 +1282,9 @@ namespace Proyecto1Compi2.com.Analisis
 			return columnas;
 		}
 
-		private static Procedimiento GetProcedimiento(ParseTreeNode raiz, List<object> db)
+		private static ProcedimientoFalso GetProcedimiento(ParseTreeNode raiz, List<object> db)
 		{
-			Procedimiento proc = new Procedimiento(raiz.Span.Location.Line, raiz.Span.Location.Column);
+			ProcedimientoFalso proc = new ProcedimientoFalso(raiz.Span.Location.Line, raiz.Span.Location.Column);
 			string t = null;
 			string bren = null;
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
@@ -1271,14 +1350,14 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								//PARAMETROS
 								bren = ":D";
-								List<Parametro> resultado = GetListaParametros(nodo.ChildNodes.ElementAt(1));
+								List<Parametro> resultado = GetListaParametros(proc,nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 								{
 									proc.Parametros = resultado;
 								}
 
 								//RETORNOS 
-								resultado = GetListaRetornos(nodo.ChildNodes.ElementAt(1));
+								resultado = GetListaRetornos(proc,nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 								{
 									proc.Retornos = resultado;
@@ -1350,7 +1429,7 @@ namespace Proyecto1Compi2.com.Analisis
 						break;
 				}
 			}
-			if (proc.isValido() && t != null && bren != null) return proc;
+			if (proc.Nombre!=null &&proc.Parametros!=null &&proc.Instrucciones!=null && proc.Retornos!=null && t != null && bren != null) return proc;
 			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME','PARAMETERS', 'INSTR' o 'CQL-TYPE'",
 				raiz.Span.Location.Line,
@@ -1360,7 +1439,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static List<Parametro> GetListaRetornos(ParseTreeNode rai)
+		private static List<Parametro> GetListaRetornos(ProcedimientoFalso proc, ParseTreeNode rai)
 		{
 			List<Parametro> dic = new List<Parametro>();
 			foreach (ParseTreeNode nodo in rai.ChildNodes)
@@ -1458,6 +1537,8 @@ namespace Proyecto1Compi2.com.Analisis
 						if (nombre != null && tipo != null && pras != null)
 						{
 							dic.Add(new Parametro(nombre, Datos.GetTipoObjetoDBPorCadena(tipo)));
+							proc.LineasNum.Add(nodo.Span.Location.Line+1);
+							proc.ColumnasNum.Add(nodo.Span.Location.Column);
 						}
 						else
 						{
@@ -1483,7 +1564,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return dic;
 		}
 
-		private static List<Parametro> GetListaParametros(ParseTreeNode rai)
+		private static List<Parametro> GetListaParametros(ProcedimientoFalso proc,ParseTreeNode rai)
 		{
 			List<Parametro> dic = new List<Parametro>();
 			foreach (ParseTreeNode nodo in rai.ChildNodes)
@@ -1581,6 +1662,9 @@ namespace Proyecto1Compi2.com.Analisis
 						if (nombre != null && tipo != null && pras != null)
 						{
 							dic.Add(new Parametro(nombre, Datos.GetTipoObjetoDBPorCadena(tipo)));
+							proc.LineasNum.Add(nodo.Span.Location.Line+1);
+							proc.ColumnasNum.Add(nodo.Span.Location.Column);
+
 						}
 						else
 						{
