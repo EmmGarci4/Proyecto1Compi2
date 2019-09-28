@@ -349,16 +349,33 @@ namespace com.Analisis
 
 		public static List<Sentencia> GetSentenciasCQL(String codigo)
 		{
-			codigoAnalizado = codigo;
+			string bk_codigoAnalizado = CodigoAnalizado;
+			List<Error> erroresCql_bk = new List<Error>();
+			erroresCql_bk.AddRange(erroresCQL);
+			List<Funcion> aux = new List<Funcion>();
+			aux.AddRange(funciones);
+
 			GramaticaCql gramatica = new GramaticaCql();
 			LanguageData ldata = new LanguageData(gramatica);
 			Parser parser = new Parser(ldata);
-			ParseTree arbol = parser.Parse(codigo);
+
+			CodigoAnalizado = codigo;
 			Analizador.ErroresCQL.Clear();
-			List<Funcion> aux = funciones;
 			funciones.Clear();
-			List<Sentencia> res=GeneradorAstCql.GetAST(arbol.Root);
+
+			ParseTree arbol = parser.Parse(codigo);			
+			
+			
+			List<Sentencia> res = GeneradorAstCql.GetAST(arbol.Root);
+
+			foreach (Error error in ErroresCQL) {
+				GeneradorDB.ErroresChison.Add(new Error(TipoError.Semantico,"Error en Sentencia de procedimiento -> "+error.Mensaje,
+					error.Linea,error.Columna,Datos.GetDate(),Datos.GetTime()));
+			}
+
 			funciones = aux;
+			erroresCQL = erroresCql_bk;
+			codigoAnalizado = bk_codigoAnalizado;
 			return res;
 		}
 

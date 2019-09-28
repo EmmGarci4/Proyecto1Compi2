@@ -336,16 +336,19 @@ namespace Proyecto1Compi2.com.Analisis
 			if (based.Nombre != null && objetos != null)
 			{
 				
-				foreach (ProcedimientoFalso proc in procedimientos) {
-					ValidarProcedimiento(proc,based);
-				}
+				
 				foreach (UserTypeFalso ut in usert)
 				{
 					ValidarUserType(ut, based);
 				}
+				
 				foreach (TablaFalsa tabla in tablas)
 				{
 					ValidarTabla(tabla, based);
+				}
+				foreach (ProcedimientoFalso proc in procedimientos)
+				{
+					ValidarProcedimiento(proc, based);
 				}
 				return based;
 			}
@@ -445,12 +448,16 @@ namespace Proyecto1Compi2.com.Analisis
 						}
 
 					} else if (Datos.IsLista(param.Tipo.Tipo)) {
-						if (ValidarInstanciaLista(param.Tipo, based, proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont)))
+						if (param.Tipo.Nombre=="")
 						{
 							procedimiento.Parametros.Add(param);
 						}
 						else
 						{
+							erroresChison.Add(new Error(TipoError.Semantico,
+							"Tipo de dato no permitido en la declaración de parámetros",
+							proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
+							Datos.GetDate(), Datos.GetTime()));
 							valido = false;
 						}
 					}
@@ -553,27 +560,47 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						if (Datos.IsLista(col.Tipo.Tipo))
 						{
-							//VALIDAR LISTA
-							if (ValidarInstanciaLista(col.Tipo, based, tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador)))
+							if (!col.IsPrimary)
 							{
-								tabla.AgregarColumna(col);
+								//VALIDAR LISTA
+								if (ValidarInstanciaLista(col.Tipo, based, tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador)))
+								{
+									tabla.AgregarColumna(col);
+								}
+							}
+							else {
+								erroresChison.Add(new Error(TipoError.Semantico,
+												"No se puede definir una columna de tipo '"+col.Tipo.ToString()+"' como llave primaria",
+											tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
+												Datos.GetDate(),
+												Datos.GetTime()));
 							}
 						}
 						else
 						{
-							//VALIDAR OBJETO
-							if (based.ExisteUserType(col.Tipo.Nombre))
-							{
-								tabla.AgregarColumna(col);
+							if (!col.IsPrimary) {
+								//VALIDAR OBJETO
+								if (based.ExisteUserType(col.Tipo.Nombre))
+								{
+									tabla.AgregarColumna(col);
+								}
+								else
+								{
+									erroresChison.Add(new Error(TipoError.Semantico,
+													"El objeto '" + col.Tipo.ToString() + "' no existe",
+												tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
+													Datos.GetDate(),
+													Datos.GetTime()));
+									return;
+								}
 							}
 							else
 							{
 								erroresChison.Add(new Error(TipoError.Semantico,
-												"El objeto '" + col.Tipo.ToString() + "' no existe",
+												"No se puede definir una columna de tipo '" + col.Tipo.ToString() + "' como llave primaria",
 											tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
 												Datos.GetDate(),
 												Datos.GetTime()));
-								return;
 							}
 						}
 					}
@@ -1433,14 +1460,8 @@ namespace Proyecto1Compi2.com.Analisis
 								String codigo = nodo.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 								codigo = codigo.TrimStart('$');
 								codigo = codigo.TrimEnd('$');
+
 								proc.Sentencias = Analizador.GetSentenciasCQL(codigo);
-								List<Error> erroresInst = (Analizador.ErroresCQL);
-								//cambiar el numero de linea 
-								if (erroresInst.Count > 0)
-								{
-									//agregar a errores chison
-									codigo = "//SE ENCONTRARON ERRORES EN EL CODIGO\n";
-								}
 								proc.Instrucciones = codigo;
 							}
 							else
@@ -2560,14 +2581,13 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					bool contienetodo = true;
 					int contadorAt = 0;
-					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
-					{
-						if (!atributo.Key.Equals(attrs.ElementAt(contadorAt).Nombre))
-						{
-							contienetodo = false;
-							break;
-						}
-						contadorAt++;
+					foreach (ParDatos par in attrs) {
+							if (!ut.Atributos.ContainsKey(attrs.ElementAt(contadorAt).Nombre))
+							{
+								contienetodo = false;
+								break;
+							}
+							contadorAt++;
 					}
 					if (contienetodo)
 					{

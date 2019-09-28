@@ -93,36 +93,7 @@ namespace Proyecto1Compi2.com.AST
 															Linea, Columna);
 													}
 												}
-												else if (cl.Tipo.Tipo == TipoDatoDB.MAP_OBJETO || cl.Tipo.Tipo == TipoDatoDB.MAP_PRIMITIVO)
-												{
-													CollectionMapCql date = (CollectionMapCql)respuesta;
-													if (date.IsNull)
-													{
-														return new ThrowError(TipoThrow.ValuesException,
-														"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
-															Linea, Columna);
-													}
-												}
-												else if (cl.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || cl.Tipo.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-												{
-													CollectionListCql date = (CollectionListCql)respuesta;
-													if (date.IsNull)
-													{
-														return new ThrowError(TipoThrow.ValuesException,
-														"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
-															Linea, Columna);
-													}
-												}
-												else if (cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO || cl.Tipo.Tipo == TipoDatoDB.SET_PRIMITIVO)
-												{
-													CollectionListCql date = (CollectionListCql)respuesta;
-													if (date.IsNull)
-													{
-														return new ThrowError(TipoThrow.ValuesException,
-														"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
-															Linea, Columna);
-													}
-												}
+												
 											}
 											valoresAInsertar.Enqueue(nuevovalor);
 											indiceDatos++;
@@ -130,7 +101,7 @@ namespace Proyecto1Compi2.com.AST
 										else
 										{
 											if (respuesta.Equals("null")) {
-												valoresAInsertar.Enqueue("null");
+												valoresAInsertar.Enqueue(Datos.CasteoImplicito(cl.Tipo, "null",tb,sesion,Linea,Columna));
 												indiceDatos++;
 											}
 											else
@@ -280,7 +251,7 @@ namespace Proyecto1Compi2.com.AST
 											{
 												if (respuesta.Equals("null"))
 												{
-													valoresAInsertar.Enqueue("null");
+													valoresAInsertar.Enqueue(Datos.CasteoImplicito(cl.Tipo, "null",tb,sesion,Linea,Columna));
 													indiceDatos++;
 												}
 												else
@@ -317,7 +288,7 @@ namespace Proyecto1Compi2.com.AST
 										}
 										else
 										{
-											valoresAInsertar.Enqueue("null");
+											valoresAInsertar.Enqueue(Datos.CasteoImplicito(cl.Tipo, "null", tb, sesion, Linea, Columna));
 										}
 									}
 								}
