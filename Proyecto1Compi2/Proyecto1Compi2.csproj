@@ -164,6 +164,7 @@
     <Compile Include="com.Util\ParDatos.cs" />
     <Compile Include="com.Util\ResultadoConsulta.cs" />
     <Compile Include="com.Util\Simbolo.cs" />
+    <Compile Include="com.Util\TablaFalsa.cs" />
     <Compile Include="com.Util\TablaSimbolos.cs" />
     <Compile Include="com.Util\TipoObjetoDB.cs" />
     <Compile Include="com.Util\Tipos.cs" />

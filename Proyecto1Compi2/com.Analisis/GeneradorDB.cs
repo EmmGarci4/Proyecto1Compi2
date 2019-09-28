@@ -269,11 +269,10 @@ namespace Proyecto1Compi2.com.Analisis
 				else
 				{
 					erroresChison.Add(new Error(TipoError.Semantico,
-								"La base de datos '" + nuevo.Nombre + "' ya existe en el sistema",
-								raiz.Span.Location.Line, raiz.Span.Location.Column,
-								Datos.GetDate(),
-								Datos.GetTime()));
-
+						"La base de datos '" + nuevo.Nombre + "' ya existe en el sistema",
+						raiz.Span.Location.Line, raiz.Span.Location.Column,
+						Datos.GetDate(),
+						Datos.GetTime()));
 				}
 			}
 		}
@@ -282,6 +281,8 @@ namespace Proyecto1Compi2.com.Analisis
 		{
 			BaseDatos based = new BaseDatos();
 			List<object> objetos = null;
+			List<TablaFalsa> tablas = new List<TablaFalsa>();
+
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
 				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
@@ -352,12 +353,12 @@ namespace Proyecto1Compi2.com.Analisis
 												Datos.GetDate(), Datos.GetTime()));
 										}
 									}
-									else if (objetodb.GetType() == typeof(Tabla))
+									else if (objetodb.GetType() == typeof(TablaFalsa))
 									{
-										Tabla ut = (Tabla)objetodb;
+										TablaFalsa ut = (TablaFalsa)objetodb;
 										if (!based.ExisteTabla(ut.Nombre))
 										{
-											based.AgregarTabla(ut);
+											tablas.Add(ut);
 										}
 										else
 										{
@@ -399,7 +400,15 @@ namespace Proyecto1Compi2.com.Analisis
 						break;
 				}
 			}
-			if (based.IsValido()) return based;
+
+			if (based.Nombre != null && objetos != null)
+			{
+				foreach (TablaFalsa tabla in tablas)
+				{
+					ValidarTabla(tabla, based);
+				}
+				return based;
+			}
 			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME' o 'DATA'",
 				raiz.Span.Location.Line,
@@ -407,6 +416,78 @@ namespace Proyecto1Compi2.com.Analisis
 				Datos.GetDate(),
 				Datos.GetTime()));
 			return null;
+		}
+
+		private static void ValidarTabla(TablaFalsa tablaFalsa, BaseDatos based)
+		{
+			Tabla tabla = new Tabla(tablaFalsa.Nombre);
+			//VALIDAR COLUMNAS 
+			int contador = 0;
+			foreach (Columna col in tablaFalsa.Columnas)
+			{
+				if (!tabla.ExisteColumna(col.Nombre))
+				{
+					if (Datos.IsPrimitivo(col.Tipo.Tipo))
+					{
+						tabla.AgregarColumna(col);
+					}
+					else
+					{
+						if (Datos.IsLista(col.Tipo.Tipo))
+						{
+							//VALIDAR LISTA
+							if (ValidarInstanciaLista(col.Tipo, based, tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador)))
+							{
+								tabla.AgregarColumna(col);
+							}
+						}
+						else
+						{
+							//VALIDAR OBJETO
+							if (based.ExisteUserType(col.Tipo.Nombre))
+							{
+								tabla.AgregarColumna(col);
+							}
+							else
+							{
+								erroresChison.Add(new Error(TipoError.Semantico,
+												"El objeto '" + col.Tipo.ToString() + "' no existe",
+											tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
+												Datos.GetDate(),
+												Datos.GetTime()));
+								return;
+							}
+						}
+					}
+				}
+				else
+				{
+					erroresChison.Add(new Error(TipoError.Semantico,
+						"La columna '" + col.Nombre + "' no existe",
+						tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
+						Datos.GetDate(),
+						Datos.GetTime()));
+					return;
+				}
+				contador++;
+			}
+			//VALIDAR DATOS 
+			foreach (FilaDatos fila in tablaFalsa.Datos)
+			{
+				InsertarEnTabla(tabla, fila.Datos, based, fila.Linea, fila.Columna);
+			}
+
+			if (!based.ExisteTabla(tabla.Nombre))
+			{
+				based.AgregarTabla(tabla);
+			}
+			else {
+				erroresChison.Add(new Error(TipoError.Semantico,
+												"La tabla '"+tabla.Nombre+"' ya existe",
+											tablaFalsa.LineasNum.ElementAt(contador), tablaFalsa.ColumnasNum.ElementAt(contador),
+												Datos.GetDate(),
+												Datos.GetTime()));
+			}
 		}
 
 		private static List<object> GetObjetos(ParseTreeNode raiz)
@@ -429,7 +510,7 @@ namespace Proyecto1Compi2.com.Analisis
 							if (proc != null) lista.Add(proc);
 							break;
 						case TipoObjeto.Tabla:
-							Tabla tab = GetTabla(nodo, lista);
+							TablaFalsa tab = GetTabla(nodo, lista);
 							if (tab != null) lista.Add(tab);
 							break;
 					}
@@ -448,14 +529,10 @@ namespace Proyecto1Compi2.com.Analisis
 			return lista;
 		}
 
-		private static Tabla GetTabla(ParseTreeNode raiz, List<object> db)
+		private static TablaFalsa GetTabla(ParseTreeNode raiz, List<object> db)
 		{
-			Tabla tabla = new Tabla();
+			TablaFalsa tabla = new TablaFalsa();
 			string t = null;
-			List<object> filas = null;
-			List<Columna> columnas = null;
-			List<FilaDatos> datos = null;
-			int linea=0, columna = 0;
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
 				switch (nodo.ChildNodes.ElementAt(0).Token.ValueString.ToLower())
@@ -515,51 +592,9 @@ namespace Proyecto1Compi2.com.Analisis
 					case "columns":
 						if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
 						{
-							if (columnas == null)
+							if (tabla.Columnas == null)
 							{
-								columnas = GetColumnasTabla(nodo.ChildNodes.ElementAt(1));
-								foreach (Columna col in columnas)
-								{
-									if (!tabla.ExisteColumna(col.Nombre))
-									{
-										if (col.Tipo.Tipo == TipoDatoDB.OBJETO)
-										{
-											if (ExisteUt(col.Tipo.Nombre, db))
-											{
-												tabla.AgregarColumna(col);
-											}
-											else
-											{
-												erroresChison.Add(new Error(TipoError.Semantico,
-												"El objeto '" + col.Tipo.ToString() + "' no existe",
-												raiz.Span.Location.Line, raiz.Span.Location.Column,
-												Datos.GetDate(),
-												Datos.GetTime()));
-											}
-										}
-										else
-										{
-											if (Datos.IsLista(col.Tipo.Tipo))
-											{
-												if (!ValidarInstanciaLista(col.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
-												{
-													continue;
-												}
-											}
-											//validar si es lista, set o map
-											tabla.AgregarColumna(col);
-										}
-
-									}
-									else
-									{
-										erroresChison.Add(new Error(TipoError.Semantico,
-										"La columna '" + col.Nombre + "' no existe",
-										raiz.Span.Location.Line, raiz.Span.Location.Column,
-										Datos.GetDate(),
-										Datos.GetTime()));
-									}
-								}
+								tabla.Columnas = GetColumnasTabla(tabla, nodo.ChildNodes.ElementAt(1));
 							}
 							else
 							{
@@ -583,12 +618,14 @@ namespace Proyecto1Compi2.com.Analisis
 					case "data":
 						if (nodo.ChildNodes.ElementAt(1).Term.Name == "LISTA")
 						{
-							if (filas == null)
+							if (tabla.Datos == null)
 							{
 								//recuperar e insertar
-								datos = GetDatosTabla(nodo.ChildNodes.ElementAt(1), db);
-								linea = nodo.Span.Location.Line;
-								columna=nodo.Span.Location.Column;
+								List<FilaDatos> datos = GetDatosTabla(nodo.ChildNodes.ElementAt(1), db);
+								if (datos != null)
+								{
+									tabla.Datos = datos;
+								}
 							}
 							else
 							{
@@ -621,13 +658,7 @@ namespace Proyecto1Compi2.com.Analisis
 
 			}
 
-			if (datos!=null) {
-				foreach (FilaDatos fila in datos)
-				{
-					InsertarEnTabla(tabla, fila.Datos, linea,columna);
-				}
-			}
-			if (tabla.Nombre != null && t != null) return tabla;
+			if (tabla.Nombre != null && t != null && tabla.Columnas != null) return tabla;
 			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' o 'DATA'",
 				raiz.Span.Location.Line,
@@ -637,7 +668,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static bool ValidarInstanciaLista(TipoObjetoDB tipoInstancia, List<object> objetos, int linea, int columna)
+		private static bool ValidarInstanciaLista(TipoObjetoDB tipoInstancia, BaseDatos db, int linea, int columna)
 		{
 			switch (tipoInstancia.Tipo)
 			{
@@ -646,7 +677,7 @@ namespace Proyecto1Compi2.com.Analisis
 					TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipoInstancia.Nombre);
 					if (Datos.IsLista(tipoAdentro.Tipo))
 					{
-						if (!ValidarInstanciaLista(tipoAdentro, objetos, linea, columna))
+						if (!ValidarInstanciaLista(tipoAdentro, db, linea, columna))
 						{
 							return false;
 						}
@@ -659,7 +690,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						//comprobar que exista el objeto
-						if (!ExisteUt(tipoAdentro.Nombre, objetos))
+						if (!db.ExisteUserType(tipoAdentro.Nombre))
 						{
 							erroresChison.Add(new Error(TipoError.Semantico,
 								"El objeto '" + tipoAdentro.Nombre + "' no existe",
@@ -678,7 +709,7 @@ namespace Proyecto1Compi2.com.Analisis
 					tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipos[1]);
 					if (Datos.IsLista(tipoAdentro.Tipo))
 					{
-						if (!ValidarInstanciaLista(tipoAdentro, objetos, linea, columna))
+						if (!ValidarInstanciaLista(tipoAdentro, db, linea, columna))
 						{
 							return false;
 						}
@@ -691,7 +722,7 @@ namespace Proyecto1Compi2.com.Analisis
 					else
 					{
 						//comprobar que exista el objeto
-						if (!ExisteUt(tipoAdentro.Nombre, objetos))
+						if (!db.ExisteUserType(tipoAdentro.Nombre))
 						{
 							erroresChison.Add(new Error(TipoError.Semantico,
 								"El objeto '" + tipoAdentro.Nombre + "' no existe",
@@ -705,7 +736,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return false;
 		}
 
-		private static void InsertarEnTabla(Tabla tab, List<ParDatos> valores, int linea, int columna)
+		private static void InsertarEnTabla(Tabla tab, List<ParDatos> valores, BaseDatos db, int linea, int columna)
 		{
 			if (valores.Count == tab.Columnas.Count)
 			{
@@ -715,42 +746,85 @@ namespace Proyecto1Compi2.com.Analisis
 				Queue<object> valoresAInsertar = new Queue<object>();
 				foreach (Columna cl in tab.Columnas)
 				{
-					ParDatos respuesta = valores.ElementAt(indiceDatos);
+					ParDatos parDatos = valores.ElementAt(indiceDatos);
 
-					if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, respuesta.Valor))
+					if (IsTipoCompatible(cl.Tipo, parDatos.Valor))
 					{
-						valoresAInsertar.Enqueue(respuesta.Valor);
-					}
-					else
-					{
-						TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(respuesta.Valor);
-						if (Datos.IsLista(tipoRes.Tipo))
+						object respuesta = CasteoImplicito(cl.Tipo, parDatos.Valor, db, linea, columna);
+						if (respuesta != null)
 						{
-							if (tipoRes.Tipo != TipoDatoDB.MAP_OBJETO && tipoRes.Tipo != TipoDatoDB.MAP_PRIMITIVO)
+							if (respuesta.GetType() == typeof(ThrowError))
 							{
-								CollectionListCql colection = (CollectionListCql)respuesta.Valor;
-								if (tipoRes.Nombre == "null")
+								erroresChison.Add(new Error((ThrowError)respuesta, true));
+							}
+							else
+							{
+								if (cl.IsPrimary)
 								{
-									colection.TipoDato = cl.Tipo;
-									valoresAInsertar.Enqueue(colection);
-								}
-								else
-								{
-									if (cl.Tipo.Nombre.Equals(colection.TipoDato.Nombre))
+									if (cl.Tipo.Tipo == TipoDatoDB.STRING)
 									{
-										if (cl.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || cl.Tipo.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+										if (respuesta.Equals("$%_null_%$"))
 										{
-											colection.IsLista = true;
-											valoresAInsertar.Enqueue(colection);
+											erroresChison.Add( new Error(TipoError.Semantico,
+											"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+												linea, columna));
+											return;
 										}
-										else if (cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO || cl.Tipo.Tipo == TipoDatoDB.SET_PRIMITIVO)
+									}
+									else if (cl.Tipo.Tipo == TipoDatoDB.DATE || cl.Tipo.Tipo == TipoDatoDB.TIME)
+									{
+										MyDateTime date = (MyDateTime)respuesta;
+										if (date.IsNull)
 										{
-											colection.IsLista = false;
-											valoresAInsertar.Enqueue(colection);
+											erroresChison.Add(new Error(TipoError.Semantico,
+											"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+												linea, columna));
+											return;
+										}
+									}
+									else if (cl.Tipo.Tipo == TipoDatoDB.MAP_OBJETO || cl.Tipo.Tipo == TipoDatoDB.MAP_PRIMITIVO)
+									{
+										CollectionMapCql date = (CollectionMapCql)respuesta;
+										if (date.IsNull)
+										{
+											erroresChison.Add(new Error(TipoError.Semantico,
+											"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+												linea, columna));
+											return;
+										}
+									}
+									else if (cl.Tipo.Tipo == TipoDatoDB.LISTA_OBJETO || cl.Tipo.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
+									{
+										CollectionListCql date = (CollectionListCql)respuesta;
+										if (date.IsNull)
+										{
+											erroresChison.Add(new Error(TipoError.Semantico,
+											"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+												linea, columna));
+											return;
+										}
+									}
+									else if (cl.Tipo.Tipo == TipoDatoDB.SET_OBJETO || cl.Tipo.Tipo == TipoDatoDB.SET_PRIMITIVO)
+									{
+										CollectionListCql date = (CollectionListCql)respuesta;
+										if (date.IsNull)
+										{
+											erroresChison.Add(new Error(TipoError.Semantico,
+											"No se pueden insertar nulos en la columna '" + cl.Nombre + "'",
+												linea, columna));
+											return;
 										}
 									}
 								}
+								valoresAInsertar.Enqueue(respuesta);
 							}
+						}
+					}
+					else
+					{
+						if (parDatos.Valor.Equals("null"))
+						{
+							valoresAInsertar.Enqueue("null");
 						}
 						else
 						{
@@ -758,12 +832,15 @@ namespace Proyecto1Compi2.com.Analisis
 								"El valor No." + (indiceDatos + 1) + " no concuerda con el tipo de dato '" + cl.Nombre + "'(" + cl.Tipo.ToString() + ")",
 								  linea, columna,
 								  Datos.GetDate(), Datos.GetTime()));
+							return;
 						}
+
+						
+						//}
 					}
 					indiceColumnas++;
 					indiceDatos++;
 				}
-
 				//INSERTANDO
 				if (tab.Columnas.Count == valoresAInsertar.Count)
 				{
@@ -789,19 +866,6 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 		}
 
-		private static bool ExisteUt(string nombre, List<object> db)
-		{
-			List<UserType> usertpypes = GetUserTypesLista(db);
-			foreach (UserType ut in usertpypes)
-			{
-				if (ut.Nombre.Equals(nombre))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
 		private static List<FilaDatos> GetDatosTabla(ParseTreeNode parseTreeNode, List<object> db)
 		{
 			List<FilaDatos> datos = new List<FilaDatos>();
@@ -818,9 +882,9 @@ namespace Proyecto1Compi2.com.Analisis
 				else
 				{
 					erroresChison.Add(new Error(TipoError.Semantico,
-									"La data de una tabla solo debe contener columnas",
-								   parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column,
-								   Datos.GetDate(), Datos.GetTime()));
+					  "La data de una tabla solo debe contener columnas",
+						parseTreeNode.Span.Location.Line, parseTreeNode.Span.Location.Column,
+						Datos.GetDate(), Datos.GetTime()));
 				}
 			}
 			return datos;
@@ -836,10 +900,8 @@ namespace Proyecto1Compi2.com.Analisis
 				{
 					fila.Datos.Add(new ParDatos(nodis.ChildNodes.ElementAt(0).Token.ValueString.ToLower(),
 					val));
-				}
-				else
-				{
-					return null;
+					fila.Linea = nodis.ChildNodes.ElementAt(0).Span.Location.Line;
+					fila.Columna = nodis.ChildNodes.ElementAt(0).Span.Location.Column;
 				}
 			}
 			return fila;
@@ -869,6 +931,7 @@ namespace Proyecto1Compi2.com.Analisis
 					Regex.IsMatch(parseTreeNode.Token.ValueString.ToLower().ToString(), "'[0-9]{4}-[0-9]{2}-[0-9]{2}'"))
 					{
 						di = new MyDateTime(TipoDatoDB.DATE, dt);
+						return di;
 					}
 					else
 					{
@@ -878,22 +941,36 @@ namespace Proyecto1Compi2.com.Analisis
 								   linea, column,
 								   Datos.GetDate(), Datos.GetTime()));
 					}
-					return di;
+					break;
 				case "time":
 					if (DateTime.TryParse(parseTreeNode.Token.ValueString.ToLower().Replace("'", string.Empty), out DateTime dt1) &&
 								Regex.IsMatch(parseTreeNode.Token.ValueString.ToLower().ToString(), "'[0-9]{2}:[0-9]{2}:[0-9]{2}'"))
 					{
 						di = new MyDateTime(TipoDatoDB.TIME, dt1);
+						return di;
 					}
 					else
 					{
-						di = new MyDateTime(TipoDatoDB.TIME, DateTime.Parse("00:00:00"));
-						erroresChison.Add(new Error(TipoError.Advertencia,
+
+						try
+						{
+							di = new MyDateTime(TipoDatoDB.DATE, DateTime.Parse("0000-00-00"));
+							erroresChison.Add(new Error(TipoError.Advertencia,
 									"La hora es incorrecta, el formato debe ser HH:MM:SS",
 								   linea, column,
 								   Datos.GetDate(), Datos.GetTime()));
+							return di;
+						}
+						catch (Exception)
+						{
+							erroresChison.Add(new Error(TipoError.Advertencia,
+								"La fecha está fuera de rango",
+								 parseTreeNode.ChildNodes.ElementAt(0).Token.Location.Line, parseTreeNode.ChildNodes.ElementAt(0).Token.Location.Column,
+								 Datos.GetDate(), Datos.GetTime()));
+
+						}
 					}
-					return di;
+					break;
 				case "LISTA":
 					List<object> lista = new List<object>();
 					foreach (ParseTreeNode nodo in parseTreeNode.ChildNodes)
@@ -904,185 +981,12 @@ namespace Proyecto1Compi2.com.Analisis
 							lista.Add(respuesta);
 						}
 					}
-					if (lista.Count > 0)
-					{
-						object primer_elemento = lista.ElementAt(0);
-						TipoObjetoDB tipodato = Datos.GetTipoObjetoDB(primer_elemento);
-						TipoObjetoDB tipoCol = null;
-						if (Datos.IsPrimitivo(tipodato.Tipo))
-						{
-							tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_PRIMITIVO, tipodato.ToString());
-						}
-						else
-						{
-							tipoCol = new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, tipodato.ToString());
-						}
-						CollectionListCql collection = new CollectionListCql(tipoCol, true);
-						TipoObjetoDB tipo = Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre);
-						foreach (object exp in lista)
-						{
-							if (Datos.IsTipoCompatibleParaAsignar(tipo, exp))
-							{
-								object nuevoVal = CasteoImplicito(tipo, exp, linea, column);
-								object posibleError = collection.AddItem(nuevoVal, linea, column);
-								if (posibleError != null)
-								{
-									if (posibleError.GetType() == typeof(ThrowError))
-									{
-										erroresChison.Add(new Error((ThrowError)posibleError, true));
-									}
-								}
-							}
-							else
-							{
-								erroresChison.Add(new Error(TipoError.Semantico,
-									"No se puede almacenar un valor " + Datos.GetTipoObjetoDB(exp) + " en un Collection tipo " + collection.TipoDato.ToString(),
-									linea, column, Datos.GetDate(), Datos.GetTime()));
-							}
-
-						}
-						return collection;
-					}
-					else
-					{
-						return new CollectionListCql(new TipoObjetoDB(TipoDatoDB.LISTA_OBJETO, "null"), true);
-					}
+					return lista;
 				case "OBJETO":
-					FilaDatos atributos = GetFilaDatos(parseTreeNode, db);
-					List<object> expresiones = new List<object>();
-					List<String> attrs = new List<string>();
-					if (atributos != null)
-					{
-						foreach (ParDatos par in atributos.Datos)
-						{
-							attrs.Add(par.Nombre);
-							expresiones.Add(par.Valor);
-						}
-						UserType usert = GetUt(attrs, db);
-						if (usert != null)
-						{
-							//CREANDO INSTANCIAS***************************
-							Objeto nuevaInstancia = new Objeto(usert);
-							int indice = 0;
-							if (usert.Atributos.Count == expresiones.Count)
-							{
-								foreach (KeyValuePair<string, TipoObjetoDB> atributo in usert.Atributos)
-								{
-									if (Datos.IsTipoCompatibleParaAsignar(atributo.Value, expresiones.ElementAt(indice)))
-									{
-										nuevaInstancia.Atributos.Add(atributo.Key, expresiones.ElementAt(indice));
-									}
-									else
-									{
-										TipoObjetoDB tipoRes = Datos.GetTipoObjetoDB(expresiones.ElementAt(indice));
-										if (Datos.IsLista(tipoRes.Tipo))
-										{
-											if (tipoRes.Tipo != TipoDatoDB.MAP_OBJETO && tipoRes.Tipo != TipoDatoDB.MAP_PRIMITIVO)
-											{
-												CollectionListCql colection = (CollectionListCql)expresiones.ElementAt(indice);
-												if (tipoRes.Nombre == "null")
-												{
-													//colection.TipoDato = ;
-													nuevaInstancia.Atributos.Add(atributo.Key, colection);
-												}
-												else
-												{
-													if (atributo.Value.Nombre.Equals(colection.TipoDato.Nombre))
-													{
-														if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-														{
-															colection.IsLista = true;
-															nuevaInstancia.Atributos.Add(atributo.Key, colection);
-														}
-														else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
-														{
-															colection.IsLista = false;
-															nuevaInstancia.Atributos.Add(atributo.Key, colection);
-														}
-													}
-													else if (atributo.Value.Nombre.Equals("double") && colection.TipoDato.Nombre.Equals("int"))
-													{
-														colection.TipoDato.Nombre = "double";
-														List<object> nuevosDatos = new List<object>();
-														foreach (object contenido in colection)
-														{
-															nuevosDatos.Add(double.Parse(contenido.ToString()));
-														}
-														colection.Clear();
-														colection.AddRange(nuevosDatos);
-
-														if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-														{
-															colection.IsLista = true;
-														}
-														else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
-														{
-															colection.IsLista = false;
-														}
-
-														nuevaInstancia.Atributos.Add(atributo.Key, colection);
-													}
-													else if (atributo.Value.Nombre.Equals("int") && colection.TipoDato.Nombre.Equals("double"))
-													{
-														colection.TipoDato.Nombre = "int";
-														List<object> nuevosDatos = new List<object>();
-														foreach (object contenido in colection)
-														{
-															nuevosDatos.Add(int.Parse(contenido.ToString()));
-														}
-														colection.Clear();
-														colection.AddRange(nuevosDatos);
-
-														if (atributo.Value.Tipo == TipoDatoDB.LISTA_OBJETO || atributo.Value.Tipo == TipoDatoDB.LISTA_PRIMITIVO)
-														{
-															colection.IsLista = true;
-														}
-														else if (atributo.Value.Tipo == TipoDatoDB.SET_OBJETO || atributo.Value.Tipo == TipoDatoDB.SET_PRIMITIVO)
-														{
-															colection.IsLista = false;
-														}
-
-														nuevaInstancia.Atributos.Add(atributo.Key, colection);
-													}
-												}
-											}
-										}
-										else if (atributo.Value.Tipo == TipoDatoDB.OBJETO && tipoRes.Tipo == TipoDatoDB.NULO)
-										{
-											Objeto obj = new Objeto(usert, true);
-											nuevaInstancia.Atributos.Add(atributo.Key, obj);
-										}
-										else
-										{
-											erroresChison.Add(new Error(TipoError.Semantico,
-											"Los atributos no corresponden al tipo '" + usert.Nombre + "'",
-											linea, column, Datos.GetDate(), Datos.GetTime()));
-										}
-									}
-
-									indice++;
-								}
-							}
-							else
-							{
-								erroresChison.Add(new Error(TipoError.Semantico,
-									"Los atributos no corresponden en numero al tipo '" + usert.Nombre + "'",
-									linea, column, Datos.GetDate(), Datos.GetTime()));
-							}
-							return nuevaInstancia;
-							//*************************************************
-						}
-						else
-						{
-							//error
-							erroresChison.Add(new Error(TipoError.Semantico,
-										"No existe un objeto con esos atributos en la base de datos",
-									   linea, column, Datos.GetDate(), Datos.GetTime()));
-						}
-					}
-					break;
 				case "MAP":
-					return GetMap(parseTreeNode.ChildNodes.ElementAt(0));
+					FilaDatos atributos = GetFilaDatos(parseTreeNode, db);
+					return atributos;
+
 			}
 			return null;
 		}
@@ -1163,33 +1067,6 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static UserType GetUt(List<string> attrs, List<object> tab)
-		{
-			List<UserType> usertpypes = GetUserTypesLista(tab);
-			foreach (UserType ut in usertpypes)
-			{
-				if (ut.Atributos.Count == attrs.Count)
-				{
-					bool contienetodo = true;
-					int contadorAt = 0;
-					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
-					{
-						if (!atributo.Key.Equals(attrs.ElementAt(contadorAt)))
-						{
-							contienetodo = false;
-							break;
-						}
-						contadorAt++;
-					}
-					if (contienetodo)
-					{
-						return ut;
-					}
-				}
-			}
-			return null;
-		}
-
 		private static List<UserType> GetUserTypesLista(List<object> tab)
 		{
 			List<UserType> usertpypes = new List<UserType>();
@@ -1203,7 +1080,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return usertpypes;
 		}
 
-		private static List<Columna> GetColumnasTabla(ParseTreeNode parseTreeNode)
+		private static List<Columna> GetColumnasTabla(TablaFalsa tabla, ParseTreeNode parseTreeNode)
 		{
 			List<Columna> columnas = new List<Columna>();
 			foreach (ParseTreeNode col in parseTreeNode.ChildNodes)
@@ -1223,6 +1100,7 @@ namespace Proyecto1Compi2.com.Analisis
 									if (cl.Nombre == null)
 									{
 										cl.Nombre = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
+
 									}
 									else
 									{
@@ -1301,6 +1179,8 @@ namespace Proyecto1Compi2.com.Analisis
 						cl.Tipo = Datos.GetTipoObjetoDBPorCadena(tipo);
 						cl.IsPrimary = isPk.ToLower().Equals("true");
 						columnas.Add(cl);
+						tabla.LineasNum.Add(col.Span.Location.Line);
+						tabla.ColumnasNum.Add(col.Span.Location.Column);
 					}
 					else
 					{
@@ -1394,107 +1274,14 @@ namespace Proyecto1Compi2.com.Analisis
 								List<Parametro> resultado = GetListaParametros(nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 								{
-									foreach (Parametro par in resultado)
-									{
-										if (!proc.Parametros.Contains(par))
-										{
-											if (par.Tipo.Tipo == TipoDatoDB.OBJETO)
-											{
-												if (ExisteUt(par.Tipo.Nombre, db))
-												{
-													proc.Parametros.Add(par);
-												}
-												else
-												{
-													erroresChison.Add(new Error(TipoError.Semantico,
-													"El objeto '" + par.Tipo.ToString() + "' no existe",
-													raiz.Span.Location.Line, raiz.Span.Location.Column,
-													Datos.GetDate(),
-													Datos.GetTime()));
-												}
-											}
-											else
-											{
-												if (Datos.IsLista(par.Tipo.Tipo))
-												{
-													if (par.Tipo.Nombre != "")
-													{
-														if (ValidarInstanciaLista(par.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
-														{
-															proc.Parametros.Add(par);
-														}
-													}
-													else
-													{
-														proc.Parametros.Add(par);
-													}
-												}
-												else
-												{
-													proc.Parametros.Add(par);
-												}
-
-											}
-
-										}
-										else
-										{
-											erroresChison.Add(new Error(TipoError.Semantico,
-												"El parámetro '" + par.Nombre + "' ya existe",
-												raiz.Span.Location.Line, raiz.Span.Location.Column,
-												Datos.GetDate(),
-												Datos.GetTime()));
-										}
-									}
+									proc.Parametros = resultado;
 								}
 
 								//RETORNOS 
 								resultado = GetListaRetornos(nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 								{
-									foreach (Parametro par in resultado)
-									{
-										if (!proc.Retornos.Contains(par))
-										{
-											if (par.Tipo.Tipo == TipoDatoDB.OBJETO)
-											{
-												if (ExisteUt(par.Tipo.Nombre, db))
-												{
-													proc.Retornos.Add(par);
-												}
-												else
-												{
-													erroresChison.Add(new Error(TipoError.Semantico,
-													"El objeto '" + par.Tipo.ToString() + "' no existe",
-													raiz.Span.Location.Line, raiz.Span.Location.Column,
-													Datos.GetDate(),
-													Datos.GetTime()));
-												}
-											}
-											else
-											{
-												if (Datos.IsLista(par.Tipo.Tipo))
-												{
-													if (ValidarInstanciaLista(par.Tipo, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
-													{
-														proc.Retornos.Add(par);
-													}
-												}
-												else
-												{
-													proc.Retornos.Add(par);
-												}
-											}
-										}
-										else
-										{
-											erroresChison.Add(new Error(TipoError.Semantico,
-												"El retorno '" + par.Nombre + "' ya existe",
-												raiz.Span.Location.Line, raiz.Span.Location.Column,
-												Datos.GetDate(),
-												Datos.GetTime()));
-										}
-									}
+									proc.Retornos = resultado;
 								}
 							}
 							else
@@ -1908,7 +1695,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (user.Atributos == null)
 							{
-								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1), db,user.Nombre);
+								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 									user.Atributos = resultado;
 							}
@@ -1942,7 +1729,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 
-			if (user.IsValido() && t != null)
+			if (user.IsValido() && t != null && user.Atributos != null)
 			{
 				return user;
 			}
@@ -1955,7 +1742,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(ParseTreeNode parseTreeNode, List<object> db, string nombreUt)
+		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(ParseTreeNode parseTreeNode)
 		{
 			Dictionary<string, TipoObjetoDB> dic = new Dictionary<string, TipoObjetoDB>();
 
@@ -2001,56 +1788,7 @@ namespace Proyecto1Compi2.com.Analisis
 								{
 									if (tipo == null)
 									{
-										TipoObjetoDB tipodato = Datos.GetTipoObjetoDBPorCadena(raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower());
-										if (tipodato.Tipo == TipoDatoDB.OBJETO)
-										{
-											if (ExisteUt(tipodato.Nombre, db))
-											{
-												tipo = tipodato.ToString();
-											}
-											else
-											{
-												if (nombreUt != null)
-												{
-													if (nombreUt == tipodato.Nombre)
-													{
-														tipo = tipodato.ToString();
-													}
-													else
-													{
-														erroresChison.Add(new Error(TipoError.Semantico,
-															"El objeto '" + tipodato.ToString() + "' no existe",
-															raiz.Span.Location.Line, raiz.Span.Location.Column,
-															Datos.GetDate(),
-															Datos.GetTime()));
-													}
-												}
-												else
-												{
-													erroresChison.Add(new Error(TipoError.Semantico,
-													"El objeto '" + tipodato.ToString() + "' no existe",
-													raiz.Span.Location.Line, raiz.Span.Location.Column,
-													Datos.GetDate(),
-													Datos.GetTime()));
-												}
-
-											}
-										}
-										else
-										{
-											if (Datos.IsLista(tipodato.Tipo))
-											{
-												if (ValidarInstanciaLista(tipodato, db, raiz.Span.Location.Line, raiz.Span.Location.Column))
-												{
-													tipo = tipodato.ToString();
-												}
-											}
-											else
-											{
-												tipo = tipodato.ToString();
-											}
-
-										}
+										tipo = raiz.ChildNodes.ElementAt(1).Token.ValueString.ToLower();
 									}
 									else
 									{
@@ -2379,7 +2117,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return permisos;
 		}
 
-		public static object CasteoImplicito(TipoObjetoDB tipo, object res, int linea, int columna)
+		public static object CasteoImplicito(TipoObjetoDB tipo, object res, BaseDatos db, int linea, int columna)
 		{
 			switch (tipo.Tipo)
 			{
@@ -2387,25 +2125,467 @@ namespace Proyecto1Compi2.com.Analisis
 					{
 						if (double.TryParse(res.ToString(), out double d2))
 						{
-							return (int)d2;
+							int entero = (int)d2;
+							if (entero <= -2147483648 || entero >= 2147483647)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									linea, columna);
+							}
+							return entero;
 						}
-
 						break;
 					}
-
 				case TipoDatoDB.DOUBLE:
 					{
 						if (double.TryParse(res.ToString(), out double d2))
 						{
+							if (d2 <= -9223372036854775800 || d2 >= 9223372036854775800)
+							{
+								return new ThrowError(TipoThrow.ArithmeticException,
+									"El número está fuera de rango",
+									linea, columna);
+							}
+
 							return d2;
 						}
 
 						break;
 					}
+				case TipoDatoDB.DATE:
+					if (res.GetType() == typeof(MyDateTime))
+					{
+						MyDateTime dt = (MyDateTime)res;
+						if (dt.Dato.Year > 2999)
+						{
+							return new ThrowError(TipoThrow.Exception,
+								"El año está fuera de rango",
+								linea, columna);
+						}
+					}
+					if (res.Equals("null"))
+					{
+						return new MyDateTime();
+					}
+					break;
+				case TipoDatoDB.TIME:
+					if (res.Equals("null"))
+					{
+						return new MyDateTime();
+					}
+					break;
+				case TipoDatoDB.STRING:
+					if (res.Equals("null"))
+					{
+						return "$%_null_%$";
+					}
+					else if (res.ToString().Length >= 2147483647)
+					{
+						return new ThrowError(TipoThrow.Exception,
+								"La cadena está fuera de rango",
+								linea, columna);
+					}
+					break;
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+					if (res.Equals("null"))
+					{
+						return new CollectionMapCql();
+					}
+					else if (res.GetType() == typeof(FilaDatos))
+					{
+						FilaDatos objeto = (FilaDatos)res;
+						//VALIDANDO TIPO EN FILA
+						bool bandddera = false;
+						foreach (ParDatos fd in objeto.Datos) {
+							if (fd.Valor.GetType()==typeof(FilaDatos)) {
+								bandddera = true;
+								break;
+							}
+						}
+						if (!bandddera)
+						{
+							string[] tipos = tipo.Nombre.Split(',');
+							if (tipos.Length > 1)
+							{
+								TipoObjetoDB tipoClave = Datos.GetTipoObjetoDBPorCadena(tipos[0]);
+								TipoObjetoDB tipoValor = Datos.GetTipoObjetoDBPorCadena(tipos[1]);
+								CollectionMapCql collection = new CollectionMapCql(tipoClave,tipoValor);
+
+								foreach (ParDatos valor in objeto.Datos)
+								{
+									object valorNuevo = Datos.GetValor(valor.Nombre);
+									if (IsTipoCompatible(tipoClave, valorNuevo) && IsTipoCompatible(tipoValor, valor.Valor))
+									{
+										
+										object objeto1 = CasteoImplicito(tipoClave, valorNuevo, db, linea, columna);
+										if (objeto1 != null)
+										{
+											if (objeto1.GetType() == typeof(ThrowError))
+											{
+												erroresChison.Add(new Error((ThrowError)objeto1, true));
+											}
+											else
+											{
+												object objeto2 = CasteoImplicito(tipoValor, valor.Valor, db, linea, columna);
+												if (objeto2 != null)
+												{
+													if (objeto2.GetType() == typeof(ThrowError))
+													{
+														erroresChison.Add(new Error((ThrowError)objeto2, true));
+													}
+													else
+													{
+
+														collection.AddItem(objeto1, objeto2, linea, columna);
+													}
+												}
+											}
+										}
+									}
+									else
+									{
+										erroresChison.Add(new Error(TipoError.Semantico,
+											"El valor no concuerda con el tipo de dato " + tipo.ToString(),
+											  linea, columna,
+											  Datos.GetDate(), Datos.GetTime()));
+									}
+								}
+								return collection;
+							}
+							else {
+								erroresChison.Add(new Error(TipoError.Semantico,
+										"El tipo de dato no concuerda con el tipo de un Collection " + tipo.ToString(),
+										  linea, columna,
+										  Datos.GetDate(), Datos.GetTime()));
+							}
+						}
+						else {
+							erroresChison.Add(new Error(TipoError.Semantico,
+										"Los valores no concuerdan con un Collection tipo Map",
+										  linea, columna,
+										  Datos.GetDate(), Datos.GetTime()));
+						}
+						
+
+					}
+					break;
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.LISTA_OBJETO:
+					if (res.Equals("null"))
+					{
+						return new CollectionListCql(true);
+					} else if (res.GetType()==typeof(List<object>)) {
+						List<object> objeto = (List<object>)res;
+						CollectionListCql collection = new CollectionListCql(tipo, true);
+						TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipo.Nombre);
+						foreach (object valor in objeto) {
+							if (IsTipoCompatible(tipoAdentro, valor))
+							{
+								object objeto1 = CasteoImplicito(tipoAdentro, valor, db, linea, columna);
+								if (objeto1 != null)
+								{
+									if (objeto1.GetType() == typeof(ThrowError))
+									{
+										erroresChison.Add(new Error((ThrowError)objeto1, true));
+									}
+									else
+									{
+										collection.AddItem(objeto1, linea, columna);
+									}
+								}
+							}
+							else
+							{
+								erroresChison.Add(new Error(TipoError.Semantico,
+									"El valor no concuerda con el tipo de dato "+tipo.ToString(),
+									  linea, columna,
+									  Datos.GetDate(), Datos.GetTime()));
+							}
+						}
+						return collection;
+					}
+					break;
+				case TipoDatoDB.SET_PRIMITIVO:
+				case TipoDatoDB.SET_OBJETO:
+					if (res.Equals("null"))
+					{
+						return new CollectionListCql(true);
+					}
+					else if (res.GetType() == typeof(List<object>))
+					{
+						List<object> objeto = (List<object>)res;
+						CollectionListCql collection = new CollectionListCql(tipo, false);
+						TipoObjetoDB tipoAdentro = Datos.GetTipoObjetoDBPorCadena(tipo.Nombre);
+						foreach (object valor in objeto)
+						{
+							if (IsTipoCompatible(tipoAdentro, valor))
+							{
+								object objeto1 = CasteoImplicito(tipoAdentro, valor, db, linea, columna);
+								if (objeto1 != null)
+								{
+									if (objeto1.GetType() == typeof(ThrowError))
+									{
+										erroresChison.Add(new Error((ThrowError)objeto1, true));
+									}
+									else
+									{
+										collection.AddItem(objeto1, linea, columna);
+									}
+								}
+							}
+							else
+							{
+								erroresChison.Add(new Error(TipoError.Semantico,
+									"El valor no concuerda con el tipo de dato " + tipo.ToString(),
+									  linea, columna,
+									  Datos.GetDate(), Datos.GetTime()));
+							}
+						}
+						return collection;
+					}
+					break;
+				case TipoDatoDB.OBJETO:
+					if (res.Equals("null"))
+					{
+						object obj = GetInstanciaObjeto(tipo, db, linea, columna);
+						 if (obj != null)
+						{
+							if (obj.GetType() == typeof(ThrowError))
+							{
+								return obj;
+							}
+							if (obj.GetType() == typeof(Objeto))
+							{
+								((Objeto)obj).IsNull = true;
+								return obj;
+							}
+						}
+					}
+					else
+					{
+						FilaDatos fila = (FilaDatos)res;
+						UserType usertype = GetUt(fila.Datos, db);
+						if (usertype != null)
+						{
+							Objeto obj = new Objeto(usertype);
+							foreach (ParDatos par in fila.Datos)
+							{
+								TipoObjetoDB tipodato = usertype.Atributos[par.Nombre];
+								if (tipodato!=null) {
+									if (IsTipoCompatible(tipodato,par.Valor))
+									{
+										object objeto = CasteoImplicito(tipodato, par.Valor, db, linea, columna);
+										if (objeto != null)
+										{
+											if (objeto.GetType() == typeof(ThrowError))
+											{
+												erroresChison.Add(new Error((ThrowError)objeto, true));
+											}
+											else
+											{
+												obj.Atributos.Add(par.Nombre, objeto);
+											}
+										}
+									}
+									else
+									{
+										erroresChison.Add(new Error(TipoError.Semantico,
+											"El valor no concuerda con el tipo de dato '" + par.Nombre + "'(" + tipodato.ToString() + ")",
+											  linea, columna,
+											  Datos.GetDate(), Datos.GetTime()));
+									}
+								}
+
+							}
+							if (obj.Atributos.Count == usertype.Atributos.Count)
+							{
+								return obj;
+							}
+							else {
+								erroresChison.Add(new Error(TipoError.Semantico,
+											"La cantidad de atrbutos no concuerda con el User Type '"+usertype.Nombre+"'",
+											  linea, columna,
+											  Datos.GetDate(), Datos.GetTime()));
+							}
+						}
+						return null;
+					}
 					break;
 			}
 
 			return res;
+		}
+
+		private static UserType GetUt(List<ParDatos> attrs, BaseDatos tab)
+		{
+			foreach (UserType ut in tab.UserTypes)
+			{
+				if (ut.Atributos.Count == attrs.Count)
+				{
+					bool contienetodo = true;
+					int contadorAt = 0;
+					foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
+					{
+						if (!atributo.Key.Equals(attrs.ElementAt(contadorAt).Nombre))
+						{
+							contienetodo = false;
+							break;
+						}
+						contadorAt++;
+					}
+					if (contienetodo)
+					{
+						return ut;
+					}
+				}
+			}
+			return null;
+		}
+
+		public static object GetInstanciaObjeto(TipoObjetoDB tipoInstancia, BaseDatos db, int linea, int columna)
+		{
+
+			if (db.ExisteUserType(tipoInstancia.ToString()))
+			{
+				UserType ut = db.BuscarUserType(tipoInstancia.ToString());
+				Objeto nuevaInstancia = new Objeto(ut);
+				foreach (KeyValuePair<string, TipoObjetoDB> atributo in ut.Atributos)
+				{
+					object valPre = GetValorPredeterminado(atributo.Value, db, linea, columna);
+					if (valPre != null)
+					{
+						if (valPre.GetType() == typeof(ThrowError))
+						{
+							return valPre;
+						}
+						nuevaInstancia.Atributos.Add(atributo.Key, valPre);
+
+					}
+				}
+				return nuevaInstancia;
+			}
+			else
+			{
+				return new ThrowError(Util.TipoThrow.UseBDException,
+					"No existe el tipo '" + tipoInstancia.ToString() + "'",
+					linea, columna);
+			}
+		}
+
+		public static object GetValorPredeterminado(TipoObjetoDB tipo, BaseDatos db, int Linea, int Columna)
+		{
+			switch (tipo.Tipo)
+			{
+				case TipoDatoDB.BOOLEAN:
+					return false;
+				case TipoDatoDB.DOUBLE:
+					return 0.0;
+				case TipoDatoDB.COUNTER:
+				case TipoDatoDB.INT:
+					return 0;
+				case TipoDatoDB.STRING:
+					return "$%_null_%$";
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.SET_OBJETO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					return "null";
+				case TipoDatoDB.DATE:
+				case TipoDatoDB.TIME:
+					return new MyDateTime();
+				case TipoDatoDB.OBJETO:
+
+					if (db.ExisteUserType(tipo.Nombre))
+					{
+
+						//buscar objeto;
+						Objeto objeto = new Objeto(db.BuscarUserType(tipo.Nombre), true);
+						return objeto;
+					}
+					else
+					{
+						return new ThrowError(Util.TipoThrow.TypeDontExists,
+					"El user Type '" + tipo.Nombre + "' no existe",
+					Linea, Columna);
+					}
+				default:
+					return "null";
+			}
+		}
+
+		public static bool IsTipoCompatible(TipoObjetoDB tipoDato, object v)
+		{
+			switch (tipoDato.Tipo)
+			{
+				case TipoDatoDB.BOOLEAN:
+					return v.GetType() == typeof(bool);
+				case TipoDatoDB.DOUBLE:
+					return v.GetType() == typeof(double);
+				case TipoDatoDB.COUNTER:
+				case TipoDatoDB.INT:
+					return v.GetType() == typeof(int);
+				case TipoDatoDB.DATE:
+					if (v.GetType() == typeof(MyDateTime))
+					{
+						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.DATE);
+					} else if (v.Equals("null")) {
+						return true;
+					}
+					return false;
+				case TipoDatoDB.NULO:
+					if (v.GetType() == typeof(string))
+					{
+						return v.ToString().ToLower().Equals("null");
+					}
+					return false;
+				case TipoDatoDB.STRING:
+					return (v.GetType() == typeof(string));
+				case TipoDatoDB.TIME:
+					if (v.GetType() == typeof(MyDateTime))
+					{
+						return ((MyDateTime)v).Tipo.Equals(TipoDatoDB.TIME);
+					}
+					else if (v.Equals("null"))
+					{
+						return true;
+					}
+					return false;
+				case TipoDatoDB.LISTA_OBJETO:
+				case TipoDatoDB.SET_OBJETO:
+				case TipoDatoDB.LISTA_PRIMITIVO:
+				case TipoDatoDB.SET_PRIMITIVO:
+					if (v.GetType()==typeof(List<object>)) {
+						return true;
+					}
+					else if (v.Equals("null"))
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.MAP_PRIMITIVO:
+				case TipoDatoDB.MAP_OBJETO:
+					if (v.GetType() == typeof(FilaDatos))
+					{
+						return true;
+					}
+					else if (v.Equals("null"))
+					{
+						return true;
+					}
+					break;
+				case TipoDatoDB.OBJETO:
+					if (v.GetType() == typeof(FilaDatos))
+					{
+						return true;
+					} else if (v.ToString().Equals("null")) {
+						return true;
+					}
+					return false;
+			}
+			return false;
 		}
 	}
 }

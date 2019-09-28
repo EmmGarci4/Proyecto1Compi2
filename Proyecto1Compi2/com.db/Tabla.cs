@@ -15,27 +15,25 @@ namespace Proyecto1Compi2.com.db
 		private String nombre;
 		List<Columna> columnas;
 		private int contadorFilas;
-
-		public List<Columna> Columnas { get => columnas; }
+		private List<FilaDatos> data;
+		
+		public List<Columna> Columnas { get => columnas; set => columnas=value; }
 		public int ContadorFilas { get => contadorFilas; }
 		public string Nombre { get => nombre; set => nombre = value; }
-
-		public Tabla()
-		{
-			this.Nombre = null;
-			this.columnas = new List<Columna>();
-		}
+		internal List<FilaDatos> Data { get => data; set => data = value; }
 
 		public Tabla(String nombre)
 		{
 			this.Nombre = nombre;
 			this.columnas = new List<Columna>();
+			this.data = new List<FilaDatos>(); ;
 		}
 
 		public Tabla(String nombre, List<Columna> tab)
 		{
 			this.Nombre = nombre;
 			this.columnas = tab;
+			this.data = new List<FilaDatos>();
 		}
 
 		//*****************************COLUMNAS**************************************************
@@ -143,14 +141,7 @@ namespace Proyecto1Compi2.com.db
 			foreach (Columna cl in columnas)
 			{
 				object valor = valores.Dequeue();
-				//if (valor.Equals("$%_null_%$"))
-				//{
-				//	cl.Datos.Add("null");
-				//}
-				//else {
-					cl.Datos.Add(valor);
-				//}
-				
+				cl.Datos.Add(valor);
 			}
 			contadorFilas++;
 		}

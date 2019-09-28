@@ -251,9 +251,5 @@ namespace Proyecto1Compi2.com.db
 			return cadena.ToString();
 		}
 
-		internal bool IsValido()
-		{
-			return nombre != null;
-		}
 	}
 }

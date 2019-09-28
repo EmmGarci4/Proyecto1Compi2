@@ -122,14 +122,21 @@ namespace Proyecto1Compi2.com.AST
 				{
 					object dato = cl.Datos.ElementAt(i);
 					Simbolo s;
-					if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+					if (Datos.IsTipoCompatibleParaAsignar(cl.Tipo, dato))
 					{
-						s = new Simbolo(cl.Nombre, dato, new TipoObjetoDB(TipoDatoDB.INT, "int"), Linea, Columna);
+						
+						if (cl.Tipo.Tipo == TipoDatoDB.COUNTER)
+						{
+							s = new Simbolo(cl.Nombre, dato, new TipoObjetoDB(TipoDatoDB.INT, "int"), Linea, Columna);
 
+						}
+						else
+						{
+							s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+						}
 					}
-					else
-					{
-						s = new Simbolo(cl.Nombre, dato, cl.Tipo, Linea, Columna);
+					else {
+						s = new Simbolo(cl.Nombre, dato,new TipoObjetoDB(TipoDatoDB.NULO,"nulo"), Linea, Columna);
 					}
 
 					local.AgregarSimbolo(s);
@@ -185,7 +192,15 @@ namespace Proyecto1Compi2.com.AST
 					foreach (Columna cl in miTabla.Columnas)
 					{
 						val = local.GetSimbolo(cl.Nombre);
-						fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
+						if (val.Valor.Equals("$%_null_%$"))
+						{
+
+							fila.Datos.Add(new ParDatos(cl.Nombre, "null"));
+						}
+						else {
+							fila.Datos.Add(new ParDatos(cl.Nombre, val.Valor));
+						}
+						
 					}
 					//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
 					if (PropiedadWhere != null)
