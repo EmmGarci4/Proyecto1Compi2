@@ -119,6 +119,11 @@ namespace Proyecto1Compi2.com.AST
 										}
 									}
 								}
+								if (!Datos.IsPrimitivo(cl.Tipo.Tipo)) {
+									return new ThrowError(Util.TipoThrow.Exception,
+										"No se puede seleccionar una columna tipo '"+cl.Tipo.ToString()+"' como llave primaria",
+										Linea, Columna);
+								}
 							}
 							//VALIDANDO TIPO
 							if (!EsListaDeLista(cl))
