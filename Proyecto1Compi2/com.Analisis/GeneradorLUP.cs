@@ -198,6 +198,23 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 				}
 			}
+			else {
+				//respuesta.Clear();
+				//respuesta.Append("[+ERROR]");
+				//respuesta.Append("[+LINE]");
+				//respuesta.Append(1);
+				//respuesta.Append("[-LINE]");
+				//respuesta.Append("[+COLUMN]");
+				//respuesta.Append(1);
+				//respuesta.Append("[-COLUMN]");
+				//respuesta.Append("[+TYPE]");
+				//respuesta.Append("Semantico");
+				//respuesta.Append("[-TYPE]");
+				//respuesta.Append("[+DESC]½");
+				//respuesta.Append("No existe el usuario");
+				//respuesta.Append("½[-DESC]");
+				//respuesta.Append("[-ERROR]\n");
+			}
 			respuesta.AppendLine("[-DATABASES]");
 		}
 

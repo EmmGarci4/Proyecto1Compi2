@@ -26,7 +26,8 @@ namespace Proyecto1Compi2.com.AST
 
 		public override object Ejecutar(TablaSimbolos tb,Sesion sesion)
 		{
-			if (Analizador.BuscarUsuario(sesion.Usuario)!=null) {
+			if (Analizador.BuscarUsuario(sesion.Usuario) != null)
+			{
 				if (Analizador.BuscarUsuario(sesion.Usuario).ExistePermiso(BaseDatos))
 				{
 					if (Analizador.ExisteUsuario(usuario))
@@ -58,6 +59,9 @@ namespace Proyecto1Compi2.com.AST
 					return new ThrowError(TipoThrow.Exception, "No tiene permisos sobre la base de datos '" + baseDatos + "' para revocar permisos a otros usuarios", Linea, Columna);
 
 				}
+			}
+			else {
+				return new ThrowError(TipoThrow.UserDontExists, "El usuario '" +sesion.Usuario+ "' no existe", Linea, Columna);
 			}
 			return null;
 		}

@@ -58,6 +58,10 @@ namespace Proyecto1Compi2.com.AST
 					return new ThrowError(TipoThrow.Exception, "No tiene permisos sobre la base de datos '" + baseDatos + "' para asignar permisos a otros usuarios", Linea, Columna);
 				}
 			}
+			else
+			{
+				return new ThrowError(TipoThrow.UserDontExists, "El usuario '" + sesion.Usuario + "' no existe", Linea, Columna);
+			}
 			return null;
 		}
 	}

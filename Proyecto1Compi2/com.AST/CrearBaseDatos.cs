@@ -36,9 +36,26 @@ namespace Proyecto1Compi2.com.AST
 			else {
 				Analizador.AddBaseDatos(new BaseDatos(Nombre));
 				if (Analizador.ExisteUsuario(sesion.Usuario)) {
-					Analizador.BuscarUsuario(sesion.Usuario).Permisos.Add(Nombre);
+					Usuario usuario = Analizador.BuscarUsuario(sesion.Usuario);
+
+					if (usuario != null)
+					{
+						usuario.Permisos.Add(Nombre);
+					}
+					else {
+						if (!sesion.Usuario.Equals("admin"))
+						{
+							if (Analizador.ExisteUsuario("admin"))
+							{
+								Analizador.BuscarUsuario("admin").Permisos.Add(nombre);
+							}
+						}
+						return new ThrowError(TipoThrow.UserDontExists, "El usuario '" + sesion.Usuario + "' no existe", Linea, Columna);
+					}
 					if (!sesion.Usuario.Equals("admin")) {
-						Analizador.BuscarUsuario("admin").Permisos.Add(nombre);
+						if (Analizador.ExisteUsuario("admin")) {
+							Analizador.BuscarUsuario("admin").Permisos.Add(nombre);
+						}
 					}
 				}
 			}
