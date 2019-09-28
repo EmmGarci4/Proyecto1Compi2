@@ -19,10 +19,10 @@ namespace Proyecto1Compi2.com.db
 			this.Atributos = atributos;
 		}
 
-		public UserType()
+		public UserType(string nombre)
 		{
-			this.Nombre = null;
-			this.Atributos = null;
+			this.Nombre = nombre;
+			this.Atributos = new Dictionary<string, TipoObjetoDB>();
 		}
 
 		public string Nombre { get => nombre; set => nombre = value; }

@@ -170,6 +170,7 @@
     <Compile Include="com.Util\TipoObjetoDB.cs" />
     <Compile Include="com.Util\Tipos.cs" />
     <Compile Include="com.Util\TipoThrow.cs" />
+    <Compile Include="com.Util\UserTypeFalso.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

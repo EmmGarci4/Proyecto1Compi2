@@ -2,8 +2,8 @@
 using com.Analisis.Util;
 using Irony.Parsing;
 using Proyecto1Compi2.com.AST;
-using Proyecto1Compi2.com.db;
 using Proyecto1Compi2.com.Util;
+using Proyecto1Compi2.com.db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -283,7 +283,7 @@ namespace Proyecto1Compi2.com.Analisis
 			List<object> objetos = null;
 			List<TablaFalsa> tablas = new List<TablaFalsa>();
 			List<ProcedimientoFalso> procedimientos = new List<ProcedimientoFalso>();
-			List<UserType> usert = new List<UserType>();
+			List<UserTypeFalso> usert = new List<UserTypeFalso>();
 
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
@@ -323,9 +323,9 @@ namespace Proyecto1Compi2.com.Analisis
 								objetos = GetObjetos(nodo.ChildNodes.ElementAt(1));
 								foreach (object objetodb in objetos)
 								{
-									if (objetodb.GetType() == typeof(UserType))
+									if (objetodb.GetType() == typeof(UserTypeFalso))
 									{
-										UserType ut = (UserType)objetodb;
+										UserTypeFalso ut = (UserTypeFalso)objetodb;
 										usert.Add(ut);
 									}
 									else if (objetodb.GetType() == typeof(ProcedimientoFalso))
@@ -372,12 +372,17 @@ namespace Proyecto1Compi2.com.Analisis
 
 			if (based.Nombre != null && objetos != null)
 			{
+				
+				foreach (ProcedimientoFalso proc in procedimientos) {
+					ValidarProcedimiento(proc,based);
+				}
+				foreach (UserTypeFalso ut in usert)
+				{
+					ValidarUserType(ut, based);
+				}
 				foreach (TablaFalsa tabla in tablas)
 				{
 					ValidarTabla(tabla, based);
-				}
-				foreach (ProcedimientoFalso proc in procedimientos) {
-					ValidarProcedimiento(proc,based);
 				}
 				return based;
 			}
@@ -390,9 +395,72 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
+		private static void ValidarUserType(UserTypeFalso ut, BaseDatos based)
+		{
+			UserType usert = new UserType(ut.Nombre);
+			bool valido = true;
+			int cont = 0;
+			foreach (KeyValuePair<string,TipoObjetoDB> atributo in ut.Atributos) {
+				if (atributo.Value.Tipo == TipoDatoDB.OBJETO)
+				{
+
+					if (based.ExisteUserType(atributo.Value.Nombre))
+					{
+						usert.Atributos.Add(atributo.Key,atributo.Value);
+					}
+					else
+					{
+						if (atributo.Value.Nombre==usert.Nombre) {
+							usert.Atributos.Add(atributo.Key, atributo.Value);
+						}
+						else {
+							erroresChison.Add(new Error(TipoError.Semantico,
+							"El user Type '" + atributo.Key + "' no existe",
+							ut.LineasNum.ElementAt(cont), ut.ColumnasNum.ElementAt(cont),
+							Datos.GetDate(), Datos.GetTime()));
+							valido = false;
+						}
+						
+					}
+
+				}
+				else if (Datos.IsLista(atributo.Value.Tipo))
+				{
+					if (ValidarInstanciaLista(atributo.Value, based, ut.LineasNum.ElementAt(cont), ut.ColumnasNum.ElementAt(cont)))
+					{
+						usert.Atributos.Add(atributo.Key, atributo.Value);
+					}
+					else {
+						valido = false;
+					}
+				}
+				else
+				{
+					usert.Atributos.Add(atributo.Key, atributo.Value);
+
+				}
+				cont++;
+			}
+			if (valido) {
+				if (!based.ExisteUserType(usert.Nombre))
+				{
+					based.AgregarUserType(usert);
+				}
+				else
+				{
+					erroresChison.Add(new Error(TipoError.Semantico,
+						"El user Type '" + ut.Nombre + "' ya existe",
+						ut.LineasNum.ElementAt(cont ),
+						ut.ColumnasNum.ElementAt(cont),
+						Datos.GetDate(), Datos.GetTime()));
+				}
+			}
+		}
+
 		private static void ValidarProcedimiento(ProcedimientoFalso proc, BaseDatos based)
 		{
 			Procedimiento procedimiento = new Procedimiento(proc.Linea,proc.Columna);
+			procedimiento.Nombre = proc.Nombre;
 			Boolean valido = true;
 			int cont = 0;
 			foreach (Parametro param in proc.Parametros)
@@ -407,7 +475,7 @@ namespace Proyecto1Compi2.com.Analisis
 						else
 						{
 							erroresChison.Add(new Error(TipoError.Semantico,
-								"El user Type '" + proc.Nombre + "' no existe",
+								"El user Type '" + param.Tipo.ToString() + "' no existe",
 								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
 								Datos.GetDate(), Datos.GetTime()));
 							valido = false;
@@ -418,6 +486,10 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							procedimiento.Parametros.Add(param);
 						}
+						else
+						{
+							valido = false;
+						}
 					}
 					else {
 						procedimiento.Parametros.Add(param);
@@ -426,7 +498,7 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 				else {
 					erroresChison.Add(new Error(TipoError.Semantico,
-								"El parámetro '" + proc.Nombre + "' ya existe",
+								"El parámetro '" + param.Nombre + "' ya existe",
 								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
 								Datos.GetDate(), Datos.GetTime()));
 					valido = false;
@@ -449,7 +521,7 @@ namespace Proyecto1Compi2.com.Analisis
 						else
 						{
 							erroresChison.Add(new Error(TipoError.Semantico,
-								"El user Type '" + proc.Nombre + "' no existe",
+								"El user Type '" + param.Tipo.ToString() + "' no existe",
 								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
 								Datos.GetDate(), Datos.GetTime()));
 							valido = false;
@@ -462,6 +534,10 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							procedimiento.Retornos.Add(param);
 						}
+						else
+						{
+							valido = false;
+						}
 					}
 					else
 					{
@@ -472,7 +548,7 @@ namespace Proyecto1Compi2.com.Analisis
 				else
 				{
 					erroresChison.Add(new Error(TipoError.Semantico,
-								"El parámetro '" + proc.Nombre + "' ya existe",
+								"El parámetro '" + param.Nombre + "' ya existe",
 								proc.LineasNum.ElementAt(cont), proc.ColumnasNum.ElementAt(cont),
 								Datos.GetDate(), Datos.GetTime()));
 					valido = false;
@@ -482,7 +558,7 @@ namespace Proyecto1Compi2.com.Analisis
 			}
 
 			if (valido) {
-				if (!based.ExisteProcedimiento(proc.Nombre))
+				if (!based.ExisteProcedimiento(procedimiento.GetLlave()))
 			{
 				based.AgregarProcedimiento(procedimiento);
 			}
@@ -581,7 +657,7 @@ namespace Proyecto1Compi2.com.Analisis
 					switch (t)
 					{
 						case TipoObjeto.Objeto:
-							UserType ustype = GetUserType(nodo, lista);
+							UserTypeFalso ustype = GetUserType(nodo, lista);
 							if (ustype != null) lista.Add(ustype);
 							break;
 						case TipoObjeto.Procedimiento:
@@ -737,7 +813,11 @@ namespace Proyecto1Compi2.com.Analisis
 
 			}
 
-			if (tabla.Nombre != null && t != null && tabla.Columnas != null) return tabla;
+			if (tabla.Nombre != null && t != null && tabla.Columnas != null) {
+				tabla.LineasNum.Add(raiz.Span.Location.Line);
+				tabla.ColumnasNum.Add(raiz.Span.Location.Column);
+				return tabla;
+			}
 			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME', 'CQL-TYPE', 'COLUMNS' o 'DATA'",
 				raiz.Span.Location.Line,
@@ -1146,14 +1226,14 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static List<UserType> GetUserTypesLista(List<object> tab)
+		private static List<UserTypeFalso> GetUserTypesLista(List<object> tab)
 		{
-			List<UserType> usertpypes = new List<UserType>();
+			List<UserTypeFalso> usertpypes = new List<UserTypeFalso>();
 			foreach (object ut in tab)
 			{
-				if (ut.GetType() == typeof(UserType))
+				if (ut.GetType() == typeof(UserTypeFalso))
 				{
-					usertpypes.Add((UserType)ut);
+					usertpypes.Add((UserTypeFalso)ut);
 				}
 			}
 			return usertpypes;
@@ -1350,14 +1430,14 @@ namespace Proyecto1Compi2.com.Analisis
 							{
 								//PARAMETROS
 								bren = ":D";
-								List<Parametro> resultado = GetListaParametros(proc,nodo.ChildNodes.ElementAt(1));
+								List<Parametro> resultado = GetListaParametros(proc, nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 								{
 									proc.Parametros = resultado;
 								}
 
 								//RETORNOS 
-								resultado = GetListaRetornos(proc,nodo.ChildNodes.ElementAt(1));
+								resultado = GetListaRetornos(proc, nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 								{
 									proc.Retornos = resultado;
@@ -1429,7 +1509,11 @@ namespace Proyecto1Compi2.com.Analisis
 						break;
 				}
 			}
-			if (proc.Nombre!=null &&proc.Parametros!=null &&proc.Instrucciones!=null && proc.Retornos!=null && t != null && bren != null) return proc;
+			if (proc.Nombre != null && proc.Parametros != null && proc.Instrucciones != null && proc.Retornos != null && t != null && bren != null){
+				proc.LineasNum.Add(raiz.Span.Location.Line + 1);
+				proc.ColumnasNum.Add(raiz.Span.Location.Column+1);
+				return proc;
+			}
 			erroresChison.Add(new Error(TipoError.Advertencia,
 				"No se incluyó alguno de los atributos 'NAME','PARAMETERS', 'INSTR' o 'CQL-TYPE'",
 				raiz.Span.Location.Line,
@@ -1538,7 +1622,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							dic.Add(new Parametro(nombre, Datos.GetTipoObjetoDBPorCadena(tipo)));
 							proc.LineasNum.Add(nodo.Span.Location.Line+1);
-							proc.ColumnasNum.Add(nodo.Span.Location.Column);
+							proc.ColumnasNum.Add(nodo.Span.Location.Column+1);
 						}
 						else
 						{
@@ -1663,7 +1747,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							dic.Add(new Parametro(nombre, Datos.GetTipoObjetoDBPorCadena(tipo)));
 							proc.LineasNum.Add(nodo.Span.Location.Line+1);
-							proc.ColumnasNum.Add(nodo.Span.Location.Column);
+							proc.ColumnasNum.Add(nodo.Span.Location.Column+1);
 
 						}
 						else
@@ -1714,9 +1798,9 @@ namespace Proyecto1Compi2.com.Analisis
 			return false;
 		}
 
-		private static UserType GetUserType(ParseTreeNode raiz, List<object> db)
+		private static UserTypeFalso GetUserType(ParseTreeNode raiz, List<object> db)
 		{
-			UserType user = new UserType();
+			UserTypeFalso user = new UserTypeFalso();
 			string t = null;
 			foreach (ParseTreeNode nodo in raiz.ChildNodes)
 			{
@@ -1779,7 +1863,7 @@ namespace Proyecto1Compi2.com.Analisis
 						{
 							if (user.Atributos == null)
 							{
-								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(nodo.ChildNodes.ElementAt(1));
+								Dictionary<string, TipoObjetoDB> resultado = GetListaAtributos(user,nodo.ChildNodes.ElementAt(1));
 								if (resultado != null)
 									user.Atributos = resultado;
 							}
@@ -1813,8 +1897,10 @@ namespace Proyecto1Compi2.com.Analisis
 				}
 			}
 
-			if (user.IsValido() && t != null && user.Atributos != null)
+			if (user.Nombre!=null && user.Atributos!=null && t != null && user.Atributos != null)
 			{
+				user.LineasNum.Add(raiz.Span.Location.Line);
+				user.ColumnasNum.Add(raiz.Span.Location.Column);
 				return user;
 			}
 			erroresChison.Add(new Error(TipoError.Advertencia,
@@ -1826,7 +1912,7 @@ namespace Proyecto1Compi2.com.Analisis
 			return null;
 		}
 
-		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(ParseTreeNode parseTreeNode)
+		private static Dictionary<string, TipoObjetoDB> GetListaAtributos(UserTypeFalso user, ParseTreeNode parseTreeNode)
 		{
 			Dictionary<string, TipoObjetoDB> dic = new Dictionary<string, TipoObjetoDB>();
 
@@ -1908,6 +1994,8 @@ namespace Proyecto1Compi2.com.Analisis
 						try
 						{
 							dic.Add(nombre, Datos.GetTipoObjetoDBPorCadena(tipo));
+							user.LineasNum.Add(nodo.Span.Location.Line);
+							user.ColumnasNum.Add(nodo.Span.Location.Column);
 						}
 						catch (ArgumentException)
 						{
