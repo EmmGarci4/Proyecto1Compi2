@@ -2695,10 +2695,10 @@ namespace Proyecto1Compi2.com.Analisis
 				case TipoDatoDB.BOOLEAN:
 					return v.GetType() == typeof(bool);
 				case TipoDatoDB.DOUBLE:
-					return v.GetType() == typeof(double);
+					return v.GetType() == typeof(double)|| v.GetType() == typeof(int);
 				case TipoDatoDB.COUNTER:
 				case TipoDatoDB.INT:
-					return v.GetType() == typeof(int);
+					return v.GetType() == typeof(int)|| v.GetType() == typeof(double);
 				case TipoDatoDB.DATE:
 					if (v.GetType() == typeof(MyDateTime))
 					{
