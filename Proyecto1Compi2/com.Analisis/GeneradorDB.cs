@@ -14,7 +14,6 @@ namespace Proyecto1Compi2.com.Analisis
 	class GeneradorDB
 	{
 		static List<Error> erroresChison = new List<Error>();
-		static Dictionary<int, int> intervalos = new Dictionary<int, int>();
 
 		public static List<Error> ErroresChison { get => erroresChison; set => erroresChison = value; }
 
@@ -53,10 +52,9 @@ namespace Proyecto1Compi2.com.Analisis
 
 		private static string Importar(string texto)
 		{
-			intervalos.Clear();
 			int contadorLineas = 1;
 			string[] lineas = texto.Split('\n');
-
+			bool hayCambios = false;
 			foreach (string linea in lineas)
 			{
 				Match match2 = Regex.Match(linea, "\\${.*}\\$");
@@ -66,7 +64,7 @@ namespace Proyecto1Compi2.com.Analisis
 					if (t1 != null)
 					{
 						texto = texto.Replace(match2.Value, t1);
-						intervalos.Add(contadorLineas, t1.Split('\n').Length + contadorLineas);
+						hayCambios = true;
 					}
 					else
 					{
@@ -77,6 +75,9 @@ namespace Proyecto1Compi2.com.Analisis
 					}
 				}
 				contadorLineas++;
+			}
+			if (hayCambios) {
+				HandlerFiles.guardarArchivo(texto, "principal.chison");
 			}
 			return texto;
 		}
@@ -97,56 +98,18 @@ namespace Proyecto1Compi2.com.Analisis
 			Queue<object> valores = new Queue<object>();
 			foreach (Error error in erroresChison)
 			{
-				int linea = GetLineaError(error.Linea);
-				String mensajeExtra = "";
-				if (linea != error.Linea)
-				{
-					mensajeExtra = "(línea:" + GetLineaRealError(error.Linea) + " en archivo)";
-				}
 				valores.Clear();
 				int contador = Analizador.Errors.BuscarColumna("numero").GetUltimoValorCounter();
 				valores.Enqueue(contador + 1);
 				valores.Enqueue(error.Tipo.ToString());
-				valores.Enqueue(error.Mensaje + mensajeExtra);
-				valores.Enqueue(linea);
+				valores.Enqueue(error.Mensaje);
+				valores.Enqueue(error.Linea);
 				valores.Enqueue(error.Columna);
 				valores.Enqueue(new MyDateTime(TipoDatoDB.DATE, DateTime.Parse(error.Fecha)));
 				valores.Enqueue(new MyDateTime(TipoDatoDB.TIME, DateTime.Parse(error.Hora)));
 				//agregando valores
 				Analizador.Errors.AgregarValores(valores);
 			}
-		}
-
-		private static int GetLineaRealError(int line)
-		{
-			if (intervalos.Count > 0)
-			{
-
-				foreach (KeyValuePair<int, int> intervalo in intervalos)
-				{
-					if (line >= intervalo.Key && line <= intervalo.Value)
-					{
-						return line - intervalo.Key;
-					}
-				}
-			}
-			return line;
-		}
-
-		private static int GetLineaError(int line)
-		{
-			if (intervalos.Count > 0)
-			{
-
-				foreach (KeyValuePair<int, int> intervalo in intervalos)
-				{
-					if (line > intervalo.Key && line < intervalo.Value)
-					{
-						return intervalo.Key;
-					}
-				}
-			}
-			return line;
 		}
 
 		public static void GuardarInformación(ParseTreeNode raiz)
