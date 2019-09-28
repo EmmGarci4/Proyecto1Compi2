@@ -142,6 +142,7 @@ namespace Proyecto1Compi2.com.AST
 				case TipoDatoDB.INT:
 					return 0;
 				case TipoDatoDB.STRING:
+					return "$%_null_%$";
 				case TipoDatoDB.LISTA_OBJETO:
 				case TipoDatoDB.LISTA_PRIMITIVO:
 				case TipoDatoDB.MAP_OBJETO:
