@@ -34,6 +34,8 @@ namespace com.Analisis
 		public static NodoAST AST { get => ast; }
 		public static Tabla Errors { get => errors; set => errors = value; }
 		internal static List<string> ResultadosConsultas { get => resultadosConsultas; set => resultadosConsultas = value; }
+		internal static List<BaseDatos> BasesDatos { get => BasesDeDatos; }
+		internal static List<Usuario> Usuarios { get => Usuariosdb; }
 
 		//******************************FUNCIONES***********************************************************
 		public static bool ExisteFuncion(string nombre)

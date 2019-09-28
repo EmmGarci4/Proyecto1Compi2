@@ -271,7 +271,6 @@ namespace com.Analisis
 				| SENTENCIATCL //commit y rollback
 				| SENTENCIADCL //usuarios y permisos
 				| SENTENCIADML //base de datos
-				| BATCH
 				| CREAR_FUNCION
 				| CREAR_PROC
 				| CREAR_USERTYPE
@@ -463,7 +462,8 @@ namespace com.Analisis
 			SENTENCIADML.Rule = INSERTAR
 				| ACTUALIZAR
 				| BORRAR
-				| SELECCIONAR + puntoycoma;
+				| SELECCIONAR + puntoycoma
+				| BATCH;
 
 			SENTENCIADML.ErrorRule=SyntaxError +puntoycoma;
 
