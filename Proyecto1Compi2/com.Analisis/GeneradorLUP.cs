@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -123,7 +125,7 @@ namespace Proyecto1Compi2.com.Analisis
 								respuesta.AppendLine(col.Tipo.ToString());
 								if (col.IsPrimary)
 								{
-									respuesta.AppendLine(":llave_primaria");
+									respuesta.AppendLine("_llave_primaria");
 								}
 								respuesta.AppendLine("[-TYPE]");
 								respuesta.AppendLine("[-COLUMN]");
