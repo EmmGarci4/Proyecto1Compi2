@@ -25,7 +25,7 @@ namespace Proyecto1Compi2.com.Util
 			this.isNull = true;
 			this.tipoLlave = null;
 			this.TipoValor = null;
-		}
+		} 
 
 		public TipoObjetoDB TipoLlave { get => tipoLlave; set => tipoLlave = value; }
 		public TipoObjetoDB TipoValor { get => tipoValor; set => tipoValor = value; }
@@ -165,39 +165,29 @@ namespace Proyecto1Compi2.com.Util
 					if (ib.Value.GetType() == typeof(CollectionListCql))
 					{
 						cad.Append(((CollectionListCql)ib.Value).GetLinealizado());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
+						cad.Append("<br/>");
 					}
 					else if (ib.Value.GetType() == typeof(CollectionMapCql))
 					{
 						cad.Append(((CollectionMapCql)ib.Value).GetLinealizado());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
+						cad.Append("<br/>");
 					}
 					else if (ib.Value.GetType() == typeof(Objeto))
 					{
 						cad.Append(((Objeto)ib.Value).GetLinealizado());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
+						cad.Append("<br/>");
 					}
 					else
 					{
 						cad.Append(ib.Value.ToString());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
+						cad.Append("<br/>");
 					}
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+						cad.Append("<br/>");
+					}
+					i++;
 				}
 				cad.Append("}");
 			}

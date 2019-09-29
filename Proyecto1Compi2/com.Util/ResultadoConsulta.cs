@@ -54,18 +54,22 @@ namespace Proyecto1Compi2.com.Util
 						if (par.Valor.GetType() == typeof(CollectionListCql))
 						{
 							resultado.Append(((CollectionListCql)par.Valor).GetLinealizado());
+							resultado.Append("<br/>");
 						}
 						else if (par.Valor.GetType() == typeof(CollectionMapCql))
 						{
 							resultado.Append(((CollectionMapCql)par.Valor).GetLinealizado());
+							resultado.Append("<br/>");
 						}
 						else if (par.Valor.GetType() == typeof(Objeto))
 						{
 							resultado.Append(((Objeto)par.Valor).GetLinealizado());
+							resultado.Append("<br/>");
 						}
 						else
 						{
 							resultado.Append(par.Valor);
+							resultado.Append("<br/>");
 						}
 						resultado.Append("</td>\n");
 					}

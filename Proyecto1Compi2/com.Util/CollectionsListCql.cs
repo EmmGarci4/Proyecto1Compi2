@@ -286,48 +286,29 @@ namespace Proyecto1Compi2.com.Util
 					if (ib.GetType() == typeof(CollectionListCql))
 					{
 						cad.Append(((CollectionListCql)ib).GetLinealizado());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
 					}
 					else if (ib.GetType() == typeof(CollectionMapCql))
 					{
 						cad.Append(((CollectionMapCql)ib).GetLinealizado());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
 					}
 					else if (ib.GetType() == typeof(Objeto))
 					{
 						cad.Append(((Objeto)ib).GetLinealizado());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
 					}
-					if (this.tipoDato.Nombre.Equals("string"))
+					else if (this.tipoDato.Nombre.Equals("string"))
 					{
 						cad.Append("\"" + ib.ToString() + "\"");
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
 					}
 					else
 					{
 						cad.Append(ib.ToString());
-						if (i < this.Count - 1)
-						{
-							cad.Append(",");
-						}
-						i++;
 					}
+					if (i < this.Count - 1)
+					{
+						cad.Append(",");
+						cad.Append("<br/>");
+					}
+					i++;
 				}
 				cad.Append("]");
 			}

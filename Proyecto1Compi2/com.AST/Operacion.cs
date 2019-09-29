@@ -66,6 +66,8 @@ namespace Proyecto1Compi2.com.AST
 		internal Expresion Izquierda { get => izquierda; set => izquierda = value; }
 		internal Expresion Derecha { get => derecha; set => derecha = value; }
 
+		public object ValorInterno => Valor;
+
 		public override TipoOperacion GetTipo(TablaSimbolos ts, Sesion sesion)
 		{
 			switch (tipoOp)

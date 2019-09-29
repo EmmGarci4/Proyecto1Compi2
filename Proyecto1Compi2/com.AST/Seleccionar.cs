@@ -107,8 +107,32 @@ namespace Proyecto1Compi2.com.AST
 						}
 					}
 					else {
-						resultado.Titulos.Add("Resultado " + (cc + 1));
-						resultado.Tipos.Add(new TipoObjetoDB(TipoDatoDB.OBJETO, "%%"));
+						if (listaAccesos.ElementAt(cc).GetType() == typeof(Operacion))
+						{
+							Operacion op = (Operacion)listaAccesos.ElementAt(cc);
+							if (op.TipoOp == TipoOperacion.Identificador)
+							{
+								resultado.Titulos.Add(op.ValorInterno.ToString());
+								if (miTabla.ExisteColumna(op.ValorInterno.ToString()))
+								{
+									resultado.Tipos.Add(miTabla.BuscarColumna(op.ValorInterno.ToString()).Tipo);
+								}
+								else
+								{
+									resultado.Tipos.Add(new TipoObjetoDB(TipoDatoDB.OBJETO, "%%"));
+								}
+							}
+							else
+							{
+								resultado.Titulos.Add("Resultado " + (cc + 1));
+								resultado.Tipos.Add(new TipoObjetoDB(TipoDatoDB.OBJETO, "%%"));
+							}
+						}
+						else {
+							resultado.Titulos.Add("Resultado " + (cc + 1));
+							resultado.Tipos.Add(new TipoObjetoDB(TipoDatoDB.OBJETO, "%%"));
+						}
+						
 					}
 				}
 			}
@@ -158,8 +182,16 @@ namespace Proyecto1Compi2.com.AST
 							{
 								return val;
 							}
+							if (val.Equals("$%_null_%$"))
+							{
+
+								fila.Datos.Add(new ParDatos("", "null"));
+							}
+							else
+							{
+								fila.Datos.Add(new ParDatos("", val));
+							}
 						}
-						fila.Datos.Add(new ParDatos("", val));
 					}
 					//EVALUANDO LA CONDICION WHERE SI ES QUE HAY **************************************
 					if (PropiedadWhere != null)

@@ -133,7 +133,7 @@ namespace Proyecto1Compi2.com.Util
 							}
 							else if (tipo.Tipo.Equals(TipoDatoDB.DATE) || tipo.Tipo.Equals(TipoDatoDB.TIME))
 							{
-								if (val.Value.Equals("null"))
+						 		if (val.Value.Equals("null"))
 								{
 									cadena.Append(val.Value);
 								}
@@ -154,6 +154,7 @@ namespace Proyecto1Compi2.com.Util
 						if (i < atributos.Count - 1)
 						{
 							cadena.Append(",\n");
+							cadena.Append("<br/>");
 						}
 						i++;
 					}
