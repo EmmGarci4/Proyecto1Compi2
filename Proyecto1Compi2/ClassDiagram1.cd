@@ -1,0 +1,831 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="com.Analisis.Analizador" Collapsed="true">
+    <Position X="148.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>A4EAAAAABAAgAwCBA4EUkGAAgABgAAIgAEgEsQBChyA=</HashCode>
+      <FileName>com.Analisis\Analizador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.Analisis.generadorDOT" Collapsed="true">
+    <Position X="147" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAABCAAAAAAAAAAAAAgAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Analisis\generadorDOT.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.Analisis.GramaticaCql" Collapsed="true">
+    <Position X="152.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Analisis\GramaticaCql.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Analisis.GeneradorAstCql" Collapsed="true">
+    <Position X="155.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MQm44AYHBkAISQEEGYASAYCAQkwFkhgxYoBgAACEHAQ=</HashCode>
+      <FileName>com.Analisis\GeneradorAstCql.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Analisis.GeneradorDB" Collapsed="true">
+    <Position X="157.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CBEDIIIAAAACAgEAJAAAQWBUCAAwBBAIkIAAQAkACAQ=</HashCode>
+      <FileName>com.Analisis\GeneradorDB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Analisis.GeneradorLup" Collapsed="true">
+    <Position X="148.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAgAACABAIAAAAAAAAAgAAQAoAIAAA=</HashCode>
+      <FileName>com.Analisis\GeneradorLup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Analisis.GramaticaChison" Collapsed="true">
+    <Position X="150.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Analisis\GramaticaChison.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Analisis.GramaticaLup" Collapsed="true">
+    <Position X="154" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Analisis\GramaticaLup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AbrirCursor" Collapsed="true">
+    <Position X="110.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\AbrirCursor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Acceso" Collapsed="true">
+    <Position X="20.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAGABCAAAAAAAAAAAAAACBAAAAgAAAAAQABAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Acceso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AccesoArreglo" Collapsed="true">
+    <Position X="23" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACEAAAAgAAEAAAABAAAQAAEAAAAAAQ=</HashCode>
+      <FileName>com.AST\AccesoArreglo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AccesoFuncion" Collapsed="true">
+    <Position X="25.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\AccesoFuncion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AccesoPar" Collapsed="true">
+    <Position X="147" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAACAAAAAgAAAAAAQ=</HashCode>
+      <FileName>com.AST\AccesoPar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Actualizar" Collapsed="true">
+    <Position X="47.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAIAARACAAAAAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Actualizar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AlterarTabla" Collapsed="true">
+    <Position X="59" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABABAAAAAQAAAAEAABAAAAAgAAAAAAAAAAAAQAAAAU=</HashCode>
+      <FileName>com.AST\AlterarTabla.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AlterarUserType" Collapsed="true">
+    <Position X="70.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAACAAABAgAAAAgAAAAIAAAAIAAAACAQ=</HashCode>
+      <FileName>com.AST\AlterarUserType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AlterarUsuario" Collapsed="true">
+    <Position X="83.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAACAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\AlterarUsuario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Asignacion" Collapsed="true">
+    <Position X="90.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAgAEAAIAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Asignacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AsignacionCall" Collapsed="true">
+    <Position X="99.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAAQAAAAEAAA=</HashCode>
+      <FileName>com.AST\AsignacionCall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.AsignacionColumna" Collapsed="true">
+    <Position X="113" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAgAAAAIAABAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>com.AST\AsignacionColumna.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Batch" Collapsed="true">
+    <Position X="124.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAEBAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>com.AST\Batch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Borrar" Collapsed="true">
+    <Position X="137.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAIAAQACAAAAAAABAAAABAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Borrar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Break" Collapsed="true">
+    <Position X="27.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Break.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Case" Collapsed="true">
+    <Position X="36.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAQAAAAEBAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>com.AST\Case.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Casteo" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAQAAAAEAAAAAAAAAAAAAAAAAAAQAAACAAAAAw=</HashCode>
+      <FileName>com.AST\Casteo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CerrarCursor" Collapsed="true">
+    <Position X="61.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\CerrarCursor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Commit" Collapsed="true">
+    <Position X="72.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Commit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Condicion" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQCAgAEAgIAAAAAAAAAAAABAAAQAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Condicion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Continue" Collapsed="true">
+    <Position X="92.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Continue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearBaseDatos" Collapsed="true">
+    <Position X="101.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>com.AST\CrearBaseDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearCursor" Collapsed="true">
+    <Position X="115.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAABAAAAAQAAAAgA=</HashCode>
+      <FileName>com.AST\CrearCursor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearObjeto" Collapsed="true">
+    <Position X="126.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAACAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\CrearObjeto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearProcedimiento" Collapsed="true">
+    <Position X="140" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAQAAQACAAEBAgAAAABAAAAAUAAAADAAAAAA=</HashCode>
+      <FileName>com.AST\CrearProcedimiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearTabla" Collapsed="true">
+    <Position X="29.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAgAAAigAABAiAAAAAgAAAAAAAAAAABgAAA=</HashCode>
+      <FileName>com.AST\CrearTabla.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearUserType" Collapsed="true">
+    <Position X="38.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAgAACAIABAgAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>com.AST\CrearUserType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.CrearUsuario" Collapsed="true">
+    <Position X="50" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAACAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\CrearUsuario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Cursor" Collapsed="true">
+    <Position X="147" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAgAAAAAAAAABAAAgAQAAIAAA=</HashCode>
+      <FileName>com.AST\Cursor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Declaracion" Collapsed="true">
+    <Position X="74.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAIABAAABAAAAgQAAAAAQAAAAEAAQ=</HashCode>
+      <FileName>com.AST\Declaracion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.DenegarPermiso" Collapsed="true">
+    <Position X="86" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAgBAAAAAAAAAAAQAAAAEAAAAAAA=</HashCode>
+      <FileName>com.AST\DenegarPermiso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.DoWhile" Collapsed="true">
+    <Position X="95" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACAQAAAAEBAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\DoWhile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.EliminarBaseDatos" Collapsed="true">
+    <Position X="104" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\EliminarBaseDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.EliminarTabla" Collapsed="true">
+    <Position X="117.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>com.AST\EliminarTabla.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.EliminarUserType" Collapsed="true">
+    <Position X="128.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\EliminarUserType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.ElseIf" Collapsed="true">
+    <Position X="142.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACAQAAAAEBAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\ElseIf.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Expresion" Collapsed="true">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Expresion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.For" Collapsed="true">
+    <Position X="41" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAACCAQAAggEBAEAAAAAAAAACAAAEAgAABAAA=</HashCode>
+      <FileName>com.AST\For.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Foreach" Collapsed="true">
+    <Position X="52.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQACAAEBAgAAAAAAAAAAEAAAABAAAAAA=</HashCode>
+      <FileName>com.AST\Foreach.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Funcion" Collapsed="true">
+    <Position X="63.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAACAAEBAgAAAAQAAAAAEAAAADAACAAQ=</HashCode>
+      <FileName>com.AST\Funcion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.FuncionAgregacion" Collapsed="true">
+    <Position X="77" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACQACCAIBAgAAAAAAAAABAAABBRAAABAA=</HashCode>
+      <FileName>com.AST\FuncionAgregacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.FuncionAgregacionExp" Collapsed="true">
+    <Position X="11.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\FuncionAgregacionExp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.If" Collapsed="true">
+    <Position X="97.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACAgAAAAIBAAAAEAAEABAAAAAAAAgAAAAI=</HashCode>
+      <FileName>com.AST\If.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Insertar" Collapsed="true">
+    <Position X="106.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAEQAAABAAAAADAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>com.AST\Insertar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.InstanciaObjeto" Collapsed="true">
+    <Position X="16.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAQAAEAAEAAAQ=</HashCode>
+      <FileName>com.AST\InstanciaObjeto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Limit" Collapsed="true">
+    <Position X="131" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAIBAAAAAAAAAAAAAAAgAAAAEAAA=</HashCode>
+      <FileName>com.AST\Limit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.LlamadaFuncion" Collapsed="true">
+    <Position X="144.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAgAAAAAMAAAABAAAAAA=</HashCode>
+      <FileName>com.AST\LlamadaFuncion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.LlamadaFuncionExp" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAACAABQAQ=</HashCode>
+      <FileName>com.AST\LlamadaFuncionExp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.LlamadaProcedimiento" Collapsed="true">
+    <Position X="43.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAgAAAAAMAAAABAAAAAA=</HashCode>
+      <FileName>com.AST\LlamadaProcedimiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Log" Collapsed="true">
+    <Position X="54.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAEAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Log.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Modificador" Collapsed="true">
+    <Position X="65.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEABAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Modificador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.ModificadorExp" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAhAAAQIAAAEAAAAAAAAAAAAAAAAAAQAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\ModificadorExp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.NodoAST" Collapsed="true">
+    <Position X="72.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAgAAAAIAA=</HashCode>
+      <FileName>com.AST\NodoAST.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Operacion" Collapsed="true">
+    <Position X="14" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQCBgAEFgIIAAAAAAEAAAAAAAAQAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Operacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.OperacionAsignacion" Collapsed="true">
+    <Position X="119.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAQAAAAEAAAABAAAAAAAAAAAAAAAEAAAABAgA=</HashCode>
+      <FileName>com.AST\OperacionAsignacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.OrderBy" Collapsed="true">
+    <Position X="133.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAYBBAAAAAAAAAAAAAAgAAAAAAAQ=</HashCode>
+      <FileName>com.AST\OrderBy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.PropOrderBy" Collapsed="true">
+    <Position X="148.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAgAAAAIAA=</HashCode>
+      <FileName>com.AST\OrderBy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.OtorgarPermiso" Collapsed="true">
+    <Position X="32" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAgBAAAAAAAAAAAQAAAAEAAAAAAA=</HashCode>
+      <FileName>com.AST\OtorgarPermiso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Parametro" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="152.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAACAgAAAgAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Parametro.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.ParAsignacion" Collapsed="true">
+    <Position X="154" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAgAAIAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\ParAsignacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Return" Collapsed="true">
+    <Position X="68" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAIAAAABAAAACAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Return.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Rollback" Collapsed="true">
+    <Position X="79.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Rollback.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Seleccionar" Collapsed="true">
+    <Position X="88.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAIABQAAAAAAAAADAAAAgAAEAAAQAAAAEQAAAAAA=</HashCode>
+      <FileName>com.AST\Seleccionar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Sentencia" Collapsed="true">
+    <Position X="85" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\Sentencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Switch" Collapsed="true">
+    <Position X="108.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAQAAABEAABAAAAAQAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Switch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Ternario" Collapsed="true">
+    <Position X="18.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIwAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAQ=</HashCode>
+      <FileName>com.AST\Ternario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Throw" Collapsed="true">
+    <Position X="135.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAgAAAAIAA=</HashCode>
+      <FileName>com.AST\Throw.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.ThrowError" Collapsed="true">
+    <Position X="152.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAgIAAAICQ=</HashCode>
+      <FileName>com.AST\ThrowError.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.TruncarTabla" Collapsed="true">
+    <Position X="34.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\TruncarTabla.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.TryCatch" Collapsed="true">
+    <Position X="45.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAABAAAAAIAAAAAAAAQAAAAAAAEA=</HashCode>
+      <FileName>com.AST\TryCatch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.UsarBaseDatos" Collapsed="true">
+    <Position X="56.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAABAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\UsarBaseDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.Where" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAABiAAAAIAAAAAAAAAAAAAAQAQAAEABAAAAQ=</HashCode>
+      <FileName>com.AST\Where.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.AST.While" Collapsed="true">
+    <Position X="81.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAACAQAAAAEBAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.AST\While.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.Atributo" Collapsed="true">
+    <Position X="150.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAACAAAAAgAAEAAAABAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>com.db\Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.BaseDatos" Collapsed="true">
+    <Position X="152.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQJAAAAAQABQEACEIAAAigIAEgIAGATAAAAIgAARBAA=</HashCode>
+      <FileName>com.db\BaseDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.Columna" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="157.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAABAEAAAAAAACEgQAAgAAAAAAAAACEAEAAgAAAAAQ=</HashCode>
+      <FileName>com.db\Columna.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.Procedimiento" Collapsed="true">
+    <Position X="122" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAQACEAEJAgAAAARAACgAUAEgADAACAAA=</HashCode>
+      <FileName>com.db\Procedimiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.Sesion" Collapsed="true">
+    <Position X="154" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAACAAAAAAAAAAAAAAAAAAQBAAAEAQAAAAA=</HashCode>
+      <FileName>com.db\Sesion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.Tabla" Collapsed="true">
+    <Position X="147" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAGAABGEAAEABAKEoAAAgAAABEAQQBAAIAARCAgAIQA=</HashCode>
+      <FileName>com.db\Tabla.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.UserType" Collapsed="true">
+    <Position X="155.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAgAACEIAAAgAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.db\UserType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.db.Usuario" Collapsed="true">
+    <Position X="147" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACEAAAAgAAAAABAQAACAAAAAgAAAAI=</HashCode>
+      <FileName>com.db\Usuario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.CollectionMapCql" Collapsed="true">
+    <Position X="155.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABEAEAAAAAAAAgAAAAIAIICAACCAgIAA=</HashCode>
+      <FileName>com.Util\CollectionMapCql.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.CollectionListCql" Collapsed="true">
+    <Position X="154" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAKAAAAAAhAAEAAAAAAUAgAAACIAYACAACAggIAQ=</HashCode>
+      <FileName>com.Util\CollectionsListCql.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.Datos" Collapsed="true">
+    <Position X="148.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ARAQAAAAAAEAACAAAiAAAQAACAAAAAAAQAAQAAgAAAI=</HashCode>
+      <FileName>com.Util\Datos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.FilaDatos" Collapsed="true">
+    <Position X="152.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAIAAAAAAAAAAAAAAAAACAAAAggAAAIAA=</HashCode>
+      <FileName>com.Util\FilaDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.Info" Collapsed="true">
+    <Position X="157.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAABgAAAA=</HashCode>
+      <FileName>com.Util\Info.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.InfoCollection" Collapsed="true">
+    <Position X="147" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Util\InfoCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.MyDateTime" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="148.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAQEAAAAAAAAAAAAAAAIBAAACAQAAAQ=</HashCode>
+      <FileName>com.Util\MyDateTime.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.Objeto" Collapsed="true">
+    <Position X="150.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAQAEAgAAAEIAAAAAAAAAAAAIAIAAAACAAAAAA=</HashCode>
+      <FileName>com.Util\Objeto.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.ParDatos" Collapsed="true">
+    <Position X="155.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAgAAEAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Util\ParDatos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.ProcedimientoFalso" Collapsed="true">
+    <Position X="157.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAQAYACQAEAAkAAAABAACAAUAAggBAAAIAA=</HashCode>
+      <FileName>com.Util\ProcedimientoFalso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.ResultadoConsulta" Collapsed="true">
+    <Position X="152.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAEAAAAAIAAAACAAAAAAAIAAAQCAAA=</HashCode>
+      <FileName>com.Util\ResultadoConsulta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.TablaFalsa" Collapsed="true">
+    <Position X="148.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAQABACQAAAAkAAAAAAAAACAAAAAhAAAAAA=</HashCode>
+      <FileName>com.Util\TablaFalsa.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.TipoObjetoDB" Collapsed="true">
+    <Position X="154" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAACEgAAAgAAAAAAAAIAAAAAAAAAAAAQ=</HashCode>
+      <FileName>com.Util\TipoObjetoDB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.com.Util.UserTypeFalso" Collapsed="true">
+    <Position X="157.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQgAACQIAAAkAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>com.Util\UserTypeFalso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.Analisis.Util.Error" Collapsed="true">
+    <Position X="150.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAgAQAAIAEEAAAAAAAAAEAAAABAAAAgIAAAICQ=</HashCode>
+      <FileName>com.Util\Error.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.Analisis.Util.HandlerFiles" Collapsed="true">
+    <Position X="155.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>com.Util\HandlerFiles.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.Analisis.Util.Simbolo" Collapsed="true">
+    <Position X="157.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAIACAAAAAgAgEAAAABAAAACAgAAAgIAA=</HashCode>
+      <FileName>com.Util\Simbolo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="com.Analisis.Util.TablaSimbolos" Collapsed="true">
+    <Position X="150.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAARQAAAAAAAAADAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>com.Util\TablaSimbolos.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.Form1" Collapsed="true">
+    <Position X="154" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAgAAJggMGBAFwCQigEAAAAAAEQAAAAAGg=</HashCode>
+      <FileName>Form1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.Program" Collapsed="true">
+    <Position X="147" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.Properties.Resources" Collapsed="true">
+    <Position X="150.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Proyecto1Compi2.Properties.Settings" Collapsed="true">
+    <Position X="155.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Proyecto1Compi2.com.AST.TipoOperacion" Collapsed="true">
+    <Position X="155.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MAAACkAAARAABAIEQAAAgABgADAAgAAhAhAgGQBBAwI=</HashCode>
+      <FileName>com.AST\Operacion.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Proyecto1Compi2.com.Util.TipoDatoDB" Collapsed="true">
+    <Position X="150.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAABEABBAIBgQAIABEAAAEgAAAAAAA=</HashCode>
+      <FileName>com.Util\TipoObjetoDB.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Proyecto1Compi2.com.Util.TipoThrow" Collapsed="true">
+    <Position X="157.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ECAAABAAAAAAAAAiAAgAEEggAAgAABgAABhKACAQAAA=</HashCode>
+      <FileName>com.Util\TipoThrow.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="com.Analisis.Util.TipoError" Collapsed="true">
+    <Position X="152.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>giAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Util\Tipos.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="com.Analisis.Util.TipoAccion" Collapsed="true">
+    <Position X="148.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>com.Util\Tipos.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="com.Analisis.Util.TipoAcceso" Collapsed="true">
+    <Position X="147" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAACQAAAAEAAA=</HashCode>
+      <FileName>com.Util\Tipos.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="com.Analisis.Util.TipoObjeto" Collapsed="true">
+    <Position X="154" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAQAAAAQAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>com.Util\Tipos.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
