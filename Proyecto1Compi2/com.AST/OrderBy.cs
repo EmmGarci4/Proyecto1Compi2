@@ -52,6 +52,7 @@ namespace Proyecto1Compi2.com.AST
 				if (Datos.IsPrimitivo(tipo.Tipo))
 				{
 					ResultadoConsulta res = Ordenar(index, tipo, consulta);
+					if (!prop.IsAsc) res.Reverse();
 					indexPropiedades++;
 					if (indexPropiedades < this.propiedades.Count)
 					{

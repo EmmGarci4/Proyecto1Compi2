@@ -266,9 +266,8 @@ namespace Proyecto1Compi2.com.AST
 											return indiceexp;
 										}
 										TipoObjetoDB tipoIndice = Datos.GetTipoObjetoDB(indiceexp);
-										if (tipoIndice.Tipo == TipoDatoDB.INT)
+										if (tipoIndice.Tipo == TipoDatoDB.INT && int.TryParse(indiceexp.ToString(), out int indice))
 										{
-											int indice = (int)indiceexp;
 											if (indice >= 0 && indice < lista.Count)
 											{
 
@@ -427,9 +426,8 @@ namespace Proyecto1Compi2.com.AST
 												return indiceexp;
 											}
 											TipoObjetoDB tipoIndice = Datos.GetTipoObjetoDB(indiceexp);
-											if (tipoIndice.Tipo == TipoDatoDB.INT)
+											if (tipoIndice.Tipo == TipoDatoDB.INT && int.TryParse(indiceexp.ToString(), out int indice))
 											{
-												int indice = (int)indiceexp;
 												if (indice >= 0 && indice < lista.Count)
 												{
 
@@ -692,10 +690,9 @@ namespace Proyecto1Compi2.com.AST
 											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (t == TipoOperacion.Numero)
 											{
-												if (!nuevo.ToString().Contains("."))
+												if (!nuevo.ToString().Contains(".")&&int.TryParse(nuevo.ToString(),out int posicion))
 												{
 													//es entero
-													int posicion = (int)nuevo;
 													if (posicion >= 0 && posicion < collection.Count)
 													{
 														object nuevoValor = collection.ElementAt(posicion);
@@ -746,10 +743,9 @@ namespace Proyecto1Compi2.com.AST
 											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (t == TipoOperacion.Numero)
 											{
-												if (!nuevo.ToString().Contains("."))
+												if (!nuevo.ToString().Contains(".") && int.TryParse(nuevo.ToString(), out int posicion))
 												{
 													//es entero
-													int posicion = (int)nuevo;
 													if (posicion >= 0 && posicion < collection.Count)
 													{
 														//SEGUNDO PARAMETRO= VALOR
@@ -762,7 +758,7 @@ namespace Proyecto1Compi2.com.AST
 															}
 															TipoOperacion t2 = llamada.Parametros.ElementAt(1).GetTipo(ts, sesion);
 
-															if (Datos.IsTipoCompatibleParaAsignar(collection.TipoDato, nuevoValor))
+															if (Datos.IsTipoCompatibleParaAsignar(Datos.GetTipoObjetoDBPorCadena(collection.TipoDato.Nombre), nuevoValor))
 															{
 																object nuevoDato = Datos.CasteoImplicito(collection.TipoDato, nuevoValor, ts, sesion, Linea, Columna);
 																if (nuevoDato != null)
@@ -824,10 +820,9 @@ namespace Proyecto1Compi2.com.AST
 											TipoOperacion t = llamada.Parametros.ElementAt(0).GetTipo(ts, sesion);
 											if (t == TipoOperacion.Numero)
 											{
-												if (!nuevo.ToString().Contains("."))
+												if (!nuevo.ToString().Contains(".") && int.TryParse(nuevo.ToString(), out int posicion))
 												{
 													//es entero
-													int posicion = (int)nuevo;
 													if (posicion >= 0 && posicion < collection.Count)
 													{
 														collection.EliminarItem(posicion);
